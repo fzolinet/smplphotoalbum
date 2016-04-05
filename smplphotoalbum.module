@@ -1,0 +1,1004 @@
+<?php
+require_once 'inc/define.inc';
+require_once 'inc/functions.inc';
+require_once 'inc/substitute.inc';
+require_once 'inc/statistics.inc';
+require_once 'inc/image.inc';
+require_once 'inc/imagetax.inc';
+require_once 'inc/imagelist.inc';
+require_once 'inc/imagelisttax.inc';
+require_once 'inc/callback.inc';
+require_once 'inc/edit.inc';
+require_once 'inc/exif.inc';
+require_once 'inc/imgedit.inc';
+require_once 'inc/imgmanipulate.inc';
+require_once 'lib/exif/exif.php';
+require_once 'lib/encoding.php';
+require_once 'lib/ffmpeg/_ffmpeg.php';
+
+ // Be sure of the path to the class
+/**
+ * Megjeleniti a module help informaciokat
+ * @param unknown_type $path
+ * @param unknown_type $arg
+ */
+function smplphotoalbum_help($path,$arg){
+	$output = '';
+
+	switch($path){
+		case "admin/help#smplphotoalbum":
+			$output = '<h3>' .t('About'). '</h3>';
+			$path = drupal_get_path('module', 'smplphotoalbum') . '/smplphotoalbum.info';
+			$info = drupal_parse_info_file($path);
+			$output .= 'Author: <a href="http://www.fzolee.hu">Zoltan Fabian</a><br/>';
+			$output .= t('version').': '.$info['version'].'<br/>';
+			$output .= t('compiled').': '.date('Y.m.d',$info['datestamp']);
+			$output .="<p>".t("Simple Photoalbum shows a set of picture and other filetypes .")."</p>";
+			break;
+		case "admin/help/smplphotoalbum":
+			break;
+	}
+	return $output;
+}
+
+/*
+ * hook_block_info megvalositasa
+* Megmondja a drupalnak, hogy a modul melyik blokkokat hozza letre
+*/
+function smplphotoalbum_block_info(){
+	$blocks['smplphotoalbum'] = array(
+			'info' => t('Smplphotoalbum'), 			//Ez lesz a blokkok listajaban a neve
+			'cache' => DRUPAL_CACHE_PER_ROLE, 	//Default
+	);
+	return $blocks;
+}
+
+function smplphotoalbum_block_view($d) {
+	$content = 'x';
+	switch($d){
+		case 'smplphotoalbum':
+			$block['subject'] = t('Smplphotoalbum');
+			if(user_access('access content')){
+				$content = '';
+			}
+	}
+	return $content;
+}
+
+/**
+* Valid permissions for this module
+* @return array An array of valid permissions for the on this module
+*/
+function smplphotoalbum_perm() {
+	return array('access smplphotoalbum', 'administer smplphotoalbum', 'edit smplphotoalbum');
+}
+
+function smplphotoalbum_access(){
+	return user_access("administer smplphotoalbum") && user_access("edit smplphotoalbum");
+}
+
+/**
+ * Admin interface for Simple Photoalbum
+ */
+function smplphotoalbum_admin_settings(){
+ global $base_url;
+ $check = variable_get('smplphotoalbum_check',False);
+ //Akarjuk-e ellenorizni, hogy az adatbazisban a linkek es a kepek jok-e?
+ if($check){
+     _smplphotoalbum_check_links();
+ }
+ 
+ $form = array();
+ $form['smplphotoalbum_cols'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of table columns'),
+    '#default_value' => variable_get('smplphotoalbum_cols', 3),
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t("The maximum number of columns in the table.")
+  );
+  $form['smplphotoalbum_rows'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of table rows'),
+    '#default_value' => variable_get('smplphotoalbum_rows', 5),
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t("The maximum number of rows in the table.")
+  );
+
+  $form['smplphotoalbum_width'] = array(
+  		'#type' => 'textfield',
+  		'#title' => t('Maximum width of thumbnail (in pixels)'),
+  		'#default_value' => variable_get('smplphotoalbum_width', 150),
+  		'#size' => 11,
+  		'#maxlength' => 11,
+  		'#description' => t("Set the maximum width of thumbnails.")
+  );
+
+  $form['smplphotoalbum_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Class of thumbnails'),
+    '#default_value' => variable_get('smplphotoalbum_class', 'smpl_image'),
+    '#description' => t("Class of thumbnails of simple photoalbum. You can use in the CSS file to format the table.")
+  );
+
+  $form['smplphotoalbum_root'] = array(
+  	'#type' => 'textfield',
+    '#title' => t('Root folder of galleries'),
+  	'#required' => TRUE,
+    '#default_value' => variable_get('smplphotoalbum_root', str_ireplace('\\','/',$_SERVER["DOCUMENT_ROOT"])),
+    '#description' => t("The root of photogalleries, somewhere in the filesystem."),
+  );
+  
+  $directaccess = variable_get('smplphotoalbum_directaccess', TRUE);
+  $form['smplphotoalbum_directaccess'] = array(
+    		'#type' => 'checkbox',
+    		'#title' => t('Disable access direct the folder tree of Simple photoalbum?'),
+    		'#required' => False,
+    		'#default_value' => $directaccess,
+    		'#description' => t("Disable access direct the root folder and the tree of folders of simple photoalbum with .htaccess file."),
+  );
+
+  $htaccess= "SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006\nOptions None\nOptions +FollowSymLinks";
+  $form['smplphotoalbum_htaccess'] = array(
+    '#type' => 'textarea',
+    '#title' => t('To prevent the root folder of Simple photoalbum this text put into the .htaccess file.'),
+    '#default_value' =>variable_get('smplphotoalbum_htaccess', $htaccess),
+    '#description' => t("To prevent the direct access the root folder of simple photoalbum put this text into the .htaccess file and copy it into the folder of simple photoalbum root folder."),
+  );
+  
+  $p = variable_get('smplphotoalbum_root', str_ireplace('\\','/',$_SERVER["DOCUMENT_ROOT"]));
+  if($directaccess){
+      file_put_contents($p."/.htaccess", variable_get('smplphotoalbum_htaccess', $htaccess) );
+  }else{
+     if(file_exists($p."/.htaccess")) unlink($p."/.htaccess");
+  }
+  
+  $form['smplphotoalbum_rebuild'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Need the rebuild the pathes of menus?'),
+  		'#required' => False,
+  		'#default_value' => variable_get('menu_rebuild_needed', TRUE),
+  		'#description' => t("Need the pathes rebuild once after the smplphotoalbum module installed or updated."),
+  );
+
+  $form['smplphotoalbum_direct'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Direct access of images when the picturescan access direct'),
+  		'#required' => TRUE,
+  		'#default_value' => variable_get('smplphotoalbum_direct', FALSE),
+  		'#description' => t("Direct access to pictures in the filesystem."),
+  );
+
+  $form['smplphotoalbum_url'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Shows the url of associated with image?'),
+  		'#required' => False,
+  		'#default_value' => variable_get('smplphotoalbum_url', false),
+  		'#description' => t("When it is on shows a button and click on it in a window shows the content of url."),
+  );
+
+  if(variable_get('smplphotoalbum_url', false) ){
+  	$form['smplphotoalbum_url_window'] = array(
+  		'#type' => 'select',
+  		'#title' => t('What is the default target of link'),
+  		'#default_value' => variable_get('smplphotoalbum_url_target', '_blank'),
+  		'#required' => false,
+  		'#options' =>
+  		array('_blank'=> t('New blank window (_blank).'),
+  				  '_self'   => t('The same window (_self).'),
+  				  '_parent' => t('The calling window (_parent)'),
+  				  'name'    => t('New window with a name: default(smplphotoalbum)'),
+  				  'vote'    => t('Sort images by average of votes'),
+  				  'view'    => t('Sort images by number of views'),
+  		),
+  		'#description' => t("The content of link shows in this window."),
+  	);
+  }else{
+  	$form['smplphotoalbum_url_window']= array(
+  			'#type' => 'textfield',
+  			'#title' => t('What is the default target of link'),
+  			'#default_value' => variable_get('smplphotoalbum_url_target', '_blank'),
+  			'#required' => false,
+  			'#description' => t("The content of link shows in this window."),
+  			'#attributes'  => array('readonly' => 'readonly'),
+  	);
+  }
+
+	$x = module_exists("taxonomy");
+	if(!$x){
+		drupal_set_message(t('The Taxonomy module is not installed or disabled, install it and enable it and Simple Photoalbum can use the taxonomy albums'),'warning');
+		variable_set('smplphotoalbum_taxonomy',$x );
+	}
+
+  $form['smplphotoalbum_taxonomy'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Enable using the taxonomy Photoalbums?'),
+  		'#required' => False,
+  		'#default_value' => variable_get('smplphotoalbum_taxonomy', false),
+  		'#description' => t("When it is on you can use photogalleries with taxonomy sentences. Using it with: [smpl|taxonomy => taxonomy name]"),
+  );
+
+  $form['smplphotoalbum_taxonomy_vocabulary_machine_name'] = array(
+  		'#type' => 'textfield',
+  		'#title' => t('The vocabulary of taxonomy - machine name'),
+  		'#required' => False,
+  		'#default_value' => variable_get('smplphotoalbum_taxonomy_vocabulary_machine_name', false),
+  		'#description' => t("The vocabulary of taxonomy - machine name. Don't use space in name"),
+  		'#attributes'  => (!variable_get('smplphotoalbum_taxonomy', false) ? array('readonly' => 'readonly'): array() ),
+  	);
+
+  $form['smplphotoalbum_taxonomy_vocabulary_name'] = array(
+ 			'#type' => 'textfield',
+  		'#title' => t('The vocabulary of taxonomy - human readable name'),
+  		'#required' => False,
+  		'#default_value' => variable_get('smplphotoalbum_taxonomy_vocabulary_name', false),
+  		'#description' => t("The vocabulary of taxonomy - human readable name. You can use any characters"),
+  		'#attributes'  => (!variable_get('smplphotoalbum_taxonomy', false) ? array('readonly' => 'readonly'): array() ),
+    );
+
+  $form['smplphotoalbum_cache'] = array(
+  	'#type' => 'checkbox',
+    '#title' => t('Is there system cache for Simple Photoalbum'),
+    '#default_value' => variable_get('smplphotoalbum_cache', FALSE)
+  );
+
+  $form['smplphotoalbum_cache_duration'] = array(
+  	'#type' => 'textfield',
+    '#title' => t('Expiration time of the Simple Photoalbum cache (in days)'),
+    '#default_value' => variable_get('smplphotoalbum_cache_duration', 30),
+    '#size' => 5,
+  	'#maxlength' => 5,
+    '#description' => t("Images and other gallery structures are cached to improve speed of serving. Here you can set how long time they should be cached."),
+  );
+
+  //Social network share
+  $form['social'] = array(
+  		'#type' => 'fieldset',
+  		'#title' => t('Social network sharing'),
+  		'#collapsible' => true,
+  		'#collapsed' => true,
+  		'#description' => t("You enable/disable the share for the social networks"),
+  );
+
+
+  $form['social']['smplphotoalbum_fb'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('OpenGraph metatag for Facebook sharing'),
+  		'#default_value' => variable_get('smplphotoalbum_fb', false),
+  		'#size' => 5,
+  		'#maxlength' => 5,
+  		'#description' => t("If set it can use OpenGraph protocol for the share to Facebook. It can set by hand or the first picture will be that one."),
+  );
+
+  $form['social']['smplphotoalbum_twitter'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Metatag for Twitter sharing'),
+  		'#default_value' => variable_get('smplphotoalbum_twitter', false),
+  		'#size' => 5,
+  		'#maxlength' => 5,
+  		'#description' => t("Experimental! If set it can use the Twitter protocol to share the side. It can set by hand or the first picture will be that one."),
+  );
+
+  $form['social']['smplphotoalbum_googlep'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Metatag for Google+ sharing'),
+  		'#default_value' => variable_get('smplphotoalbum_googlep', false),
+  		'#size' => 5,
+  		'#maxlength' => 5,
+  		'#description' => t("Experimental! If set it can use the Google+ protocol to share the side. It can set by hand or the first picture will be that one."),
+  );
+
+  $form['view'] = array(
+  		'#type' => 'fieldset',
+  		'#title' => t('Viewing options'),
+  		'#collapsible' => TRUE,
+  		'#collapsed' => TRUE,
+  );
+  $form['view']['smplphotoalbum_viewed'] = array(
+  	'#type' => 'checkbox',
+    '#title' => t('Show the number of views of a picture'),
+    '#default_value' => variable_get('smplphotoalbum_viewed', TRUE),
+    '#description' => t("Output the number of views of pictures"),
+  );
+
+  $form['view']['smplphotoalbum_voted'] = array(
+		'#type' => 'checkbox',
+    '#title' => t('Show the number of votes of picture'),
+    '#default_value' => variable_get('smplphotoalbum_voted', TRUE),
+    '#description' => t("Output the number of votes of pictures"),
+  );
+
+  $form['view']['smplphotoalbum_rank'] = array(
+		'#type' => 'checkbox',
+    '#title' => t('Show the rank of picture'),
+    '#default_value' => variable_get('smplphotoalbum_rank', TRUE),
+    '#description' => t("Output the rank of pictures"),
+  );
+
+  $form['view']['smplphotoalbum_exif'] = array(
+	'#type' => 'checkbox',
+    '#title' => t('Show the EXIF informations of pictures'),
+    '#default_value' => variable_get('smplphotoalbum_exif', TRUE),
+    '#description' => t("Output the width and height of the picture"),
+  );
+  $form['view']['smplphotoalbum_sub'] = array(
+	  '#type' => 'checkbox',
+    '#title' => t('Show the subtitles of picture'),
+    '#default_value' => variable_get('smplphotoalbum_sub', TRUE),
+    '#description' => t("If it is true output the subtitle of pictures if exists, othervise output the name of picture"),
+  );
+
+  $form['view']['smplphotoalbum_capt'] = array(
+		'#type' => 'checkbox',
+    '#title' => t('Show the caption of picture'),
+    '#default_value' => variable_get('smplphotoalbum_capt', TRUE),
+    '#description' => t("Output the name of pictures in title attribute of picture"),
+  );
+
+  $form['editing'] = array(
+  		'#type' => 'fieldset',
+  		'#title' => t('Editing the list and files and pictures'),
+  		'#collapsible' => TRUE,
+  		'#collapsed' => TRUE,
+  );
+
+  $form['editing']['smplphotoalbum_edit'] = array(
+		'#type' => 'checkbox',
+    '#title' => t('You can edit the properties of the pictures (name, caption, etc, taxonomy) etc.'),
+    '#default_value' => variable_get('smplphotoalbum_edit', TRUE)
+  );
+
+  $form['editing']['smplphotoalbum_delete'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('You can delete the actual picture'),
+  		'#default_value' => variable_get('smplphotoalbum_delete', TRUE)
+  );
+  
+  $imv = "<br>Image Magic library: ";
+  if(extension_loaded("imagick")){
+    $im   = new Imagick();
+    $v    = $im->getVersion();
+    $imv .= "<b>".$v['versionString']."</b>";
+  }else{
+    $imv .= "Not installed";
+  }
+  
+  $gdv = "<br>GD library: ";
+  if(extension_loaded("GD")){
+    $gd   = gd_info();
+    $gdv .= $gd['GD Version'];
+  }else{
+    $gdv .= "Not installed";
+  }
+  
+  $form['editing']['smplphotoalbum_imgedit'] = array(
+    		'#type' => 'checkbox',
+    		'#title' => t('You can edit the pictures on the web'),
+    		'#default_value' => variable_get('smplphotoalbum_imgedit', False),
+        '#description'=> t('You can use the installed server side graphic manipulation system: ').$imv.$gdv
+  );
+  if( variable_get('smplphotoalbum_imgedit', False) ){
+    $p = str_replace("\\","/", DRUPAL_ROOT). "/" . variable_get("smplphotoalbum_temp", variable_get("file_public_path") ."/smplphotoalbum/");
+    if( !is_dir($p) ){
+      $ok = drupal_mkdir($p,0777);
+      if(!$ok){
+        drupal_set_message( t("I can not make Smplphotoalbum temporary folder:") . variable_get("smplphotoalbum_temp"),"warning");
+      }else{
+        
+        if( ! is_writable($p) ){
+          drupal_set_message( t('The Smplphotoalbum temporary folder not writeable and deleteable by Drupal!'), "warning");
+        }
+      }
+    }else{
+      if( ! _smpl_check_writeable($p) ){
+        drupal_set_message( t('The Smplphotoalbum temporary folder not writeable and deleteable by Drupal!'), "warning");
+      }
+    }
+  }
+  
+  $form['editing']['smplphotoalbum_temp'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Simple Photoalbum temporary folder!'),
+      '#default_value' => variable_get('smplphotoalbum_temp', variable_get("files_public_path")."/smplphotoalbum/"),
+      '#description' => t("This folder has to can access from web and it has to be writeable and readable by Drupal."),
+      '#disabled' => ! variable_get('smplphotoalbum_imgedit', False),
+  );
+  
+  $lb = module_exists('lightbox2');
+
+  if($lb){
+  	$form['lightbox2'] = array(
+  			'#type' => 'fieldset',
+  			'#title' => t('Lightbox2 settings'),
+  			'#collapsible' => TRUE,
+  			'#collapsed' => TRUE,
+  	);
+
+  	$form['lightbox2']['smplphotoalbum_overbrowser'] = array(
+		'#type' => 'checkbox',
+  	'#title' => t('Lightbox2 overlay browser'),
+	  '#default_value' => variable_get('smplphotoalbum_overbrowser', true),
+  	'#description' => t('Do you want to use the LightBox2 overlay browser (if installed of course).'),
+  	);
+
+  	$form['lightbox2']['smplphotoalbum_overbrowser_paging'] = array(
+  			'#type' => 'checkbox',
+	  		'#title' => t('Lightbox2 overlay browser paging'),
+  			'#default_value' => variable_get('smplphotoalbum_overbrowser_paging', true),
+  			'#description' => t('Do you want to use Lightbox2 paging (must be installed Lightbox2).'),
+  	);
+
+  	$form['lightbox2']['smplphotoalbum_overbrowser_video'] = array(
+  			'#type' => 'checkbox',
+  			'#title' => t('Lightbox2 overlay browser for video'),
+  			'#default_value' => variable_get('smplphotoalbum_overbrowser_video', true),
+  			'#description' => t('Do you want to use Lightbox2 for videos (must be installed Lightbox2).'),
+  	);
+  }else{
+  	variable_set('smplphotoalbum_overbrowser', false);
+  	$form['lightbox2']['smplphotoalbum_overbrowser'] = array(
+  			'#type' => 'item',
+  			'#title' => t('Lightbox2 overlay browser'),
+  			'#default_value' => false,
+  			'#description' => t('Do you want to use the LightBox2 overlay browser (if installed of course).'),
+  	);
+
+  	$form['lightbox2']['smplphotoalbum_overbrowser_paging'] = array(
+  			'#type' => 'item',
+  			'#title' => t('Lightbox2 overlay browser paging'),
+  			'#default_value' => false,
+  			'#description' => t('Do you want to use Lightbox2 paging (must be installed Lightbox2).'),
+  	);
+
+  	$form['lightbox2']['smplphotoalbum_overbrowser_video'] = array(
+  			'#type' => 'item',
+  			'#title' => t('Lightbox2 overlay browser for video'),
+  			'#default_value' => false,
+  			'#description' => t('Do you want to use Lightbox2 for videos (must be installed Lightbox2).'),
+  	);
+  }
+
+  $form['smplphotoalbum_change_order'] = array(
+	  '#type' => 'checkbox',
+    '#title' => t('change the images order'),
+    '#default_value' => variable_get('smplphotoalbum_change_order', TRUE),
+    '#description' => t("If it is checked can change the sorting order of images"),
+  );
+
+  $form['smplphotoalbum_order'] = array(
+    '#type' => 'select',
+    '#title' => t('Sort or randomize image order'),
+    '#default_value' => variable_get('smplphotoalbum_order', 'asc'),
+  	'#required' => TRUE,
+    '#options' =>
+      array('unsort'=> t('Unsorted'),
+      			'asc'  => t('Sort images by their file names alphabetically.'),
+            'desc' => t('Sort images in reverse order by their file names alphabetically.'),
+            'rand' => t('The order of your gallery images will always be randomized (on each page load or cache refresh).'),
+    ),
+    '#description' => t("Ascending, descending, random order or unsorted"),
+  );
+
+  $form['smplphotoalbum_sort']= array(
+  		'#type' => 'select',
+  		'#title' => t('Which property of images the source of sorting (filename, etc...)'),
+  		'#default_value' => variable_get('smplphotoalbum_sort', 'filename'),
+  		'#required' => TRUE,
+  		'#options' =>
+  		array('filename'=> t('Sort files by their file names.'),
+  				  'size'    => t('Sort files by their size'),
+  				  'date'    => t('Sort files by their dates.'),
+  				  'caption' => t('Sort files by captions'),
+  				  'vote'    => t('Sort files by average of votes'),
+  				  'view'    => t('Sort files by number of views'),
+  		),
+  		'#description' => t("Source of sorting"),
+  );
+
+  $form['smplphotoalbum_filter'] = array(
+  		'#type' => 'checkbox',
+  		'#title' => t('Can use a filter in lists'),
+  		'#default_value' => variable_get('smplphotoalbum_filter', false),
+  		'#description' => t("If it is checked it can use a filter in galleries"),
+  );
+
+  $form['checklinks'] = array(
+  		'#type' => 'fieldset',
+  		'#title' => t('Check and delete the wrong links from database'),
+  		'#collapsible' => TRUE,
+  		'#collapsed' => TRUE,
+  );
+
+  $form['checklinks']['smplphotoalbum_check'] = array(
+	'#type' => 'checkbox',
+    '#title' => t('Check the link of pictures in the table'),
+    '#default_value' => variable_get('smplphotoalbum_check', 0),
+  	'#description' => t("Check and delete the wrong link of files from database."),
+  );
+
+  $db= db_query('SELECT count(id) AS db FROM {smplphotoalbum}')->fetchField();
+  
+  $form['checklinks']['smplphotoalbum_from'] = array(
+	'#type' => 'textfield',
+    '#title' => t('From which item starts the checking.'),
+    '#default_value' => variable_get('smplphotoalbum_from', 0),
+  	'#description' => t("This number is changing in every run."." ". t("The number of records: ".number_format($db,0,'.',' ')))
+  );
+
+  $form['checklinks']['smplphotoalbum_number_of_checking'] = array(
+	'#type' => 'textfield',
+    '#title' => t('Number of items chekcing in one run'),
+    '#default_value' => variable_get('smplphotoalbum_number_of_checking', 2000),
+  	'#description' => t("If the number is too high the script stops with timeout"),
+  );
+
+  $form['smplphotoalbum_keywords'] = array(
+	'#type' => 'checkbox',
+    '#title' => t('Insert the caption of pictures into the keywords meta tag.'),
+    '#default_value' => variable_get('smplphotoalbum_keywords',0)
+  );
+
+   $form['smplphotoalbum_subtitle_change'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Change the subtitles automatically'),
+    '#default_value' => variable_get('smplphotoalbum_subtitle_change',1),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#description' => t("Changeable or deletable character in subtitles")
+  );
+
+  //Ezt itt ki kellene bővíteni!!!!
+   $changeable_strings = variable_get('smplphotoalbum_subtitle_change_text', '_ .jpg .png .exe .apk');
+
+  if(variable_get('smplphotoalbum_audio_checking',0)){
+  	$astr = explode(' ',variable_get('smplphotoalbum_audio_extensions', SMPLAUDIOEXT));
+  	foreach($astr as $i => $str ){
+  		if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+  			$changeable_strings .= ' .'.$str;
+  		}
+  	}
+  }
+
+  if(variable_get('smplphotoalbum_video_checking', 0)){
+  	$astr = explode(' ',variable_get('smplphotoalbum_video_extensions', SMPLVIDEOEXT));
+    foreach($astr AS $i => $str ){
+  		if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+  			$changeable_strings .= ' .'.$str;
+  		}
+  	}
+  }
+
+  if(variable_get('smplphotoalbum_doc_checking', 0)){
+  	$astr = explode(' ',variable_get('smplphotoalbum_doc_extensions', SMPLDOCEXT));
+  	foreach($astr as $i => $str ){
+  		if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+  			$changeable_strings .= ' .'.$str;
+  		}
+  	}
+  }
+  
+  if(variable_get('smplphotoalbum_cmp_checking', 0)){
+      $astr = explode(' ',variable_get('smplphotoalbum_cmp_extensions', SMPLCMPEXT));
+      foreach($astr as $i => $str ){
+          if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+              $changeable_strings .= ' .'.$str;
+          }
+      }
+  }
+  
+  if(variable_get('smplphotoalbum_app_checking', 0)){
+      $astr = explode(' ',variable_get('smplphotoalbum_app_extensions', SMPLAPPEXT));
+      foreach($astr as $i => $str ){
+          if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+              $changeable_strings .= ' .'.$str;
+          }
+      }
+  }
+  
+  if(variable_get('smplphotoalbum_oth_checking', 0)){
+      $astr = explode(' ',variable_get('smplphotoalbum_app_extensions', SMPLOTHEXT));
+      foreach($astr as $i => $str ){
+          if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+              $changeable_strings .= ' .'.$str;
+          }
+      }
+  }
+   
+  if(variable_get('smplphotoalbum_dis_checking', 0)){
+      $astr = explode(' ',variable_get('smplphotoalbum_app_extensions', SMPLDISEXT));
+      foreach($astr as $i => $str ){
+          if(!preg_match('/\.'.$str.'/i', $changeable_strings)){
+              $changeable_strings .= ' .'.$str;
+          }
+      }
+  }
+  $form['smplphotoalbum_subtitle_change_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Changeable or deletable subtitles with whitespace'),
+    '#default_value' => $changeable_strings,
+    '#size' => 120,
+    '#maxlength' => 256,
+    '#description' => t("Changeable or deletable character in subtitles")
+  );
+
+
+  $form['types_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Audio settings'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $form['types_settings']['smplphotoalbum_audio_checking'] = array(
+	'#type' => 'checkbox',
+    '#title' => t('Lists the audio files'),
+    '#default_value' => variable_get('smplphotoalbum_audio_checking',0)
+  );
+
+  $form['types_settings']['smplphotoalbum_audio_extensions'] = array(
+	'#type' => 'textfield',
+    '#title' => t('List of extensions of audio files'),
+    '#default_value' => variable_get('smplphotoalbum_audio_extensions', SMPLAUDIOEXT),
+    '#description' => t("This is a list of extensions of audio files. Default only mp3"),
+    '#attributes' => ( variable_get('smplphotoalbum_audio_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+
+   $form['types_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('File types settings'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['types_settings']['smplphotoalbum_video_checking'] = array(
+	'#type' => 'checkbox',
+    '#title' => t('Lists the video files'),
+    '#default_value' => variable_get('smplphotoalbum_video_checking', 0)
+  );
+
+  $form['types_settings']['smplphotoalbum_video_extensions'] = array(
+	'#type' => 'textfield',
+    '#title' => t('List of extensions of video files'),
+    '#default_value' => variable_get('smplphotoalbum_video_extensions', SMPLVIDEOEXT),
+    '#description' => t("This is a list of extensions of video files."),
+    '#attributes' => ( variable_get('smplphotoalbum_video_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+  
+  $form['types_settings']['smplphotoalbum_doc_checking'] = array(
+	'#type' => 'checkbox',
+    '#title' => t('Lists the document files'),
+    '#default_value' => variable_get('smplphotoalbum_doc_checking', 0)
+  );
+
+  $form['types_settings']['smplphotoalbum_doc_extensions'] = array(
+	'#type' => 'textfield',
+    '#title' => t('List of extensions of doc files'),
+    '#default_value' => variable_get('smplphotoalbum_doc_extensions', SMPLDOCEXT),
+    '#description' => t("This is a list of extensions of doc files. Default only doc"),
+    '#attributes' => ( variable_get('smplphotoalbum_doc_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+  
+  $form['types_settings']['smplphotoalbum_cmp_checking'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Lists the compressed files'),
+      '#default_value' => variable_get('smplphotoalbum_cmp_checking', 0)
+  );
+  
+  $form['types_settings']['smplphotoalbum_cmp_extensions'] = array(
+      '#type' => 'textfield',
+      '#title' => t('List of extensions of compressed files'),
+      '#default_value' => variable_get('smplphotoalbum_cmp_extensions', SMPLCMPEXT),
+      '#description' => t("This is a list of extensions of compressed files."),
+      '#attributes' => ( variable_get('smplphotoalbum_cmp_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+  
+  $form['types_settings']['smplphotoalbum_app_checking'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Lists the application files'),
+      '#default_value' => variable_get('smplphotoalbum_app_checking', 0)
+  );
+  
+  $form['types_settings']['smplphotoalbum_app_extensions'] = array(
+      '#type' => 'textfield',
+      '#title' => t('List of extensions of application files'),
+      '#default_value' => variable_get('smplphotoalbum_app_extensions', SMPLAPPEXT),
+      '#description' => t("This is a list of extensions of application files."),
+      '#attributes' => ( variable_get('smplphotoalbum_app_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+  
+  $form['types_settings']['smplphotoalbum_oth_checking'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Lists the other files'),
+      '#default_value' => variable_get('smplphotoalbum_oth_checking', 0)
+  );
+  
+  $form['types_settings']['smplphotoalbum_oth_extensions'] = array(
+      '#type' => 'textfield',
+      '#title' => t('List of extensions of other files'),
+      '#default_value' => variable_get('smplphotoalbum_oth_extensions', SMPLOTHEXT),
+      '#description' => t("This is a list of extensions of other types files."),
+      '#attributes' => ( variable_get('smplphotoalbum_oth_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+  
+  $form['types_settings']['smplphotoalbum_dis_checking'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use the list of prohibited files'),
+      '#default_value' => variable_get('smplphotoalbum_dis_checking', 0)
+  );
+  
+  $form['types_settings']['smplphotoalbum_dis_extensions'] = array(
+      '#type' => 'textfield',
+      '#title' => t('List of extensions of prohibited files'),
+      '#default_value' => variable_get('smplphotoalbum_dis_extensions', SMPLDISEXT),
+      '#description' => t("This is a list of extensions of application files."),
+      '#attributes' => ( variable_get('smplphotoalbum_dis_checking',0) ?'':array('readonly' => 'readonly')),
+  );
+  
+  $ffmpeg = extension_loaded("ffmpeg");
+  
+  $form['types_settings']['ffmpeg_preview'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Make preview from mpeg files. php_ffmpeg module: '). ($ffmpeg ? t("is loaded"):t("is not loaded")),
+      '#default_value' => variable_get('smplphotoalbum_ffmpeg', $ffmpeg && true),
+      '#description' => t("If loaded php_ffmpeg module you can switch to make previes from videos."),
+      '#attributes' => ( $ffmpeg ? '' : array('readonly' => 'readonly')),
+  );
+  
+  $form = system_settings_form($form);
+  return $form;
+}
+
+/**
+ *	Hook menu implementalasa
+ */
+function smplphotoalbum_menu() {
+
+  $items = array();
+
+  $items['admin/config/fz/smplphotoalbum'] = array(
+    'title'            => 'Simple Photoalbum',
+    'description'      => t('Description of your Smplphotoalbum settings control'),
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('smplphotoalbum_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 1
+   );
+  
+  $items['admin/config/fz/smplphotoalbum/settings'] = array(
+      'title'            => 'Simple Photoalbum',
+     'description'      => t('Description of your Smplphotoalbum settings control'),
+      'page callback'    => 'drupal_get_form',
+      'page arguments'   => array('smplphotoalbum_settings'),
+      'access arguments' => array('administer site configuration'),
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'weight' => 2
+  );
+  
+  $items['admin/config/fz/smplphotoalbum/stat'] = array(
+      'title'            => 'Simple Photoalbum Statistics',
+      'description'      => t('Statistics of Smplphotoalbum images and files'),
+      'page callback'    => 'drupal_get_form',
+      'page arguments'   => array('smplphotoalbum_stat'),
+      'access arguments' => array('administer administration pages'),
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 3
+  );
+  
+  
+   $items['smplphotoalbum'] = array(
+   'title' => 'Smplphotoalbum',
+   'description' => t('Ajax calling, view picture'),
+   'page callback' => 'smplphotoalbum_view',
+   'access callback' =>'smpl_callback',
+   'type' => MENU_CALLBACK,
+   );
+
+
+   $modulepath = drupal_get_path('module','smplphotoalbum');
+
+   //Ez lesz az az ut, amivel meg lehet nezni egy kepet - az smpl_callback.inc-ben levo f�ggvenyeket hivja meg.
+   $items['smplphotoalbum/view'] = array(
+   'title' => 'Smplphotoalbum view picture',
+   'description' => t('Ajax calling, view picture'),
+   'page callback' => 'smplphotoalbum_view',
+   'access callback' =>'smpl_callback',
+   'type' => MENU_CALLBACK,
+   );
+
+	// Voting an image
+   $items['smplphotoalbum/vote'] = array(
+   'title' => 'Smplphotoalbum voting',
+   'description' => t('Ajax calling, voting'),
+   'page callback' => 'smplphotoalbum_vote',
+   'access callback' =>'smpl_callback',
+   'type' => MENU_CALLBACK,
+   );
+
+    // Change the subscription of image
+   $items['smplphotoalbum/sub'] = array(
+     'title' => 'Smplphotoalbum subscription',
+     'description' => t('Ajax calling, subscription'),
+     'page callback' => 'smplphotoalbum_sub',
+     'access arguments' => array('update'),
+     'type' => MENU_CALLBACK,
+   );
+
+   // Change the subscription and taxonomy of image
+   $items['smplphotoalbum/edit'] = array(
+   		'title' => 'Smplphotoalbum Image Edit form',
+   		'description' => t('Ajax calling, Image Edit form'),
+   		'page callback' => 'smplphotoalbum_edit',
+   		'access arguments' => array('update'),
+   		'type' => MENU_CALLBACK,
+   );
+   
+   // Change the subscription of image
+   $items['smplphotoalbum/subcap'] = array(
+       'title' => 'Smplphotoalbum Edit properties of image',
+       'description' => t('Ajax calling, change subs and captions of images'),
+       'page callback' => 'smplphotoalbum_subcap',
+       'access arguments' => array('update'),
+       'type' => MENU_CALLBACK,
+   );
+   
+   // Change the subscription of image
+   $items['smplphotoalbum/flushcache'] = array(
+       'title' => 'Flush the cache of actual page',
+       'description' => t('Ajax calling, flush the cache of actual page'),
+       'page callback' => 'smplphotoalbum_flushcache',
+       'access arguments' => array('update'),
+       'type' => MENU_CALLBACK,
+   );
+   
+   // Edit an image
+   $items['smplphotoalbum/imgedit'] = array(
+       'title' => 'Smplphotoalbum Image Edit form',
+       'description' => t('Ajax calling, Image Edit form'),
+       'page callback' => 'smplphotoalbum_imgedit',
+       'access arguments' => array('update'),
+       'type' => MENU_CALLBACK,
+   );
+    //The image can set to deleted state
+    $items['smplphotoalbum/del'] = array(
+      'title' => 'Smplphotoalbum delete picture',
+      'description' => t('Ajax calling, delete picture'),
+      'page callback' => 'smplphotoalbum_del',
+      'access arguments' => array('delete'),
+      'type' => MENU_CALLBACK,
+    );
+
+    //Kill an image from the filesystem and the database
+    $items['smplphotoalbum/kill'] = array(
+      'title' => 'Smplphotoalbum kill picture from hdd and database',
+      'description' => t('Ajax calling, kill picture'),
+      'page callback' => 'smplphotoalbum_kill',
+      'access arguments' => array('delete'),
+      'type' => MENU_CALLBACK,
+    );
+
+		// Properties of image give back
+    $items['smplphotoalbum/prop'] = array(
+   		'title' => 'Smplphotoalbum give back the properties of file.',
+   		'description' => t('Give back the properties of file, for example exif data, last modify...'),
+   		'page callback' => 'smplphotoalbum_kill',
+   		'access arguments' => array('read'),
+   		'type' => MENU_CALLBACK,
+    );
+
+   // Setting image for share on facebook
+   $items['smplphotoalbum/fb'] = array(
+   		'title' => 'SmplPhotoalbum sign the img for share to Facebook',
+   		'description' => t('Ajax calling, Setting image for share to facebook'),
+   		'page callback' => 'smplphotoalbum_fb',
+   		'access arguments' => array('update'),
+   		'type' => MENU_CALLBACK,
+   );
+   // Setting image for share on facebook
+   $items['smplphotoalbum/taxes'] = array(
+   		'title' => 'Load the taxonomies fromserver',
+   		'description' => t('Ajax calling'),
+   		'page callback' => 'smplphotoalbum_taxes',
+   		'access arguments' => array('read'),
+   		'type' => MENU_CALLBACK,
+   );
+
+   $items['smplphotoalbum/taxonomy'] = array(
+   		'title' => t('Simple Photoalbum page with taxonomy'),
+   		'description' => t('Ajax calling,'),
+   		'page callback' => 'smplphotoalbum_taxonomy',
+   		'access arguments' => array('read'),
+   		'type' => MENU_CALLBACK,
+   );
+   
+   $items['smplphotoalbum/exif'] = array(
+       'title' => t('Simple Photoalbum exif informations'),
+       'description' => t('Ajax calling,'),
+       'page callback' => 'smplphotoalbum_exif',
+       'access arguments' => array('read'),
+       'type' => MENU_CALLBACK,
+   );
+    
+   return $items;
+}
+
+function smpl_callback($pass =''){
+	return true;
+}
+/**
+ * hook_init() implementation
+ * it runs in every page
+ */
+function smplphotoalbum_init(){
+   drupal_page_is_cacheable(False);
+}
+/**
+ * hook_filter_info() implementation
+ * Leirja, hogy milyen a szuro
+ */
+function smplphotoalbum_filter_info(){
+	$filters['smplphotoalbum_filter'] =array(
+			'title' => t('Simple Photoalbum filter'),
+			'description' => t('Substitutes a special Simple Photoalbum Tag with the given folder\'s gallery table.'),
+			'cache' => TRUE,
+			'process callback' => 'smplphotoalbum_substitute',
+			'tips callback' => 'smplphotoalbum_filter_tips',
+			);
+	return $filters;
+}
+
+/**
+ * Tips of using filter
+ */
+function smplphotoalbum_filter_tips($filter, $format, $long) {
+	if ($long) {
+		return t('The SmplPhotoalbum change the smpl filter and shows the album of pictures of given folder.');
+	}
+	else {
+		return t('Use a wysiwyg editor toolbar icons to display uploaded images inline.');
+	}
+}
+
+/*
+function smplphotoalbum_cron() {
+  $timenow = time();
+  $smplcachexpire = variable_get('smplphotoalbum_cache_duration',90) * 24 * 3600; // Cache expiration time in days.
+  $timestampexpired = time()-$smplcachexpire;
+
+  // Also clear the Drupal cache - otherwise there might be some cached HTML pointing to files that are no longer in the file cache.
+  cache_clear_all();
+
+  watchdog('SmplPhotoalbum',t('Simple Photoalbum cache cleared ').t('After').' '.variable_get('smplphotoalbum_cache_duration',90).' days. Elapsed time: '.(time()-$timenow).' seconds.');
+}
+*/
+// Simple Photoalbum Random Block
+function smplphotoalbum_block_menu(){
+
+}
+
+function smplphotoalbum_block_block($op = 'list', $delta = 0, $edit = array()){
+  switch ($op) {
+    case 'list':
+      $blocks[0] = array(
+        'info' => t('Simple Photoalbum'),
+      );
+      return $blocks;
+    case 'configure':
+    	$form ='Itt van egy form';
+      return $form;
+    case 'save':
+      break;
+    case 'view':
+      $block['subject'] = t('Simple Photoalbum');
+      $block['content'] = '<div id="smplphotoalbum_block"></div>';
+
+      return $block;
+  }
+}
+/**
+ *
+ */
+function smplphotoalbum_block_theme(){
+
+}

@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * Tests for Smplphotoalbum module
+ */
+
+class SmplphotoalbumTests extends DrupalWebTestCase{
+  public static function getInfo(){
+    return array (
+      'name' => 'SmplPhotoalbum',
+      'description' => 'Tests for SmplPhotoalbum ',
+      'group' => 'SmplPhotoalbum Group'
+    );
+  }
+
+  /**
+   * Perform any setup tasks for our test case.
+   */
+  public function setUp() {
+    parent::setUp(array('smplphotoalbum'));
+  }
+  
+  public function testVphp(){
+    
+  }
+  
+  public function testSmplPhotoalbum(){
+    
+  }
+}

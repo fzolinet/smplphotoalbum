@@ -1,0 +1,17 @@
+; $Id: smplphotoalbum.info$
+name = SmplPhotoalbum
+description = "Simple Photoalbum anywhere in the website"
+package = FZ
+project = smplphotoalbum
+core = 7.x
+dependencies[] = lightbox2
+stylesheets[all][] = css/smpl.css
+stylesheets[all][] = lib/crop/css/imgareaselect-default.css
+scripts[] = js/smpl.js
+configure = admin/config/fz/smplphotoalbum
+
+; Information added by drupal.org packaging script on 2014-02-27
+version = VERSION
+version = "7.x-2.0"
+
+datestamp = "1442690104"

@@ -1,0 +1,229 @@
+Todo:
+~~~~~
+- Facebook paraméterek átadása: 
+	og:title
+	og:description
+	og:site_name
+	og:image
+
+- Simple list with delete and caption and view permission in a table
+- Unit testing
+- Owner in the database setting trustee of users
+- Slideshow (based on javascript)
+- Sort order (javascript, css, php)
+- Filter (javascript, css, php)
+- Facebook, Edit, Delete, Kill let buttons not div! (templates, php, css)
+- can use with keyboards the buttons (smpl.js, or templates and php) 
+- lets edit for all image in the folder (templates, php, javascript, css)
+  ie: The names og images change with ajax (Caption and Subscription) smpl.js
+- payant content
+  Képnél egy jelző, hogy fizetős is lehet
+  Partner: regisztrál => emailt kap => fizet érte => letöltheti => n alkalommal, akárhány alkalommal
+  adatszerkezet:
+  	smplphotoalbum (+ paid, down_max, prize): fizetős, letöltés maximuma, ár
+  	
+  n:m kapcsolat az image-ek és a userek között.
+  
+  smplphotoalbum_connection(smplphotoalbum.id, uid, paid, down_max (0...n), down_act)
+  A kapcsolat lehet fizetett, n alkalmi, akárhány alkalmi
+  Ha nincs fizetve, akkor 
+  - kép esetén csak preview
+  - film és hang esetén csak az első 10 sec.
+  Ha a kapcsolat fizetett, akkor =>
+  
+On Fire;
+~~~~~~~
+- Lekérem a taxonomiát, akkor hibás adatok jönnek le
+- Taxonomia frissités, törlés, módosítás nem gömbölyű
+- Shows taxonomy images starting
+- imagefilter: EDGEDETECT, EMBOSS, GAUSSIAN_BLUR, SELECTIVE_BLUR, SKETCHY REMOVAL, SMOOTH, PIXELATE 
+
+History:
+~~~~~~~~
+2016.03.15
+- Little bugfix
+- Flush the cache of actual page
+- Staistics of smplphotoalbum items 
+2016.03.07
+- Little bugfixes
+2016.02.29 
+- Little changes for compatibilty for PHP 7
+20151226
+- If installed use Imagick everywhere - because of less memory consumption
+- video can make thumbnail with ffmep lib or use my own thumbs.
+20151224
+- if there is Imagick installed on server system it use that library 
+20151222
+- Change added: smplphotoalbum table fb, googlep, twitter - removed:social
+20151212
+- On the Linux server the edit image is ready
+- Bug: Kill the image from server and database
+20151205
+- Added: image edit undo, redo
+20151129
+- Add: Edit image: Rotate, any degree, flip, crop, resize, contrast, color, brightness
+20151108
+- Bug: 404 code when the image is missed.
+- Add: Automatic meta keyword and description
+
+20151101
+- Edit all subscription / caption is ok 
+- Bug: number of viewing
+- Bug: There was 2 characters output of bootloader - and the images did not viewed
+20151018
+- Bug: When taxonomy page vote, view then call the all page, beacause calls the taxonomy/path...
+- New taxonomy and modify taxonomy is ok.
+- link edit with ajax and write out the change
+- Taxonomy modify with ajax and write out the change
+- Viewnumber increments in v.php
+- Random image style modify
+- css modify
+- md5chk change ready
+20151010
+- md5chk delete but there are bugs in the module
+20150927
+- Edit taxonomy of image
+- New taxonomy into the taxonomy_term_data tabe ad smplphotoalbum_taxonomy
+- Delete from a row from smplphotoalbum_taxonomy table
+- Modfy taxonomy_term_data table record name and /or description
+- Shows a taxonomy table 
+20150920
+- Random image from a folder
+20150919
+- Prevent to direct access of folder tree of simple photoalbum
+20150913
+- Edit all Subscription / Caption on the gallery
+- Error: If not logged in the pager link are bad :-( - This is cache problem 
+20150823
+- write out Properties of pptx. It is the same mode than docx.
+- write out properties of zip if php_zip is loaded
+- write out properties of rar's if php_rar is loaded
+- new filetype icons and properties
+- css with sass
+20150711
+- Bugfix (when in the link there are two digits)
+20150705
+- Taxonomy delete
+  
+20150627
+  - AJAX bugfix
+20150614
+  - bugfixes - paging & Drupal cache problems
+20150607
+  - bug correction os simple list
+  - HTML warnings correction
+  - Taxonomy of pictures 
+20141220
+  - compressed and application (exe,dll, etc.) shows
+20141116
+  - Bugfix in the "Simple listof all items"
+  - New: Description ia longer text and view in a popup layer
+20141020
+  - Bugfix - show gallery of non pictures
+20140629
+  - Helperfunction for sharing a page for Facebook with image
+20140615
+  - Bugfix - for thumbnail pictures fix
+  - Bugfix - pager
+  - increases the speed of showing of pictures
+20121231
+  - Drupal 7 Working version with
+    NEWS:
+    installer
+    more quicker
+    less memory comsumption
+    BUGFIXES:
+    edit / delete /kill in simple list is working
+20121226
+  - Drupal 7 text filter module rewritten
+
+20100720
+	- BUG: voted number strange! - smpl.js - solved
+	- BUG: simple list of images does not work - solved
+20100719
+   - Changeable order
+   - Filter in views
+20100718
+   - permission problem
+20100704
+   - rewrite it with hook_menu and callback ajax calling - token hardening dropped!
+20100629
+   - Durpal token hardening
+20100614
+   - bugfixes
+20100523
+   - Insert the subtitles into the contents of keywords meta tag
+20100511
+   - write out properties of docx, and xlsx documents
+   - BUG: The last page was not out - solved
+20100510
+   - BUG: ajax callback authentication - solved with token
+   - write out properties of pdf and other media types
+20100507
+   - Handle video and other media types
+20100504
+   - Bug: Random picture almost the same - solved
+   - Bug: if the number of pages is only one does not need pager - solved
+20100502
+   - Optimize the speed of making a random image
+20100418
+   - exif information popup window - ok
+20100416
+   - change subtitle
+   - setting delete state the image
+20100411
+  - Checked is over
+  - Ranking is over
+  - Viewed
+  - Make thumbnails
+20100410
+  - Show the thumbnails and pictures
+  - the pager works, similar the original Drupal pager
+  - the css style is the original
+  - making thumbnails
+20100406
+  - Write out the place of pictures in table
+20100405
+  - Make Drupal Setting interface, install, uninstall
+
+Original Drupal version based on previous version
+
+2.4.3   PDO database layer support if PHP version > 5.1.0
+2.4.2   Bugfix: Error in database table.
+2.4.1   Add: Read Exif information of picture with PHP
+2.3.6a  Bugfix
+2.3.6   Simple list can ordered and filtered
+        css styles are in other file (smplphotoalbum.css)
+        Bugfix: Flat file database
+        Bugfix: Watch the picture in original format in IE
+2.3.5a  Tested PHP 5.0.4 Databases(Access, Mysql 5.0.1 with ADODB)
+2.3.5   Add: Voting system with ADODB (http://adodb.sourceforge.net)
+                      Tested with access & mysql
+                      List of Ranks
+2.3.4c  Bugfixes and preview of database version (ADODB or Flat file database)
+        Compatibility problem php 4.x.x vs php 5.x.x
+2.3.4b  The folder of thumbnails go to the subdirectory is called _th_
+        It converts the thumbnails of older version.
+2.3.4   It plays the video and the audio files in LAYER
+2.3.3b  The size of picture resizes to the size of space, the picture is printable
+2.3.3a  Shows the picture with overlibmws library
+        - The name of thumbnail file started with _tn_
+        It converts the tn_ => _tn_ automatic at first run
+
+2.3.2b  U can use LANG definition.
+2.3.2a  Debug version
+2.3.2   Debugging
+2.3     Video & sound file play's and Listm,
+        if the plugins are installed
+        Supported video: avi, mpg, mpeg, mov, rm, ram, wmv
+        mov, rm, ram and wav, asf, mp3, mid, wma file has no thumbnail
+        Tested in IE6 & Firefox 1.0.7
+
+2.2.3   Simple List of Pictures (to download)
+2.2.2a  default pager, bugs
+2.2.2   Pager
+2.2.1   Thumbnail rewrite when original file newer than thumbnail
+2.2     CSV file handling
+2.1     no session
+2.0b    rewritten in OOP style
+1.0     first release
