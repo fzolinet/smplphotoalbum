@@ -11,9 +11,10 @@ while(!file_exists("fz.drupal")){
 }
 define('DRUPAL_ROOT', getcwd());
 $_SERVER['REMOTE_ADDR']="127.0.0.1";
+echo "==> Bootstrap\n";
 require_once (DRUPAL_ROOT."./includes/bootstrap.inc");
 error_reporting(E_ALL ^ E_NOTICE);
-drupal_bootstrap(DRUPAL_BOOTSTRAP_LANGUAGE);
+drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 error_reporting(E_ALL ^ E_NOTICE);
 chdir($fz_dir);
 //
@@ -47,9 +48,9 @@ mkdir(TARGET);
 
 print "=> Copy files into ".TARGET."\n";
 system('xcopy *.* '.TARGET.' /S /Y /EXCLUDE:m.excl');
-
+die();
 $smplgz =   SMPL.'-'.$fver.'.tar.gz';
-$smplzip =  SMPL.'-'.$fver.'.zip ';
+$smplzip =  SMPL.'-'.$fver.'.zip';
 
 print "=> Make E:\\".SMPL."-$fver.tar.gz\n";
 system('cmd /c .make\\tar\\bsdtar -cf E:\\'.$smplgz.' -z '.TARGET);
@@ -74,6 +75,7 @@ system('cmd /c copy E:\\'.$smplzip.' '.$dest);
 
 print "=> Make Zip on Backup area\n";
 system('cmd /c .make\\zip\\zip -r -9 -q '.$dest.SMPL.' .');
+
 print "=> Copy files => ftp://www.fzolee.hu/web/download/smplphotoalbum/ \n";
 
 // set up basic connection
@@ -83,22 +85,22 @@ $login_result = ftp_login($conn_id, 'fz', '11kokojumbo');
 
 if($login_result)
 {
-    ftp_pasv($conn_id,true);
+  ftp_pasv($conn_id,true);
 
-    // upload a file
-    if (ftp_put($conn_id, '/web/download/smplphotoalbum/'.$smplgz, "E:\\".$smplgz, FTP_BINARY)) {
-     echo "  => Successfully uploaded ".$smplgz."\n";
-    } else {
-     echo "  => There was a problem while uploading ".$smplgz."\n";
-    }
+  // upload a file
+  if (ftp_put($conn_id, '/web/download/smplphotoalbum/'.$smplgz, "E:\\".$smplgz, FTP_BINARY)) {
+    echo "  => Successfully uploaded ".$smplgz."\n";
+  } else {
+    echo "  => There was a problem while uploading ".$smplgz."\n";
+  }
 
-    if (ftp_put($conn_id, '/web/download/smplphotoalbum/'.$smplzip, "E:\\".$smplzip, FTP_BINARY)) {
-     echo "  => successfully uploaded ".$smplzip."\n";
-    } else {
-     echo "  => There was a problem while uploading ".$smplzip."\n";
-    }
-    // close the connection
-    ftp_close($conn_id);
+  if (ftp_put($conn_id, '/web/download/smplphotoalbum/'.$smplzip, "E:\\".$smplzip, FTP_BINARY)) {
+    echo "  => successfully uploaded ".$smplzip."\n";
+  } else {
+    echo "  => There was a problem while uploading ".$smplzip."\n";
+  }
+  // close the connection
+  ftp_close($conn_id);
 }
 echo "=> End of compiling the module: ".SMPL."\n\n";
 ?>

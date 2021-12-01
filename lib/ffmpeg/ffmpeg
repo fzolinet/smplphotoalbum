@@ -1,0 +1,82 @@
+http://ffmpeg-php.sourceforge.net/doc/api/ffmpeg_movie.php
+
+$movie = new ffmpeg_movie(String path_to_media, boolean persistent) 	Open a video or audio file and return it as an object.
+
+    path_to_media - File path of video or audio file to open.
+    persistent - Whether to open this media as a persistent resource. See the PHP documentation for more info about persistent resources
+
+$movie->getDuration() 	Return the duration of a movie or audio file in seconds.
+$movie->getFrameCount() 	Return the number of frames in a movie or audio file.
+$movie->getFrameRate() 	Return the frame rate of a movie in fps.
+$movie->getFilename() 	Return the path and name of the movie file or audio file.
+$movie->getComment() 	Return the comment field from the movie or audio file.
+$movie->getTitle() 	Return the title field from the movie or audio file.
+$movie->getAuthor() alias $movie->getArtist() 	Return the author field from the movie or the artist ID3 field from an mp3 file.
+$movie->getCopyright() 	Return the copyright field from the movie or audio file.
+$movie->getArtist() 	Return the artist ID3 field from an mp3 file.
+$movie->getGenre() 	Return the genre ID3 field from an mp3 file.
+$movie->getTrackNumber() 	Return the track ID3 field from an mp3 file.
+$movie->getYear() 	Return the year ID3 field from an mp3 file.
+$movie->getFrameHeight() 	Return the height of the movie in pixels.
+$movie->getFrameWidth() 	Return the width of the movie in pixels.
+$movie->getPixelFormat() 	Return the pixel format of the movie.
+$movie->getBitRate() 	Return the bit rate of the movie or audio file in bits per second.
+$movie->getVideoBitRate() 	Return the bit rate of the video in bits per second.
+
+NOTE: This only works for files with constant bit rate.
+$movie->getAudioBitRate() 	Return the audio bit rate of the media file in bits per second.
+$movie->getAudioSampleRate() 	Return the audio sample rate of the media file in bits per second.
+$movie->getFrameNumber() 	Return the current frame index.
+$movie->getVideoCodec() 	Return the name of the video codec used to encode this movie as a string.
+$movie->getAudioCodec() 	Return the name of the audio codec used to encode this movie as a string.
+$movie->getAudioChannels() 	Return the number of audio channels in this movie as an integer.
+$movie->hasAudio() 	Return boolean value indicating whether the movie has an audio stream.
+$movie->hasVideo() 	Return boolean value indicating whether the movie has a video stream.
+$movie->getFrame([Integer framenumber]) 	Returns a frame from the movie as an ffmpeg_frame object. Returns false if the frame was not found.
+
+    framenumber - Frame from the movie to return. If no framenumber is specified, returns the next frame of the movie. 
+
+$movie->getNextKeyFrame() 	Returns the next key frame from the movie as an ffmpeg_frame object. Returns false if the frame was not found.
+
+
+$frame = new ffmpeg_frame(Resource gd_image) 	Create a frame object from a GD image.
+
+NOTE: This function will not be available if GD is not enabled.
+$frame->getWidth() 	Return the width of the frame.
+$frame->getHeight() 	Return the height of the frame.
+$frame->getPTS() alias $frame->getPresentationTimestamp() 	Return the presentation time stamp of the frame.
+$frame->resize(Integer width, Integer height [, Integer crop_top [, Integer crop_bottom [, Integer crop_left [, Integer crop_right ]]]]) 	
+
+    width - New width of the frame (must be an even number).
+    height - New height of the frame (must be an even number).
+    croptop - Remove [croptop] rows of pixels from the top of the frame.
+    cropbottom - Remove [cropbottom] rows of pixels from the bottom of the frame.
+    cropleft - Remove [cropleft] rows of pixels from the left of the frame.
+    cropright - Remove [cropright] rows of pixels from the right of the frame. 
+
+
+NOTE: Cropping is always applied to the frame before it is resized. Crop values must be even numbers.
+$frame->crop(Integer crop_top [, Integer crop_bottom [, Integer crop_left [, Integer crop_right ]]]) 	Crop the frame.
+
+    croptop - Remove [croptop] rows of pixels from the top of the frame.
+    cropbottom - Remove [cropbottom] rows of pixels from the bottom of the frame.
+    cropleft - Remove [cropleft] rows of pixels from the left of the frame.
+    cropright - Remove [cropright] rows of pixels from the right of the frame. 
+
+
+NOTE: Crop values must be even numbers.
+$frame->toGDImage() 	Returns a truecolor GD image of the frame.
+
+NOTE: This function will not be available if GD is not enabled. 
+
+$gif = new ffmpeg_animated_gif(String output_file_path, Integer width, Integer height, Integer frame_rate, [Integer loop_count]) 	create a new ffmpeg_animated_gif object
+
+    output_file_path - Location in the filesystem where the animated gif will be written.
+    width - Width of the animated gif.
+    height - Height of the animated gif.
+    frame_rate - Frame rate of the animated gif in frames per second..
+    loop_count - Number of times to loop the animation. Put a zero here to loop forever or omit this parameter to disable looping. 
+
+$frame->addFrame(ffmpeg_frame frame_to_add) 	Add a frame to the end of the animated gif.
+
+    frame_to_add - The ffmpeg_frame object to add to the end of the animated gif. 
