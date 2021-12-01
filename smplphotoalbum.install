@@ -24,7 +24,6 @@ function smplphotoalbum_requirement($phase)
  */
 
 function smplphotoalbum_schema() {
-
   $schema['smplphotoalbum'] = array(
     'description' => t('Table for Simple Photoalbum.'),
     'fields' => array(
@@ -56,7 +55,7 @@ function smplphotoalbum_schema() {
             'not null' => FALSE,
             'default' => '',
         ),
-      'sub' => array(
+      'subtitle' => array(
         'description' => t('Subtitle of image'),
         'type' => 'varchar',
         'length' => 255,
@@ -103,21 +102,49 @@ function smplphotoalbum_schema() {
     		'type' => 'int',
     		'default' => 0,
     	),
-     'social' => array(
-            'description' => t('Social sharing metatag for Facebook'),
-            'type' => 'int',
-            'default' => 0,
+     'fb' => array(
+        'description' => t('Social sharing metatag for Facebook'),
+        'type' => 'int',
+        'default' => 0,
       ),
       'googlep' => array(
-            'description' => t('Social sharing metatag for Google+'),
-            'type' => 'int',
-            'default' => '0',
+        'description' => t('Social sharing metatag for Google+'),
+        'type' => 'int',
+        'default' => '0',
       ),
       'twitter' => array(
-            'description' => t('Social sharing metatag for Twitter'),
-            'type' => 'int',
-            'default' => 0,
+        'description' => t('Social sharing metatag for Twitter'),
+        'type' => 'int',
+        'default' => 0,
       ),
+      'url' => array(
+        'description' => t('Social sharing metatag for Twitter'),
+        'type' => 'blob',
+      ),
+      'target' => array(
+          'description' => t('Target of link'),
+          'type' => 'varchar',
+          'length' => 255,
+          'default' => '_blank',
+      ),
+      'price' => array(
+          'description' => t('Price'),
+          'type'        => 'int',
+          'default'     => 0
+      ),
+      'currency' => array(
+          'description' => t("Currency"),
+          'type'        => 'varchar',
+          'length'      => 10,
+          'not null' => FALSE,
+          'default' => 'Ft',
+      ),
+      'download' => array(
+            'description' => t("Number of downloading of a user"),
+            'type'        => 'int',
+            'default' => 1,
+      ),
+        
     ),
     'primary key' => array('id'),
     'indexes' =>array(
@@ -139,7 +166,7 @@ function smplphotoalbum_schema() {
   						'description' => t('Taxonomy ID'),
   						'type' => 'int',
   						'unsigned' => TRUE,
-  						'default' => '0',
+  						'default' => 0,
   				),
   		    'sid' => array(
   		        'description' => t('smplphotoalbum ID'),
@@ -148,15 +175,96 @@ function smplphotoalbum_schema() {
   		        'default' => '0',
   		    ),
   		),		//Fields definition end
-  		'primary key' => array('id'),
+  		'primary key' => array('stid'),
   		'indexes'     => array(
   				'tid'    => array('tid')
   		),
   );
 
+  $schema['smplphotoalbum_event'] = array(
+    		'description' => t('Table of event in Simple Photoalbum.'),
+    		'fields' => array(
+    		    'id' => array(
+    		        'description' => t('Event id.'),
+    		        'type' => 'serial',
+    		        'unsigned' => TRUE,
+    		        'not null' => TRUE,
+    		        'size' => 'normal',
+    		        //'default' => 0,
+    		    ),
+    		    'uid' => array(
+    		        'description' => t('smplphotoalbum user ID'),
+    		        'type' => 'int',
+    		        'unsigned' => TRUE,
+    		        'default' => 0,
+    		    ),
+    		    'sid' => array(
+    		        'description' => t('smplphotoalbum ID'),
+    		        'type' => 'int',
+    		        'unsigned' => TRUE,
+    		        'default' => 0,
+    		    ),
+    		    'event' => array(
+    		        'description' => t('Event type'),
+    		        'type' => 'varchar',
+    		        'length' => 20,
+    		        'default' => '',
+    		    ),
+    		    'eventdate' => array(
+    		        'description' => t('Timestamp of event'),
+    		        'type' => 'int',
+    		        'unsigned' => TRUE,
+    		    ),
+    		    
+    		),		//Fields definition end
+    		'primary key' => array('id'),
+    		'indexes'     => array(
+    		    'sid'    => array('sid')
+    		),
+      
+  );
+
+  //smplphtoalbum user table
+  $schema['smplphotoalbum_user'] = array(
+      'description' => t('Table of users of Simple Photoalbum.'),
+      'fields' => array(
+            'uid' => array(
+                'type'        => 'int',
+		'description' => t('user id'),
+                'unsigned'    => TRUE,
+    		'not null'    => TRUE,
+    		'size'        => 'normal',
+    	     ),
+    	    'money' => array(
+    		'description' => t('Money on the account'),
+    		'type'        => 'int',
+    		'unsigned'    => TRUE,
+    		'default'     => 0,
+    	    ),
+    	    'currency' => array(
+		'description' => t("Currency"),
+	        'type'        => 'varchar',
+		'length'      => 10,
+	        'not null' => FALSE,
+		'default' => 'Ft',
+    	    ),
+	),
+      'primary key' => array('uid'),
+  );
+  
+  //Smplphotoalbum cache set
+  $schema['cache_smplphotoalbum'] = drupal_get_schema_unprocessed('system','cache');
   return $schema;
 }
 
+/**
+ * A fizetős tartalom adatait készíti elő.
+ */
+function smplphotoalbum_update_7200(){
+  variable_set('smpl_payment',false);
+  variable_set('smpl_opened',true);
+  variable_set('smpl_mobile',false);    //modify the number of column if detect mobile device
+}
 /**
  * Implementation of hook_install().
  *
@@ -165,183 +273,168 @@ function smplphotoalbum_schema() {
  * otherwise we install the table as normal
  */
 function smplphotoalbum_install() {
-
-	variable_set('smplphotoalbum_edit',1);
-  variable_set('smplphotoalbum_overbrowser',true);
-  variable_set('smplphotoalbum_overbrowser_paging',true);
-  variable_set('smplphotoalbum_overbrowser_video',true);
-	variable_set('smplphotoalbum_cols',4);
-	variable_set('smplphotoalbum_rows',5);
-	variable_set('smplphotoalbum_width',150);
-	variable_set('smplphotoalbum_sub',true);
-	variable_set('smplphotoalbum_capt',true);
-  variable_set('smplphotoalbum_root',str_replace('\\','/',$_SERVER["DOCUMENT_ROOT"]) );
-  variable_set('smplphotoalbum_cache',false);
-  /*
-   * variable_set('smplphotoalbum_cache_folder',str_replace('\\','/',variable_get('file_public_path').'smplphotoalbum_cache'));
-  */
-  variable_set('smplphotoalbum_cache_duration',30);
-	variable_set('smplphotoalbum_viewed',true);
-	variable_set('smplphotoalbum_voted',true);
-	variable_set('smplphotoalbum_exif',true);
-	variable_set('smplphotoalbum_rank',true);
-	variable_set('smplphotoalbum_sort', 'filename');
-	variable_set('smplphotoalbum_order','asc');
+  variable_set('smpl_edit',1);
+  
+	$cb = module_exists('colorbox');
+	$lb = (!$cb) && module_exists('lightbox2');
+	if($cb )
+	  variable_set('smpl_overbrowser_type','cb');
+	elseif($lb)
+	 variable_set('smpl_overbrowser_type','lb');
+	else
+	  variable_set('smpl_overbrowser_type','');
+	  
+	variable_set('smpl_overbrowser',true);
+  variable_set('smpl_overbrowser_paging',true);
+  variable_set('smpl_overbrowser_video',true);
+  
+	variable_set('smpl_cols',4);
+	variable_set('smpl_rows',5);
+	variable_set('smpl_width',150);
+	variable_set('smpl_sub',true);
+	variable_set('smpl_capt',true);
+  variable_set('smpl_root',"__DRUPALROOT__");
+  variable_set('smpl_viewed',true);
+	variable_set('smpl_voted',true);
+	variable_set('smpl_exif',true);
+	variable_set('smpl_rank',true);
+	variable_set('smpl_sort', 'filename');
+	variable_set('smpl_order','asc');
 	// Social sharing
-	variable_set('smplphotoalbum_fb',true);
-	variable_set('smplphotoalbum_twitter',true);
-	variable_set('smplphotoalbum_googlep',true);
+	variable_set('smpl_fb',true);
+	variable_set('smpl_twitter',true);
+	variable_set('smpl_googlep',true);
 
-	variable_set('smplphotoalbum_check',false);
-	variable_set('smplphotoalbum_number_of_checking',2000);
- 	variable_set('smplphotoalbum_from',0);
- 	variable_set('smplphotoalbum_keywords',true);
- 	variable_set('smplphotoalbum_subtitle_change',1);
- 	variable_set('smplphotoalbum_subtitle_change_text', '_ .jpg');
-  variable_set("smplphotoalbum_ffmpeg", true);
- 	variable_set('smplphotoalbum_audio_checking',0);
- 	variable_set('smplphotoalbum_audio_extensions', SMPLAUDIOEXT);
+	variable_set('smpl_check',false);
+	variable_set('smpl_number_of_checking',2000);
+ 	variable_set('smpl_from',0);
+ 	variable_set('smpl_keywords',true);
+ 	variable_set('smpl_subtitle_change',1);
+ 	variable_set('smpl_subtitle_change_text', '_ .jpg');
+  variable_set("smpl_ffmpeg", true);
+  
+ 	variable_set('smpl_audio_checking',0);
+ 	variable_set('smpl_audio_extensions', SMPLAUDIOEXT);
+ 	variable_set('smpl_audiohtml5_extensions', SMPLHTML5AUDIOEXT);
 
- 	variable_set('smplphotoalbum_video_checking', 0);
- 	variable_set('smplphotoalbum_video_extensions', SMPLVIDEOEXT);
+ 	variable_set('smpl_video_checking', 0);
+ 	variable_set('smpl_video_extensions', SMPLVIDEOEXT);
+ 	variable_set('smpl_videohtml5_extensions', SMPLHTML5VIDEOEXT);
 
- 	variable_set('smplphotoalbum_doc_checking', 0);
- 	variable_set('smplphotoalbum_doc_extensions', SMPLDOCEXT);
+ 	variable_set('smpl_html5', true);   // v2.01 - Use html5 widgets
+ 	variable_set('smpl_doc_checking', 0);
+ 	variable_set('smpl_doc_extensions', SMPLDOCEXT);
  	
- 	variable_set('smplphotoalbum_cmp_checking', 0);
- 	variable_set('smplphotoalbum_cmp_extensions', SMPLCMPEXT);
+ 	variable_set('smpl_cmp_checking', 0);
+ 	variable_set('smpl_cmp_extensions', SMPLCMPEXT);
 
- 	variable_set('smplphotoalbum_app_checking', 0);
- 	variable_set('smplphotoalbum_app_extensions', SMPLAPPEXT);
+ 	variable_set('smpl_app_checking', 0);
+ 	variable_set('smpl_app_extensions', SMPLAPPEXT);
 
- 	variable_set('smplphotoalbum_oth_checking', 0);
- 	variable_set('smplphotoalbum_oth_extensions', SMPLOTHEXT);
+ 	variable_set('smpl_oth_checking', 0);
+ 	variable_set('smpl_oth_extensions', SMPLOTHEXT);
  	
- 	variable_set('smplphotoalbum_dis_checking', 0);
- 	variable_set('smplphotoalbum_dis_extensions', SMPLDISEXT);
+ 	variable_set('smpl_dis_checking', 0);
+ 	variable_set('smpl_dis_extensions', SMPLDISEXT);
  	
- 	variable_set('smplphotoalbum_button_pre',"-:");
- 	variable_set('smplphotoalbum_button_post',":-");
- 	variable_set('smplphotoalbum_edit',True);
- 	variable_set('smplphotoalbum_delete',True);
+ 	variable_set('smpl_button_pre',"-:");
+ 	variable_set('smpl_button_post',":-");
+ 	variable_set('smpl_edit',True);
+ 	variable_set('smpl_delete',True);
  	variable_set('menu_rebuild_needed', TRUE);
- 	variable_set('menu_rebuild_directaccess', TRUE);
+ 	variable_set('smpl_menu_rebuild_directaccess', TRUE);
  	
  	$htaccess ="SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006\nOptions None\nOptions +FollowSymLinks";
- 	variable_set('menu_rebuild_htaccess', $htaccess);
+ 	variable_set('smpl_menu_rebuild_htaccess', $htaccess);
+
+ 	// url settings
+ 	variable_set('smpl_url', false);
+ 	variable_set('smpl_url_target', '_blank');
+
+ 	//taxonomy settings
+ 	$x = module_exists("smpl_taxonomy");
+ 	if(!$x) drupal_set_message(t('The Taxonomy module is not installed or disabled, Install it and enable it and Simple Photoalbum can use the taxonomy albums'),'warning');
+ 	variable_set('smpl_taxonomy',$x  );
+ 	variable_set('smpl_taxonomy_vocabulary_machine_name','smpl_vocabulary');
+ 	variable_set('smpl_taxonomy_vocabulary_name','Simple Photoalbum Vocabulary');
+
+ 	// img edit settings
+ 	variable_set("smpl_imgedit", true);
+ 	variable_set("smpl_temp",variable_get("files_public_path")."/smplphotoalbum/");
  	drupal_set_message(t('Smplphotoalbum module has been setup.'));
-}
-/**
- * Update to using link & taxonomy
- */
-
-function smplphotoalbum_update_7000(){
-	//link version updating
-	variable_set('smplphotoalbum_url', false);
-	variable_set('smplphotoalbum_url_target', '_blank');
-	if( !db_field_exists("smplphotoalbum", "target"))
-	{
-	   $url_field = array(
-		  	 'description' => t('url associated with image'),
-    		'type' => 'blob',
-	   );
-	   db_add_field('smplphotoalbum','url',$url_field);
-
-	   $target_field = array(
-			 'description' => t('Target of link'),
-			 'type' => 'varchar',
-			 'length' => 255,
-			 'default' => '_blank',
-			 #'not null' => false,
-	   );
-	   db_add_field('smplphotoalbum','target',$target_field);
-	}
-
-	$x = module_exists("taxonomy");
-	if(!$x) drupal_set_message(t('The Taxonomy module is not installed or disabled, Install it and enable it and Simple Photoalbum can use the taxonomy albums'),'warning');
-	variable_set('smplphotoalbum_taxonomy',$x  );
-
-	variable_set('smplphotoalbum_taxonomy_vocabulary_machine_name','smpl_vocabulary');
-	variable_set('smplphotoalbum_taxonomy_vocabulary_name','Simple Photoalbum Vocabulary');
-	$schema =array();
-	return $schema;
-}
-
-function smplphotoalbum_update_7010(){
-  variable_set("smplphotoalbum_imgedit", true);
-  variable_set("smplphotoalbum_temp",variable_get("files_public_path")."/smplphotoalbum/");
 }
 
 //Uninstall function
 function smplphotoalbum_uninstall(){
 	drupal_uninstall_schema('smplphotoalbum');
 	drupal_uninstall_schema('smplphotoalbum_taxonomy');
+	drupal_uninstall_schema('smplphotoalbum_event');
+	drupal_uninstall_schema('smplphotoalbum_payment');
+	drupal_uninstall_schema('smplphotoalbum_user');
+	
   drupal_set_message(t('Smplphotoalbum module has been uninstalled'));
-	variable_del('smplphotoalbum_edit');
-  variable_del('smplphotoalbum_overbrowser');
-  variable_del('smplphotoalbum_overbrowser_paging',true);
-  variable_del('smplphotoalbum_overbrowser_video',true);
-	variable_del('smplphotoalbum_cols');
-	variable_del('smplphotoalbum_rows');
-	variable_del('smplphotoalbum_sub');
-	variable_del('smplphotoalbum_capt');
-  variable_del('smplphotoalbum_root');
-  variable_del('smplphotoalbum_cache');
-  //
-  variable_del('smplphotoalbum_fb');
-  variable_del('smplphotoalbum_twitter');
-  variable_del('smplphotoalbum_googlep');
-  /*
-   * variable_del('smplphotoalbum_cache_folder');
-  */
-  variable_del('smplphotoalbum_cache_duration');
-	variable_del('smplphotoalbum_viewed');
-	variable_del('smplphotoalbum_voted');
-	variable_del('smplphotoalbum_exif');
-	variable_del('smplphotoalbum_rank');
-	variable_del('smplphotoalbum_sort');
-	variable_del('smplphotoalbum_order');
-	variable_del('smplphotoalbum_check');
-	variable_del('smplphotoalbum_number_of_checking');
-  variable_del('smplphotoalbum_from');
-  variable_del('smplphotoalbum_keywords');
-  variable_del('smplphotoalbum_subtitle_change');
-  variable_del('smplphotoalbum_subtitle_change_text');
-
-  variable_del('smplphotoalbum_audio_checking');
-  variable_del('smplphotoalbum_audio_extensions');
-
-  variable_del('smplphotoalbum_video_checking');
-  variable_del('smplphotoalbum_video_extensions');
-  variable_del("smplphotoalbum_ffmpeg");
-
-  variable_del('smplphotoalbum_doc_checking');
-  variable_del('smplphotoalbum_doc_extensions');
+  variable_del('smpl_overbrowser');
+  variable_del('smpl_overbrowser_paging');
+  variable_del('smpl_overbrowser_video');
   
-  variable_del('smplphotoalbum_cmp_checking');
-  variable_del('smplphotoalbum_cmp_extensions');
+  variable_del('smpl_cols');
+  variable_del('smpl_rows');
+  variable_del('smpl_width');
+  variable_del('smpl_sub');
+  variable_del('smpl_capt');
+  variable_del('smpl_root');
+  variable_del('smpl_viewed');
+  variable_del('smpl_opened');
+  variable_del('smpl_voted');
+  variable_del('smpl_exif');
+  variable_del('smpl_rank');
+  variable_del('smpl_sort');
+  variable_del('smpl_order');
+  // Social sharing
+  variable_del('smpl_fb');
+  variable_del('smpl_twitter');
+  variable_del('smpl_googlep');
   
-  variable_del('smplphotoalbum_app_checking');
-  variable_del('smplphotoalbum_app_extensions');
-
-  variable_del('smplphotoalbum_oth_checking');
-  variable_del('smplphotoalbum_oth_extensions');
-
-  variable_del('smplphotoalbum_dis_checking');
-  variable_del('smplphotoalbum_dis_extensions');
+  variable_del('smpl_check');
+  variable_del('smpl_number_of_checking');
+  variable_del('smpl_from');
+  variable_del('smpl_keywords');
+  variable_del('smpl_subtitle_change');
+  variable_del('smpl_subtitle_change_text');
+  variable_del("smpl_ffmpeg");
   
-  variable_del('smplphotoalbum_button_pre');
-  variable_del('smplphotoalbum_button_post');
-  variable_del('smplphotoalbum_edit');
-  variable_del('smplphotoalbum_delete');
-  variable_del('smplphotoalbum_url');
-  variable_del('smplphotoalbum_taxonomy');
-  variable_del('smplphotoalbum_taxonomy_vocabulary_machine_name');
-  variable_del('smplphotoalbum_taxonomy_vocabulary_name');
-  variable_del('menu_rebuild_directaccess');
-  variable_del('menu_rebuild_htaccess');
-  variable_del("smplphotoalbum_imgedit");
-  variable_del('smplphotoalbum_temppath');
-
+  variable_del('smpl_audio_checking');
+  variable_del('smpl_audio_extensions');
+  variable_del('smpl_audiohtml5_extensions');
+  
+  variable_del('smpl_video_checking');
+  variable_del('smpl_video_extensions');
+  variable_del('smpl_videohtml5_extensions');
+  
+  variable_del('smpl_html5');   // v2.01 - Use html5 widgets
+  variable_del('smpl_doc_checking');
+  variable_del('smpl_doc_extensions');
+  
+  variable_del('smpl_cmp_checking');
+  variable_del('smpl_cmp_extensions');
+  
+  variable_del('smpl_app_checking');
+  variable_del('smpl_app_extensions');
+  
+  variable_del('smpl_oth_checking');
+  variable_del('smpl_oth_extensions');
+  
+  variable_del('smpl_dis_checking');
+  variable_del('smpl_dis_extensions');
+  
+  variable_del('smpl_button_pre');
+  variable_del('smpl_button_post');
+  variable_del('smpl_edit');
+  variable_del('smpl_delete');
+  variable_del('smp_payment');
+  
+  
+  variable_del('menu_rebuild_needed');
+  variable_del('smpl_menu_rebuild_directaccess');
   variable_set('menu_rebuild_needed', TRUE);
 }

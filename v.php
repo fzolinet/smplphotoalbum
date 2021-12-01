@@ -2,6 +2,7 @@
 /* $Id: image.php,v 1.15.2.3.2.2.2.11 2009/10/29 00:09:17 tjfulopp Exp $ */
 
 /* Check for bad URL inputs */
+include "inc/functions.inc";
 $url = isset($_GET['i']) ? $_GET['i'] : "/";
 
 if( strpos($url, "://") !== false || strpos($url, "..") !== false ) {
@@ -23,29 +24,33 @@ $GLOBALS['devel_shutdown'] = FALSE;
 if($url == '/'){
   $root= __DIR__."/image";
 }else{
-  $root = variable_get('smplphotoalbum_root','');
+  $root = smpl_root();
 }
-
 $tmp = realpath($root.$url);
-if(is_dir($tmp ) || !file_exists($tmp)){
-  $root= __DIR__."/image";
-  $url       ="/404.png";
-}
-$root = str_replace("\\","/",$root);
 
+if(!file_exists($tmp)){
+  $tmp = realpath(utf8_decode($root.$url));
+  if(!file_exists($tmp )){
+    if(is_dir($tmp ) || !file_exists($tmp)){
+      $root= __DIR__."/image";
+      $url       ="/404.png";
+    }
+  }
+}
+
+$root = str_replace("\\","/",$root);
 $path      = pathinfo($url, PATHINFO_DIRNAME);
 $name      = pathinfo($url, PATHINFO_BASENAME);
+$name      = utf8_decode($name);
 $ext       = pathinfo($url, PATHINFO_EXTENSION);
 
 if( !isset($_GET['tn']) && $url !="/404.png" && !isset($_GET['imgedit']) ) {
   smpl_increment_view($path, $name);
 }
-
 //headers
 $head     = _smpl_get_image_head($ext);
-$size     = @filesize($root.$url);
+$size     = filesize($root.$url);
 $filename = basename($url);
-
 header("Cache-Control:max-age");
 header("Content-disposition: inline; filename=".$filename );
 header("Content-length: ".$size);
@@ -196,13 +201,14 @@ function smpl_increment_view( $path, $name ){
   }
   $record = $rs->fetchAssoc();
 
-  $id         = $record['id'];
-  $db = (int)$record['viewnumber'];
+  $id = $record['id'];
+  $db = (int) $record['viewnumber'];
   $db++;
 
   db_update('smplphotoalbum')
   ->fields(array('viewnumber' => $db))
   ->condition('id',$id,'=')
   ->execute();
+  _smplphotoalbum_event($id, "view");
   return $db;
 }

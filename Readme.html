@@ -1,0 +1,182 @@
+<h2><strong>Simple Photoalbum 7.x-2.7</strong></h2>
+
+<h3>Features</h3>
+
+<ul>
+  <li>The modul works as a Drupal filter of any nodes on it.</li>
+  <li>It makes a table or list of images, videos, documents compressed or executable files</li>
+  <li>from a directory on the server.</li>
+  <li>When the node is viewed first time the module makes</li>
+  <li>thumbnails from the images,</li>
+  <li>the thumbnails saves into the _tn_ subdirectory,</li>
+  <li>save the datas of files into the database table</li>
+  <li>makes automatically thumbnails and insert into a table of database.</li>
+</ul>
+
+<h3>Installation:</h3>
+
+<ul>
+  <li>Install the Lightbox2 or Colorbox module as usual</li>
+  <li>Copy the files of module into the modules directory and enable.</li>
+  <li>Set the appropriate properties in the admin/config/fz/smplphotoalbum&nbsp; &nbsp;</li>
+  <li>In the admin/config/content/formats</li>
+  <li>Enable the Simpla Photoalbum and Lightbox or Colorbox filteres in the Full HTML or any other content types</li>
+</ul>
+
+<h3>Defaults</h3>
+
+<ul>
+  <li>The thumbnails showed in table format</li>
+  <li>The table has pager</li>
+  <li>The admin sets what kind of files enables / disables. It can
+  <ul>
+    <li>image (default),</li>
+    <li>videos (default) normal or HTML5 Video format</li>
+    <li>audio (default) HTML5 Audio format</li>
+    <li>document,</li>
+    <li>compressed,</li>
+    <li>executable,</li>
+    <li>other types</li>
+    <li>prohibited files.</li>
+  </ul>
+  </li>
+  <li>The admin can change the extension of files</li>
+  <li>You can not acces the files direct!</li>
+</ul>
+
+<h3>Events</h3>
+
+<p>If you click on a thumbnail:</p>
+
+<ul>
+  <li>image: showing in original size (in colorbox)</li>
+  <li>Video: downloads or plays</li>
+  <li>audio: downloads or plays</li>
+  <li>documents, compressed, executable, other types downloaded</li>
+  <li>HTML5 &lt;Audio&gt; and &lt;Video&gt;: plays the media,</li>
+</ul>
+
+<h3>Administration settings</h3>
+
+<ul>
+  <li>Maximum number columns on a page: number (default 4)
+  <ul>
+    <li>Maximum number of columns in the mobile version: numbers (default: 5)</li>
+  </ul>
+  </li>
+  <li>Maximum number of table rows on a page</li>
+  <li>Maximum width of thumbnail in pixel: number (default: 150px)</li>
+  <li>CSS class of thumbnail: string (default: smpl_image)</li>
+  <li>Root folder of photoalbums: string</li>
+</ul>
+
+<p class="rteindent1">All the albums are in a folder structure on the server. This is absolute path in the filesystem. If you use in the path the&nbsp; __DRUPALROOT__&nbsp; it substitutes the Drupal path with it.</p>
+
+<ul>
+  <li>Rebuild of pathes of Drupal menus (for developers)</li>
+  <li>Direct access of files (enable/disable)</li>
+  <li>Shows the URL of associated with image: (enable/disable)</li>
+  <li>Default target of link of image (default: _blank)</li>
+  <li>Use taxonomy Photoalbum: (enable/disable)</li>
+  <li>Social Network Sharing (OpenGraph protocol for Facebook, Metatag for Twitter)</li>
+  <li>The admin can enable / disable the &nbsp;
+  <ul>
+    <li>Shows the number of views (downloads) of images (files)</li>
+    <li>Voting for the image (file) and shows the</li>
+    <li>Average votes anf number of votes (Shows the rank of files)</li>
+    <li>Link for the other properties of images (exif info, bitrate, etc.)</li>
+    <li>Caption of files</li>
+    <li>Substitle of files</li>
+    <li>Link of files (URLof original website etc...)&nbsp;&nbsp; &nbsp;</li>
+  </ul>
+  </li>
+  <li>There are buttons below the files and you can enable / disable the functions:
+  <ul>
+    <li>Edit images online (if installed GD or ImageMagic module on PHP)</li>
+    <li>Edit the subtitles (caption, link) of images</li>
+    <li>The file hides from the website</li>
+    <li>Delete from database and directory &nbsp;</li>
+  </ul>
+  </li>
+  <li>Simple Photoalbum temporary folder for Editing the images: relative path from Drupal root</li>
+  <li>Change the order of files / images (enable /disable)</li>
+  <li>Using filter in lists (enable / disable)</li>
+  <li>Check and delete the wrong links of files from database (shrinks the table)</li>
+  <li>Change or delete the subtitles automatically (string substitues with a space)</li>
+  <li>File types (enable / disable). Let's see on top of this document
+  <ul>
+    <li>image (default: enable),</li>
+    <li>video (default:enable) normal or HTML5 Video format</li>
+    <li>audio (default) HTML5 Audio format</li>
+    <li>document,</li>
+    <li>compressed,</li>
+    <li>executable,</li>
+    <li>other types</li>
+    <li>prohibited files.</li>
+  </ul>
+  </li>
+  <li>Set the lists of extensions of any file types</li>
+  <li>Make preview of mpeg files: enable/disable (if the php_ffmpeg module is installed)</li>
+</ul>
+
+<h3>Using</h3>
+
+<p>You can define a content filter on the node if the content filter enabled on the content type.</p>
+
+<h4>1. Make a simple photoalbum from a folder:</h4>
+
+<h4><code>[smpl|relative path from photoalbum root]</code></h4>
+
+<p>or<br />
+if you want to change the parameters of this photoalbum. The order of parameters does not matter.<br />
+<code>[smpl|relative path from photoalbum root| parameter01 =&gt; value | parameter02 =&gt; value |....]</code><br />
+&nbsp;<br />
+Parameters:</p>
+
+<ul>
+  <li>cols : number of columns</li>
+  <li>rows: Number of rows</li>
+  <li>width: width of thumbnails in pixel</li>
+  <li>order: asc /desc / rand, default asc</li>
+  <li>sort: sortable of this album - (True/False)</li>
+  <li>sub: is there subtitle (true / false)</li>
+  <li>capt: is there caption (true / false)</li>
+  <li>viewed: shows the number of views</li>
+  <li>voted: shows the number of votes and rank</li>
+  <li>edit: Editable images (true / false)</li>
+  <li>exif: shows the exif onformation of images</li>
+  <li>audio: shows this type of files (true / false)</li>
+  <li>video:shows this type of files (true / false)</li>
+  <li>doc:shows this type of files (true / false)</li>
+  <li>cmp:shows this type of files (true / false)</li>
+  <li>app:shows this type of files (true / false)</li>
+  <li>issocial: Facebook like button</li>
+  <li>url: shows the URL of image website</li>
+  <li>target: what is the target (default: _blank)</li>
+  <li>taxes: shows the taxonomies of file</li>
+  <li>html5: the video and autio file shows with HTML5 audio and video tags</li>
+  <li>mobile: when the user view from mobile the album shows in mobile CSS</li>
+</ul>
+
+<p>&nbsp;2. You can use gallery from taxonomie on the server.</p>
+
+<p><code>[smplt|taxonomy =&gt; taxonomy name] - images from a taxonomy</code><br />
+the other parameters are the same</p>
+
+<p>3. Random photos from a path and subfolders</p>
+
+<p>The random image shows from that folder and subfolders. The images source will be from the database<br />
+<code>[smplr|relative path from photoalbum root]</code></p>
+
+<h3>Examples:</h3>
+
+<p><code>[smpl|myalbum/foo/]</code></p>
+
+<p><code>[smpl|myalbum/foo/|rows=&gt;6|cols=&gt;5|width=&gt;150|sort=&gt;asc]</code><br />
+<code>[smplr|myalbum/foo/]</code></p>
+
+<p>2018.06<br />
+Zoltan Fabian</p>
+
+<p>fz@fzolee.hu<br />
+<a href="http://www.fzolee.hu">http://www.fzolee.hu</a></p>

@@ -48,7 +48,7 @@ mkdir(TARGET);
 
 print "=> Copy files into ".TARGET."\n";
 system('xcopy *.* '.TARGET.' /S /Y /EXCLUDE:m.excl');
-die();
+
 $smplgz =   SMPL.'-'.$fver.'.tar.gz';
 $smplzip =  SMPL.'-'.$fver.'.zip';
 

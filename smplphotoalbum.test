@@ -1,30 +1,23 @@
-<?php
-/**
- * @file
- * Tests for Smplphotoalbum module
- */
-
-class SmplphotoalbumTests extends DrupalWebTestCase{
-  public static function getInfo(){
-    return array (
-      'name' => 'SmplPhotoalbum',
-      'description' => 'Tests for SmplPhotoalbum ',
-      'group' => 'SmplPhotoalbum Group'
+fz_die();
+class SmplphotoalbumTestCase extends DrupalWebTestCase{
+  
+  static public function getInfo()
+  {
+    return array(
+    
+      'name'        => 'Simple Photoalbum Test',
+      'description' => 'Unit tests for this module',
+      'group'       => 'Simple Photoalbum'
     );
   }
-
-  /**
-   * Perform any setup tasks for our test case.
-   */
-  public function setUp() {
-    parent::setUp(array('smplphotoalbum'));
-  }
   
-  public function testVphp(){
-    
-  }
-  
-  public function testSmplPhotoalbum(){
-    
+  public function testsmplphotoalbumMakeSubstitute(){
+    $str      = "[smpl|/teszt]";
+    filter    = "";
+    $format   = "";
+    $langcode = "hu";
+    $str      = smplphotoalbum_substitute($str,$flter, $format, $langcode);
+    drupal_display($str, "WARNING");
+    return;
   }
 }

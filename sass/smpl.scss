@@ -1,0 +1,663 @@
+/* Default parameters*/
+$bordercolor: #AAA;
+$fontsize: 0.8em;
+$borderradius: 3px 3px 3px 3px;
+$bkgeditcolor: #DFEDF7;
+$bkgviewcolor: #EDF5FA;  
+$bkgactbutton: $bkgviewcolor;
+$bkgviewbutton: darken($bkgactbutton, 10%)       ;
+$bkgeven: #E0E0F0;
+$bkgodd:  #E7E7FF;
+$border-width: 1px;
+$border-style: solid;
+$border_settings: $border-width $border-style $bordercolor; 
+$line-height: 1.2em;
+
+/* - end of default parameters -------*/
+
+.smpl_table_all{
+	text-align:center;
+}
+.smpl_table{}
+.smpl_tr_a, .smpl_tr_b{
+	vertical-align:top;
+}
+.smpl_tr_a{
+	border-top: 1px solid $bordercolor;
+	margin-top: 0.5em;
+}
+.smpl_td{
+	text-align: center; 
+	text-decoration:none; 
+	vertical-align:top;
+}
+
+/* The vote button settings */
+.smpl_vote_plus{
+	display:inline; 
+	width:12px; 
+	height:7px; 
+	border-width:	2px;
+	border-style: outset;  
+	cursor: pointer;
+}
+
+.smpl_vote_last,
+.smpl_vote_number,
+.smpl_view_last,
+.smpl_view_number
+{
+	display: block;
+}
+.smpl_vote,
+.smpl_view,
+.smpl_size,
+.smpl_exif,
+.smpl_exif_div,
+.smpl_date,
+.smpl_desc_a,
+.smpl_tax,
+.smpl_list,
+#smpl_list
+{
+	text-align:center; 	
+	font-size: $fontsize;
+	line-height: $line-height;	
+}
+
+.smpl_tax{
+	font-style: italic;
+}
+
+.smpl_vote{ 
+	cursor: pointer;
+	display:block;
+	vertical-align: middle;
+}
+
+.smpl_sub_text,
+.smpl_view_text,
+.smpl_size_text,
+.smpl_date_text {
+	display:inline; 
+	border-width:0; 
+	display:inline; 
+	width:100%; 
+	clear: both;
+}
+
+.smpl_sub_text{
+  word-wrap: break-word;	
+}
+.smpl_sub{
+	display: block;	
+	vertical-align: middle;
+}
+
+.smpl_img{
+	border-style:ridge; 
+	border-width:2px; 
+	border-color: $bordercolor; 
+	text-decoration:none;
+}
+
+.smpl_img_mobile{
+	border-style:ridge; 
+	border-width:2px; 
+	border-color: $bordercolor; 
+	text-decoration:none;
+	width: 100%;
+}
+
+
+/* css of properties */
+.smpl_info{
+	text-align:    center; 
+	border-style: inset; 
+	border-top-width:   1px; 
+	border-bottom-width: 0px; 
+	border-left-width:   0px; 
+	border-right-width:  0px; 
+	border-color:        $bordercolor;
+}
+.smpl_info_tr{
+}
+.smpl_info_td{
+	text-align:     center; 
+	vertical-align: middle;
+	font-size:      $fontsize;
+}
+.smpl_edit{
+	text-align: center;
+	cursor:     pointer;
+	padding:    2px; 
+	margin:     2px;
+}
+/* buttons */
+.smpl_edit_all,
+.smpl_cache_clear,
+.smpl_vote_plus,
+.smpl_imgedit_plus,
+.smpl_edit_plus,
+.smpl_delete_plus,
+.smpl_kill_plus,
+.smpl_fb_plus,
+.smpl_url_plus,
+.smpl_new_tax,
+.smpl_tax_del,
+.smpl_tax_add,
+.smpl_sel,
+#smpl_help_link,
+#smpl_help_close,
+#smpl_list{
+	font-size:          $fontsize;
+  display:            inline;
+  cursor:             pointer;
+  border-radius:      $borderradius;
+  background: none repeat scroll 0 0 $bkgviewcolor;
+  border: $border_settings;
+  font-weight: bold;
+  margin: 2px;
+  padding: 2px;
+  text-align: center;
+	background-repeat: no-repeat;	
+}
+
+.smpl_imgedit_form_cancel,
+.smpl_imgedit_form_save,
+.smpl_imgedit_form_done,
+.smpl_imgedit_form_undo,
+.smpl_imgedit_form_redo,
+.smpl_imgedit_form_thumb,
+.smpl_edit_form_submit,
+.smpl_edit_form_cancel{
+	font-size:          $fontsize;
+  display:            inline-block;  
+  border-radius:      5px;
+  background:         none repeat scroll 0 0 $bkgviewcolor;
+  background-repeat:  no-repeat;	
+  border-width:        ($border-width+3);
+	border-style:       outset;
+	border-color:       $bordercolor;
+  font-weight:        bold;
+  margin:  2px;
+  padding: 2px 4px 2px 4px;
+  text-align: center;	
+}
+
+#smpl_help_link{
+	background-position: left center;
+	background-image: url("../image/b_help.png");	
+}
+#smpl_help_link:hover{
+	cursor: pointer;
+}
+
+#smpl_help_close{
+	width: 12px;
+	height: 12px;
+	float: right;
+	background-image: url("../image/b_close.png");
+}
+
+.smpl_fb_plus{
+	background-color: #3B56A1;
+	color: white;
+	border: none;
+}
+
+ /* edit properties of all images*/
+.smpl_edit_all{
+  background-position: left center;
+	background-image: url("../image/b_edit.png");	
+}
+.smpl_cache_clear{
+	background-position: left center;
+	background-image: url("../image/b_cache.png");
+}
+.smpl_edit_all, .smpl_cache_clear{
+	padding-left:5px;
+	padding-right: 5px; 
+}
+
+
+.smpl_edit_form_submit,
+.smpl_edit_form_cancel,
+.smpl_imgedit_form_done,
+.smpl_imgedit_form_undo,
+.smpl_imgedit_form_redo,
+.smpl_imgedit_form_save,
+.smpl_imgedit_form_thumb,
+.smpl_imgedit_form_cancel,
+.smpl_new_tax,
+.smpl_tax_del{
+	background-position: left center;
+	cursor: pointer !important;
+}
+
+.smpl_vote_plus,
+.smpl_imgedit_plus,
+.smpl_edit_plus,
+.smpl_delete_plus,
+.smpl_kill_plus,
+.smpl_fb_plus,
+.smpl_url_plus {
+	background-position: center center;
+}
+
+
+/* Vote text */
+.smpl_vote_text{
+  font-size: $fontsize;
+  display:inline;
+  border-radius: $borderradius;
+  border: $border_settings;
+ 
+  margin:  2px;
+  padding: 2px;
+  text-align: center;
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+/* Vote button */
+.smpl_vote_plus{
+	background-image: url('../image/vote.png');
+	width: 24px;
+	height: 12px;
+	padding-left: 5px;
+	padding-right: 5px;	
+}
+
+.smpl_edit_form{
+  padding: 8px;
+}
+
+/* Button images on the left side of buttons */
+.smpl_imgedit_plus{
+	background-image: url("../image/b_imgedit.png");
+}
+
+/* Edit button */
+.smpl_edit_plus{
+	background-image: url("../image/b_edit.png");
+}
+
+/* Delete button */
+.smpl_delete_plus{
+  background-image: url("../image/b_delete.png");
+}
+
+/* Kill button */
+.smpl_kill_plus{
+  background-image: url("../image/b_drop.png");
+}
+
+/* New Taxonomy button*/
+.smpl_new_tax{
+	left: 20px;
+	background-image: url("../image/b_add.png");
+}
+
+/* Delete Taxonomy button*/
+.smpl_tax_del{
+	background-image: url("../image/b_delete.png");
+}
+
+/* Taxonomy Add button*/
+.smpl_tax_add{
+  background-image: url("../image/b_arrow.png");
+}
+
+/* Edit Form submit button */
+
+.smpl_edit_form_submit,
+.smpl_imgedit_form_save{
+  background-image: url("../image/b_save.png");
+  margin: 10px 5px !important;
+}
+
+.smpl_imgedit_form_thumb{
+  background-image: url("../image/b_thumb.png");
+  margin: 10px 5px !important;
+}
+/* URL link button */
+.smpl_url_plus{
+	background-image: url("../image/b_link.png");	
+}
+
+/* Edit form cancel button*/
+.smpl_edit_form_cancel,
+.smpl_imgedit_form_cancel{
+  background-image: url("../image/b_cancel.png");
+	margin: 10px 5px;
+}
+
+/* Edit form Select taxonomies button */
+.smpl_sel{
+	background-image: url("../image/b_browse.png");
+}
+
+.smpl_imgedit_form_done{
+  background-image: url("../image/b_done.png");
+	margin: 10px 5px;
+}
+.smpl_imgedit_form_undo{
+  background-image: url("../image/b_undo.png");
+	margin: 10px 5px;
+}
+.smpl_imgedit_form_redo{
+  background-image: url("../image/b_redo.png");
+	margin: 10px 5px;
+}
+/* Taxonomy list */
+#smpl_list_a{
+	text-decoration:none !important;
+}
+
+/* Vote list */
+.smpl_vote_select{
+	font-size: $fontsize;
+}
+
+/* Pager */
+.smpl_pager{
+	margin-top: 4px; 
+	margin-bottom:4px;
+}
+
+/* pager current page */
+
+.smpl_pagerform{
+	display: inline-flex;
+	border: 0;	
+}
+.smpl_pagebutton{
+  background-color: $bkgviewbutton;
+  border-radius: $borderradius;	
+	border: $border_settings;	
+}
+.smpl_pager_current{  
+	background-color:$bkgactbutton;
+}
+
+/* not current page */
+.smpl_pagebutton{
+  cursor: pointer;
+  margin: 2px;
+  font-weight: bold;
+	font-size: $fontsize;
+  text-align:center;
+  text-decoration: none;
+}
+
+/* Image style */
+.smpl_image{
+	border-style:ridge; 
+	border-width:4px; 
+	border-color: $bordercolor;
+}
+
+.smpl_exif_table{
+	/*border: 1 solid black;*/
+	border: $border_settings;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 0.1em !important;
+  margin-top: 0.1em !important;
+}
+.smpl_exif_tr{
+
+}
+.smpl_exif_td{
+	text-align: right;
+  max-height: 1em;
+  height: 0.8em;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: $bordercolor;
+}
+.smpl_detailed_exif_info{	
+	position:absolute;
+	text-align:left;
+	border-style: solid;
+	border-width: 1px;
+	
+	background-color: $bkgviewcolor;
+	padding: 2px;
+	z-index: 256;
+	cursor:pointer;
+}
+
+.smpl_desc_title{
+	border-bottom-width: 1px;
+	border-bottom-color: $bordercolor;
+	border-bottom-style: solid;
+}
+.smpl_desc_info{
+  display:none;
+  position:absolute;
+  text-align:left;
+  border-width: 1px;
+  border-style: solid;
+
+  background-color:$bkgviewcolor;
+  padding: 2px;
+  z-index: 256;
+  cursor:pointer;
+}
+
+select#smpl_sortsource, select#smpl_sort,
+select#smpl_filtersource, input#smpl_filtertext
+{
+  width: 100px;
+  padding: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-right: 1px solid #CCC;
+  border-color: $bordercolor $bordercolor $bordercolor;
+  border-image: none;
+  border-radius: 3px;
+  color: #333;	
+}
+
+input#smpl_sortfilter{}
+.smpl_order_box{
+	font-size: $fontsize;
+}
+.smpl_filter_box{
+	/*display:inline;*/
+	font-size: $fontsize;
+}
+#smpl_stat_table, .smpl_stat_row, .smpl_stat_td{
+	border: $border_settings;	
+}
+
+.smpl_stat_tdleft{
+  text-align: left;	
+}
+.smpl_stat_tdval{
+	text-align: right;
+}
+
+tr.even {
+	background-color: $bkgeven;
+	border: $border_settings;
+}
+
+tr.odd{
+  background-color: $bkgodd;
+	border: $border_settings;
+}
+/* visibility, position, etc*/
+
+div#SmplEditForm {
+	display:none;
+	z-index: 1023;
+	position:absolute;
+	left:50%;
+	top: 10%;
+}
+
+
+div#SmplEditForm > table > tr > td{
+	text-align: left;
+}
+div#SmplEditFormData{
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+/* only the parameters of view*/
+.smpl_edit_form,
+.smpl_imgedit_form{
+  background-color: $bkgviewcolor;
+  border-style: ridge;
+  border-width: 4px;
+  border-color: $bordercolor;
+}
+
+/* Img Edit css settings */
+.smpl_imgedit_form{
+  padding: 8px;
+}
+
+div.smpl_imgeditform_container{
+	padding: 0.1em;
+}
+.smpl_imgedit_title{
+	text-align: center;
+	font-weight: bold;
+	border-bottom-width: 1px;
+	border-bottom-color: $bordercolor;
+	border-bottom-style: solid;
+	margin-bottom: 0.1em;
+}
+
+.smpl_imgedit_img{
+	max-width: 100%;	
+}
+
+div#smpl_imgedit_title{
+	max-width: 100%;
+}
+div#smpl_imgedit_filename{
+	display: inline;
+}
+div#smpl_imgeditform_container{
+	float: left; max-width: 65%;max-height: 80%;
+}
+div#SmplImgEditForm {
+	display:none;
+	/*display:block; // for testing purposes */
+	z-index: 1023;
+	position:absolute;
+	left:45%;
+	top: 10%;
+	resize: both;	
+}
+
+div#SmplImgEditForm > table > tr > td{
+	text-align: left;
+}
+
+div#SmplImgEditFormCont {
+}
+
+/* Taxonomy css settings*/
+div.smpl_div_taxonomy {
+	border-style: solid none solid none;
+	border-color: $bordercolor;
+	border-width: 1px;  
+	padding-bottom: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+select#smpl_sel_tax{
+	max-width: 150px;
+}
+
+select#smpl_sel_tax > option {
+	max-width: 150px;
+}
+
+/* Rangom image style*/
+.smpl_randomimage{
+	max-width:150px;
+	border-style:ridge; 
+	border-width: 4px; 
+	border-color: $bordercolor;
+}
+
+.smpl_imgeditborder{
+	/*padding-bottom:0.1em;*/
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: $bordercolor;
+	vertical-align: middle;
+	margin-bottom:0.1em;
+}
+
+div#imgedit_actions{
+	float:left; 
+	min-width: 200px;
+	/*max-width: 35%; */
+	max-height: 80%;
+}
+
+.smpl_imgedit_cl{
+	display:inline; 
+	max-width: 3.2em;	
+}
+.smpl_imgedit_max{
+	display:inline; 
+	max-width: 3.1em;	
+}
+
+.smpl_slider{
+	vertical-align: middle;
+	display:inline; 
+	max-width: 80px;
+}
+
+#smpl_imgedit_actions{
+	font-size:0.85em;
+	text-align: left;
+}
+
+div.smpl_mobile_div{
+	float:left;
+	border-bottom: 1px solid #f0f0f0;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+
+/* Help */
+.smpl_help{
+	display: none;
+	width: 75%; 
+	border: 1px solid grey;
+	position: absolute;
+	top: 100px;
+	left: 100px; 
+	background-color: #ccc;
+	z-index: 1023;
+	text-align: left;
+	padding: 0.5em;
+	resize:both;
+	overflow: auto;
+}
+#smpl_help_content{
+	float: left;
+	width: 100%;
+	height: 100%;
+}
+
+label{
+	display: inline;
+}
+
+body.smpl_waiting{
+	cursor:progress;
+}
