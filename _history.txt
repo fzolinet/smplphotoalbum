@@ -1,375 +1,112 @@
-Bug:
+Bugs:
 ~~~~
+- There is not Image Edit button
+- The Pictures higher than - when Blazy installed
 
 Todo:
-~~~~~
-	og:title
-	og:description
-	og:site_name
-	og:image
-- The statistic of image in the description
-- Simple list with delete and caption and view permission in a table
-- Owner in the database setting trustee of users
-- Slideshow (based on javascript)
-- Sort order (javascript, css, php)
-- Facebook let buttons not div! (templates, php, css)
-- can use with keyboards the buttons (smpl.js, or templates and php) 
-
-- The content can be paid
-  - file/ files / content of folder / all the site can be paid
-  - the number of downloading limitation for file / files / folder / all the site  
-  - Pay: Paypal
-  
-  Admin set the paid file:
-  - set the price
-  - the maximum number of downloadin
-  - watermark on the icon to paid (PHP graph modul write on it)
-  
-  When downloading
-  - image: watermark on the image
-  - Audio/Video: play only the first 10%
-  - other file: could not downloading the file.
-  
-  Access the paid content:
-    Mark the user on my site in session  and set a SESSION variable
-    change his/her account and amnount.
-    If he/she is anonymous, can pay with PayPal.
-  
-  Partner: 
- 
-  - register on the site to want to download content (required email and password) 
-    => I send email  when push the PayPal button => pay with PayPal 
-    => I get from PayPal to paid some money
-    => He/she can download the content (n times / any times )
-     
-    If he/she click on paid content
-    - I sign to login with paid account and redirect to own login form. 
-    - If he/she has paid account, but not enough money on his account redirect to PayPal and 
-    can be pay.
-    - If he has enough money push the download button the money down from account
-    - I he/she does not want to register pay with PayPal and can download while the session is 
-    alive
-Or: I can make virtual user with email, name, password, money account
- 
-Fizetés leírása: 
-  http://www.phpgang.com/how-to-integrate-payment-system-with-paypal_249.html
-
-  Adatszerkezet:
-  	Drupal user (smplbuy lesz a megfelelő profil)
-  	smplphotoalbum plusz mezők (+ paid, prize): fizetős, ár (1 letöltés ára)
-  	smpl_folder (fid, path, ar) - Egy folderhez tartozó ár
-  	smpl_user (uid, egyenleg)
-  	
-  	n:m kapcsolat az image-ek és a userek között.
-  
-  smplphotoalbum_connection(smplphotoalbum.id, uid, paid, down_max (0...n), down_act)
-  
-  Számla: 
-  
-  A kapcsolat lehet fizetett, n alkalmi, akárhány alkalmi
-  Ha nincs fizetve, akkor 
-  - kép esetén csak preview
-  - film és hang esetén csak az első 10 sec.
-  Ha a kapcsolat fizetett, akkor =>
-
-- imagefilter: 
-  EDGEDETECT, EMBOSS, GAUSSIAN_BLUR, SELECTIVE_BLUR, SKETCHY REMOVAL, SMOOTH, 
-  noise despeckleImages
-PIXELATE
-- Perspective transition
-- Watermark on the images on fly
-
-  
-On Fire;
-~~~~~~~
--
-edit.js JSON fogadása
-
-- HTML5 video embed thumbnail generator
-- Editing properties of files in admin modul
-- Video preview making without ffmpeg (?)
-- Bugs: 
-  call taxonomy the data errors 
-  Taxonomia refresh 
-- Shows taxonomy images starting 
-
-- Fizetős tartalom
-  Adatbázis módosítása a letöltések miatt
-  Install / Update elkészítése
-  - új adatbázis táblák
-  - Régi táblák módosítása
-  Az adminisztrátori felületen egy fájl adatainak módosítása
-  Fájlhoz tartozó edit felület módosítása (AJAX)
-  
-  Ha fizetős, akkor a thumbnail megjelenítését meg kell változtatni fizetősre (GD segítségével) 
-    Összeg is kerüljön rá
-  Ha fizetős, akkor vízjelet kell tenni a képre, a filmnek zenének csak a 10%-a játszható le.
-  Ha a fájlra kattint, akkor
-  - Ha a user számláján van-e elég pénz
-    akkor letölti
-    különben 
-      átirányítjuk a fizetős felületre (Drupal útvonal)
-        átadjuk az összeget és azt, hogy melyik oldalon volt a pali
-        Megjelenik egy box a fizetési lehetőséggel (PAYPAL)
-        Fizetés után visszairányítjuk a korábbi oldalra és letölthet
-        Letöltéskor csökkentjük a megadott összeggel a számláját.
-        
-  Mindenhol át kellene írni az elnevezéseket image helyett file-ra!!!!!!
+~~~~
+- Searhing for some image (name, filename, caption)
+Edit image
+- If the window too big and the screen too small
+- Saturation (a színek élénkítése)
+- Vignette effect (A szélek beszürkülnek)
+- Watermark (effekt - egy képet vagy logot teszek rá)
+- Grain (kis pontocsák kerülnek rá - amount, Smoothing, size
+- Correction (Lens, Perspective, Distortion, Liquify)
+- Levels correction
+- Light EQ
 
 History:
-~~~~~~~~
-2019.12.24
-- Bugfix: voted, viewed => true / false 
-2019.03.10
-- Bugfix: Editing Caption the Ajax calling with wrong ID
-- Bugfix: Wrong order after sort
-2018.07.13
-- Brightness works
-- Need > jQuery 1.6
-2018.06.21
-- Denoise with median flat algorithm
-2018.06.20
-- Bug: image rotate
-2018.06.15
-- Online help for editors
-- little bugfix
-2018.06.10
-- Mobile version modified and test
-- Bugfix:
-2018.05.09
-- Edit & Imgedit windows 
-- Bugfix: The buttons was not in one row
-- Bugfix: In the description windows the "1" was the Caption. 
-2017.07.29
-- Bugfix: Problem is the mobile device sensor gave back not boolean value.
-2017.07.25
-- If the device is mobile (dependencies Browsecap or Mobile Detect module), then the view is 
-change.
-  The width of the browser set the number of column (with <div> and not <table> tag)
-2017.07.22
-- Bugfix: ajax call "edit" image subscription and caption
-- Test: ajax call: Edit_all
-2017.07.21
-- Bugfix: Ajax call "kill" function
-2017.07.02
-- Bugfix: Ajax calling and "if" problem
-2017.06.17
-- Bugfix - 
-- getid3 lib update
-2017.04.09
-- Settings html5 widgets on |off in nodes independently
-2017.02.19
-- Bugfix - Imagick install eception handling
-2017.02.13
-- Using HTML5 <video> and <audio> tags
-2016.07.27
-- Delete, Kill, Edit button does not div more
-- Bugfix: installer
-- Bugfix: Viewer when the filename has UTF8 character. 
-2016.07.14
-- Too much variable of smplphotoalbum => settings array smpl=array();
-- Bugfix: Event settings
-- Bugfix: Popup Edit position in the window
-- Bugfix: The last view event save in the database
-2016.05.31
-- Facebook og:image and og:description 
-- Changing the table
-- Statistic: last view, last vote
-2016.05.21.
-- Cache clear all function
-2016.05.20
-- New: All the caption and subscription change as one to one.
-- Bugfix: cache problem
-- New: colorbox or lightbox2 usable for view the pictures
-- Bugfix: Random picture link problem
-- Bugfix: Flush the cache
-2016.05.14.
-- Link problems
+~~~~~~~
+2021.11.12 - 9.x-1.12
+- Bug: js: Does not close the big picture
+2021.10.13 - 9.x-1.11
+- Slideshow animation
+2021.09.29 - 9.x-1.10
+- Slideshow ready
 
-2016.03.15
-- Little bugfix
-- New: Flush the cache of actual page
-- Statistics of smplphotoalbum items 
-2016.03.07
-- Little bugfixes
-2016.02.29 
-- Little changes for compatibilty for PHP 7
-20151226
-- If installed use Imagick everywhere - because of less memory consumption
-- video can make thumbnail with ffmep lib or use my own thumbs.
-20151224
-- if there is Imagick installed on server system it use that library 
-20151222
-- Change added: smplphotoalbum table fb, googlep, twitter - removed:social
-20151212
-- On the Linux server the edit image is ready
-- Bugfix: Kill the image from server and database
-2015.12.05
-- Added: image edit undo, redo
-20151129
-- Add: Edit image: Rotate, any degree, flip, crop, resize, contrast, color, brightness
-2015.11.08
-- Bugfix: 404 code when the image is missed.
-- Add: Automatic meta keyword and description
+2021.08.21 - 9.x-1.06
+- Bug: Delete item did not work
+- Edit subscription of all of the item in path
 
-2015.11.01
-- Edit all subscription / caption is ok 
-- Bug: number of viewing
-- Bug: There was 2 characters output of bootloader - and the images did not viewed
-2015.10.18
-- Bug: When taxonomy page vote, view then call the all page, beacause calls the 
-taxonomy/path...
-- New taxonomy and modify taxonomy is ok.
-- link edit with ajax and write out the change
-- Taxonomy modify with ajax and write out the change
-- Viewnumber increments in v.php
-- Random image style modify
-- css modify
-- md5chk change ready
-2015.10.10
-- md5chk delete but there are bugs in the module
-2015.09.27
-- Edit taxonomy of image
-- New taxonomy into the taxonomy_term_data tabe ad smplphotoalbum_taxonomy
-- Delete from a row from smplphotoalbum_taxonomy table
-- Modfy taxonomy_term_data table record name and /or description
-- Shows a taxonomy table 
-2015.09.20
-- Random image from a folder
-2015.09.19
-- Prevent to direct access of folder tree of simple photoalbum
-2015.09.13
-- Edit all Subscription / Caption on the gallery
-- Error: If not logged in the pager link are bad :-( - This is cache problem 
-20150823
-- write out Properties of pptx. It is the same mode than docx.
-- write out properties of zip if php_zip is loaded
-- write out properties of rar's if php_rar is loaded
-- new filetype icons and properties
-- css with sass
-2015.07.11
-- Bugfix (when in the link there are two digits)
-20150705
-- Taxonomy delete
+2021.08.13
+- Bug: Did not save the modified image
+
+2021.08.07
+- Exif information bugs ( xls, etc...)
+- Bug: smpl variable does not exist when edit the view
+2021.08.07 
+- Bug: If there is not title on the page there are warnings
+- Bug: When edit the caption, subtitle of image trim the string of subtitle
+2021.06.10
+- Bug: solved - When download, the filename only a number, not the original filename 
+- Bug: solved - Image Download not works (Binary Response: SmplphotoalbumControlles::v()) 
+2021.06.09
+- Exif: doc files (under development PHPword not really good)
+2021.06.08
+- Exif: pdf, ppt
+2021.06.06
+- ppt Exif informations
+2021.06.04
+
+- Exif informations: 
+  Audio files, video files, images
+  exe, dll, pdf
+  docx, pptx, xlsx,
+  chm
   
-2015.06.27
-  - AJAX bugfix
-2015.06.14
-  - bugfixes - paging & Drupal cache problems
-2015.06.07
-  - bug correction os simple list
-  - HTML warnings correction
-  - Taxonomy of pictures 
-2014.12.20
-  - compressed and application (exe,dll, etc.) shows
-2014.11.16
-  - Bugfix in the "Simple listof all items"
-  - New: Description ia longer text and view in a popup layer
-2014.10.20
-  - Bugfix - show gallery of non pictures
-2014.06.29
-  - Helperfunction for sharing a page for Facebook with image
-2014.06.15
-  - Bugfix - for thumbnail pictures fix
-  - Bugfix - pager
-  - increases the speed of showing of pictures
-2012.12.31
-  - Drupal 7 Working version with
-    NEWS:
-    installer
-    more quicker
-    less memory comsumption
-    BUGFIXES:
-    edit / delete /kill in simple list is working
-20121226
-  - Drupal 7 text filter module rewritten
-20100720
-	- BUG: voted number strange! - smpl.js - solved
-	- BUG: simple list of images does not work - solved
-20100719
-   - Changeable order
-   - Filter in views
-20100718
-   - permission problem
-20100704
-   - rewrite it with hook_menu and callback ajax calling - token hardening dropped!
-20100629
-   - Durpal token hardening
-20100614
-   - bugfixes
-20100523
-   - Insert the subtitles into the contents of keywords meta tag
-20100511
-   - write out properties of docx, and xlsx documents
-   - BUG: The last page was not out - solved
-20100510
-   - BUG: ajax callback authentication - solved with token
-   - write out properties of pdf and other media types
-20100507
-   - Handle video and other media types
-20100504
-   - Bug: Random picture almost the same - solved
-   - Bug: if the number of pages is only one does not need pager - solved
-20100502
-   - Optimize the speed of making a random image
-20100418
-   - exif information popup window - ok
-20100416
-   - change subtitle
-   - setting delete state the image
-20100411
-  - Checked is over
-  - Ranking is over
-  - Viewed
-  - Make thumbnails
-20100410
-  - Show the thumbnails and pictures
-  - the pager works, similar the original Drupal pager
-  - the css style is the original
-  - making thumbnails
-20100406
-  - Write out the place of pictures in table
-20100405
-  - Make Drupal Setting interface, install, uninstall
-
-Original Drupal version based on previous version
-
-2.4.3   PDO database layer support if PHP version > 5.1.0
-2.4.2   Bugfix: Error in database table.
-2.4.1   Add: Read Exif information of picture with PHP
-2.3.6a  Bugfix
-2.3.6   Simple list can ordered and filtered
-        css styles are in other file (smplphotoalbum.css)
-        Bugfix: Flat file database
-        Bugfix: Watch the picture in original format in IE
-2.3.5a  Tested PHP 5.0.4 Databases(Access, Mysql 5.0.1 with ADODB)
-2.3.5   Add: Voting system with ADODB (http://adodb.sourceforge.net)
-                      Tested with access & mysql
-                      List of Ranks
-2.3.4c  Bugfixes and preview of database version (ADODB or Flat file database)
-        Compatibility problem php 4.x.x vs php 5.x.x
-2.3.4b  The folder of thumbnails go to the subdirectory is called _th_
-        It converts the thumbnails of older version.
-2.3.4   It plays the video and the audio files in LAYER
-2.3.3b  The size of picture resizes to the size of space, the picture is printable
-2.3.3a  Shows the picture with overlibmws library
-        - The name of thumbnail file started with _tn_
-        It converts the tn_ => _tn_ automatic at first run
-
-2.3.2b  U can use LANG definition.
-2.3.2a  Debug version
-2.3.2   Debugging
-2.3     Video & sound file play's and Listm,
-        if the plugins are installed
-        Supported video: avi, mpg, mpeg, mov, rm, ram, wmv
-        mov, rm, ram and wav, asf, mp3, mid, wma file has no thumbnail
-        Tested in IE6 & Firefox 1.0.7
-
-2.2.3   Simple List of Pictures (to download)
-2.2.2a  default pager, bugs
-2.2.2   Pager
-2.2.1   Thumbnail rewrite when original file newer than thumbnail
-2.2     CSV file handling
-2.1     no session
-2.0b    rewritten in OOP style
-1.0     first release
+2021.06.03.
+- bug: UTF-8 problem in Exif - solved
+- exif info bugs.
+2021.06.01
+- jpg / png / gif etc exif info ok
+- docx exif info ok
+2021.05.28
+- Exif class: Video, audio, image, rar, zip, jar, apk
+2021.05.27
+- Exif class in 
+2021.05.15
+- Initial version of D9
+2021.01.25 - 8.x-1.03
+  add: images lazy loading
+  Add: new syntax of smplphotoalbum
+2021.01.12 - 8.x-1.02
+  Add: ImgEdit - Grayscale
+  Add: ImgEdit - Convolution matrix using
+  Add: ImgEdit - Emboss
+- bugfix: Undo / Redo show
+- bugfix: Underline at the pictures
+- bugfix: ImgEdit - resize / crop does not works!
+-   
+2021.01.08 - 8.x-1.01
+- change colorbox to own solution
+2021.01.05 - 8.x-1.0
+- Pager works and tested
+- Order is ready - tested
+2021.01.03
+  ImgEdit functions ready there are bugs
+  bugfix:Delete functions works
+2021.01.01
+  start the Image Edit functions
+  bugfixes
+2020.12.28
+  Edit subtitle and link
+2020.12.27
+  Exif window draggable
+  Exif readers: pdf, images, docx, audio, video, xlsx, xls, jar   
+2020.12.26.
+  Optimalization - reprogram: Imagelist.php & Image.php 
+2020.12.25
+  The images shows right
+2020.12.21
+  The pictures shows
+  makes new thumbnail
+  new rows in database
+  FilterSMplphotoalbum  
+  beginning modify js files in /js/ - library
+2020.12.15 
+  beginning modify CSS, sass 
+2020.05.05 
+  Install is ready
+  Readme, Olvassel, smplphotoalbum.module is ready
+2020.05.03 - the port of smpl photoalbum begins 

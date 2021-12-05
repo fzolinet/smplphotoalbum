@@ -1,3 +1,0 @@
-      <div class="smpl_edit" {{smpl_simplelist}} >
-        <!--<button id="ImgBtn{{id}}" class="smpl_imgedit_plus" title="{{imgedit}}">&nbsp;&nbsp;&nbsp;</button>--><button id="SubBtn{{id}}" class="smpl_edit_plus" title="{{edit}}">&nbsp;&nbsp;&nbsp;</button><button id="DelBtn{{id}}" class="smpl_delete_plus" title="{{delete}}">&nbsp;&nbsp;&nbsp;</button><button id="Kill{{id}}" class="smpl_kill_plus" title="{{trash}}">&nbsp;&nbsp;&nbsp;</button>
-      </div>

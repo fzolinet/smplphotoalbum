@@ -1,440 +1,114 @@
 <?php
-
+require_once 'src/define.php';
+require_once 'src/functions.php';
 /**
- * Implementation os hook_requirement()
- * @param unknown $phase
+ * Implements hook_requirements().
+ * Check the requirements
+ * 
+ * @param unknown $phase          
  */
-require_once 'inc/define.inc';
-function smplphotoalbum_requirement($phase)
-{
-	$req = array();
-	$is_gd = function_exists("gd_info");
-	if(!is_gd){
-		$req['smplphotoalbum']['GD'] = array(
-			'title' => t('GD module is not avaliable'),
-			'description' => 'When GD module is not avaliable resizing of images does not works!',
-			'severity' => REQUIREMENT_ERROR,
-		);
-	}
-
-	return $req;
-}
-/**
- * Implementation of hook_schema().
- */
-
-function smplphotoalbum_schema() {
-  $schema['smplphotoalbum'] = array(
-    'description' => t('Table for Simple Photoalbum.'),
-    'fields' => array(
-      'id' => array(
-        'description' => t('Image id.'),
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'size' => 'normal',
-      ),
-      'path' => array(
-        'description' => t('Image path.'),
-        'type' => 'varchar',
-        'not null' => FALSE,
-        'length' => 255,
-        'default' => '',
-      ),
-      'name' => array(
-        'description' => t('Image Text.'),
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => FALSE,
-        'default' => '',
-      ),
-      'type' => array(
-            'description' => t('Type of file.'),
-            'type' => 'varchar',
-            'length' => 20,
-            'not null' => FALSE,
-            'default' => '',
-        ),
-      'subtitle' => array(
-        'description' => t('Subtitle of image'),
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'votenumber' => array(
-        'description' => t('Voted picture'),
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'size' => 'normal',
-        'default' => 0,
-      ),
-      'viewnumber' => array(
-      	'description' => t('number of viewed'),
-      	'type' => 'int',
-      	'unsigned' => TRUE,
-      	'DEFAULT' => 0,
-      ),
-      'rank' => array(
-      	'description' => t('rank of image'),
-      	'type' => 'int',
-      	'unsigned' => TRUE,
-      	'default' => 0,
-      ),
-      'caption' => array(
-      	'description' => t('Text of caption'),
-      	'type' => 'blob',
-        'length' => 255,
-      	'not null' => FALSE,
-      ),
-      'deleted' => array(
-      	'description' => t('Is logical deleted the image'),
-      	'type' => 'int',
-      	'default' => 0,
-      ),
-      'filesize' =>array(
-        'description' => t('The size of file'),
-        'type' => 'int',
-        'default' => 0,
-      ),
-    	'thdate' => array(
-    		'description' => t('last modified time of file'),
-    		'type' => 'int',
-    		'default' => 0,
-    	),
-     'fb' => array(
-        'description' => t('Social sharing metatag for Facebook'),
-        'type' => 'int',
-        'default' => 0,
-      ),
-      'googlep' => array(
-        'description' => t('Social sharing metatag for Google+'),
-        'type' => 'int',
-        'default' => '0',
-      ),
-      'twitter' => array(
-        'description' => t('Social sharing metatag for Twitter'),
-        'type' => 'int',
-        'default' => 0,
-      ),
-      'url' => array(
-        'description' => t('Social sharing metatag for Twitter'),
-        'type' => 'blob',
-      ),
-      'target' => array(
-          'description' => t('Target of link'),
-          'type' => 'varchar',
-          'length' => 255,
-          'default' => '_blank',
-      ),
-      'price' => array(
-          'description' => t('Price'),
-          'type'        => 'int',
-          'default'     => 0
-      ),
-      'currency' => array(
-          'description' => t("Currency"),
-          'type'        => 'varchar',
-          'length'      => 10,
-          'not null' => FALSE,
-          'default' => 'Ft',
-      ),
-      'download' => array(
-            'description' => t("Number of downloading of a user"),
-            'type'        => 'int',
-            'default' => 1,
-      ),
-        
-    ),
-    'primary key' => array('id'),
-    'indexes' =>array(
-     )
-  );
-
-  $schema['smplphotoalbum_taxonomy'] = array(
-  		'description' => t('Table for using taxonomy in Simple Photoalbum.'),
-  		'fields' => array(
-  				'stid' => array(
-  						'description' => t('Image id.'),
-  						'type' => 'serial',
-  						'unsigned' => TRUE,
-  						'not null' => TRUE,
-  						'size' => 'normal',
-  						//'default' => 0,
-  				),
-  				'tid' => array(
-  						'description' => t('Taxonomy ID'),
-  						'type' => 'int',
-  						'unsigned' => TRUE,
-  						'default' => 0,
-  				),
-  		    'sid' => array(
-  		        'description' => t('smplphotoalbum ID'),
-  		        'type' => 'int',
-  		        'unsigned' => TRUE,
-  		        'default' => '0',
-  		    ),
-  		),		//Fields definition end
-  		'primary key' => array('stid'),
-  		'indexes'     => array(
-  				'tid'    => array('tid')
-  		),
-  );
-
-  $schema['smplphotoalbum_event'] = array(
-    		'description' => t('Table of event in Simple Photoalbum.'),
-    		'fields' => array(
-    		    'id' => array(
-    		        'description' => t('Event id.'),
-    		        'type' => 'serial',
-    		        'unsigned' => TRUE,
-    		        'not null' => TRUE,
-    		        'size' => 'normal',
-    		        //'default' => 0,
-    		    ),
-    		    'uid' => array(
-    		        'description' => t('smplphotoalbum user ID'),
-    		        'type' => 'int',
-    		        'unsigned' => TRUE,
-    		        'default' => 0,
-    		    ),
-    		    'sid' => array(
-    		        'description' => t('smplphotoalbum ID'),
-    		        'type' => 'int',
-    		        'unsigned' => TRUE,
-    		        'default' => 0,
-    		    ),
-    		    'event' => array(
-    		        'description' => t('Event type'),
-    		        'type' => 'varchar',
-    		        'length' => 20,
-    		        'default' => '',
-    		    ),
-    		    'eventdate' => array(
-    		        'description' => t('Timestamp of event'),
-    		        'type' => 'int',
-    		        'unsigned' => TRUE,
-    		    ),
-    		    
-    		),		//Fields definition end
-    		'primary key' => array('id'),
-    		'indexes'     => array(
-    		    'sid'    => array('sid')
-    		),
-      
-  );
-
-  //smplphtoalbum user table
-  $schema['smplphotoalbum_user'] = array(
-      'description' => t('Table of users of Simple Photoalbum.'),
-      'fields' => array(
-            'uid' => array(
-                'type'        => 'int',
-		'description' => t('user id'),
-                'unsigned'    => TRUE,
-    		'not null'    => TRUE,
-    		'size'        => 'normal',
-    	     ),
-    	    'money' => array(
-    		'description' => t('Money on the account'),
-    		'type'        => 'int',
-    		'unsigned'    => TRUE,
-    		'default'     => 0,
-    	    ),
-    	    'currency' => array(
-		'description' => t("Currency"),
-	        'type'        => 'varchar',
-		'length'      => 10,
-	        'not null' => FALSE,
-		'default' => 'Ft',
-    	    ),
-	),
-      'primary key' => array('uid'),
-  );
+function smplphotoalbum_requirements($phase) {
+  $m = \Drupal::service ( 'module_handler' );
+  $requirements = array ();
+  switch ($phase) {
+    case 'install' :
+      break;
+    case 'update' :
+      break;
+    case 'runtime' :
+      break;
+    default :
+      break;
+  }
   
-  //Smplphotoalbum cache set
-  $schema['cache_smplphotoalbum'] = drupal_get_schema_unprocessed('system','cache');
-  return $schema;
+  if (extension_loaded ( "gd" )) {
+    $requirements ['smplphotoalbum'] = array (
+        'title' => t ( 'Simple Photoalbum requirement ERROR!' ),
+        'value' => t ( 'GD not installed in PHP but required!' ),
+        'description' => t ( 'Enable the GD in PHP, because it is required!' ) 
+    );
+  } else {
+    $requirements ['smplphotoalbum'] = array (
+        'title' => t ( 'Simple Photoalbum requirement OK!' ),
+        'value' => t ( 'GD installed in PHP' ),
+        'severity' => REQUIREMENT_OK 
+    );
+  }
+  
+  return $requirements;
 }
 
 /**
- * A fizetős tartalom adatait készíti elő.
- */
-function smplphotoalbum_update_7200(){
-  variable_set('smpl_payment',false);
-  variable_set('smpl_opened',true);
-  variable_set('smpl_mobile',false);    //modify the number of column if detect mobile device
-}
-/**
- * Implementation of hook_install().
- *
- * flashnode used to be just flash, so we need to check if {flash} table already
- * exists when we install flashnode. If it does then we need to rename it,
- * otherwise we install the table as normal
+ * Implementation of hook_install()
  */
 function smplphotoalbum_install() {
-  variable_set('smpl_edit',1);
-  
-	$cb = module_exists('colorbox');
-	$lb = (!$cb) && module_exists('lightbox2');
-	if($cb )
-	  variable_set('smpl_overbrowser_type','cb');
-	elseif($lb)
-	 variable_set('smpl_overbrowser_type','lb');
-	else
-	  variable_set('smpl_overbrowser_type','');
-	  
-	variable_set('smpl_overbrowser',true);
-  variable_set('smpl_overbrowser_paging',true);
-  variable_set('smpl_overbrowser_video',true);
-  
-	variable_set('smpl_cols',4);
-	variable_set('smpl_rows',5);
-	variable_set('smpl_width',150);
-	variable_set('smpl_sub',true);
-	variable_set('smpl_capt',true);
-  variable_set('smpl_root',"__DRUPALROOT__");
-  variable_set('smpl_viewed',true);
-	variable_set('smpl_voted',true);
-	variable_set('smpl_exif',true);
-	variable_set('smpl_rank',true);
-	variable_set('smpl_sort', 'filename');
-	variable_set('smpl_order','asc');
-	// Social sharing
-	variable_set('smpl_fb',true);
-	variable_set('smpl_twitter',true);
-	variable_set('smpl_googlep',true);
-
-	variable_set('smpl_check',false);
-	variable_set('smpl_number_of_checking',2000);
- 	variable_set('smpl_from',0);
- 	variable_set('smpl_keywords',true);
- 	variable_set('smpl_subtitle_change',1);
- 	variable_set('smpl_subtitle_change_text', '_ .jpg');
-  variable_set("smpl_ffmpeg", true);
-  
- 	variable_set('smpl_audio_checking',0);
- 	variable_set('smpl_audio_extensions', SMPLAUDIOEXT);
- 	variable_set('smpl_audiohtml5_extensions', SMPLHTML5AUDIOEXT);
-
- 	variable_set('smpl_video_checking', 0);
- 	variable_set('smpl_video_extensions', SMPLVIDEOEXT);
- 	variable_set('smpl_videohtml5_extensions', SMPLHTML5VIDEOEXT);
-
- 	variable_set('smpl_html5', true);   // v2.01 - Use html5 widgets
- 	variable_set('smpl_doc_checking', 0);
- 	variable_set('smpl_doc_extensions', SMPLDOCEXT);
- 	
- 	variable_set('smpl_cmp_checking', 0);
- 	variable_set('smpl_cmp_extensions', SMPLCMPEXT);
-
- 	variable_set('smpl_app_checking', 0);
- 	variable_set('smpl_app_extensions', SMPLAPPEXT);
-
- 	variable_set('smpl_oth_checking', 0);
- 	variable_set('smpl_oth_extensions', SMPLOTHEXT);
- 	
- 	variable_set('smpl_dis_checking', 0);
- 	variable_set('smpl_dis_extensions', SMPLDISEXT);
- 	
- 	variable_set('smpl_button_pre',"-:");
- 	variable_set('smpl_button_post',":-");
- 	variable_set('smpl_edit',True);
- 	variable_set('smpl_delete',True);
- 	variable_set('menu_rebuild_needed', TRUE);
- 	variable_set('smpl_menu_rebuild_directaccess', TRUE);
- 	
- 	$htaccess ="SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006\nOptions None\nOptions +FollowSymLinks";
- 	variable_set('smpl_menu_rebuild_htaccess', $htaccess);
-
- 	// url settings
- 	variable_set('smpl_url', false);
- 	variable_set('smpl_url_target', '_blank');
-
- 	//taxonomy settings
- 	$x = module_exists("smpl_taxonomy");
- 	if(!$x) drupal_set_message(t('The Taxonomy module is not installed or disabled, Install it and enable it and Simple Photoalbum can use the taxonomy albums'),'warning');
- 	variable_set('smpl_taxonomy',$x  );
- 	variable_set('smpl_taxonomy_vocabulary_machine_name','smpl_vocabulary');
- 	variable_set('smpl_taxonomy_vocabulary_name','Simple Photoalbum Vocabulary');
-
- 	// img edit settings
- 	variable_set("smpl_imgedit", true);
- 	variable_set("smpl_temp",variable_get("files_public_path")."/smplphotoalbum/");
- 	drupal_set_message(t('Smplphotoalbum module has been setup.'));
+  \Drupal::messenger ()->addMessage ( t ( 'Smplphotoalbum module has been installed.' ), 'status' );
 }
 
-//Uninstall function
-function smplphotoalbum_uninstall(){
-	drupal_uninstall_schema('smplphotoalbum');
-	drupal_uninstall_schema('smplphotoalbum_taxonomy');
-	drupal_uninstall_schema('smplphotoalbum_event');
-	drupal_uninstall_schema('smplphotoalbum_payment');
-	drupal_uninstall_schema('smplphotoalbum_user');
-	
-  drupal_set_message(t('Smplphotoalbum module has been uninstalled'));
-  variable_del('smpl_overbrowser');
-  variable_del('smpl_overbrowser_paging');
-  variable_del('smpl_overbrowser_video');
-  
-  variable_del('smpl_cols');
-  variable_del('smpl_rows');
-  variable_del('smpl_width');
-  variable_del('smpl_sub');
-  variable_del('smpl_capt');
-  variable_del('smpl_root');
-  variable_del('smpl_viewed');
-  variable_del('smpl_opened');
-  variable_del('smpl_voted');
-  variable_del('smpl_exif');
-  variable_del('smpl_rank');
-  variable_del('smpl_sort');
-  variable_del('smpl_order');
-  // Social sharing
-  variable_del('smpl_fb');
-  variable_del('smpl_twitter');
-  variable_del('smpl_googlep');
-  
-  variable_del('smpl_check');
-  variable_del('smpl_number_of_checking');
-  variable_del('smpl_from');
-  variable_del('smpl_keywords');
-  variable_del('smpl_subtitle_change');
-  variable_del('smpl_subtitle_change_text');
-  variable_del("smpl_ffmpeg");
-  
-  variable_del('smpl_audio_checking');
-  variable_del('smpl_audio_extensions');
-  variable_del('smpl_audiohtml5_extensions');
-  
-  variable_del('smpl_video_checking');
-  variable_del('smpl_video_extensions');
-  variable_del('smpl_videohtml5_extensions');
-  
-  variable_del('smpl_html5');   // v2.01 - Use html5 widgets
-  variable_del('smpl_doc_checking');
-  variable_del('smpl_doc_extensions');
-  
-  variable_del('smpl_cmp_checking');
-  variable_del('smpl_cmp_extensions');
-  
-  variable_del('smpl_app_checking');
-  variable_del('smpl_app_extensions');
-  
-  variable_del('smpl_oth_checking');
-  variable_del('smpl_oth_extensions');
-  
-  variable_del('smpl_dis_checking');
-  variable_del('smpl_dis_extensions');
-  
-  variable_del('smpl_button_pre');
-  variable_del('smpl_button_post');
-  variable_del('smpl_edit');
-  variable_del('smpl_delete');
-  variable_del('smp_payment');
-  
-  
-  variable_del('menu_rebuild_needed');
-  variable_del('smpl_menu_rebuild_directaccess');
-  variable_set('menu_rebuild_needed', TRUE);
+/**
+ * implementation of hook_uninstall()
+ */
+function smplphotoalbum_uninstall() {
+  \Drupal::messenger ()->addMessage ( t ( 'Smplphotoalbum module has been uninstalled.' ), 'status' );
+}
+
+function smplphotoalbum_schema() {
+  $schema = array ();
+  $schema ['smplphotoalbum'] = array (
+      'description' => t ( 'Table for Simple Photoalbum.' ),
+      'fields' => array (
+          'id' => array (
+              'description' => t ( 'Image id.' ),
+              'type' => 'serial',
+              'unsigned' => TRUE,
+              'not null' => TRUE,
+              'size' => 'normal' 
+          ),
+          'path' => array (
+              'description' => t ( 'Image path.' ),
+              'type' => 'varchar',
+              'not null' => FALSE,
+              'length' => 255,
+              'default' => '' 
+          ),
+          'name' => array (
+              'description' => t ( 'Image Text.' ),
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE,
+              'default' => '' 
+          ),
+          'typ' => array (
+              'description' => t ( 'Type of file.' ),
+              'type' => 'varchar',
+              'length' => 20,
+              'not null' => FALSE,
+              'default' => '' 
+          ),
+          'viewnumber' => array (
+              'description' => t ( 'number of viewed' ),
+              'type' => 'int',
+              'unsigned' => TRUE,
+              'DEFAULT' => 0 
+          ),
+          'subtitle' => array (
+              'description' => t ( 'Text of caption/subtitle' ),
+              'type' => 'blob',
+              'length' => 255,
+              'not null' => FALSE 
+          ),
+          'link' => array (
+              'description' => t ( 'URL association of file ' ),
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE,
+              'default' => '' 
+          ) 
+      ),
+      'primary key' => array (
+          'id' 
+      ),
+      'indexes' => array () 
+  );
+  return $schema;
 }

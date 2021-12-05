@@ -132,6 +132,9 @@ You want to make a simple photoalbum:
   You canb shows random photos from the path:
   [smplr|relative path from photoalbum root] - random image from that folder and subfolders
 
+  if the path begins with '/' sign or on Windows 'C:' or something like that, the path is
+  absolute from beginning of the filesystem.
+
 Default example:
 [smpl|myalbum/foo/]
 

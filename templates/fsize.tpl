@@ -1,1 +1,0 @@
-<div class='smpl_size' {{smpl_simplelist}}> <div id='Size{{id}}' class='smpl_size_text'>{{size}}: {{fsize}}</div></div>

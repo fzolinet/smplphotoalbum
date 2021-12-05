@@ -1,417 +1,64 @@
 <?php
-
-require_once 'inc/define.inc';
-require_once 'inc/functions.inc';
-require_once 'inc/settings.inc';
-require_once 'inc/substitute.inc';
-require_once 'inc/statistics.inc';
-require_once 'inc/image.inc';
-require_once 'inc/imagetax.inc';
-require_once 'inc/imagelist.inc';
-require_once 'inc/imagelisttax.inc';
-require_once 'inc/callback.inc';
-require_once 'inc/edit.inc';
-require_once 'inc/exif.inc';
-require_once 'inc/imgedit.inc';
-require_once 'inc/imgmanipulate.inc';
-require_once 'inc/user.inc';
-require_once 'inc/mobile.inc';
-require_once 'lib/exif/exif.php';
-require_once 'lib/encoding.php';
-require_once 'lib/ffmpeg/_ffmpeg.php';
-
-
-
- // Be sure of the path to the class
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Extension\InfoParser;
 /**
- * Megjeleniti a module help informaciokat
- * @param unknown_type $path
- * @param unknown_type $arg
+ * Implements hook_help().
  */
-function smplphotoalbum_help($path,$arg){
-  global $language ;
-	$output = '';
-
-	switch($path){
-	  
-	  case "admin/help#smplphotoalbum":
-			$output = '<h3>' .t('About'). '</h3>';
-			$path = drupal_get_path('module', 'smplphotoalbum') . '/smplphotoalbum.info';
-			$info = drupal_parse_info_file($path);
-			$output .= 'Author: <a href="http://www.fzolee.hu">Zoltan Fabian</a><br/>';
-			$output .= t('version').': '.$info['version'].'<br/>';
-			$output .= t('compiled').': '.date('Y.m.d',$info['datestamp']);
-			$output .="<p>".t("Simple Photoalbum shows a set of picture and other filetypes .")."</p>";
-			$lang_name = $language->language;
-			if($lang_name == "hu"){
-			  $output .= file_get_contents(drupal_get_path('module', 'smplphotoalbum')."/Olvassel.html");
-			}else{
-			  $output .= file_get_contents(drupal_get_path('module', 'smplphotoalbum')."/Readme.html");
-			}
-			
-			break;
-	  case "admin/help/smplphotoalbum":
-	    break;
-	}
-	return $output;
-}
-
-/*
- * hook_block_info megvalositasa
-* Megmondja a drupalnak, hogy a modul melyik blokkokat hozza letre
-*/
-function smplphotoalbum_block_info(){
-	$blocks['smplphotoalbum'] = array(
-			'info' => t('Smplphotoalbum'), 			//Ez lesz a blokkok listajaban a neve
-			'cache' => DRUPAL_CACHE_PER_ROLE, 	//Default
-	);
-	return $blocks;
-}
-
-function smplphotoalbum_block_view($d) {
-	$content = 'x';
-	switch($d){
-		case 'smplphotoalbum':
-			$block['subject'] = t('Smplphotoalbum');
-			if(user_access('access content')){
-				$content = '';
-			}
-	}
-	return $content;
-}
-
-/**
-* Valid permissions for this module
-* @return array An array of valid permissions for the on this module
-*/
-function smplphotoalbum_perm() {
-	return array('access smplphotoalbum', 'administer smplphotoalbum', 'edit smplphotoalbum');
-}
-
-function smplphotoalbum_access(){
-	return user_access("administer smplphotoalbum") && user_access("edit smplphotoalbum");
-}
-
-
-/**
- *	Hook menu implementalasa
- */
-function smplphotoalbum_menu() {
-
-  $items = array();
-
-  $items['admin/config/fz/smplphotoalbum'] = array(
-    'title'            => 'Simple Photoalbum',
-    'description'      => t('Description of your Smplphotoalbum settings control'),
-    'page callback'    => 'drupal_get_form',
-    'page arguments'   => array('smplphotoalbum_admin_settings'),
-    'access arguments' => array('administer site configuration'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 1
-   );
+function smplphotoalbum_help($route_name, RouteMatchInterface $route_match) {
+  global $language;
+  $output = '';
   
-  $items['admin/config/fz/smplphotoalbum/settings'] = array(
-      'title'            => 'Simple Photoalbum',
-      'description'      => t('Description of your Smplphotoalbum settings control'),
-      'page callback'    => 'drupal_get_form',
-      'page arguments'   => array('smplphotoalbum_admin_settings'),
-      'access arguments' => array('administer site configuration'),
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-      'weight' => 2
-  );
-  
-  $items['admin/config/fz/smplphotoalbum/stat'] = array(
-      'title'            => 'Simple Photoalbum Statistics',
-      'description'      => t('Statistics of Smplphotoalbum images and files'),
-      'page callback'    => 'drupal_get_form',
-      'page arguments'   => array('smplphotoalbum_stat'),
-      'access arguments' => array('administer administration pages'),
-      'type' => MENU_LOCAL_TASK,
-      'weight' => 3
-  );
-  
-  $items['smplphotoalbum'] = array(
-   'title' => 'Smplphotoalbum',
-   'description' => t('Ajax calling, view picture'),
-   'page callback' => 'smplphotoalbum_view',
-   'access callback' =>'smpl_callback',
-   'type' => MENU_CALLBACK,
-   );
-
-
-   $modulepath = drupal_get_path('module','smplphotoalbum');
-
-   //Ez lesz az az ut, amivel meg lehet nezni egy kepet - az smpl_callback.inc-ben levo függvenyeket hivja meg.
-   $items['smplphotoalbum/view'] = array(
-   'title' => 'Smplphotoalbum view picture',
-   'description' => t('Ajax calling, view picture'),
-   'page callback' => 'smplphotoalbum_view',
-   'access callback' =>'smpl_callback',
-   'type' => MENU_CALLBACK,
-   );
-   
-   $items['smplphotoalbum/edithelp'] = array(
-       'title' => 'Smplphotoalbum view picture',
-       'description' => t('Ajax calling, view picture'),
-       'page callback' => 'smplphotoalbum_edithelp',
-       'access callback' =>'smpl_callback',
-       'type' => MENU_CALLBACK,
-   );
-	// Voting an image
-   $items['smplphotoalbum/vote'] = array(
-   'title' => 'Smplphotoalbum voting',
-   'description' => t('Ajax calling, voting'),
-   'page callback' => 'smplphotoalbum_vote',
-   'access callback' =>'smpl_callback',
-   'type' => MENU_CALLBACK,
-   );
-
-    // Change the subscription of image
-   $items['smplphotoalbum/sub'] = array(
-     'title' => 'Smplphotoalbum subscription',
-     'description' => t('Ajax calling, subscription'),
-     'page callback' => 'smplphotoalbum_sub',
-     'access arguments' => array('update'),
-     'type' => MENU_CALLBACK,
-   );
-
-   // Change the subscription and taxonomy of image
-   $items['smplphotoalbum/edit'] = array(
-   		'title' => 'Smplphotoalbum Image Edit form',
-   		'description' => t('Ajax calling, Image Edit form'),
-   		'page callback' => 'smplphotoalbum_edit',
-   		'access arguments' => array('update'),
-   		'type' => MENU_CALLBACK,
-   );
-   
-  
-   // Edit an image
-   $items['smplphotoalbum/imgedit'] = array(
-       'title' => 'Smplphotoalbum Image Edit form',
-       'description' => t('Ajax calling, Image Edit form'),
-       'page callback' => 'smplphotoalbum_imgedit',
-       'access arguments' => array('update'),
-       'type' => MENU_CALLBACK,
-   );
-    //The image can set to deleted state
-    $items['smplphotoalbum/del'] = array(
-      'title' => 'Smplphotoalbum delete picture',
-      'description' => t('Ajax calling, delete picture'),
-      'page callback' => 'smplphotoalbum_del',
-      'access arguments' => array('delete'),
-      'type' => MENU_CALLBACK,
-    );
-
-    //Kill an image from the filesystem and the database
-    $items['smplphotoalbum/kill'] = array(
-      'title' => 'Smplphotoalbum kill picture from hdd and database',
-      'description' => t('Ajax calling, kill picture'),
-      'page callback' => 'smplphotoalbum_kill',
-      'access arguments' => array('delete'),
-      'type' => MENU_CALLBACK,
-    );
-
-		// Properties of image give back
-    $items['smplphotoalbum/prop'] = array(
-   		'title' => 'Smplphotoalbum give back the properties of file.',
-   		'description' => t('Give back the properties of file, for example exif data, last modify...'),
-   		'page callback' => 'smplphotoalbum_kill',
-   		'access arguments' => array('read'),
-   		'type' => MENU_CALLBACK,
-    );
-
-   // Setting image for share on facebook
-   $items['smplphotoalbum/fb'] = array(
-   		'title' => 'SmplPhotoalbum sign the img for share to Facebook',
-   		'description' => t('Ajax calling, Setting image for share to facebook'),
-   		'page callback' => 'smplphotoalbum_fb',
-   		'access arguments' => array('update'),
-   		'type' => MENU_CALLBACK,
-   );
-   // Setting image for share on facebook
-   $items['smplphotoalbum/taxes'] = array(
-   		'title' => 'Load the taxonomies fromserver',
-   		'description' => t('Ajax calling'),
-   		'page callback' => 'smplphotoalbum_taxes',
-   		'access arguments' => array('read'),
-   		'type' => MENU_CALLBACK,
-   );
-
-   $items['smplphotoalbum/taxonomy'] = array(
-   		'title' => t('Simple Photoalbum page with taxonomy'),
-   		'description' => t('Ajax calling,'),
-   		'page callback' => 'smplphotoalbum_taxonomy',
-   		'access arguments' => array('read'),
-   		'type' => MENU_CALLBACK,
-   );
-   
-   $items['smplphotoalbum/exif'] = array(
-       'title' => t('Simple Photoalbum exif informations'),
-       'description' => t('Ajax calling,'),
-       'page callback' => 'smplphotoalbum_exif',
-       'access arguments' => array('read'),
-       'type' => MENU_CALLBACK,
-   );
-   
-   $items['smplphotoalbum/record/load'] = array(
-       'title'            => t('Simple photoalbum Record load'),
-       'page arguments'   => array('smplphotoalbum_record_load'),
-       'access arguments' => array('administer administration pages'),
-       'type'             => MENU_CALLBACK
-   );
-   
-   $items['smplphotoalbum/record/save'] = array(
-       'title'            => t('Simple Photoalbum Record modified save'),
-       'page arguments'   => array('smplphotoalbum_record_save'),
-       'access arguments' => array('administer administration pages'),
-       'type'             => MENU_CALLBACK
-   );
-   return $items;
-}
-
-function smpl_callback($pass =''){
-	return true;
-}
-
-/**
- * write info out about filter
- * hook_filter_info() implementation
- */
-function smplphotoalbum_filter_info(){
-	$filters['smplphotoalbum_filter'] =array(
-			'title' => t('Simple Photoalbum filter'),
-			'description' => t('Substitutes a special Simple Photoalbum Tag with the given folder\'s gallery table.'),
-			'cache' => FALSE,
-			'process callback' => 'smplphotoalbum_substitute',
-			'tips callback' => 'smplphotoalbum_filter_tips',
-			);
-	return $filters;
-}
-
-/**
- * Tips of using filter
- */
-function smplphotoalbum_filter_tips($filter, $format, $long) {
-	if ($long) {
-		return t('The SmplPhotoalbum change the smpl filter and shows the album of pictures of given folder.');
-	}
-	else {
-		return t('Use a wysiwyg editor toolbar icons to display uploaded images inline.');
-	}
-}
-
-// Simple Photoalbum Random Block
-function smplphotoalbum_block_menu(){
-
-}
-
-function smplphotoalbum_block_block($op = 'list', $delta = 0, $edit = array()){
- 
-  switch ($op) {
-    case 'list':
-      $blocks[0] = array(
-        'info' => t('Simple Photoalbum'),
-      );
-      return $blocks;
-    case 'configure':
-    	$form ='Itt van egy form';
-      return $form;
-    case 'save':
-      break;
-    case 'view':
-      $block['subject'] = t('Simple Photoalbum');
-      $block['content'] = '<div id="smplphotoalbum_block"></div>';
-
-      return $block;
-  }
-}
-/**
- * Flush the smplphotoalbum cache when...
- * implementation of hook_flush_caches()
- */
-function smplphotoalbum_flush_caches(){
-  
-  return array("cache_smplphotoalbum");
-}
-/**
- * I is called in bootstrap
- * hook_boot() implementation
- *
- * clear the cache_field table
- */
-function smplphotoalbum_boot(){
-  if(isset($_REQUEST['smplpage']) || isset($_REQUEST['smpllist']) || isset($_REQUEST['smplsubcap']) ){
-    $alias = arg(0);
-    $result = db_query("SELECT source FROM {url_alias} WHERE alias = :alias", array(':alias' => $alias))->fetchField();
-    if( preg_match("/node/i",$result)){
-      $nid = preg_replace("|node/|i","",$result);
-      $db = db_delete("cache_field")->condition("cid","field:node:".$nid)->execute();
-    }
-  }
-}
-
-/**
- * it is called after bootstrap
- * hook_init() implementation
- */
-function smplphotoalbum_init(){
-  //smplphotoalbum_user_load();
-}
-/**
- *
- * @param object $nodes
- * @param array $types
- */
-function smplphotoalbum_node_load($nodes, $types){
-}
-
-/*
- * implementing hook_node-view()
- * It is called before hook_node_view_alter()
- */
-function smplphotoalbum_node_view($node, $view_mode, $langcode){
-}
-
-/**
- * implementing hook_node_view_alter()
- * @param unknown $build
- */
-function smplphotoalbum_node_view_alter(&$build){
-}
-/**
- * write <meta property="og:description" content="...."> meta tag
- * @param array $head
- */
-function smplphotoalbum_html_head_alter(&$head){
-  if( (isset($_REQUEST['smplpage']) || isset($_REQUEST['smpllist']) || isset($_REQUEST['smplsubcap']) ) && isset($head["og_image"]) )
-  {
-    $og = false;
-    foreach($head AS $e => $i){
-      if( preg_match("/smpl_image/",$e) > 0){
-        $og = true;
+  switch ($route_name) {
+    case "help.page.smplphotoalbum" :
+      $output = '<h3>' . t ( 'About' ) . '</h3>';
+      $path = drupal_get_path ( 'module', 'smplphotoalbum' ) . '/smplphotoalbum.info.yml';
+      $InfoParsed = new InfoParser ();
+      $info = $InfoParsed->parse ( $path );
+      $output .= 'Author: <a href="http://www.fzolee.hu">Zoltan Fabian</a><br/>';
+      $output .= t ( 'version' ) . ': ' . $info ['version'] . '<br/>';
+      $output .= t ( 'compiled' ) . ': ' . date ( 'Y.m.d', $info ['datestamp'] );
+      $output .= "<p>" . t ( "Simple Photoalbum shows a set of picture and other filetypes ." ) . "</p>";
+      $lang = \Drupal::languageManager ()->getCurrentLanguage ();
+      if ($lang->getId () == "hu") {
+        $output .= file_get_contents ( drupal_get_path ( 'module', 'smplphotoalbum' ) . "/Olvassel.html" );
+      } else {
+        $output .= file_get_contents ( drupal_get_path ( 'module', 'smplphotoalbum' ) . "/Readme.html" );
       }
-    }
-    unset($head["og_image"]);
-    $out   = &drupal_static("smpl_text");
-    $out   = "";
-    $taxes = &drupal_static('smpl_taxes');
-    if(isset($head["og_description"]['#attributes']['content'])){
-      $str   = $head["og_description"]['#attributes']['content'];
-      if($taxes){
-        $out = preg_replace("/\[smplt\|[^]]*\]/simx", $out, $str, 1);
-      }else{
-        $out = preg_replace("/\[smpl\|[^]]*\]/simx" , $out, $str, 1);
-      }
-      smpl_clear($out);
-
-      $head["og_description"]['#attributes']['content'] = $out;
-    }
   }
+  return $output;
 }
-
-function smpl_clear(&$out){
-  $out   = preg_replace("|\s{2,}|simx", " ",$out);
-  $h   = strlen($out);
-  $out = substr($out,0,$h>255 ? 255 : $h);
+/*
+ * function smplphotoalbum_preprocess_page(&$variables) {
+ * $variables['#attached']['library'][] = "smplphotoalbum/css";
+ * }
+ */
+/**
+ * Hook_theme() - for use twig templates
+ * 
+ * @param unknown $existing          
+ * @param unknown $type          
+ * @param unknown $theme          
+ * @param unknown $path          
+ * @return NULL[][][]
+ */
+function smplphotoalbum_theme($existing, $type, $theme, $path) {
+  $theme = [ 
+      'smplphotoalbum' => [ 
+          'variables' => [ 
+              'valami változo' => NULL 
+          ] 
+      ],
+      'editform' => [ 
+          'variables' => [ 
+              'var1' => NULL 
+          ] 
+      ],
+      'imageeditform' => [ 
+          'variables' => [ 
+              'var2' => NULL 
+          ] 
+      ] 
+  ];
+  
+  return $theme;
 }
-

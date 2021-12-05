@@ -1,1 +1,0 @@
-<div class="smpl_fb"><div id="FbBtn{{id}}" class="smpl_fb_plus">{{fbshare}}</div></div>

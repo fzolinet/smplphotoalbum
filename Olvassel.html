@@ -1,26 +1,27 @@
-<h2><strong>Simple Photoalbum 7.x-2.7</strong></h2>
+<h2><strong>Simple Photoalbum 9.x-1.12-dev</strong></h2>
 
 <p>Abból az igényből alakult ki a modul, hogy a szerverre egy könyvtárba feltöltött sok képből hogyen lesz lapozható fotóalbum a lehető legkevesebb kézi munkával</p>
 
 <h3>Tulajdonságok</h3>
 
 <ul>
-	<li>A modul Drupal 7 tartalomszűrőként működik tetszőleges tartalomtípuson.</li>
+	<li>A modul Drupal 8/9 tartalomszűrőként (Filter) működik tetszőleges tartalomtípuson.</li>
 	<li>Táblázatot készít a képek, hangfájlok, videók, dokumentumok, tömörített, végrehajtható fájlokból kiskép formájában egy szerveren lévő megadott könyvtárból</li>
 	<li>Amikor a node-ot először megnézzük, akkor készít a modul:</li>
 	<li>bélyegképeket a képfájlokból,</li>
 	<li>a bélyegképeket beteszi a _tn_ alkönyvtárba,</li>
 	<li>adatokat tárol az adatbázisban a fájlokról</li>
 	<li>A bélyegképekből táblázatot készít.</li>
+	<li>Slideshow-t tud működtetni a tartalomban lévő képekből</li>
 </ul>
 
 <h3>Telepítés</h3>
 
 <ul>
-	<li>Telepítsd a Lightbox2 vagy a Colorbox modulok egyikét</li>
+	<li>Telepítsd a Colorbox modult</li>
 	<li>Telepítsd a Simple Photoalbum fájljait a megfelelő helyre és engedélyezd a modult.</li>
 	<li>Állítsd be a modul paramétereit az admin/config/fz/smplphotoalbum útvonalon</li>
-	<li>Engedélyezd a különböző tartalomtípusokban a Simple Photoalbum, Lightbox2 és/vagy Colorbox tartalomszűrőket a Full HTML és a többi szükséges típusban itt: admin/config/content/formats</li>
+	<li>Engedélyezd a különböző tartalomtípusokban a Simple Photoalbum, Colorbox tartalomszűrőket a Full HTML és a többi szükséges típusban itt: admin/config/content/formats</li>
 </ul>
 
 <h3>Alapértelmezések</h3>
@@ -44,7 +45,7 @@
 	<li>Nem lehet elérni a fájlokat közvetlenül!</li>
 </ul>
 
-<h3>Események</h3>
+<h3>Események galéria módban</h3>
 
 <p>Egy béleygképre kattintva:</p>
 
@@ -55,6 +56,14 @@
 	<li>Dokumentumok, tömörített fájlok, futtatható és más típusok esetén elkezdi letölteni a fájlt.</li>
 	<li>HTML5 Audió és videó: lejátssza a médiát</li>
 </ul>
+<h3>Események slideshow módban</h3>
+<ul>
+	<li>Megjelenik egy kép, majd a beállításoktól függően pár perc múlva eltűnik és a könyvtár 'következő' képe jelenik meg.
+	A kép két szélén lévő gombokkal lehet előre/hátra lapozni a képek között.
+	</li>
+	<li>Ha a képre rákattintunk a kép teljes képernyős módban jelenik meg.</li>
+	<li>Ha az egérrel a kép fölé kerülünk, akkor a slideshow megáll</li>
+</ul>
 
 <h3>Adminisztrátori beállítások</h3>
 
@@ -64,7 +73,7 @@
 		<li>A mobil változat esetén a maximális oszlopszám: szám (default: 5)</li>
 	</ul>
 	</li>
-	<li>Maximális számú rsor a táblázatban: szám</li>
+	<li>Maximális számú sor a táblázatban: szám</li>
 	<li>A bélyegképek maximális szélessége: szám (default: 150px)</li>
 	<li>A bélyegképek CSS osztálya: string (default: smpl_image)</li>
 	<li>A photoalbumok gyökérkönyvtára: string</li>
@@ -78,7 +87,6 @@
 	<li>Az fájlokhoz tartozó URL-ek megjelenítése:(engedély / tiltás)</li>
 	<li>Alapértelmezett URL cél (default: _blank)</li>
 	<li>Taxonómia használata a Simple Photoalbumban (enable/disable)</li>
-	<li>Szociális hálózatok használata (OpenGraph protocol a Facebook, Metatag a Twitter részére)</li>
 	<li>Az adminisztrátor engedélyezheti / tilthatja
 	<ul>
 		<li>A fájlok megtekintések (letöltések) számának megjelenítése</li>
@@ -133,8 +141,9 @@ Módosítani szeretnénk ennek a fotóalbumnak egyes paramétereit. A paraméter
 <p><strong>Lehetséges paraméterek:</strong></p>
 
 <ul>
-	<li>cols : oszlopok száma</li>
-	<li>rows: sorok száma</li>
+	<li>cols : oszlopok száma (D8-ban nem működik)</li>
+	<li>rows: sorok száma (D8-ban nem működik)</li>
+  <li>number: A kirakott képek száma (D8-tól))
 	<li>width: a bélyegkép szélessége pixelben</li>
 	<li>order: sorrend növekvő / csökkenő / véletlen</li>
 	<li>sort: rendezhető a sorrend (true/False)</li>
