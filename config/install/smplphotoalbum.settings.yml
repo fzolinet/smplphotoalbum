@@ -1,0 +1,91 @@
+TN: '_tn_/'
+PICTURE: P
+VIDEO: V
+NOPIC: N
+QTIME: Q
+RM: R
+SOUND: S
+FOLDER: F
+SMPLADMIN: smpllist
+
+#SMPLSIMPLELIST: style=display:block;vertical-align: middle;"
+
+#settings array
+number: 40
+width: 150
+sub: true
+root: public://photoalbum
+viewed: true
+exif: true
+stat: true
+smplbox: smplbox
+order: true
+sortorder: filename
+ascdesc: asc
+private: true
+lazy: true
+
+#check database
+check: false
+number_of_checking: 2000
+from: 0
+
+# Subtitle auto change
+subtitle_change: true
+subtitle_change_text: '_SMPLAUDIOEXT SMPLVIDEOEXT SMPLDOCEXT SMPLCMPEXT SMPLAPPEXT SMPLOTHEXT'
+
+#Document extensions
+
+#Image
+image_checking: true
+image_extensions: 'jpg png jpeg bmp wbmp gif'
+
+# Audio
+audio_checking: true
+audio_extensions: 'wma flac fla midi mid ac3 mp3 ogg wav alac m4a aiff aac'
+audiohtml5_extensions: 'mp3 ogg wav'
+
+# Video
+video_checking: true
+video_extensions: 'avi mpeg mpg divx rm flv 3gp mov m4v asf wmv swf m4v mov qt ogg mp4 webm mkv'
+videohtml5_extensions: 'mp4 webm'
+html5_checking: true
+
+#Documents
+doc_checking: true
+doc_extensions: 'pdf docx doc xlsx xls pptx ppt ppsx txt odt ods'
+
+cmp_checking: true
+cmp_extensions: 'zip rar gz tar arj chm 7z'
+#Applications
+app_checking: true
+app_extensions: 'exe dll apk jar so'
+#Other documents
+oth_checking: true
+oth_extensions: 'sfv nfo bak bkp'
+
+#disable documents
+dis_checking: 1
+dis_extensions: 'php js module ini install xml html htm sql yml twig'
+
+button_pre: '-:'
+button_post: ':-'
+edit: True, 
+delete: True
+imgedit: True
+temp: public://smplphotoalbum/ 
+
+# Service
+menu_rebuild: TRUE
+      
+# URL for images
+url: TRUE,
+url_target: '_blank'
+
+ffmpeg: FALSE 
+
+#Slideshow settings
+slide_checking: FALSE
+slide_extensions: 'jpg png jpeg bmp wbmp gif'
+interval: 10000
+style: 'none'

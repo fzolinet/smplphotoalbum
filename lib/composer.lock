@@ -1,0 +1,195 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "08a71eb076e3c3083ff166515c439e22",
+    "packages": [
+        {
+            "name": "phansys/getid3",
+            "version": "v1.9.4-p2",
+            "target-dir": "GetId3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phansys/GetId3.git",
+                "reference": "cfd6e1c5bdbb6f042bc33b53559b1ff9775426dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phansys/GetId3/zipball/cfd6e1c5bdbb6f042bc33b53559b1ff9775426dd",
+                "reference": "cfd6e1c5bdbb6f042bc33b53559b1ff9775426dd",
+                "shasum": ""
+            },
+            "suggest": {
+                "ext-exif": "EXIF extension is required for graphic modules."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "GetId3_": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "authors": [
+                {
+                    "name": "James Heinrich",
+                    "email": "info@getid3.org",
+                    "homepage": "http://www.getid3.org"
+                }
+            ],
+            "description": "This package integrates the GetId3 library with the Symfony2 project, emulating the PSR-0 CS",
+            "homepage": "http://www.getid3.org",
+            "keywords": [
+                "getid3",
+                "metadata",
+                "tags"
+            ],
+            "support": {
+                "issues": "https://github.com/phansys/GetId3/issues",
+                "source": "https://github.com/phansys/GetId3/tree/v1.9.4-p2"
+            },
+            "abandoned": "james-heinrich/getid3",
+            "time": "2012-08-30T21:21:23+00:00"
+        },
+        {
+            "name": "smalot/pdfparser",
+            "version": "v0.17.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/smalot/pdfparser.git",
+                "reference": "dc1e42293e7774353003b754cce9c64dd9546c2d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/dc1e42293e7774353003b754cce9c64dd9546c2d",
+                "reference": "dc1e42293e7774353003b754cce9c64dd9546c2d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zlib": "*",
+                "php": ">=5.6",
+                "symfony/polyfill-mbstring": "^1.18.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16.3",
+                "symfony/phpunit-bridge": "^4.2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Smalot\\PdfParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastien MALOT",
+                    "email": "sebastien@malot.fr"
+                }
+            ],
+            "description": "Pdf parser library. Can read and extract information from pdf file.",
+            "homepage": "https://www.pdfparser.org",
+            "keywords": [
+                "extract",
+                "parse",
+                "parser",
+                "pdf",
+                "text"
+            ],
+            "time": "2020-10-29T20:59:50+00:00"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "39d483bdf39be819deabf04ec872eb0b2410b531"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/39d483bdf39be819deabf04ec872eb0b2410b531",
+                "reference": "39d483bdf39be819deabf04ec872eb0b2410b531",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.20-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-10-23T14:02:19+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}

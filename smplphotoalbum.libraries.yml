@@ -1,0 +1,30 @@
+smplphotoalbum:
+  version: VERSION
+  css:
+    state:
+      css/smplphotoalbum.theme.css: {}
+      css/imgareaselect-default.css: {}
+  js:
+    js/smpl.js: {}
+    js/help.js: {}
+    js/delete.js: {}
+    js/exif.js: {}
+    js/edit.js: {}
+    js/jquery.imgareaselect.min.js: {}
+    js/imgedit.js: {}
+    js/statistics.js: {}
+    js/order.js: {}
+    js/stat.js: {}
+    js/editall.js: {}
+    js/slide.js: {}
+    
+#   js/jScroll.js: {}
+  dependencies:
+    - core/drupal.ajax
+    
+smplphotoalbum-stat:
+  version: 1.x
+  js:
+    js/statistics.js: {}
+  dependencies:
+    - core/drupal.ajax

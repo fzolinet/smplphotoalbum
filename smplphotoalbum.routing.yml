@@ -1,0 +1,158 @@
+system.admin_config_fz:
+  path: '/admin/config/fz'
+  defaults:
+    _title: 'FZ Modules config'
+  requirements:
+    _permission: 'access administration pages'
+  
+smplphotoalbum.settings:
+  path: '/admin/config/smplphotoalbum/settings'
+  defaults:
+    _form: '\Drupal\smplphotoalbum\Form\SettingsForm'
+    _title: 'Simple Photoalbum Settings'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
+smplphotoalbum.stat:
+  path: '/admin/config/smplphotoalbum/stat'
+  defaults:
+    _form:  '\Drupal\smplphotoalbum\Form\StatForm'
+    _title:  'Simple Photoalbum Settings'
+  requirements:
+    _permission:  'access administration pages'
+  options:
+    _admin_route: TRUE
+    
+smplphotoalbum.Help:
+  path: '/smplphotoalbum/help'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::help'
+    _title: 'Simple Photoalbum Help'
+  requirements:
+    _permission: 'access content'
+    
+smplphotoalbum.delete:
+  path: '/smplphotoalbum/delete/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::delete'
+    _title: 'Image delete from database and HDD'
+    id: '-1'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id: 
+
+smplphotoalbum.exif:
+  path: '/smplphotoalbum/exif/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::exif'
+    _title: 'Exif information of image'
+    id: '-1'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+      
+smplphotoalbum.load:
+  path: '/smplphotoalbum/edit/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::edit'
+    _title: 'Load edit data of this item'
+    id: '-1'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+
+smplphotoalbum.change:
+  path: '/smplphotoalbum/update/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::update'
+    _title: 'Update data of this item'
+    id: '-1'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+
+smplphotoalbum.changepath:
+  path: '/smplphotoalbum/updatepath/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::updatepath'
+    _title: 'Update data of this item'
+    id: '-1'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+      
+smplphotoalbum.imgedit:
+  path: '/smplphotoalbum/imgedit/{id}/{cmd}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::imgedit'
+    _title: 'edit an image'
+    id: '-1'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+      cmd:
+    
+smplphotoalbum.v:
+  path: '/smplphotoalbum/v/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::v'
+    _title: 'shows an image'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+    
+smplphotoalbum.slide:
+  path: '/smplphotoalbum/slide/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::slide'
+    _title: 'shows an image from the slideshow'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+
+smplphotoalbum.slideget:
+  path: '/smplphotoalbum/slideget/{cmd}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::slideget'
+    _title: 'shows an image from the slideshow'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+
+smplphotoalbum.statload:
+  path: '/smplphotoalbum/statload/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::statload'
+    _title: 'load data of an item'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+    
+smplphotoalbum.statsave:
+  path: '/smplphotoalbum/statupdate/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::statupdate'
+    _title: 'load data of an item'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+    

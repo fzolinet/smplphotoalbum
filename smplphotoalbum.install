@@ -1,0 +1,114 @@
+<?php
+require_once 'src/define.php';
+require_once 'src/functions.php';
+/**
+ * Implements hook_requirements().
+ * Check the requirements
+ * 
+ * @param unknown $phase          
+ */
+function smplphotoalbum_requirements($phase) {
+  $m = \Drupal::service ( 'module_handler' );
+  $requirements = array ();
+  switch ($phase) {
+    case 'install' :
+      break;
+    case 'update' :
+      break;
+    case 'runtime' :
+      break;
+    default :
+      break;
+  }
+  
+  if (extension_loaded ( "gd" )) {
+    $requirements ['smplphotoalbum'] = array (
+        'title' => t ( 'Simple Photoalbum requirement ERROR!' ),
+        'value' => t ( 'GD not installed in PHP but required!' ),
+        'description' => t ( 'Enable the GD in PHP, because it is required!' ) 
+    );
+  } else {
+    $requirements ['smplphotoalbum'] = array (
+        'title' => t ( 'Simple Photoalbum requirement OK!' ),
+        'value' => t ( 'GD installed in PHP' ),
+        'severity' => REQUIREMENT_OK 
+    );
+  }
+  
+  return $requirements;
+}
+
+/**
+ * Implementation of hook_install()
+ */
+function smplphotoalbum_install() {
+  \Drupal::messenger ()->addMessage ( t ( 'Smplphotoalbum module has been installed.' ), 'status' );
+}
+
+/**
+ * implementation of hook_uninstall()
+ */
+function smplphotoalbum_uninstall() {
+  \Drupal::messenger ()->addMessage ( t ( 'Smplphotoalbum module has been uninstalled.' ), 'status' );
+}
+
+function smplphotoalbum_schema() {
+  $schema = array ();
+  $schema ['smplphotoalbum'] = array (
+      'description' => t ( 'Table for Simple Photoalbum.' ),
+      'fields' => array (
+          'id' => array (
+              'description' => t ( 'Image id.' ),
+              'type' => 'serial',
+              'unsigned' => TRUE,
+              'not null' => TRUE,
+              'size' => 'normal' 
+          ),
+          'path' => array (
+              'description' => t ( 'Image path.' ),
+              'type' => 'varchar',
+              'not null' => FALSE,
+              'length' => 255,
+              'default' => '' 
+          ),
+          'name' => array (
+              'description' => t ( 'Image Text.' ),
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE,
+              'default' => '' 
+          ),
+          'typ' => array (
+              'description' => t ( 'Type of file.' ),
+              'type' => 'varchar',
+              'length' => 20,
+              'not null' => FALSE,
+              'default' => '' 
+          ),
+          'viewnumber' => array (
+              'description' => t ( 'number of viewed' ),
+              'type' => 'int',
+              'unsigned' => TRUE,
+              'DEFAULT' => 0 
+          ),
+          'subtitle' => array (
+              'description' => t ( 'Text of caption/subtitle' ),
+              'type' => 'blob',
+              'length' => 255,
+              'not null' => FALSE 
+          ),
+          'link' => array (
+              'description' => t ( 'URL association of file ' ),
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE,
+              'default' => '' 
+          ) 
+      ),
+      'primary key' => array (
+          'id' 
+      ),
+      'indexes' => array () 
+  );
+  return $schema;
+}

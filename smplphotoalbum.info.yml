@@ -1,0 +1,8 @@
+name: SmplPhotoalbum
+type: module
+description: Simple Photoalbum makes gallery from a content of folder with a filter
+core_version_requirement: ^8.8 || ^9
+version: '9.x-1.12'
+package: FZ
+project: 'smplphotoalbum'
+datestamp: 1636740122

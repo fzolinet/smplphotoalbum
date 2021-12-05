@@ -1,0 +1,6 @@
+{
+	"require": {
+		"smalot/pdfparser": "*",
+		"phansys/getid3": "^1.9"
+	}
+}

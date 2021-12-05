@@ -1,0 +1,9 @@
+smplphotoalbum.settings:
+  title: Settings
+  route_name: smplphotoalbum.settings
+  base_route: smplphotoalbum.settings
+  
+smplphotoalbum.stat:
+  title: Statistics
+  route_name: smplphotoalbum.stat
+  base_route: smplphotoalbum.settings

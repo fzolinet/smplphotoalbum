@@ -1,0 +1,32 @@
+<div class="smplslide_all">
+  <div class="smplslide_picture">
+    <div id="smplslide{{ id }}" class="smplslide_item_container">
+      <img id="smplslide{{ id }}" src="{{ link }}" title="{{ title }}"
+        alt="{{ subtitle }}" class="smplslidebox" class="smpl_img"
+        data-link="{{ link }}" {{ lazy }} />
+        <div id="smplarrows">
+          <div id="smplslideprev">{{ Previous }}</div>
+          <div id="smplslidenext">{{ Next }}</div>
+        </div>
+    </div>
+  </div>
+  <div class="smplslidetn_list_container">{{ thumbnails }}</div>
+</div>
+<script>
+var smplslide = [];
+smplslide.ajax     = "{{ ajax }}";
+smplslide.path     = "{{ path }}";
+smplslide.i        = {{ i }};
+smplslide.id       = {{ id }};
+smplslide.title    = "{{ title }}";
+smplslide.subtitle = "{{ sub }}";
+smplslide.linksrc  = "{{ linksrc }}";
+smplslide.interval = {{ interval }};
+smplslide.style    = "{{ style }}";
+smplslide.styles   = ['none','fade','slide','zero'];
+smplslide.height   = "0"; 
+smplslide.eftime   = 500;
+smplslide.ths      = [];
+
+var smpltimer;
+</script>

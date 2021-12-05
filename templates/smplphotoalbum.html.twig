@@ -1,0 +1,339 @@
+<form id="SmplTableAll" method="{{ METHOD }}">
+  <!--  There will be later POST -->
+  <div class="smpl_table_all">
+    <div class="smpl_commands">
+      {{ title }}
+      {{ sortorder }}
+      
+      <button id="EditAll" name="EditAll"
+        class="smpl_button smpl_edit_all"
+        onclick="edit_all(); return false;"
+        value="{{ Edit All }}">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Edit All }}
+        </button>
+        
+      <button id="SmplCacheClear" name="SmplCacheClear"
+        class="smpl_button smpl_cache_clear"
+        onclick="help_callback(); return false;"
+        value="{{ CacheClearThisPage }}">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Cache Clear }}
+      </button>
+      
+      <button id="smpl_help_link" class="smpl_button smpl_help_link"
+        onclick="return false;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Help }}
+      </button>
+      
+    </div>
+    {{ pager }}
+    <div class="smpl_table">
+      {{ table }}
+    </div>
+    {{ pager }}
+    {{ statistics }}
+    {{ linktostat }}
+  </div>
+</form>
+<div id="smpl_help" class="smpl_help">
+  <div id="smpl_help_close"></div>
+  <div id="smpl_help_content"></div>
+</div>
+<EditForm>
+<div id="SmplEditForm" class="smpl_edit_form">
+  <div id="SmplEditFormContainer">
+    <form id="SmplEditForm" name="SmplEditForm" METHOD="{{ METHOD }}">
+      <div id="SmplEditFormInner">
+        <input id="smpl_edit_id" type="hidden" name="smplformedit" value="0" />
+        <div>
+          <strong>{{ Edit }}: {{ Properties }}</strong>
+        </div>
+        <table id="SmplFormTable">
+          <tr>
+            <th colspan='2'>{{ Name }}</th>
+            <th>{{ Value }}</th>
+          </tr>
+          <tr>
+            <td colspan='2' align="left" valign="top"><label class="smpl"
+              for="smpl_name">{{ Filename }} </label></td>
+            <td align="left" valign="top"><input type='text' id="smpl_name"
+              name="smpl_name" value='{{ smpl_name }}' size="50"
+              readonly="readonly" disabled="disabled" /></td>
+          </tr>
+          <tr>
+            <td colspan='2' align="left" valign="top"><label class="smpl"
+              for="smpl_sub">{{ Subtitle }}</label></td>
+            <td align="left" valign="top"><input type='text' id="smpl_sub"
+              name="smpl_sub" value='{{ smpl_sub }}' size="50" /></td>
+          </tr>
+          <tr>
+            <td colspan='2' align="left" valign="top"><label class="smpl"
+              for="smpl_link">{{ Url }}</label></td>
+            <td align="left" valign="top"><input type='text' id="smpl_link"
+              name="smpl_link" value='{{ smpl_link }}' /></td>
+          </tr>
+        </table>
+      </div>
+      <button id="SmplEditFormSubmit" onclick="return false;" name="Save"
+        class="smpl_save smpl_button">
+        "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Save }}
+      </button>
+      <button id="SmplEditFormCancel" onclick="return false;" name="Cancel"
+        class="smpl_cancel smpl_button">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Cancel }}
+      </button>
+    </form>
+  </div>
+</div>
+</EditForm>
+
+<ImgEditForm>
+<form id="SmplImgEditForm" name="SmplImgEditForm" METHOD="{{ METHOD }}">
+  <input id="smpl_imgedit_id" type="hidden" value="0" name="smpl_img_edit_id" />
+  <div id="SmplImgEditForm" class="smpl_imgedit_form">
+    <div class="smpl_imgedit_title">
+      {{ Edit }}
+      :
+      <div id="smpl_imgedit_filename" class="smpl_imgedit_filename">Filename</div>
+    </div>
+    <div class="smpl_imgedit_actions">
+      <div class="smpl_imgeditborder">
+        <label class="smpl" for="img_rotate">{{ Rotate }}:</label> <select
+          id="smpl_rotate">
+          <option value="0">-</option>
+          <option value="-90">{{ Left }} 90&deg;
+          </option>
+          <option value="90">{{ Right }} 90&deg;
+          </option>
+          <option value="180">180&deg;</option>
+        </select> <input type="number" id="smpl_rotate_val" min="-180" max="360" step="1"
+          value="0">&deg;
+        <button id="smpl_rotate_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+      </div>
+      <div class="smpl_imgeditborder">
+        <label class="smpl">{{ Flip }}</label>:
+        {{ Flip vertically }}
+        :
+        <button id="smpl_flip_vertical_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        {{ Flip horizontally }}
+        :
+        <button id="smpl_flip_horizontal_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+      </div>
+
+      <div class="smpl_imgeditborder">
+        <label class="smpl" for="smpl_crop">{{ Crop }}:</label>
+        {{ Constrain aspect ratio }}
+        : <input type="checkbox" id="smpl_aspect"><br>
+        {{ Left top }}
+        : <input id="smpl_x1" value=""> <input id="smpl_y1" value="">
+        &nbsp;
+        {{ Right bottom }}
+        : <input id="smpl_x2" value=""> <input id="smpl_y2" value="">
+        <br />
+        {{ Size }}
+        :
+        {{ Original }}
+        : <input type="text" id="smpl_width" class="smpl_readonly"
+          readonly="readonly">&nbsp;x&nbsp; <input type="text"
+          id="smpl_height" class="smpl_readonly" readonly="readonly">px&nbsp;&nbsp;
+        {{ cropped }}
+        : <input id="smpl_w" readonly="readonly" value="">&nbsp;x <input
+          id="smpl_h" readonly="readonly" value="">px&nbsp; <input
+          id="smpl_wp" readonly="readonly" value="">&nbsp;x <input
+          id="smpl_hp" readonly="readonly" value="">%
+        <button id="smpl_crop_done" onclick="return false;" class="smpl_button">
+          {{ Done }}
+        </button>
+      </div>
+
+      <div class="smpl_imgeditborder">
+        <label class="smpl" for="smpl_resize">{{ Resize }}:&nbsp;</label> <input
+          type="range" id="smpl_resize_percent" min="0" max="200" value="100">
+        <input id="smpl_resize_percent_val">%&nbsp; <input
+          id="smpl_resizew" value="">&nbsp;x <input id="smpl_resizeh"
+          value="">px&nbsp;
+        <button id="smpl_resize_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+      </div>
+
+      <div class="smpl_imgeditborder">
+        <label class="smpl" for="smpl_contrast">{{ Color / Lightning }}:</label><br />
+        {{ Gamma }}
+        :&nbsp;
+        {{ Input }}
+        : <input id="smpl_gammain" type="range" min="0" max="4" step="0.1"
+          value="2.2" class="smpl_slider">
+        <div id="smpl_gammain_val"
+          style="display: inline; vertical-align: middle; width: 4em;">2.2</div>
+        &nbsp;
+        {{ Output }}
+        : <input id="smpl_gammaout" type="range" min="0" max="4" step="0.1"
+          value="1.0" class="smpl_slider">
+        <div id="smpl_gammaout_val" style="display: inline; width: 4em;">1.0</div>
+        <button id="smpl_gamma_done" onclick="return false;" class="smpl_button">
+          {{ Done }}
+        </button>
+        <br />
+        {{ Contrast }}
+        : <input id="smpl_contrast" type="number" step="1" min="-100" max="100"
+          value="0">
+        <button id="smpl_contrast_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+
+        {{ Brightness }}
+        : <input id="smpl_brightness" type="number" step="1" min="-255"
+          max="255" value="0">
+        <button id="smpl_brightness_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+
+        {{ RGB }}
+        : <input id="smpl_r" type="number" step="1" min="-255" max="255"
+          value="0"> <input id="smpl_g" type="number" step="1"
+          min="-255" max="255" value="0"> <input id="smpl_b"
+          type="number" step="1" min="-255" max="255" value="0">
+        <button id="smpl_rgb_done" onclick="return false;" class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+        {{ Grayscale }}
+        :
+        <button id="smpl_grayscale_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+      </div>
+
+      <div class="smpl_imgeditborder">
+        <label class="smpl" for="smpl_denoise_chk">&nbsp;{{ Detail }}:
+        </label><br>
+        {{ Sharpen }}
+        :
+        <button id="smpl_sharp_done" onclick="return false;" class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+        {{ Denoise }}
+        : <input id="smpl_smoothlevel" type="number" step="1" min="3" max="9"
+          value="3">
+        <!-- <input id="smpl_denoiseh" type="number" step="1" min="3" max ="7" value="3" >  -->
+        <button id="smpl_denoise_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+        {{ Emboss }}
+        :
+        <button id="smpl_emboss_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp; <br> <b>{{ Convolution }}:</b> preset: <select
+          id="smpl_filters">
+          <option value="sharpen">Sharpen</option>
+          <option value="edge">Edge</option>
+          <option value="findedge">Find edges</option>
+          <option value="emboss">Emboss</option>
+          <option value="boxblur">Box blur</option>
+          <option value="gaussianblur">Gaussian blur</option>
+          <option value="unsharp">unsharp</option>
+        </select> norm: <input id="smpl_convdiv" type="number" step="0" min="-3" max="16"
+          value="0"> offs:<input id="smpl_convoffs" type="number"
+          step="0" min="-3" max="16" value="0"><br> matrix: <input
+          id="smpl_conv00" class="smpl_conv" type="number" step="1" min="-3"
+          max="9" value="0"> <input id="smpl_conv01" class="smpl_conv"
+          type="number" step="1" min="-3" max="9" value="0"> <input
+          id="smpl_conv02" class="smpl_conv" type="number" step="1" min="-3"
+          max="9" value="0">&nbsp;|&nbsp; <input id="smpl_conv10"
+          class="smpl_conv" type="number" step="1" min="-3" max="9" value="0">
+        <input id="smpl_conv11" class="smpl_conv" type="number" step="1"
+          min="-3" max="9" value="0"> <input id="smpl_conv12"
+          class="smpl_conv" type="number" step="1" min="-3" max="9" value="0">&nbsp;
+        |&nbsp; <input id="smpl_conv20" class="smpl_conv" type="number" step="1"
+          min="-3" max="9" value="0"> <input id="smpl_conv21"
+          class="smpl_conv" type="number" step="1" min="-3" max="9" value="0">
+        <input id="smpl_conv22" class="smpl_conv" type="number" step="1"
+          min="-3" max="9" value="0">&nbsp;
+
+        <button id="smpl_convolution_done" onclick="return false;"
+          class="smpl_button">
+          {{ Done }}
+        </button>
+        &nbsp;&nbsp;
+      </div>
+
+      <div class="smpl_imgeditform_container">
+        <img src="{{ ImgEditDefault }}" id="SmplImgtmp" class="smpl_imgedit_img" />
+      </div>
+    </div>
+    <div class="smpl_img_edit_form_buttons smpl_imgedit_actions">
+      <input id="smpl_step" class="smpl_readonly" readonly="readonly"
+        type="text" value="0">/ <input id="smpl_que"
+        class="smpl_readonly" readonly="readonly" type="text" value="0">
+      <button name="SmplImgEditFormUndo" id="SmplImgEditFormUndo"
+        onclick="return false;" class="smpl_undo smpl_button">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Undo }}
+      </button>
+      <button name="SmplImgEditFormRedo" id="SmplImgEditFormRedo"
+        onclick="return false;" class="smpl_redo smpl_button">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Redo }}
+      </button>
+      <button name="SmplImgEditFormSubmit" id="SmplImgEditFormSubmit"
+        onclick="return false;" class="smpl_save smpl_button">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Save }}
+      </button>
+      <button name="SmplImgEditFormClose" id="SmplImgEditFormClose"
+        onclick="return false;" class="smpl_close smpl_button">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ Close }}
+      </button>
+    </div>
+  </div>
+</form>
+</ImgEditForm>
+<div id="smpldiv">
+  <img id="smplbox" src="" />
+</div>
+<div id="smplback"></div>
+
+<!-- Smpl Form Table -->
+
+<script>  
+  var smpl      = [];
+  smpl.ajax     = "{{ smpl.ajax }}";
+  smpl.subtitle = "{{ Subtitle }}";
+  smpl.del      = "{{ Delete }}";  
+  smpl.subtitle_rename    = "{{ Rename }}";
+  smpl.del_not  = "{{ Can not delete }}";  
+  smpl.view     = '';
+  smpl.id       ='';
+  smpl.pars     = '';
+  smpl.url      = '';
+  smpl.exif_info_shoe = false;
+  smpl.i        = 1;
+  smpl.smplbox  ="{{ smplbox }}";
+</script>

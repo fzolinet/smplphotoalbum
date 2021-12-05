@@ -1,0 +1,13 @@
+.buildpath
+.bat
+.excl
+.bak
+.project
+.settings
+.make
+smplphotoalbum_
+*.zip
+*.tar.gz
+m.bat
+m7.php
+m.php

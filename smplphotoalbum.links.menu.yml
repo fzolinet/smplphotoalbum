@@ -1,0 +1,19 @@
+system.config_fz:
+  parent: system.admin_config
+  title: FZ modules
+  route_name: system.admin_config_fz
+  description: 'FZ Modules admin settings'
+
+smplphotoalbum.settings: 
+  title: Simple Photoalbum  
+  route_name: smplphotoalbum.settings
+  description: 'Simple Photoalbum Settings'
+  parent: system.config_fz
+  
+smplphotoalbum.stat: 
+  title: Statistics 
+  route_name: smplphotoalbum.stat
+  description: ''
+  parent: smplphotoalbum.settings
+  weight: 1
+  

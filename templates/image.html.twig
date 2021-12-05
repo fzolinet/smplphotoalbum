@@ -1,0 +1,44 @@
+<div id="smpl{{ id }}" class="smpl_item_container">
+  <div id="smpldiv{{ id }}" class="smpl_image_div">
+    <img id="smpl{{ id }}" src="{{ linktn }}" title="{{ title }}"
+      alt="{{ subtitle }}" class="smplbox" class="smpl_img"
+      data-link="{{ link }}" {{ lazy }} />
+  </div>
+  <div class="smploth">
+    <div id="smpl_sub{{ id }}" class="smpl_subtitle">
+      {{ subtitle }}
+    </div>
+    <div id="smpl_view{{ id }}" class="smpl_viewnumber">
+      {{ viewnumber }}
+    </div>
+    <div id="smpl_link{{ id }}" class="smpl_link{{ smpl_url_class }}">
+      <a href="{{ url }}" target="_blank">{{ Link }}</a>
+    </div>
+    <div id="DescCont{{ id }}" class="smpl_desc_cont">
+      <a id="Desca{{ id }}" class="smpl_desc_a" href="javascript:void(0)">{{ ShowDescription }}: {{ id }}</a>
+      <div id="DescSub{{ id }}" class="smpl_desc_info">
+        <div class="smpl_desc_title">
+          {{ desc }}
+        </div>
+        <div id="DescFS{{ id }}">
+          {{ FileSize }}
+          :
+          {{ filesize }}
+        </div>
+        <div id="DescTime{{ id }}">
+          {{ LastModified }}
+          :
+          {{ lastmodified }}
+        </div>
+        <div id="Exif{{ id }}"></div>
+      </div>
+    </div>
+    <div class="smpl_buttons">
+      <!--<button id="ImgBtn{{ id }}" class="smpl_button smpl_imgedit"  onclick="return false;" title="{{ Image }} {{ Edit }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>-->
+      <button id="SubBtn{{ id }}" class="smpl_button smpl_edit"
+        onclick="return false;" title="Caption / subscription {{ Edit }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+      <button id="DelBtn{{ id }}" class="smpl_button smpl_delete"
+        onclick="return false;" title="{{ Delete }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+    </div>
+  </div>
+</div>
