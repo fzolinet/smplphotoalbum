@@ -1,0 +1,69 @@
+
+<form id="SmplTableAll" method="{{ method }}" action="{{ action }}">
+  <div class="smpl_table_all">{{ title }}
+    <Test>
+			<div id="smpl_test">
+				<button id="smpl_test_start" onclick="return false;">Test start</button>&nbsp;
+				Error window: <input id="smpl_fz_test" type="checkbox">&nbsp;
+				<!-- <button id="smpl_test_imgedit" onclick="return false;">Test Image Edit</button> -->
+				<a href="/fw3/slideteszt">Slideshow oldal</a>
+				<br>
+			</div>
+    </Test>
+		{{ notes }}
+    <div class="smpl_commands">{{ sortorder }}
+			<Filter>
+				<input id="smpl_filter" name="smpl_filter" class="smpl_search" type="search" maxlength="256" placeholder="{{ Filter }}" value="{{ FilterValue }}" title="Write in the filter expression" onclick="return false;">
+				<button id="SmplFilterBtn" name="SmplFilterBtn" title="{{ Filter }}" class="smpl_button smpl_filter_btn{{ icon }}" value="{{ Filter }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</Filter>
+			<editpath_cache>
+				<button id="EditPath" name="EditPath" class="smpl_button smpl_edit_all{{ icon }}" onclick="return false;" value="{{ Edit Path }}" title="{{ Edit Path }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="SmplCacheClear" name="SmplCacheClear" class="smpl_cache_clear{{ icon }} smpl_button" value="1" title="{{ Cache Clear }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="SmplThumbnails" name="SmplThumbnails" class="smpl_thumb{{ icon }} smpl_button" value="1" title="{{ Refresh }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</editpath_cache>
+			<button id="SmplSlide" name="SmplSlide" class="smpl_slide{{ icon }} smpl_button" value="1" title="{{ Slideshow }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button id="smpl_help_link" class="smpl_help_link{{ icon }} smpl_button" onclick="return false;" title="{{ Help }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+    </div>
+		{{ pager }}
+		<div class="smpl_table">
+			{{ table }}
+		</div>
+		{{ pager }}
+		<div>
+			{{ statistics }}
+			{{ linktostat }}
+		</div>
+  </div>
+</form>
+
+<div id="smpl_help" class="smpl_help">
+	<div id="smpl_help_close" class="smpl_help_close{{ icon }} right_corner">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+	<div id="smpl_help_content"></div>
+</div>
+
+{{ EditForm }}
+
+{{ ImgEditForm }}
+
+<div id="smpl_img_back">
+	<div id="smpl_img_div">	
+		<img id="smpl_img_box" src="" />	
+		<div id="smpl_div_new" class="smpl_div_new{{ icon }} smpl_label" alt="{{ Image open in new tab }}" title="{{ Image open in new tab }}">&nbsp;&nbsp;</div>
+		<div id="smpl_img_close" class="smpl_div_close{{ icon }} smpl_button right_corner" alt="{{ Close }}" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+	</div>
+</div>
+
+<!-- Smpl Form Table -->
+
+<script>
+	class words {
+		Delete   = "{{ Delete }}";
+		Rename   = "{{ Rename }}";
+		ImageEdit= "{{ Image Edit }}";
+		Undo     = "{{ Undo }}";
+		Redo     = "{{ Redo }}";
+		Subtitle = "{{ Subtitle }}";
+		Del_not  = "{{ Can not delete }}";
+	}
+	//
+</script>

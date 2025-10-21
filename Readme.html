@@ -1,0 +1,268 @@
+<h3>Features</h3>
+
+<ul>
+	<li>The modul works as a Drupal filter of any nodes on it.</li>
+	<li>It makes a table or list of images, videos, documents, compressed or executable files from a directory on the server.</li>
+	<li>When the node is viewed first time the module makes</li>
+	<ul>
+		<li>thumbnails from the images,</li>
+		<li>the thumbnails saves into the _tn_ subdirectory,</li>
+		<li>save the datas of files into the database table</li>
+		<li>makes automatically thumbnails and insert into a table of database.</li>
+	</ul>
+	<li>It make a slideshow from the images (pictures) of folder</li>
+</ul>
+
+<h3>Dependencies</h3>
+<ul>
+  <li>Must be installed the GD lib of PHP</li>
+	<li>From Drupal 9.5.1 the jQuery UI is not in the core of Drupal</li>
+  <li>Download and install the contrib modules:
+    <ul>
+      <li>jQuery UI: <a href="https://www.drupal.org/project/jquery_ui">https://www.drupal.org/project/jquery_ui</a></li>
+      <li>jQuery UI Draggable:<a href="https://www.drupal.org/project/jquery_ui_draggable">https://www.drupal.org/project/jquery_ui_draggable</a></li>
+      <li>jQuery UI Resizable: <a href="https://www.drupal.org/project/jquery_ui_resizable">https://www.drupal.org/project/jquery_ui_resizable</a></li>
+    </ul>      
+  </li>
+</ul>
+
+<h3>Installation:</h3>
+<ul>
+	<li>Download and install JQuery UI Jquery UI Draggable and jQueríy UI Resizable.</li>
+	<li>Copy the files of module into the modules directory and enable.</li>
+	<li>Set the appropriate properties in the 'admin/config/fz/smplphotoalbum'</li>
+	<li>In the 'admin/config/content/formats' enable the Simple Photoalbum filters in the Full HTML or any other content types</li>
+	<li>Default: The image shown in the other blank window.</li>
+</ul>
+
+<h3>Defaults</h3>
+<ul>
+	<li>The thumbnails showed in table format (flex)</li>
+	<li>The table has pager</li>
+	<li>The admin sets what kind of files enables / disables. It can
+		<ul>
+			<li>image (default),</li>
+			<li>videos (default) normal or HTML5 Video format</li>
+			<li>audio (default) HTML5 Audio format</li>
+			<li>document,</li>
+			<li>compressed,</li>
+			<li>executable,</li>
+			<li>other types</li>
+			<li>prohibited files.</li>
+		</ul>
+	</li>
+	<li>The admin can modify the list of extensions of files types</li>
+</ul>
+
+<h3>Events</h3>
+
+<p>If you click on a thumbnail:</p>
+<ul>
+	<li>image: showing in original size (in colorbox)</li>
+	<li>video: downloads or plays</li>
+	<li>audio: downloads or plays</li>
+	<li>documents, compressed, executable, other types downloaded</li>
+	<li>HTML5 &lt;Audio&gt; and &lt;Video&gt;: plays the media,</li>
+</ul>
+
+<h3>Administration settings</h3>
+
+<ul>
+	<li>Maximum width of thumbnail in pixel: number (default: 150px)</li>
+	<li>CSS class of thumbnail: string (default: smpl_image)</li>
+	<li>Root folder of photoalbums: string (default: public://photoalbum/)</li>
+</ul>
+
+<p class="rteindent1">All the albums are in a folder structure on
+	the server. This is absolute path in the filesystem. If you use in the
+	path the&nbsp; __DRUPALROOT__&nbsp; it substitutes the Drupal path with
+	it.</p>
+
+<ul>
+	<li>Rebuild of pathes of Drupal menus (for developers)</li>
+	<li>Direct access of files (enable/disable)</li>
+	<li>Shows the URL of associated with image: (enable/disable)</li>
+	<li>Default target of link of image (default: _blank)</li>
+	<li>The admin can enable / disable the &nbsp;
+		<ul>
+			<li>Shows the number of views (downloads) of images (files)</li>
+			<li>Link for the other properties of images (exif info, bitrate, etc.)</li>
+			<li>Caption of files</li>
+			<li>Substitle of files</li>
+			<li>Link of files (URL of original website etc...)&nbsp;&nbsp;	&nbsp;</li>
+		</ul>
+	</li>
+	<li>There are buttons below the files and you can enable / disable
+		the functions:
+		<ul>
+			<li>Edit images online (GD or if installed ImageMagic module on	PHP)</li>
+			<li>Edit the subtitles (rename the file, change caption and link) of images</li>
+			<li>Delete from database and directory &nbsp;</li>
+		</ul>
+	</li>
+	<li>Simple Photoalbum temporary folder for Editing the images:
+		relative path from Drupal root</li>
+	<li>Change the order of files / images (enable /disable)</li>
+	<li>Using filter in lists (enable / disable)</li>
+	<li>Check and delete the wrong links of files from database
+		(shrinks the table)</li>
+	<li>Change or delete the subtitles automatically (string substitues with a space)</li>
+	<li>File types (enable / disable). Let's see on top of this
+		document
+		<ul>
+			<li>image (default: enable),</li>
+			<li>video (default:enable) normal or HTML5 Video format</li>
+			<li>audio (default) HTML5 Audio format</li>
+			<li>document,</li>
+			<li>compressed,</li>
+			<li>executable,</li>
+			<li>other types</li>
+			<li>prohibited files.</li>
+		</ul>
+	</li>
+	<li>Set the lists of extensions of any file types</li>
+</ul>
+
+<h3>Using</h3>
+
+<p>You can define a content filter on the node if the content filter
+	enabled on the content type.</p>
+<h4>
+	1. Make a simple photoalbum from a folder - <u>old syntax:</u>
+</h4>
+<p>
+<code class="language-plaintext">
+	[smpl|/path-to-folder]
+</code>
+</p>
+<h4>
+	2. Make a simple photoalbum from a folder - <u>new syntax:</u>
+</h4>
+<p>
+<pre><code class="language-plaintext">
+[smplphotoalbum]
+	{name_of_parameter: value}
+[/smplphotoalbum]	
+</code></pre>
+
+<pre><code class="language-plaintext">
+{smplphotoalbum}
+	{name_of_parameter: value}
+{/smplphotoalbum}
+</code></pre>
+
+</p>
+<p>Example:</p>
+<p>
+<pre><code>
+[smplphotoalbum]
+	{path: /teszt}
+	{number: 12}
+	{width: 180px}
+[/smplphotoalbum]
+	or
+{smplphotoalbum}
+	{path: /teszt}
+	{number: 12}
+	{width: 180px}
+{/smplphotoalbum}
+</code></pre>
+</p>
+<h3>Parameters:</h3>
+<ul>
+	<li>notes: some-text</li>
+	<li>number: number of images on one page (from D8)</li>
+	<li>width: width of thumbnails in pixel</li>
+	<li>order: asc /desc / rand, default asc</li>
+	<li>ascdesc: asc /desc, default asc (D8)</li>
+	<li>sort: sortable of this album - (True/False)</li>
+	<li>sub: is there subtitle (true|false)</li>
+	<li>capt: is there caption (true|false)</li>
+	<li>viewed: shows the number of views</li>
+	<li>voted: shows the number of votes and rank</li>
+	<li>edit: Editable images (true|false)</li>
+	<li>exif: shows the exif onformation of images</li>
+	<li>audio: shows this type of files (true|false)</li>
+	<li>video: shows this type of files (true|false)</li>
+	<li>doc: shows this type of files (true|false)</li>
+	<li>cmp: shows this type of files (true|false)</li>
+	<li>app: shows this type of files (true|false)</li>
+	<li>url: shows the URL of image website</li>
+	<li>target: what is the target (default: _blank)</li>
+	<li>html5: the video and audio file shows with HTML5 audio and video tags</li>
+	<li>autoclose: After save the edited image the edit windows auto close (true|false)</li>
+  <li>Watermark</li>
+  <ul>
+    <li>wm: Watermark when show|edit the image (true|false)</li>
+    <li>wmpath: Watermark path 
+      <br>From public folder (beginning of public://)
+      <br>From Simple Photoalbum module default:(beginning of smplphotoalbum://images/).</li> 
+    <li>wmalpha: watermark alpha value: 0..100 (in %). <br/>0 - invisible, 100 - max, default: 10</li>
+    <li>wmcopyright: any text into copyright IPTC/Exif field</li>
+    <li>wmauthor: any text into author / Owner IPTC/Exif field</li>	  
+	</ul>
+	<li>test: test mode, only the  true|false</li>
+	<li>method: GET | POST (GET better the testing). Only admin mode!</li>
+	<li>graphicdrv: wich graphic driver,  gd or imagick (if it installed)</li>
+	<li>lang: hu | en</li>
+	<li>translate: true|false
+	<li>icon: Set the color of icons on the page (_col / _bw)</li>
+	<li>slide: True - Let slideshow. The parameters of slideshow</li>
+	<ul>
+		<li>title: - title of slideshow</li>
+		<li>interval: time of changin in sec</li>
+		<li>height: Height of main image (px)</li>
+		<li>style: Mode of changing images - fade / slide / zero / zero1</li>
+		<li>slstyle: string of css settings of the main image. Default: 'max-width: 100%; height: 600px;'</li>
+	</ul>
+</ul>
+
+<h3>Example:</h3>
+
+<p>
+	<pre><code>
+[smplphotoalbum]
+  {title: Bassguitar}
+  {path:/2004_Bassguitar}
+  {slide: true}
+  {interval: 10000}
+  {height: 800px}
+  {style: fade} 
+[/smplphotoalbum]
+	</code></pre>
+</p>
+
+<h3>Edit An image (This is under construction)</h3>
+If you are administrator you can edit the images online
+<ul>	
+	<li>You can edit the name of file, subtitle (caption)</li> 
+	<li>Move the image with: mouse drag or keyboard cursor keys</li>
+	<li>Zoom in / out: mouse wheel or keyboard "+" & "-" key</li>  
+  <li>You can edit a lot of properties of imagewith buttons and parameters, for example</li>
+  <ul>
+      <li>Rotate, flip vertically, horizontally</li>
+      <li>Crop the image</li>
+      <li>Resize the image</li>
+      <li>Make Watermark over the image (Copyright and author info into jpeg file)</li>
+      <li>Make Border and Vignette</li>
+      <li>Normalize, Gamma, Brightness, Saturation, Hue, RGB, Grayscale, Contrast</li>
+      <li>Add Noise, Denoise</li>
+      <li>Sharpen, Emboss, Edge, Blur and Convolution (with convolution matrix)</li>
+  </ul>
+</ul>
+
+<p>It is uses the GD driver or Imagick driver if it is installed on server</p>
+<p>If the change takes too long you can break it with press the Escape key or 
+push the Cancel button.</p>
+<p>As admin the parameters change the web oage img edit mode::</p>
+<p>http://www.foo.com/node?imgedit=1&id=[image id]</p>
+<p>The using similar than ACDSee or any other image editor application</p>
+<p>The status of editink can use undo / redo function</p>
+<p>The Save and the Save As saves the edited image into the same folder</p>
+<p>
+	2024.05.26.<br /> Zoltan Fabian
+</p>
+
+<p>
+	fz@fzolee.hu<br /> <a href="http://www.fzolee.hu">http://www.fzolee.hu</a>
+</p>

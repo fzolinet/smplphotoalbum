@@ -1,0 +1,212 @@
+Add
+Add noise
+AI_recognition
+Alpha
+Amount
+Application
+Ascending
+Audio
+Author
+Auto
+Auto gamma
+Auto histogram
+Auto orient
+Barrel
+Bestfit
+bevel
+Blue shift
+Blursize
+Blur
+Border
+Box blur
+Brightness
+Burn
+B/W
+Denoise
+Caption Edit
+Cancel
+Cache Clear
+Can not delete
+Center
+Channel
+Charchoal
+Circle
+CLAHE
+Close
+Color
+Compressed
+Constrain_aspect_ratio
+Contrast
+Convolution
+Copyright
+Correction
+Correction Strength
+This text saved into the Copyright IPTC/exif field of image only jpeg file
+This text saved into the Author / owner IPTC field of image only jpeg file
+Creator
+Crop
+cropped
+Date
+Darken
+Deep
+default
+Degree of rotate
+Dehaze
+Delete
+Denoise
+Descending
+Detail
+Distortion
+Document
+Dodge
+Done
+Down
+Edge
+Edit Path
+Effect
+Emboss
+Enhance
+Ellipse
+Edit
+Equalize
+Exposure
+exif
+Eyedropper
+Face edit
+Factor
+Filename
+File size
+Filter
+FilterValue
+Find edges
+Fisheye
+Flip
+Flip vertically
+Flip horizontally
+Frame
+Frame color
+fsize
+Gamma
+Gaussian blur
+Geometry
+Grayscale
+Height
+Help
+Histogram
+Horizontal
+Horizontal Center
+HTML5
+Hue
+In
+Initial
+Input
+Inner
+Image
+Image Edit
+Image open in new tab
+Lens
+Level
+Lightning
+Lin
+Liquify
+Log
+Kind
+Matte
+Next
+Kill
+Last modified
+Left
+Left top
+Levels
+Lighting
+Light EQ
+Linear
+Link
+Link to statistics
+Mode
+Name
+Name of data of this node
+Noise
+Normalize
+Nothing
+Number of items
+Number of views
+Average of views
+Oil
+Original
+Original size
+Other
+Out
+Outer
+Output
+Page
+Perspective
+Pinchusion
+pixels
+Point
+Previous
+Properties
+Radius
+Recip
+Rect
+Red eye
+Redo
+Refresh
+Rename
+Repair
+Reset
+Resize
+RGB
+Right
+Right bottom
+Rotate
+Saturation
+Save
+Save As
+Scale
+Search
+Selected
+Sepia
+Sharpen
+Shave
+Show Grid
+Sigma
+Size
+Skin tune
+Slideshow
+Smooth
+Solarize
+Sort
+Source
+Spec Effects
+Statistics
+statistics
+Strength
+Subtitle
+Swirl
+Target
+Thumbnail
+text
+Top
+Transparent
+Trash
+Trim
+Type
+Undo
+Unsharp
+Up
+Thumbnail
+Url
+Value
+Vertical
+Vertical Center
+Video
+view last
+viewnumber
+Views
+Vignette
+Watermark
+Wave
+White
+Whitebalance
+Width

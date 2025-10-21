@@ -1,0 +1,96 @@
+<div class="smplslide_all">
+{{ title }}
+	<!-- The Main image -->
+	<div class="smplslide_picture">
+		<div id="smplslideimgcont" class="smplslide_item_container">
+			<div id="smplup">{{ Up }}</div>
+			<div id="smplprev">{{ Previous }}</div>
+			<img id="smplslideimg" src="{{ link }}" class="smplslideimg" title="{{ titleimg }}"
+				alt="{{ titleimg }}" style="{{ slidestyle }}" data-link="{{ link }}"  />							
+			<div id="smplnext">{{ Next }}</div>								
+			<div id="smpldown">{{ Down }}</div>
+		</div>
+	</div>
+
+	<div class="smplslidetn_list_container">		
+		<div id="smplslidetn0" class="smplslidetn_container">			
+				<img id="smplslidetnid0" src="{{ linktn0 }}" title="{{ titletn0 }}"
+					alt="{{ slidetnsubtitle0 }}" class="smplslidetnimg"
+					data-id="{{ id0 }}" data-link="{{ linktn0 }}" />			
+		</div>
+
+		<div id="smplslidetn1" class="smplslidetn_container">			
+				<img id="smplslidetnid1" src="{{ linktn1 }}" title="{{ titletn1 }}"
+					alt="{{ slidetnsubtitle1 }}" class="smplslidetnimg"
+					data-id="{{ id1 }}" data-link="{{ linktn1 }}" />
+			
+		</div>
+
+		<div id="smplslidetn2" class="smplslidetn_container">			
+				<img id="smplslidetnid2" src="{{ linktn2 }}" title="{{ titletn2 }}"
+					alt="{{ slidetnsubtitle2 }}" class="smplslidetnimg"
+					data-id="{{ id2 }}" data-link="{{ linktn2 }}" />
+		</div>
+
+		<div id="smplslidetn3" class="smplslidetn_container">		
+				<img id="smplslidetnid3" src="{{ linktn3 }}" title="{{ titletn3 }}"
+					alt="{{ slidetnsubtitle3 }}" class="smplslidetnimg"
+					data-id="{{ id3 }}" data-link="{{ linktn3 }}" />			
+		</div>
+
+		<div id="smplslidetn4" class="smplslidetn_container smplslidetn_middle">			
+				<img id="smplslidetnid4" src="{{ linktn4 }}" title="{{ titletn4 }}"
+					alt="{{ slidetnsubtitle4 }}" class="smplslidetnimg"
+					data-id="{{ id4 }}" data-link="{{ linktn4 }}" />								
+		</div>
+
+		<div id="smplslidetn5" class="smplslidetn_container">			
+				<img id="smplslidetnid5" src="{{ linktn5 }}" title="{{ titletn5 }}"
+					alt="{{ slidetnsubtitle5 }}" class="smplslidetnimg"
+					data-id="{{ id5 }}" data-link="{{ linktn5 }}" />			
+		</div>
+
+		<div id="smplslidetn6" class="smplslidetn_container" >			
+				<img id="smplslidetnid6" src="{{ linktn6 }}" title="{{ titletn6 }}"
+					alt="{{ slidetnsubtitle6 }}" class="smplslidetnimg"
+					data-id="{{ id6 }}" data-link="{{ linktn6 }}" />			
+		</div>
+
+		<div id="smplslidetn7" class="smplslidetn_container" >			
+				<img id="smplslidetnid7" src="{{ linktn7 }}" title="{{ titletn7 }}"
+					alt="{{ slidetnsubtitle7 }}" class="smplslidetnimg"
+					data-id="{{ id7 }}" data-link="{{ linktn7 }}" />			
+		</div>
+
+		<div id="smplslidetn8" class="smplslidetn_container">			
+				<img id="smplslidetnid8" src="{{ linktn8 }}" title="{{ titletn8 }}"
+					alt="{{ slidetnsubtitle8 }}" class="smplslidetnimg"
+					data-id="{{ id8 }}" data-link="{{ linktn8 }}" />			
+		</div>
+	</div>
+	<a href="{{ smplurl }}">Simple Photoalbum</a>
+</div>
+<script>
+	class smplphotoalbum{};
+	var smpl = new smplphotoalbum();		
+	
+	class SmplSlide {};
+	var smplslide = new SmplSlide();
+	smplslide.ajax       = "{{ ajax }}";
+	smplslide.path       = "{{ path }}";
+	//smplslide.i          = {{ i }}; 		// No of item
+	smplslide.id         = {{ id }};		// id in the database
+	smplslide.title      = '{{ title }}';
+	smplslide.subtitle   = "{{ sub }}";
+	smplslide.linksrc    = "{{ linksrc }}";
+	smplslide.interval   = {{ interval }};
+	smplslide.slidestyle = "{{ slidestyle }}";
+	smplslide.styles     = ['none','fade','slide','zero' ];
+	smplslide.eftime     = 500;
+	smplslide.ths        = [];
+	smplslide.testmsg    = '';
+	smplslide.test       = {{ test }};
+	smplslide.maxhi      = 0;
+	smplslide.lastcmd    = "next";
+	var smpltimer        = false;
+</script>

@@ -1,0 +1,268 @@
+<p>Abból az igényből alakult ki a modul, hogy a szerverre egy
+	könyvtárba feltöltött sok képből hogyen lesz lapozható fotóalbum a
+	lehető legkevesebb kézi munkával</p>
+
+<h3>Tulajdonságok</h3>
+
+<ul>
+	<li>A modul Drupal 8/9/10/11 tartalomszűrőként (Filter) működik
+		tetszőleges tartalomtípuson.</li>
+	<li>Táblázatot készít a képek, hangfájlok, videók, dokumentumok,
+		tömörített, végrehajtható fájlokból kiskép formájában egy szerveren
+		lévő megadott könyvtárból</li>
+	<li>Amikor a node-ot először megnézzük, akkor készít a modul:</li>
+	<li>bélyegképeket a képfájlokból,</li>
+	<li>a bélyegképeket beteszi a _tn_ alkönyvtárba,</li>
+	<li>adatokat tárol az adatbázisban a fájlokról</li>
+	<li>A bélyegképekből táblázatot készít.</li>
+	<li>Slideshow-t tud működtetni a tartalomban lévő képekből</li>
+</ul>
+
+<h3>Függőségek</h3>
+<ul>
+  <li>A szerveren a GD modulnak telepíve kell lennie</li>
+	<li>A jQuery UI is a Drupal központi része a Drupal 9.5.1 előtt, de a 9.5.1-től kezdve már nem!</li>
+  <li>Töltsd le és telepítsd az alábbi modulokat, majd utána a Simple Photoalbumot:
+    <ul>
+      <li>jQuery UI: <a href="https://www.drupal.org/project/jquery_ui">https://www.drupal.org/project/jquery_ui</a></li>
+      <li>jQuery UI Draggable: <a href="https://www.drupal.org/project/jquery_ui_draggable">https://www.drupal.org/project/jquery_ui_draggable</a></li>
+      <li>jQuery UI Resizable: <a href="https://www.drupal.org/project/jquery_ui_resizable">https://www.drupal.org/project/jquery_ui_resizable</a></li>
+    </ul>      
+  </li>
+</ul>
+
+<h3>Telepítés</h3>
+
+<ul>
+	<li>Telepítsd a Simple Photoalbum fájljait a megfelelő helyre és engedélyezd a modult.</li>
+	<li>Állítsd be a modul paramétereit az admin/config/fz/smplphotoalbum útvonalon</li>
+	<li>Engedélyezd a különböző tartalomtípusokban a Simple Photoalbum tartalomszűrőt a Full HTML és a többi szükséges
+		típusban itt: admin/config/content/formats</li>
+</ul>
+
+<h3>Alapértelmezések</h3>
+
+<ul>
+	<li>A bélyegképek táblázatos formában jelennek meg (flex)</li>
+	<li>A táblának van lapozója</li>
+	<li>Az adminisztrátor beállíthatja az engedélyezett / tiltott
+		fájltípusok listáit.
+		<ul>
+			<li>Kép (=image) (default),</li>
+			<li>Videó (default) normál vagy HTML5 Videó formátum</li>
+			<li>Hang (default) HTML5 Audió formátum</li>
+			<li>Dokumentum</li>
+			<li>Tömörített (zip, Rar, stb),</li>
+			<li>Futtatható</li>
+			<li>Más típusok</li>
+			<li>Tiltott fájlok</li>
+		</ul>
+	</li>
+	<li>Az adminisztrátor megváltoztathatja a fájlkiterjesztések listáját</li>
+	<li>Nem lehet elérni a fájlokat közvetlenül!</li>
+</ul>
+
+<h3>Események galéria módban</h3>
+
+<p>Egy bélyegképre kattintva:</p>
+
+<ul>
+	<li>Kép: megjelenik a nagy kép (colorboxban)</li>
+	<li>Videó: elkezdi a böngészőben letölteni vagy lejátszani</li>
+	<li>Audió: elkezdi a böngészőben letölteni vagy lejátszani</li>
+	<li>Dokumentumok, tömörített fájlok, futtatható és más típusok
+		esetén elkezdi letölteni a fájlt.</li>
+	<li>HTML5 Audió és videó: lejátssza a médiát</li>
+</ul>
+<h3>Események slideshow módban</h3>
+<ul>
+	<li>Megjelenik egy kép, majd a beállításoktól függően pár másodperc
+		múlva eltűnik és a könyvtár 'következő' képe jelenik meg. A kép két
+		szélén lévő gombokkal lehet előre/hátra lapozni a képek között.</li>
+	<li>Ha a képre rákattintunk a kép teljes képernyős módban jelenik meg.</li>
+	<li>Ha az egérrel a kép fölé kerülünk, akkor a slideshow megáll</li>
+</ul>
+
+<h3>Adminisztrátori beállítások</h3>
+
+<ul>
+	<li>Maximális oszlopszám az oldalon: szám (default 4)</li>
+	<li>Maximális számú elem a táblázatban: szám</li>
+	<li>A bélyegképek maximális szélessége: szám (default: 150px)</li>
+	<li>A bélyegképek CSS osztálya: string (default: smpl_image)</li>
+	<li>A photoalbumok gyökérkönyvtára: string</li>
+</ul>
+
+<p>Minden album egy könyvtárstruktúrában található a szerveren. Ez
+	abszolút elérési útvonal a szerver gyökérkönyvtrárától. Ha a
+	"__DRUPALROOT__" jelet használjuk, akkor a szerver, mentéskor
+	behelyettesíti a Drupal gyökérkönyvtárának elérési útvonalát a
+	megadott helyre.</p>
+
+<ul>
+	<li>A Drupal menük újraépítése (fejlesztők számára)</li>
+	<li>A fájlok direkt elérése (engedély / tiltás)</li>
+	<li>Az fájlokhoz tartozó URL-ek megjelenítése:(engedély / tiltás)</li>
+	<li>Alapértelmezett URL cél (default: _blank)</li>
+	<li>Taxonómia használata a Simple Photoalbumban (enable/disable)</li>
+	<li>Az adminisztrátor engedélyezheti / tilthatja
+		<ul>
+			<li>A fájlok megtekintések (letöltések) számának megjelenítése</li>
+			<li>Szavazási lehetőség - megjeleníti a fájlokra adott
+				szavazatoknak a számát és átlagát (Rank)</li>
+			<li>A fájl egyéb tulajdonságainak (exif információ, bitráta,
+				méret, stb.) megfjelenítése</li>
+			<li>Caption megjelenítése (egér a kép fölé áll)</li>
+			<li>Fájlok képaláírásának megjelenítése</li>
+			<li>Féjlhoz tartozó, az adatbázisba beírt linkek megjelenítése</li>
+		</ul>
+	</li>
+	<li>A szerkesztő felhasználók szmára különböző szerkesztési
+		műveletek engedélyezése / tiltása:
+		<ul>
+			<li>A képfájlok online szerkesztése (PHP GD vagy ImageMagic modul szükséges hozzá)</li>
+			<li>Féjlok képaláírása link, caption szerkesztése</li>
+			<li>Az oldalon a megjelenítés alól kizárhatók fájlok</li>
+			<li>Fájlok törlése a szerverről és az adatbázisból</li>
+		</ul>
+	</li>
+	<li>A Simple Photoalbum ideiglenes könyvtárának beállítása (itt
+		tárolja átmenetileg a szerkeszteni kívánt fájlt a program) relatív
+		elérési útvonal a Drupal gyökérkönyvtárához képest (default: a drupal
+		files útvonala)</li>
+	<li>A megjelenítés sorrendjének változtathatósága (engedélyezése / tiltása )</li>
+	<li>Szűrő használata a megjelenítéskor (engedélyezés / tiltás )</li>
+	<li>A már nem létező fájlokra vonatkozó adatbázis bejegyzések törlése az adatbázisból</li>
+	<li>A képaláírások automatikus módosítása (szóköz és egyéb karakterek törlése a képaláírásból)</li>
+	<li>Fájl típusok engedélyezése / tiltása.
+		<ul>
+			<li>Kép (default: engedélyezve),</li>
+			<li>Videó (default: engedélyezve) normál vagy HTML5 Videó formátum</li>
+			<li>Hang (default: engedélyezve) HTML5 Audió formátum</li>
+			<li>Dokumentum (doc, docx, xlx, xlsx, ppt, pptx, stb.)</li>
+			<li>Tömörített (zip,rar, 7z)</li>
+			<li>Futtaható (exe, com, dll, msi)</li>
+			<li>Egyéb típusok</li>
+			<li>Tiltott fájlok (js, php, stb.)</li>
+		</ul>
+	</li>
+	<li>Beállítható a fenti típusok kiterjesztéseinek listája (a
+		kiterjesztések vesszővel vagy szóközzel elválasztott listája)</li>	
+</ul>
+
+<h3>Használat</h3>
+
+<p>Tetszőleges típusú tartalmon létrehozott tartalomszűrőt az alábbi
+	szintaktikával (engedélyezni kell a tartalomszűrőt a tartalomtípushoz).</p>
+
+<h4>1. Egyszerű fotoalbum készítése egy megadott könyvtárban lévő fájlokból</h4>
+<p>A modul alapértelmezett beállításainak használatával jön létre a	fotóalbum</p>
+<code>[smpl|relatív elérési útvonal a photoalbum gyökérkönyvtárától]</code>
+
+<p>vagy</p>
+Módosítani szeretnénk ennek a fotóalbumnak egyes paramétereit. A
+paraméterek listája tettzőleges, kivéve az útvonalat!
+</p>
+<code>[smpl|relatív elérési útvonal a photoalbum
+	gyökérkönyvtárától| parameter01 =&gt; érték | parameter02 =&gt; érték
+	|....]</code>
+<br />
+
+<p>2. Fejlett szintaxis:</p>
+<code> [smplphotoalbum] {parameter1: érték} {parameter2: érték}
+	{parameter3: érték} .... [/smplphotoalbum] </code>
+
+<p>
+	<strong>Lehetséges paraméterek:</strong>
+</p>
+
+<ul>
+	<li>path: A folder relatív elérési útvonala</li>
+	<li>number: A kirakott képek száma (D8+)</li>
+	<li>width: a bélyegkép szélessége pixelben</li>
+	<li>order: sorrend növekvő / csökkenő / véletlen</li>
+	<li>sort: rendezhető a sorrend  (true|false)</li>
+	<li>sub: legyen képaláírás  (true|false)</li>
+	<li>capt: legyen catpion  (true|false)</li>
+	<li>viewed: mutassa a megtekintések számát</li>
+	<li>voted: lehessen szavazni és mutassa a szavazások számát és a rangot</li>
+	<li>graphic: gd / imagick</li>
+	<li>edit: szerkeszthetőek legyenek a képek (true|false)</li>
+	<li>exif: Mutassa az exif és egyéb információkat egy linken</li>
+	<li>audio: mutassa meg az audió fájlokat (true|false), default: true</li>
+	<li>video: mutassa meg az videó fájlokat (true|false), default: true</li>
+	<li>doc: mutassa meg az dokumentum fájlokat (true|false), default: true</li>
+	<li>cmp: mutassa meg az tömörített fájlokat (true|false), default: true</li>
+	<li>app: mutassa meg az végrehajtható fájlokat (true|false), default: true</li>
+	<li>url: shows mutassa meg a fájlhoz tartozó website linkjét (true|false), default: true</li>
+	<li>target: mi legyen a target a linkhez (default: _blank)</li>
+	<li>html5: A video és audio fájlokat HTML5 taggel mutatja meg (default)</li>	
+	<li>wm: Vízjel amikor megjeleníti | szerkeszti a képet (true|false)</li>
+	<li>copyright: Exif információ a jpeg / png fileba</li>
+	<li>author:  Exif információ a jpeg / png fileba</li>
+	<li>autoclose:  A szerkesztett kép mentése után záródjon be az szerkesztő ablak</li>	
+	<li>
+	 <ul>
+	  <li>wmpath: A vízjel kép helye. <br />Alapértelmezett a Simple Photoalbumból: smplphotoalbum://images/watermark.png. <br />Publikus fájlrendszerből: A file elérési útjának kezdete 'public://'.</li>  
+    <li>wmalpha: a vízjel halványsága. <br />Érték: 0...100, <br />0-láthatatlanm 100 teljesen látszik, <br />default: 10 (halvány)</li>
+    <li>wmtext: tetszőleges szöveg</li> 
+	  <li>test: teszt üzemmód (true|false)</li>
+		<li>method: GET | POST. Csak adminisztrátori mód esetén</li>
+	 </ul>
+	</li>
+  <li>icon: Beállítja az ikonok színét színes és fekete-fehér között (_col / _bw)</li>
+	<li>slide: True - Slideshow legyen. Slideshow paraméterek</li>
+	<ul>
+		<li>title: - A slideshow címe</li>
+		<li>interval: A képek cserélődése milisecundumban</li>
+		<li>height: A főkép magassága</li>
+		<li>style: A kép cserélődésének módja - fade / slide / zero / zero1</li>
+	  <li>slstyle: A fő kép stílusainak stringje. Default: 'max-width: 100%; height: 600px;'</li>
+	</ul>
+</ul>
+
+<h3>Példa</h3>
+
+<p>
+	<code>[smplr|myalbum/foo/]</code>
+</p>
+<p>
+	<code>
+		[smplphotoalbum]<br /> &nbsp;&nbsp;{title: Basszusgitár}<br />
+		&nbsp;&nbsp;{path:/2004_Bassgitar}<br /> &nbsp;&nbsp;{slide: true}<br />
+		&nbsp;&nbsp;{interval: 10000}<br /> &nbsp;&nbsp;{height: 800px}<br />
+		&nbsp;&nbsp;{style: fade}<br /> [/smplphotoalbum]<br />
+	</code>
+</p>
+
+<p>Adminisztrátorként szerkesztheted a képeket online (Fejlesztés alatt új funkciók)</p>
+<ul>
+  <li>Szerkeszthető minden file neve és képaláírása (caption)</li> 
+  <li>Képek szerkesztése</li>
+	<li>Tulajdonságok szerkesztése gombokkal + paraméterek állításával, mint pl.</li>
+    <li>Forgatás, tükrözés</li>
+    <li>A kép levágása (crop)</li>
+    <li>Átméretezés</li>
+    <li>Vízjel a képre. (Copyright és info jpeg képek esetén)</li>
+    <li>Keret és vignyetta készítés</li>
+    <li>Gamma, Fényesség, Saturation, Hue, RGB, Szürke kép, Kontraszt tulajdonságok állítása</li>
+    <li>Zaj hozzáadása, elvétele</li>
+    <li>Élesítés, lágyítás, Emboss, Élek kijelölése, Konvolúció (konvolúció matrix-szal)</li>
+	<li>Stb...
+</ul>
+
+<p>GD vagy Imagick driver használata, ha az Imagick telepítve van a szerveren</p>
+<p>Ha egy módosítás túl sokáig tart, akkor a Cancel gombbal vagy az Eascape billentyűvel meg lehet szakítani a folyamatot.</p>
+<p>Ha a módosítás túl sokáig tart, akkor egy folyamatjelző jelzi, hogy a folyamat éppen hol tart</p>
+<p>A kép mozgatása: Ctrl billentyű + egér vonszolás vagy Ctrl + billentyűzet kurzormozgatóval</p>
+<p>A kép nagyítása / kicsinyítése: Ctrl + egér görgető kerékkel vagy billentyűzet Ctrl + "+" és "-" billentyűvel</p>
+<p>Adminként az alábbi paraméterek automatikusan edit üzemmódba állítják az oldalt:</p>
+<p>http://www.foo.com/oldal?imgedit=1&id=[kép azonosító]</p>
+<p>A használat hasonlít az ACDSee és más képszerkesztő programok használatához</p>
+<p>A szerkesztés különböző fázisai közben vissza lehet lépni (undo) vagy előre az utolsó szerkesztésig (redo)</p>
+<p>Mentés és mentés másként ugyanabba a könyvtárba az aktuálisan kiválasztott állapotot</p>
+<p>2025.02.19.<br /> Zoltan Fabian</p>
+
+<p>
+	fz@fzolee.hu<br /> <a href="http://www.fzolee.hu">http://www.fzolee.hu</a>
+</p>

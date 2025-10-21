@@ -1,0 +1,41 @@
+body {
+    background: #fff;
+    color: #121212;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* FORM */
+#imgForm {
+    border: solid 4px #ddd;
+    background: #eee;
+    padding: 10px;
+    margin: 30px;
+    width: 600px;
+    overflow:hidden;
+}
+#imgForm label {
+    float: left;
+    width: 200px;
+    font-weight: bold;
+    color: #666;
+    clear:both;
+    padding-bottom:10px;
+}
+#imgForm input {
+    float: left;
+}
+#imgForm input[type="submit"] {
+    clear:both;
+}
+#img_upload {
+    width: 400px;
+}
+#img_name {
+    width: 200px;
+}
+
+
+ul {
+    list-style-type: none !important;
+}

@@ -1,0 +1,53 @@
+<EditForm>
+	<div id="SmplEditForm" class="smpl_edit_form">
+		<form id="SmplEditForm" name="SmplEditForm" METHOD="POST">
+			<div id="SmplEditFormInner">
+				<input id="smpl_edit_id" type="hidden" name="smplformedit" value="-1" />
+				<div class="smpl_edit_title">
+					{{ Edit }}: {{ Properties }}
+					<button id="SmplEClose" class="smpl_close{{ icon }} smpl_button right_corner" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>					
+					<button id="SmplESubmit" class="smpl_save{{ icon }} smpl_button right_corner" title="{{ Save }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				</div>
+
+				<table id="SmplFormTable">
+					<tr>
+						<th colspan='2'>{{ Name }}</th>
+						<th>{{ Value }}</th>
+					</tr>
+					<tr>
+						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_name">{{ Filename }}</label></td>
+						<td align="left" valign="top">
+							<input type='text' id="smpl_name" name="smpl_name" value="" size="50" maxlength="255" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_sub">{{ Subtitle }}</label></td>
+						<td align="left" valign="top"><input type='text' id="smpl_sub" name="smpl_sub" value="" size="50" maxlength="255"/>&nbsp;
+						<ai>&nbsp;<button id="smplairecognition" onclick="return false;" class="smpl_ai{{ icon }} smpl_button" title="{{ AI_recognition }}">&nbsp;&nbsp;&nbsp;&nbsp;</button></ai>	
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_type">{{ Type }}</label></td>
+						<td align="left" valign="top">
+							<select id="smpl_type" name="smpl_type">
+								<option value="image" selected="selected">{{ Image }}</option>
+								<option value="audio">{{ Audio }}</option>
+								<option value="audiohtml5">{{ Audio }} ({{ HTML5 }})</option>
+								<option value="video">{{ Video }}</option>
+								<option value="videohtml5">{{ Video }} ({{ HTML5 }})</option>
+								<option value="app">{{ Application }}</option>
+								<option value="cmp">{{ Compressed }}</option>
+								<option value="doc">{{ Document }}</option>
+								<option value="other">{{ Other }}</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_link">{{ Url }}</label></td>
+						<td align="left" valign="top"><input id="smpl_link" type='text' name="smpl_link" value="" size="50" maxlength="255"/></td>
+					</tr>
+				</table>
+			</div>
+		</form>
+	</div>
+</EditForm>

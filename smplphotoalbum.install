@@ -1,0 +1,133 @@
+<?php
+/**
+ * Implements hook_requirements().
+ * Check the requirements
+ * 
+ * @param string $phase          
+ */
+if(!defined("REQUIREMENT_OK")){
+  define("REQUIREMENT_OK", 0);
+}
+function smplphotoalbum_requirements($phase) {
+  $m = \Drupal::service ( 'module_handler' );
+  $requirements = [];
+  switch ($phase) {
+    case 'install' :
+      break;
+    case 'update' :
+      break;
+    case 'runtime' :
+      break;
+    default :
+      break;
+  }
+
+  if (extension_loaded ( "gd" ) || extension_loaded ( "imagick" )) {
+    $requirements ['smplphotoalbum'] = array (
+        'title' =>  'Simple Photoalbum requirement ERROR!',
+        'value' =>  'GD require in PHP, recommended Imagick!',
+        'description' => 'Enable the GD in PHP, because it is required!' 
+    );
+  } else {
+    $requirements ['smplphotoalbum'] = array (
+        'title' => 'Simple Photoalbum requirement OK!',
+        'value' => 'GD or Imagick installed in PHP',
+        'severity' => REQUIREMENT_OK 
+    );
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implementation of hook_install()
+ */
+function smplphotoalbum_install() {
+  \Drupal::messenger ()->addMessage ( 'Smplphotoalbum module has been installed.', 'status' );
+}
+
+/**
+ * implementation of hook_uninstall()
+ */
+function smplphotoalbum_uninstall() {
+  \Drupal::messenger ()->addMessage (  'Smplphotoalbum module has been uninstalled.', 'status' );
+}
+
+function smplphotoalbum_schema() {
+  $schema = array ();
+  $schema ['smplphotoalbum'] = array (
+      'description' => 'Table for Simple Photoalbum.',
+      'fields' => array (
+          'id' => [
+              'description' => 'Image id',
+              'type' => 'serial',
+              'unsigned' => TRUE,
+              'not null' => TRUE,
+              'size' => 'normal' 
+          ],
+          'path' => [
+              'description' => 'Image path',
+              'type' => 'varchar',
+              'not null' => FALSE,
+              'length' => 255,
+              'default' => '' 
+          ],
+          'name' => [
+              'description' =>  'Name of item' ,
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE,
+              'default' => '' 
+          ],
+          'typ' => [
+              'description' => 'Type of file.',
+              'type' => 'varchar',
+              'length' => 20,
+              'not null' => FALSE,
+              'default' => '' 
+          ],
+          'viewnumber' => [
+              'description' => 'Number of viewed',
+              'type' => 'int',
+              'unsigned' => TRUE,
+              'DEFAULT' => 0 
+          ],
+          'subtitle' => [
+              'description' => 'Text of caption/subtitle',
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE 
+          ],
+          'link' => [
+              'description' =>  'URL association of file ',
+              'type' => 'varchar',
+              'length' => 255,
+              'not null' => FALSE,
+              'default' => '' 
+          ],
+          'size' => [
+              'description' => 'Size of file in bytes',
+              'type' => 'int',
+              'unsigned' => TRUE, 
+              'default' => 0
+          ],
+          'modified' => [
+            'description' => 'Time of created or last modified',
+            'type' => 'int',
+            'unsigned' => TRUE, 
+            'default' => 0
+          ]
+
+      ),
+      'primary key' => array (
+          'id' 
+      ),
+      'indexes' => array () 
+  );
+  return $schema;
+}
+
+// update the module
+function smplphotoalbum_update_193(): void{
+
+}

@@ -1,0 +1,14 @@
+{
+    "require": {
+        "diderich/metadata": "^1.1",
+        "joserick/png-metadata": "^0.2.8",
+        "mlocati/chm-lib": "^1.3",
+        "phpoffice/phpword": "^1.2",
+        "james-heinrich/getid3": "^1.9",
+        "nette/robot-loader": "^4.0",
+        "smalot/pdfparser": "^2.10",
+        "phpoffice/phpspreadsheet": "^3.6",
+        "php-ffmpeg/php-ffmpeg": "^1.3",
+        "clarifai/clarifai-php-grpc": "^11.3"
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "php.debug.executablePath": "G:/Apache64/php81/php.exe",
+  "php.debug.ideKey": "XDEBUG_ECLIPSE",
+  "workbench.tree.indent": 16,
+  "php.stubs": [
+    "*",
+    "imagick"
+  ]
+}

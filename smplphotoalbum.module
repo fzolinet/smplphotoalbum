@@ -1,0 +1,94 @@
+<?php
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Extension\InfoParser;
+
+require "vendor/autoload.php";
+
+/**
+ * Implements hook_help().
+ */
+function smplphotoalbum_help($route_name, RouteMatchInterface $route_match) {
+  global $language;  
+  $output = '';
+  $m = \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath ();
+    
+  switch ($route_name) {
+    case "help.page.smplphotoalbum" :
+      $output = '<h3>About</h3>';
+      $path = $m . '/smplphotoalbum.info.yml';
+      $InfoParsed = new InfoParser (\Drupal::root());
+      $info = $InfoParsed->parse ( $path );
+      $output .= 'Author: <a href="http://www.fzolee.hu">Zoltan Fabian</a><br/>';
+      $output .= "Drupal version: " .\Drupal::VERSION."<br/>";
+      $output .= 'version' . ': ' . $info ['version'] . '<br/>';
+      $output .=  'compiled: ' . date ( 'Y.m.d', $info ['datestamp'] ) . '<br/>';
+      $output .= "<p>Simple Photoalbum shows a set of picture and other filetypes</p>";
+      $lang = \Drupal::languageManager ()->getCurrentLanguage ();
+      if ($lang->getId () == "hu") {
+        $output .= file_get_contents ( $m . "/Olvassel.html" );
+      } else {
+        $output .= file_get_contents ( $m . "/Readme.html" );
+      }
+      $output = strip_tags ( $output, "<a><li><ul><p><strong><b><h1><h2><h3><br><br/>" );
+      $history = file_get_contents ( $m . "/_history.txt" );
+      $output = str_replace ( '{{ history }}', "<pre>" . $history . "</pre>", $output );
+  }
+  return $output;
+}
+/*
+ * function smplphotoalbum_preprocess_page(&$variables) {
+ * $variables['#attached']['library'][] = "smplphotoalbum/css";
+ * }
+ */
+/**
+ * Hook_theme() - for use twig templates
+ *
+ * @param string $existing          
+ * @param string $type          
+ * @param array $theme          
+ * @param string $path          
+ * @return [][][]
+ */
+function smplphotoalbum_theme($existing, $type, $theme, $path) {
+  $theme = [ 
+      'smplphotoalbum' => [ 
+          'variables' => [ 
+              'valami változo' => NULL 
+          ] 
+      ],
+      'editform' => [ 
+          'variables' => [ 
+              'var1' => NULL 
+          ] 
+      ],
+      'imageeditform' => [ 
+          'variables' => [ 
+              'var2' => NULL 
+          ] 
+      ] 
+  ];
+  
+  return $theme;
+}
+/**
+ * Load js library if you are Administrator and 
+ * there is photoalbum on the page
+ */
+function smplphotoalbum_page_attachments( array &$page ){  
+  $roles = \Drupal::currentUser()->getroles();
+  $admin = in_array( 'administrator', $roles );  
+
+  if ( $admin && isset( $GLOBALS["smplphotoalbum"] ) && $GLOBALS["smplphotoalbum"] ) {
+    $page["#attached"]['library'][] = 'smplphotoalbum/smplphotoalbum-edit';  
+  }
+}
+
+/**
+ * 'Generator' meta tags remove
+ * 
+ * @param array $page
+ * @return void
+ */
+function smplphotoalbum_page_attachments_alter( array &$page ){
+  unset($page["#attached"]["html_head"][3] );
+}

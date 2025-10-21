@@ -1,0 +1,82 @@
+smplphotoalbum:
+  version: 1.x
+  css:
+    state:
+      css/smplphotoalbum.theme.css: {}
+      #css/smplphotoalbum.theme.css: {preprocess: false}
+  js:
+    js/lib.js: {preprocess: false}
+    js/smpl.js: {preprocess: false}    
+    js/exif.js: {}    
+    js/filter.js: {}
+    js/test.js: {}    
+    #js/exif.js: {preprocess: false}    
+    #js/filter.js: {preprocess: false}
+    #js/test.js: {preprocess: false}
+  dependencies:
+    - core/jquery
+    - jquery_ui/core
+    - jquery_ui_resizable/resizable
+    - jquery_ui_draggable/draggable
+    - core/once
+    - core/drupal
+    - core/drupal.ajax
+
+smplphotoalbum-edit:
+  version: 1.x
+  js:
+    #js/mousewheel/jquery.mousewheel.js: {}
+    js/mousewheel/jquery.mousewheel.min.js: {}
+    #js/jcanvas/dist/src/jcanvas.js: {}
+    js/jcanvas/dist/min/jcanvas.min.js: {}    
+    #js/jcanvas/src/jcanvas-handles.js: {}
+    js/jcanvas/dist/min/jcanvas-handles.min.js: {}
+    #js/delete.js: {preprocess: false}
+    js/delete.js: {}
+    #js/edit.js: {preprocess: false}
+    js/edit.js: {}
+    #js/editpath.js: {preprocess: false}
+    js/editpath.js: {}
+    js/img_eyedrop.js: {preprocess: false}
+    js/img_distortion.js: {preprocess: false}
+    js/img_rect.js: {preprocess: false}
+    js/img_ellipse.js: {preprocess: false}
+    js/img_circ.js: {preprocess: false}
+    js/img_grid.js: {preprocess: false}
+    js/img_point.js: {preprocess: false}
+    js/img_init.js: {preprocess: false}
+    js/img_edit.js: {preprocess: false}
+    js/img_effects.js: {preprocess: false}
+    js/img_zoomdrag.js: {preprocess: false}
+
+  dependencies:
+    - core/jquery
+    - jquery_ui/core
+    - jquery_ui_resizable/resizable
+    - jquery_ui_draggable/draggable
+    - core/once
+    - core/drupal
+    - core/drupal.ajax
+
+smplphotoalbum-slide:
+  version: 1.x
+  js:
+    js/slide.js: {preprocess: false}
+    #js/slide.js: {}
+    
+  dependencies:
+    - core/jquery
+    - jquery_ui/core
+    - core/once
+    - core/drupal
+    - core/drupal.ajax
+
+smplphotoalbum-stat:
+  version: 1.x
+  js:
+    #js/statistics.js: {preprocess: false}
+    js/statistics.js: {}
+
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax

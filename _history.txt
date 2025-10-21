@@ -1,0 +1,762 @@
+Bugs:
+~~~~
+- If the number of item more than number in the setting does not page!
+- use POST method the Drupal cache problem => 
+  action of form random, but it is not good solution
+
+ImageEdit
+- Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
+- Add / Border => something strange ( javascript layer problem?)
+- Need to check to how layers work
+- the ellipse / rectangle / grid / point eyedrop change 
+  for the scaled and dragged image 
+
+Todo:
+~~~~
+- A slideshow-ból gombbal a normál listára lehessen változtatni 
+- Add / Grain - under construction!!!
+http://localhost/fw3/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
+
+Enhance menu (under construction)
+- AI Face Edit
+- Red Eye
+- Repair
+- Skin Tune
+
+Geometry menu
+- Perspective
+- Distortion
+- Liquify
+
+Lighting
+- Exposure
+- Levels (histogram)
+- Autolevels
+- LightEQ
+- dehaze - (ködtelenítés)
+- Dodge # Burn
+
+Correction menu
+- Correction
+	GD
+		imageaffine — Return an image containing the affine transformed src image, using an optional clipping area
+		imageaffinematrixget — Get an affine transformation matrix
+	Imagick::distortImage 
+		Correction (Lens, Perspective, Distortion, Liquify) - Image Distortion -
+- Distortion Correction
+- Lens Correction
+
+Color menu
+- Color EQ (Brightnes, Hue, Saturation, Color Shift, Vibrance, R, G, B)
+- Brightness (Saturation, Hue)
+
+Imagick
+- Strange Images
+	- Imagick::shadeImage - távoli megvilágítás
+	- Imagick::shadowImage — Simulates an image shadow
+	
+- Imagick::contrastStretchImage(black=0..100, white=0..100, channel)  
+- Imagick::trimImage — Remove edges from the image   
+
+- Imagick::setImageMatte — Sets the image matte channel
+- Imagick::setImageGravity — Sets the image gravity
+
+- Imagick::quantizeImage ??????
+- Color matrix image 
+- Color treshold image
+- Imagick::complexImages - Original and black image logical and | or |
+
+- FloodFillPaint
+- IMagick::ChannelFXImage
+- Password ciphered: - interesting 
+	- imagick::decipherImage(string $passphrase)
+	- Imagick::encipherImage(string $passphrase): bool
+
+GD
+- Edit mp3 ID tags, long of file ...
+- Write tags into image exif - jpeg possible
+- Write png image Author & Copyright info - it is not possible
+
+Exif - ODT Opend Document...
+
+- Let the blur pixel iteration's size bigger or change...
+- If the window too big and the screen too small
+- Light EQ
+
+History:
+~~~~~~~
+2025.10.21
+- Bug: pager did not worked, its ok.
+- bug: Img_edit.js: SaveSubmit did not worked
+- Little improvement for imgedit, edit windows
+- Popup windows (imgedit, edit) positioning
+
+2025.09.30
+- Little bugs editing image with Imagick - ok
+- Histogram - Break problem
+
+2025.09.23
+- Little design change
+
+2025.08.24  - 1.9.2ß
+- BUG: There was javascript errors when the user was admin and not photoalbum page - solved
+- Speed optimalization
+
+2025.07.30
+- Properties access when the user is anonymous not admin
+
+2025.07.14
+- Better BreakTime handling
+
+2025.07.13
+- Bug: Sharpen (imagick) - resolved
+- Bug: There was a bug in the main query on Linux => The solution is dynamic query
+
+2025.07.10
+- Bug: Under Construction bug.
+- Bug: Lighteq - problem
+- Bug: ImgEdit: js bug. smpl_imgeditborder => smpl_imgedit_border
+- Change: change default imgedit folder from smplphotoalbum => public://photoalbum/_edit_
+
+2025.07.08
+- Bug: BreakTime up/lowcase
+
+2025.06.10
+- Slide works
+
+2025.05.10
+- Slide: automatic slide left, right, up, down
+
+2025.05.07.
+- Edit AI recognition button shows when the item is image
+
+2025.04.26 
+- Slide bugfix
+
+2025.04.23 - 1.9.1ß
+- Bugfix
+
+2025.04.21 - 1.9.0 - AI Clarifai client
+- FZ AI started working
+  https://docs.clarifai.com/api-guide/predict/images/
+  https://docs.clarifai.com/sdk/Inference-from-AI-Models/Image-as-Input/#image-to-image
+	GRPC install: https://cloud.google.com/php/grpc
+
+- Bugfix: Javascript keyboard handling
+
+2025.03.28 - 1.8.9
+- Bug: Slideshow - ok
+- Change from normal list to slideshow with button
+- Change from slideshow to normal list with link
+
+2025.03.18 
+-  Swirl effet - 1.8.8
+
+2025.03.06
+- Spec effects / Swirl Effect
+
+2025.03.15 - 1.8.7 
+- Spec effects / Wave effect
+
+2025.03.14 - 1.8.6
+- Solarize Effect Imagick
+
+2025.03.13 - 1.8.5
+- AutoHistogram - when load another image or Undo | Redo in the edit windows load the histogram automatic
+  The data store in the local Storage not cookie - ok
+
+2025.03.12 - 1.8.5 - dev
+- Delete the old histogram when new image loaded in
+
+2025.03.11
+- Bug: Histogram Imagic / GD - ok
+- Properties of the image shows in the image edit window
+
+2025.03.07 - 1.8.5
+- Long process break and process indicato shows in browser
+- GD / Whitebalance
+
+2025.03.07 - 1.8.5-dev
+- Long process break and process indicator shows % in browser
+
+2025.03.01
+- GD: Normalization
+- Progress % shows
+
+2025.02.26
+- GD: Histogram - dev
+
+2025.02.24
+- Bug: Effect / White (Imagick & GD)
+
+2025.02.23 - 1.8.4
+- Edit mode: Mouse click button: load original image <=> actual image to compare them
+
+2025.02.22
+- Effect memu / Oil (Imagick & gd)
+
+2025.02.19 - 1.8.3-ß 
+- Effect menu / Clahe
+- ImgEdit - Save AS...
+- Shave - GD / Imagick
+
+2025.02.15 - 1.8.2-dev
+- Quicker undo / Redo in Edit mode
+
+2025.02.12
+- quick image change in edit mode / original - last
+- img_edit.js => imh_edit.js + img_effects.js
+ 
+2025.02.07 - 1.8.1-dev
+- Color menu / Whitebalance - ok
+- Color menu / Normalize - ok
+- IMGEditForm autoload with url 
+
+2025.02.06
+- Bug: Links not shows - ok
+
+2025.02.05 - 1.8.0-dev
+- Refresh folder && Database - ok
+
+2025.02.02
+- Optimal speed
+
+2025.01.26
+- Geometry > Rotate / Flip ( GD / Imagick) - Tested
+- Effect > CLAHE ( Imagick ) - Tested
+- Effect > Sepia ( Imagick ) - Tested
+- Effect > Oil ( Imagick ) - Tested
+- Effect > Charcoal ( Imagick ) - Tested
+- Effect > White ( Imagick ) - Tested - But ???
+- Effect > B/W ( Imagick ) - Tested
+- Effect > Grayscale ( GD / Imagick ) - Tested
+
+- Detail > Trim (Imagick) - Tested 
+- Detail > Convolution ( GD / Imagic ) - Tested
+- Detail > Blur ( GD / Imagic ) - Tested
+- Detail > Edge ( GD / Imagic ) - Tested
+- Detail > Emboss ( GD / Imagic ) - Tested
+- Detail > Sharpen ( GD / Imagic ) - Tested
+
+- Color > Contrast ( GD / Imagick) - Tested
+- Color > RGB ( GD / Imagick) - Tested
+- Color > Brightness (GD / Imagick ) - Tested
+- Color > Gamma ( GD / Imagic) - Tested
+- Change Graphic driver > change the edit window - ok
+- Detail > Add Noise (GD / Imagic )- Tested
+
+2025.01.25
+- Watermark ( GD / Imagic ) - Tested
+- Vignette ( GD / Imagic ) - Tested
+- scss modifies
+
+2025.01.24
+- Bug: Cache Clear - solved
+
+2025.01.22
+- Bug: rename a part of page (editall_cache => editpath_cache ) - solved
+- Rename: EditAll => EditPath, editall.js => editpath.js
+
+2025.01.18
+- Bug: Pager does not works - ok
+- Bug: Sort does not woks - ok
+
+2025.01.17
+- Bugfix: updatepath - cleantext subscriptions of path
+- bugfix: using \Drupal::request()->get($key)
+
+2025.01.13
+- Little optimalization of command line
+
+2025.01.07 -v1.7.0-dev
+- Javascript hibák (smpl.colorBrightness, smpl.progress)
+
+2024.12.24
+- Starts PHPUnit tests
+
+2024.06.13
+- Bugfix: color picker with Eyedrop shows all the trimImage
+- <label></label> => <button></button> change
+
+2024.05.28
+- Bugfix: zoom & translate with keyboard & mouse - ok
+
+2024.05.26
+- IMGEDIT + Edit html code added not substracted
+- Bugfix: Edit only for admin user
+- Bugfix: Translate with keyboard & mouse
+- Bugfix: Zoom with keyboard & mouse wheel
+
+2024.05.20
+- ImgEdit is fix full page
+
+2024.05.17
+- Bugfix: js files load only if it needs not always
+- Bugfix: Buttons shows when user an Administrator (to Edit, Delete etc...)
+- Bugfix: Load properties
+
+2024.05.14
+- Bugfix: Edit properties bug
+- Bugfix: other js bugs
+
+2024.05.13
+- 1.6.5-dev
+  Notes in the area of images
+	Bugfix: EditAll => EditPath
+	
+2024.05.03
+- datas of Copyright && Author shows in ImageEdit window
+
+2024.05.01
+- Exif informations:
+  xls, xlsx, ods, pdf, 7zip, zip, rar, gz
+
+2024.04.27
+- Bugfix: Exif.php - Properties of items does not works when it is not an image or media file
+  Problem was: Exif.php => Xml2Assoc
+- Bugfix: Exif layer show / hide at click
+- Composer using =>
+- Bugfix: CHMlib hiányzik
+- Bugfix: GetID3 lib => vendor
+
+2024.04.21. - 1.6.4 - new version
+- AVIF shows
+- Bugfix: Old Style
+- Bugfix: if empty a folder
+- Bugfix: Order string ignoring case
+- Bugfix: Edit clear || cache rebuild missed!!!!
+
+2024.03.01.
+- usable the old style back: [smpl|/path]
+- test:
+Detail menu
+- Noise - ok
+	- Noise
+	- Denoise
+- Sharpen - ok
+- Emboss - ok
+- Trim
+- Edge - ok
+- Blur - ok
+- Clarity
+- Detail Brush
+- Convolution - ok
+
+2024.02.27
+Add menu
+- Watermark - Imagick - ok
+- Border - tested - ok
+- Vignette - tested - ok 
+
+Geometry menu (Tested)
+- Rotate / Flip - ok
+- Crop - ok
+- Resize - ok
+- Distorsion - ok
+- Lens - ok
+
+Effect menu
+- Gray - ok
+- B/W - ok
+- White - ok
+- Charcoal - ok
+- Oil - ok
+- Sepia - ok
+- CLAHE - ok
+
+2024.02.20 - 9.x-1.6.4
+- Refactoring js files
+- type change in database
+- ImgManipulate
+
+2024.02.18
+- Change the type of item
+
+2024.02.16
+- Update to jCanvas 22.0.1
+
+2024.02.09
+- Bugfix: avi show
+
+2024.02.05
+- bugfix: jquery library dependencies 
+- Bugfix: In the  Render function
+
+2023.12.29
+- Test: update item
+- BugFix: Delete Item
+- Bugfix: Search don't use after the Search on the next page => FilterFilter
+- Bugfix: Translation smpl_help
+- Bugfix: Text on pager buttons
+- Bugfix: cache problem (GET=>POST)
+- Bugfix: View image size problem
+- BugFix: Properties of item
+- BugFix: Edit: Properties
+- Add: webp, avif support
+
+2023.07.04
+- when size & position of canvas change => (rect) layer change
+ 
+2023.06.23.
+- Mouse Wheele Zoom in / out
+- Dragging the canvas
+- Default size and position
+- cursor changes
+
+2023.04.30
+- Drag the scaled image
+2023.04.04
+- Scale the canvas
+2023.04.03
+- Modulable Imageedit
+
+2023.03.23
+- EyeDrop && Transparency
+
+2023.03.21
+- Color of layers is change (invert)
+
+2023.03.19
+- Point layer bug (Eyedrop bug) - ok
+2023.03.18
+- Circle, Rectangle, Ellipse layer ok
+
+2023.03.14
+- jCanvas lib using
+
+2023.02.25
+- EyeDropper
+
+2023.02.21 - 9.x-1.5-dev
+- New Imagick menu points
+
+2023.02.14 - 9.x-1.41a
+- little change in Thumbnail messages
+- Not html5 video &audio icons shows
+
+2023.02.11 9.x-1.41
+- Imagick
+	Watermark bug - ok
+	Resize bug - ok
+	Imagick version 6.x.x vs 7.x.x - ok
+	
+2023.02.10 - 9.x-1.4
+- GD
+	 Vignette oval/rect - ok
+	 Border - ok
+	 Watermark - ok
+	 Sharpen - ok
+	 Blur - ok
+	 Add noise - ok
+
+- Imagick   
+	 Vignette oval / rect - ok
+	 Border - ok
+	 Watermark - ok
+	 Sharpen - ok
+	 Blur - ok
+	 Add noise - ok
+	 
+2023.01.24
+- GD/Imagick - Sharpen, Blur - ok
+2023.01.19
+- GD - Saturation, Hu are more quick
+- Change the GD /Imagick driver on Image Edit interface
+
+2023.01.17
+- GD
+	 Resize - ok
+	 Reset - ok
+	 Gamma - ok
+	 Brightness - ok
+	 RGB - ok
+	 GrayScale - ok
+	 Contrast - ok
+	 Convolution - ok
+- Imgedit interface little changes   
+
+2023.01.16
+- Bug: GD - Noise - ok
+
+2023.01.15
+- U can use cancel button to break long command 
+- GD: Saturation & hue works, but buggy
+
+2023.01.13.
+- From Drupal 9.5.1 jQuery UI, jQuery UI Draggable, jQuery UI Resizable
+	out of core of Drupal and has to use contrib modules
+	jQuery UI, jQuery UI Draggable, jQuery UI Resizable contrib modules!
+
+2023.01.12
+- bug: imgedit=> GD / save - ok
+
+2023.01.11
+- Watermark text (copyright, author) write only into jpeg
+
+2023.01.03
+- GD:
+	- Vignette (rect, circle, ellipse) - ok
+	- Watermark - ok
+	- Border - ok
+	- Color / Lighting
+		-RGB - ok
+
+2022.12.31
+- bug: ImgEdit window selection - ok
+
+2022.12.30
+- Translate system and translation file (Hu)
+
+2022.12.28
+- imgAreaSelect problem and optimalization
+
+2022.12.17
+- Imagick
+	Vignette
+	- Ellipse - ok
+	- Circle - ok
+	- Rect - ok
+- Slideshow: little changes of design
+2022.12.16
+- Slideshow: click on thumnail load the image
+2022.12.13
+- Bug: Slideshow: There are 'items' type of items are not images
+2022.12.11
+- Bug: Slideshow shows only images
+- Bug: Edit All function
+2022.12.02
+- Selenium IDE tests
+2022.11.20
+- 9.x-1.40-dev - Test Framework
+2022.11.11
+- Javascript optimalization
+2022.11.02
+- minor fixes of
+- Rename files on the server, change subtitle & link
+- stat of actual page
+
+2022.11.01
+- Write jpeg file Author & Copyright info && Save back
+
+2022.10.18
+	Bugfix: Imagick / GD Watermark
+
+2022.10.15
+	Bugfix: Exif:
+		- images
+		- videos
+		- compressed files
+		- Office files (doc, xls, ppt, docx, xlsx, pptx),
+		- executable files (exe, dll, apk)
+2022.10.13
+- Wignette OnFly
+
+2022.10.09
+- GD
+	RGB
+- Imagick
+	RGB
+2022.10.08
+- GD
+	Border
+- Imagick driver
+	Border (default color from the image average color)
+2022.09.29
+- Imagick driver
+	Vignette ellipse
+	Vignette circle
+
+2022.09.26
+- Imagick driver
+	Emboss
+	Edge
+
+2022.09.24
+	Sharpen
+	Add noise
+	Denoise
+
+2022.09.16
+- Imagick Driver
+	GrayScale
+	Contrast
+	Brightness
+	Gamma
+	Resize interface - ok
+
+2022.09.10
+- Imagick Driver
+	Resize - ok
+	Crop - ok
+	Rotate - ok
+	Mirror (Flip/Flop) - ok
+
+2022.07.03
+- open actual image in new tab
+
+2022.05.23 - 9.x-1.28-rc5
+- Vignette_ellipse works and optimalized
+
+2022.05.18 - 9.x-1.28-rc2
+- Long term image edit process break from browser
+
+2022.05.15 - 9.x-1.28-rc1
+- Vignette - ellipse - it works
+
+2022.05.14 - 9.x-1.28-dev
+- Style change (little)
+- Vignette - ellipse - it works almost
+- Vignette - circle - ok
+- Searching for some image (name, filename, caption) - ok
+
+2022.05.10
+- Vignette - rect - ok
+
+2022.04.09 - 9.x-1.27-dev
+- Color & B/W icons
+- ImageEdit chane and bug
+
+2022.03.26
+- Vignette effect
+- Watermark
+
+2022.03.22
+- Bug: Description id
+- Bug: Search only if enabled
+
+2022.03.20
+- Refactoring
+- Bug: wrong require_once
+
+2022.03.17
+- Edit All && Cache clear buttons acces only editors
+- Bug: Help Window
+- Bug: Sort
+
+2022.03.16
+- Bug: "Warning: copy(public://photoalbum/...): failed to open stream:
+			 "Drupal\Core\StreamWrapper\PublicStream::stream_open" call failed
+				in Drupal\smplphotoalbum\ImageList->MakeThumbnail()
+				(line 397 of modules/smplphotoalbum/src/ImageList.php)
+- Bug: Draggable (ImageEdit & Edit layer)
+- Image Edit Buttons on the top too... align in the middle of the row
+
+2021.12.05
+- Slideshow ready
+
+2021.11.12 - 9.x-1.12
+- Bug: js: Does not close the big picture
+
+2021.10.13 - 9.x-1.11
+- Slideshow animation
+
+2021.09.29 - 9.x-1.10
+- Slideshow ready
+
+2021.08.21 - 9.x-1.06
+- Bug: Delete item did not work
+- Edit subscription of all of the item in path
+
+2021.08.13
+- Bug: Did not save the modified image
+
+2021.08.07
+- Exif information bugs ( xls, etc...)
+- Bug: smpl variable does not exist when edit the view
+
+2021.08.07
+- Bug: If there is not title on the page there are warnings
+- Bug: When edit the caption, subtitle of image trim the string of subtitle
+
+2021.06.10
+- Bug: solved - When download, the filename only a number, not the original filename
+- Bug: solved - Image Download not works (Binary Response: SmplphotoalbumControlles::v())
+
+2021.06.09
+- Exif: doc files (under development PHPword not really good)
+
+2021.06.08
+- Exif: pdf, ppt
+
+2021.06.06
+- ppt Exif informations
+
+2021.06.04
+
+- Exif informations:
+	Audio files, video files, images
+	exe, dll, pdf
+	docx, pptx, xlsx,
+	chm
+
+2021.06.03.
+- bug: UTF-8 problem in Exif - solved
+- exif info bugs.
+
+2021.06.01
+- jpg / png / gif etc exif info ok
+- docx exif info ok
+
+2021.05.28
+- Exif class: Video, audio, image, rar, zip, jar, apk
+
+2021.05.27
+- Exif class in
+
+2021.05.15 - 9.x - 1.0
+- Initial version of D9
+
+2021.01.25 - 8.x-1.03
+	add: images lazy loading
+	Add: new syntax of smplphotoalbum
+
+2021.01.12 - 8.x-1.02
+	Add: ImgEdit - Grayscale
+	Add: ImgEdit - Convolution matrix using
+	Add: ImgEdit - Emboss
+- bugfix: Undo / Redo show
+- bugfix: Underline at the pictures
+- bugfix: ImgEdit - resize / crop does not works!
+
+2021.01.08 - 8.x-1.01
+- change colorbox to own solution
+
+2021.01.05 - 8.x-1.0
+- Pager works and tested
+- Order is ready - tested
+
+2021.01.03
+	ImgEdit functions ready there are bugs
+	bugfix:Delete functions works
+
+2021.01.01
+	start the Image Edit functions
+	bugfixes
+
+2020.12.28
+	Edit subtitle and link
+
+2020.12.27
+	Exif window draggable
+	Exif readers: pdf, images, docx, audio, video, xlsx, xls, jar
+
+2020.12.26.
+	Optimalization - reprogram: Imagelist.php & Image.php
+
+2020.12.25
+	The images shows right
+
+2020.12.21
+	The pictures shows
+	makes new thumbnail
+	new rows in database
+	FilterSMplphotoalbum
+	beginning modify js files in /js/ - library
+
+2020.12.15
+	beginning modify CSS, sass
+
+2020.05.05
+	Install is ready
+	Readme, Olvassel, smplphotoalbum.module is ready
+2020.05.03 - the port of smpl photoalbum begins
