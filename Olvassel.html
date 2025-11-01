@@ -102,9 +102,8 @@
 <ul>
 	<li>A Drupal menük újraépítése (fejlesztők számára)</li>
 	<li>A fájlok direkt elérése (engedély / tiltás)</li>
-	<li>Az fájlokhoz tartozó URL-ek megjelenítése:(engedély / tiltás)</li>
+	<li>Az fájlokhoz tartozó URL-ek megjelenítése (engedély / tiltás)</li>
 	<li>Alapértelmezett URL cél (default: _blank)</li>
-	<li>Taxonómia használata a Simple Photoalbumban (enable/disable)</li>
 	<li>Az adminisztrátor engedélyezheti / tilthatja
 		<ul>
 			<li>A fájlok megtekintések (letöltések) számának megjelenítése</li>
@@ -115,14 +114,14 @@
 			<li>Caption megjelenítése (egér a kép fölé áll)</li>
 			<li>Fájlok képaláírásának megjelenítése</li>
 			<li>Féjlhoz tartozó, az adatbázisba beírt linkek megjelenítése</li>
+			<li>Fájlok feltöltését a fotóalbumba (engedélyezett filetípusokat)</li>
 		</ul>
 	</li>
 	<li>A szerkesztő felhasználók szmára különböző szerkesztési
 		műveletek engedélyezése / tiltása:
 		<ul>
 			<li>A képfájlok online szerkesztése (PHP GD vagy ImageMagic modul szükséges hozzá)</li>
-			<li>Féjlok képaláírása link, caption szerkesztése</li>
-			<li>Az oldalon a megjelenítés alól kizárhatók fájlok</li>
+			<li>Fájlok neve, képaláírása, linkje, típusának és fontosságának szerkesztése</li>			
 			<li>Fájlok törlése a szerverről és az adatbázisból</li>
 		</ul>
 	</li>
@@ -196,24 +195,24 @@ paraméterek listája tettzőleges, kivéve az útvonalat!
 	<li>app: mutassa meg az végrehajtható fájlokat (true|false), default: true</li>
 	<li>url: shows mutassa meg a fájlhoz tartozó website linkjét (true|false), default: true</li>
 	<li>target: mi legyen a target a linkhez (default: _blank)</li>
-	<li>html5: A video és audio fájlokat HTML5 taggel mutatja meg (default)</li>	
+	<li>html5: A video és audio fájlokat HTML5 taggel mutatja meg (default)</li>
 	<li>wm: Vízjel amikor megjeleníti | szerkeszti a képet (true|false)</li>
 	<li>copyright: Exif információ a jpeg / png fileba</li>
 	<li>author:  Exif információ a jpeg / png fileba</li>
-	<li>autoclose:  A szerkesztett kép mentése után záródjon be az szerkesztő ablak</li>	
+	<li>autoclose:  A szerkesztett kép mentése után záródjon be az szerkesztő ablak</li>
+	<li>upload: Engedélyezett fájltípus feltöltése</li>
 	<li>
-	 <ul>
-	  <li>wmpath: A vízjel kép helye. <br />Alapértelmezett a Simple Photoalbumból: smplphotoalbum://images/watermark.png. <br />Publikus fájlrendszerből: A file elérési útjának kezdete 'public://'.</li>  
-    <li>wmalpha: a vízjel halványsága. <br />Érték: 0...100, <br />0-láthatatlanm 100 teljesen látszik, <br />default: 10 (halvány)</li>
-    <li>wmtext: tetszőleges szöveg</li> 
-	  <li>test: teszt üzemmód (true|false)</li>
-		<li>method: GET | POST. Csak adminisztrátori mód esetén</li>
+	<ul>
+		<li>wmpath: A vízjel kép helye. <br />Alapértelmezett a Simple Photoalbumból: smplphotoalbum://images/watermark.png. <br />Publikus fájlrendszerből: A file elérési útjának kezdete 'public://'.</li>  
+		<li>wmalpha: a vízjel halványsága. <br />Érték: 0...100, <br />0-láthatatlanm 100 teljesen látszik, <br />default: 10 (halvány)</li>
+		<li>wmtext: tetszőleges szöveg</li>
 	 </ul>
-	</li>
-  <li>icon: Beállítja az ikonok színét színes és fekete-fehér között (_col / _bw)</li>
+	<li>method: GET | POST. Csak adminisztrátori mód esetén</li>
+	<li>test: teszt üzemmód (true|false)</li>	
+	<li>icon: Beállítja az ikonok színét színes és fekete-fehér között (_col / _bw)</li>
 	<li>slide: True - Slideshow legyen. Slideshow paraméterek</li>
 	<ul>
-		<li>title: - A slideshow címe</li>
+		<li>title: A slideshow címe</li>
 		<li>interval: A képek cserélődése milisecundumban</li>
 		<li>height: A főkép magassága</li>
 		<li>style: A kép cserélődésének módja - fade / slide / zero / zero1</li>

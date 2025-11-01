@@ -96,7 +96,7 @@
 		the functions:
 		<ul>
 			<li>Edit images online (GD or if installed ImageMagic module on	PHP)</li>
-			<li>Edit the subtitles (rename the file, change caption and link) of images</li>
+			<li>Edit the subtitles (rename the file, change subtitle|caption, type, link & importance) of files</li>
 			<li>Delete from database and directory &nbsp;</li>
 		</ul>
 	</li>
@@ -120,6 +120,7 @@
 			<li>prohibited files.</li>
 		</ul>
 	</li>
+	<li>Admin can upload files (enabled types) to the server folder of photoalbum</li>
 	<li>Set the lists of extensions of any file types</li>
 </ul>
 
@@ -139,23 +140,20 @@
 	2. Make a simple photoalbum from a folder - <u>new syntax:</u>
 </h4>
 <p>
-<pre><code class="language-plaintext">
-[smplphotoalbum]
-	{name_of_parameter: value}
-[/smplphotoalbum]	
+<pre><code class="language-plaintext">[smplphotoalbum]
+    {name_of_parameter: value}
+[/smplphotoalbum]
 </code></pre>
 
-<pre><code class="language-plaintext">
-{smplphotoalbum}
-	{name_of_parameter: value}
+<pre><code class="language-plaintext">{smplphotoalbum}
+    {name_of_parameter: value}
 {/smplphotoalbum}
 </code></pre>
 
 </p>
 <p>Example:</p>
 <p>
-<pre><code>
-[smplphotoalbum]
+<pre><code>[smplphotoalbum]
 	{path: /teszt}
 	{number: 12}
 	{width: 180px}
@@ -191,26 +189,27 @@
 	<li>target: what is the target (default: _blank)</li>
 	<li>html5: the video and audio file shows with HTML5 audio and video tags</li>
 	<li>autoclose: After save the edited image the edit windows auto close (true|false)</li>
-  <li>Watermark</li>
-  <ul>
-    <li>wm: Watermark when show|edit the image (true|false)</li>
-    <li>wmpath: Watermark path 
-      <br>From public folder (beginning of public://)
-      <br>From Simple Photoalbum module default:(beginning of smplphotoalbum://images/).</li> 
-    <li>wmalpha: watermark alpha value: 0..100 (in %). <br/>0 - invisible, 100 - max, default: 10</li>
-    <li>wmcopyright: any text into copyright IPTC/Exif field</li>
-    <li>wmauthor: any text into author / Owner IPTC/Exif field</li>	  
+	<li>upload: Upload enabled filetypes (true|false)</li>
+	<li>Watermark</li>
+	<ul>
+		<li>wm: Watermark when show|edit the image (true|false)</li>
+	    <li>wmpath: Watermark path 
+		  <br>From public folder (beginning of public://)
+	      <br>From Simple Photoalbum module default:(beginning of smplphotoalbum://images/).</li> 
+		<li>wmalpha: watermark alpha value: 0..100 (in %). <br/>0 - invisible, 100 - max, default: 10</li>
+	    <li>wmcopyright: any text into copyright IPTC/Exif field</li>
+		<li>wmauthor: any text into author / Owner IPTC/Exif field</li>	  
 	</ul>
 	<li>test: test mode, only the  true|false</li>
 	<li>method: GET | POST (GET better the testing). Only admin mode!</li>
-	<li>graphicdrv: wich graphic driver,  gd or imagick (if it installed)</li>
+	<li>graphicdrv: which graphic driver,  gd or imagick (if it installed)</li>
 	<li>lang: hu | en</li>
 	<li>translate: true|false
 	<li>icon: Set the color of icons on the page (_col / _bw)</li>
 	<li>slide: True - Let slideshow. The parameters of slideshow</li>
 	<ul>
 		<li>title: - title of slideshow</li>
-		<li>interval: time of changin in sec</li>
+		<li>interval: time of changing in sec</li>
 		<li>height: Height of main image (px)</li>
 		<li>style: Mode of changing images - fade / slide / zero / zero1</li>
 		<li>slstyle: string of css settings of the main image. Default: 'max-width: 100%; height: 600px;'</li>
@@ -220,16 +219,14 @@
 <h3>Example:</h3>
 
 <p>
-	<pre><code>
-[smplphotoalbum]
+<pre><code>[smplphotoalbum]
   {title: Bassguitar}
   {path:/2004_Bassguitar}
   {slide: true}
   {interval: 10000}
   {height: 800px}
   {style: fade} 
-[/smplphotoalbum]
-	</code></pre>
+[/smplphotoalbum]</code></pre>
 </p>
 
 <h3>Edit An image (This is under construction)</h3>
@@ -260,7 +257,7 @@ push the Cancel button.</p>
 <p>The status of editink can use undo / redo function</p>
 <p>The Save and the Save As saves the edited image into the same folder</p>
 <p>
-	2024.05.26.<br /> Zoltan Fabian
+	2025.11.02.<br /> Zoltan Fabian
 </p>
 
 <p>

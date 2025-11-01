@@ -1,5 +1,5 @@
 
-Simple Photoalbum 1.x9.x-xxxx
+Simple Photoalbum 1.9.x-xxxx
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Features
 ~~~~~~~~
@@ -69,13 +69,13 @@ Administration settings
 
 The admin can enable / disable the  
 - Shows the number of views (downloads) of images (files)
-- Voting for the image (file) and shows the 
+- Voting for the item and shows the 
 - Average votes anf number of votes (Shows the rank of files)
 - Link for the other properties of images 
     (exif info, bitrate, etc.)
-- Caption of files
-- Substitute of files
-- Link of files (URLof original website etc...)    
+- Substitute of item
+- Link of files (URLof original website etc...)
+- importance of item
 
 - There are buttons below the files and you can
   - Edit images online (if installed GD or ImageMagic module on PHP)
@@ -124,6 +124,7 @@ Parameters
   autoclose: After save the edited image the edit windows auto close (true|false)
   ai: name of image from image recognition of AI
   method: GET / POST
+  upload: can admin upload file into the photoalbum
   
   Watermark
     wm: Watermark when show|edit the image (true|false)
@@ -188,7 +189,7 @@ push the Cancel button.
 The using is similar than ACDSee or any other image editing software.
 You can use the mouse to move, zoom in or zoom out the image.
 
-2025.06.09
+2025.11.01
 
 Zoltan Fabian
 
