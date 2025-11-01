@@ -10,9 +10,7 @@ smplphotoalbum:
     js/exif.js: {}    
     js/filter.js: {}
     js/test.js: {}    
-    #js/exif.js: {preprocess: false}    
-    #js/filter.js: {preprocess: false}
-    #js/test.js: {preprocess: false}
+
   dependencies:
     - core/jquery
     - jquery_ui/core
@@ -25,17 +23,12 @@ smplphotoalbum:
 smplphotoalbum-edit:
   version: 1.x
   js:
-    #js/mousewheel/jquery.mousewheel.js: {}
     js/mousewheel/jquery.mousewheel.min.js: {}
-    #js/jcanvas/dist/src/jcanvas.js: {}
     js/jcanvas/dist/min/jcanvas.min.js: {}    
-    #js/jcanvas/src/jcanvas-handles.js: {}
     js/jcanvas/dist/min/jcanvas-handles.min.js: {}
-    #js/delete.js: {preprocess: false}
     js/delete.js: {}
-    #js/edit.js: {preprocess: false}
     js/edit.js: {}
-    #js/editpath.js: {preprocess: false}
+    js/upload.js: {}    
     js/editpath.js: {}
     js/img_eyedrop.js: {preprocess: false}
     js/img_distortion.js: {preprocess: false}

@@ -1,5 +1,5 @@
 /* Default parameters*/
- $BorderColor: #D1D1D1;
+ $BorderColor: #D0D0D0;
  $BorderWidth: 1px;
  $BorderStyle: solid;
  $BorderRadius: 0.2em;
@@ -71,6 +71,8 @@
   display: flex;
   flex-flow: column;
   justify-content: flex-end;
+  margin-left: 1px;
+  margin-top: 1px;
 }
 
 .smpl_item_div {
@@ -80,9 +82,6 @@
   margin-bottom:auto;	
 }
 
-.smpl_oth{
-
-}
 a.smpl_a {
   text-decoration: none;
   border: 0;
@@ -126,7 +125,7 @@ a.smpl_a:hover {
   font-size: $fontSize; 
 }
 
-#smpl_sub{
+#smpl_sub, #smpl_usub{
   width: 80%;
 }
 
@@ -136,6 +135,12 @@ a.smpl_a:hover {
   display: inline;
   width: 100%;
   clear: both;
+}
+
+#smpl_usize, #smpl_utime{
+  width: 10em !important;
+  max-width: 10em !important;
+  text-align: right;
 }
 
 
@@ -236,10 +241,12 @@ select, input{
   height: var(--sp1-5) !important;    
   min-height: var(--sp1-5) !important;  
 }
+
 select{
   padding-inline-start: 0 !important;
   padding-inline-end: 0 !important;
 }
+
 .right_corner{
   float: right
 }
@@ -256,6 +263,7 @@ $icons: ( _col, _bw ); @each $icon in $icons {
 .smpl_color#{$icon}       {background-image: url("../image/b_color#{$icon}.png");}
 .smpl_convolution#{$icon} {background-image: url("../image/b_convolution#{$icon}.png");}
 .smpl_correction#{$icon}  {background-image: url("../image/b_correction#{$icon}.png");}
+.smpl_upload_file#{$icon} {background-image: url("../image/b_upload#{$icon}.png");}
 .smpl_cache_clear#{$icon} {background-image: url("../image/b_cache#{$icon}.png");}
 .smpl_contrast#{$icon}    {background-image: url("../image/b_contrast#{$icon}.png");}
 .smpl_crop#{$icon}        {background-image: url("../image/b_crop#{$icon}.png");}
@@ -313,6 +321,7 @@ $icons: ( _col, _bw ); @each $icon in $icons {
 .smpl_vignette#{$icon}    {background-image: url("../image/b_vignette#{$icon}.png");}
 .smpl_watermark#{$icon}   {background-image: url("../image/b_watermark#{$icon}.png");}
 }
+
 /* Save AS div*/
 div#smpl_saveas{
   display:none;
@@ -445,29 +454,44 @@ table.smpl_exif_table > {
 }
 
 /* visibility, position, etc*/
-div#SmplEditForm {
+div#SmplEditForm, div#SmplUploadForm {
   display: none;
   z-index: 2;
   justify-content: center;
   position: absolute;  
   top: 3em;
   background-color: $BkgGrey;
+  font-size: small !important;
 }
 /*--------- EditForm --------------*/
-div#SmplEditForm > table > tr > td {
+div#SmplEditForm > table > tr > td,
+div#SmplUploadForm > table > tr > td
+ {
   text-align: left;
 }
 
-div#SmplEditFormData {
+div#SmplEditFormData, div#SmplUploadFormData {
   border: 0;
   padding: 0;
   margin: 0;
+}
+/* ---------- UploadForm ------------------- */
+#smpl_uname{
+  padding: 0!important;
+  border: 0 !important;
+  background-color: transparent !important;
+}
+
+#SmplUploadTable{
+  margin-block-start:0;
+  margin-block-end:0;
 }
 
 /* only the parameters of view*/
 /* Img Edit css settings */
 .smpl_edit_form, 
-.smpl_imgedit_form {  
+.smpl_imgedit_form,
+.smpl_upload_form {  
   border-style: ridge;  
   border-color: $BorderColor;
   padding: 8px;
@@ -489,9 +513,9 @@ div#SmplImgEditForm {
   z-index: 2;
   justify-content: center;
   position: absolute;  
-  top: 3em;
-  font-size: small !important;
+  top: 3em;  
   background-color: $BkgGrey;
+  font-size: small !important;
 }
 
 div#SmplCanvasContainer{
@@ -513,14 +537,16 @@ canvas#SmplCanvas{
   border: $BorderSettings;
 }
 
-.smpl_edit_title {
+.smpl_edit_title, 
+.smpl_upload_title {
   max-width: 100%;
   text-align: left;  
   font-weight: bold;
   font-size:1.2em;
 }
 
-.smpl_edit_title,
+.smpl_edit_title, 
+.smpl_upload_title,
 .smpl_edit_props
 {
   border-bottom: 1px solid darken($BorderColor, 20%);
@@ -928,7 +954,7 @@ input#smpl_filter {
 
 select#smpl_sortorder, select#smpl_ascdesc, select#smpl_rotate_deg,
 select#smpl_mode, select#smpl_kind, select#smpl_filters, select#smpl_geom,
-.smpl_dropdown {
+.smpl_dropdown, #smpl_utype {
   background-image: linear-gradient(45deg, transparent 50%, grey 50%),
     linear-gradient(135deg, grey 50%, transparent 50%),
     linear-gradient(to right, $BkgViewColor, $BkgViewColor);

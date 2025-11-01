@@ -35,6 +35,7 @@
 				$("input#smpl_edit_id").val(id);
 				$("input#smpl_name").val(data.name);
 				$("input#smpl_sub").val(data.subtitle);
+				$("input#smpl_importance").val(data.importance);
 				$("select#smpl_type option").attr("selected", false).change();
 				$("select#smpl_type option[value='" + data.typ + "']").attr("selected", "selected").change();
 				$("input#smpl_link").val(data.link);
@@ -56,7 +57,6 @@
 				}
 				SmplEditForm.offset({ top: pos.top + dy, left: pos.left });
 
-
 				//setDivInWindow( SmplEditForm, pos );
 				smpl.progress(false);
 			},
@@ -75,12 +75,14 @@
 		$("input#smpl_edit_id").val('');
 		$("input#smpl_name").val('');
 		$("input#smpl_sub").val('');
+		$("input#smpl_importance").val(0);
 		$("select#smpl_type option").attr("selected", false).change();
 		$("select#smpl_type option[value='image']").attr("selected", "selected").change();
 		$("input#smpl_link").val('');
 		e.preventDefault();
 		return false;
 	});
+
 	/**
 	 * Edit form send to server
 	 * @return false
@@ -91,6 +93,7 @@
 			name: $("input#smpl_name").val(),
 			subtitle: $("input#smpl_sub").val(),
 			type: $("select#smpl_type option:selected").val(),
+			importance: $("input#smpl_importance").val(),
 			link: $("input#smpl_link").val(),
 		};
 		let sendData = JSON.stringify(formData);
@@ -107,8 +110,9 @@
 				}
 				$("input#smpl_edit_id").val('');
 				$("input#smpl_sub").val('');
-				$("input#smpl_link").val(''),
-					smpl.progress(false);
+				$("input#smpl_link").val('');
+				$("input#smpl_importance").val('0');
+				smpl.progress(false);
 				SmplEditForm.hide();
 			},
 			error: function (response) {

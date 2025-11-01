@@ -270,6 +270,7 @@ class SettingsForm extends ConfigFormBase {
         '#required' => TRUE,
         '#options' => array (
             'filename' => $this->t ( 'Sort files by their file names.' ),
+            'importance' => $this->t ( 'Sort files by their importance' ),
             'size' => $this->t ( 'Sort files by their size' ),
             'date' => $this->t ( 'Sort files by their dates.' ),
             'sub' => $this->t ( 'Sort files by subtitles' ),
@@ -303,27 +304,34 @@ class SettingsForm extends ConfigFormBase {
         '#default_value' => $cfg->get( 'filter' ),
         '#description' => $this->t ( "The user can filter items in the actual path in name or subscription!" ) 
     ];
-
+    
     /**
      * Editing settings
      */
-    $form ['editing'] = [ 
+    $form ['edit'] = [ 
         '#type' => 'fieldset',
-        '#title' => $this->t ( 'Editing the list and files' ),
+        '#title' => $this->t ( 'Editing the list of items and properties of files' ),
         '#collapsible' => TRUE,
         '#collapsed' => TRUE 
     ];
-    
-    $form ['editing'] ['edit'] = [ 
+
+    $form ['edit'] ['edit'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'You can edit the properties of the files (name, caption, etc, taxonomy, url) etc.' ),
-        '#default_value' => $cfg->get( 'edit' ) 
+        '#default_value' => $cfg->get( 'edit' ) ,        
     ];
     
-    $form ['editing'] ['delete'] = [ 
+    $form ['edit'] ['delete'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'You can delete the actual file' ),
         '#default_value' => $cfg->get( 'delete' ) 
+    ];
+
+    $form['edit'] ['upload'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t ('Uploading enable files to the server.'),
+        '#default_value' => $cfg->get( 'upload' ),
+        '#description' => 'Uploading to the server is potentionally, possible dangerous!!!'
     ];
     
     // Graphic driver are exist
@@ -348,8 +356,14 @@ class SettingsForm extends ConfigFormBase {
       $imagickok = False;
     }
 
+    $form['imgedit'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t ( 'Editing images' ),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE 
+    ];
     // you can edit images
-    $form ['editing'] ['imgedit'] = [ 
+    $form ['imgedit'] ['imgedit'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'You can edit the pictures on the web' ),
         '#default_value' => $gdok || $imagickok,
@@ -357,7 +371,7 @@ class SettingsForm extends ConfigFormBase {
     ];
 
     // choose graphic driver from exists
-    $form ['editing'] ['graphicdrv'] = [ 
+    $form ['imgedit'] ['graphicdrv'] = [ 
         '#type' => 'radios',
         '#title' => $this->t ( 'Choose graphic driver for editing images on the web!' ),
         '#default_value' => $cfg->get( 'graphicdrv' ),
@@ -376,7 +390,7 @@ class SettingsForm extends ConfigFormBase {
       $jpeg = - 1;
     }
     
-    $form ['editing'] ['jpeg'] = [ 
+    $form ['imgedit'] ['jpeg'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'JPG, JPEG Quality' ),
         '#default_value' => $jpeg,
@@ -390,7 +404,7 @@ class SettingsForm extends ConfigFormBase {
     if (! isset ( $png ) || empty ( $png )) {
       $png = - 1;
     }
-    $form ['editing'] ['png'] = [ 
+    $form ['imgedit'] ['png'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'PNG Quality' ),
         '#default_value' => $png,
@@ -421,7 +435,7 @@ class SettingsForm extends ConfigFormBase {
     }
     
     //Default Temporary folder
-    $form ['editing'] ['temp'] = [ 
+    $form ['imgedit'] ['temp'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'Simple Photoalbum temporary folder!' ),
         '#default_value' => $cfg->get( "temp" ),
@@ -429,13 +443,14 @@ class SettingsForm extends ConfigFormBase {
         '#disabled' => ! $cfg->get( 'imgedit' ) 
     ];
 
-    $form ['editing'] ['autoclose'] = [
+    $form ['imgedit'] ['autoclose'] = [
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Save changed image and  autoclose th window!' ),
         '#default_value' => $cfg->get( "autoclose" ),
         '#description' => $this->t ( "After save the modified image the window close automatically." ),
         '#disabled' => ! $cfg->get( 'imgedit' )
     ];
+
     // Watermark settings
     $form ['wm'] = [
         '#type' => 'fieldset',
@@ -884,9 +899,12 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'dis_checking', $vals ['dis_checking'] )
         ->set( 'dis_extensions', $vals ['dis_extensions'] )        
         ->set( 'method', $vals ['method'] )
+        // Editing list and properties of items
         ->set( 'edit', $vals ['edit'] )
         ->set( 'jpeg', $vals ['jpeg'] )->set ( 'png', $vals ['png'] )
         ->set( 'delete', $vals ['delete'] )
+        ->set( 'upload', $vals['upload'])
+        // Image editing
         ->set( 'imgedit', $vals ['imgedit'] )
         ->set( 'graphicdrv', $vals ['graphicdrv'] )
         ->set( 'url_checking', $vals ['url_checking'] )
@@ -908,6 +926,7 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'icon', $vals ['icon'] )
         ->set( 'test', $vals ['test'])
         ->set( 'ai', $vals['ai'])
+        
         ->save ();
   }
   /**

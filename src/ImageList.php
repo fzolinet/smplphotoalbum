@@ -1,6 +1,7 @@
 <?php
 namespace Drupal\smplphotoalbum;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\smplphotoalbum\Image;
@@ -22,7 +23,7 @@ class ImageList {
 	protected $con; // Drupal database connection string
 	protected $copyright = "PiQasso Group";
 	protected $edit = false;
-	protected $editok = true;
+	protected $access = true;
 	protected $graphicdrv = "gd";
 	protected $filter = "";
 	protected $firstimage = 0; // the first viewing item
@@ -47,17 +48,17 @@ class ImageList {
 	protected $request;
 	protected $requestUri = '';
 	protected $root = "";     	// root folder of photoalbum	
-	protected $sess = '';  //Drupal session handling
+	protected $sess = '';  			//Drupal session handling
 	protected $smplbox = "smplbox"; // It helps to shows the image in a lightbox or colorbox
 	protected $sortorder = 'filename'; // source of compare
 	protected $stat = '';     	// statistics
-	protected $sub = true;		// Enable/disable the subtitles
+	protected $sub = true;			// Enable/disable the subtitles
 	protected $sumviews = 0;
 	protected $tags = '';    	// keywords and descriptions metatag
 	protected $title = '';   	// Title of page
 	protected $notes = '';		// Notes of page
 	protected $tpl = [];     	// array of templates
-	protected $html5;	
+	protected $html5;
 
 	//translating
 	protected $translate = false;
@@ -68,6 +69,7 @@ class ImageList {
 	protected $wmpath  = ""; 	// watermark
 	protected $wmalpha = 10;	// watermark alpha
 	protected $words = [];
+	// Types
 	protected $app = 1;			//view the types
 	protected $audio = 1;
 	protected $cmp = 1;
@@ -113,7 +115,7 @@ class ImageList {
 		$root             = $this->root;
 		$path             = $this->path;
 		$this->slide_path	= $this->path;
-		$this->editok     = $this->access();
+		$this->access     = $this->RightAccess();
 
 		// If method comes from page
 		if( isset( $params["method"] ) ){
@@ -144,17 +146,23 @@ class ImageList {
 		}
 
 		//Thumbnails refresh
-		if( $this->Request('SmplThumbnails')  && $this->access() ) {
+		if( $this->Request('SmplThumbnails')  && $this->access ) {
 			$this->RefreshFolder($path);
 		}
+		
+		//Upload file enabled		
+		if( $this->upload && $this->Request("SmplUploadSubmit") && $this->access ){
+			$this->Upload();
+		}
 
+		// filter enabled
 		if ( isset ( $this->params['filter'] ) && $this->params['filter'] ) {
 			$this->filter = $this->Request('smpl_filter',"" );
 		}
 		
 		//------------------- Query dynamic -----------
 		$query = $this->con->select('{smplphotoalbum}', 's');
-		$query -> fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified' ]);				
+		$query -> fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified', 'importance' ]);				
 
 		//WHERE  path = 
 		$pathCond = $query->condition( 'path', $path, "=" );		
@@ -199,14 +207,17 @@ class ImageList {
 		if ($this->page > $this->pagenumber) {
 			$this->page = $this->pagenumber-1;
 		}
+		if($this->page <0 ) $this->page = 0;
 		
 		// ORDER BY
 		$order = "";
+		
 		if ( $this->order && $this->sortorder != "-") {
 
 			switch (substr ( $this->sortorder, 0, 2 )) {
 				case 'filename':
 				case 'fi' : $order = "name"; break;
+				case 'im' : $order = "importance"; break;
 				case 'su' : $order = "subtitle"; break;
 				case 'vi' : $order = "viewnumber"; break;
 				case 'ty' : $order = "typ"; break;
@@ -217,6 +228,10 @@ class ImageList {
 		}
 
 		//LIMIT
+		if( $this->page < 0 ) {
+			$this->page = 0;
+		}
+
 		$query->range( (int) ( $this->page * $this->number ), $this->number);
 
 		$rs = $query->execute();	
@@ -246,6 +261,7 @@ class ImageList {
 				$params,
 				$this->words,
 				$RS->name,
+				$RS->importance,
 				$type,
 				$tpl
 			);
@@ -293,6 +309,8 @@ class ImageList {
 		$this->edit      = $params["edit"];		// Edit 
 		$this->imgedit   = $params["imgedit"];	// Image Edit
 		$this->wmpath    = $params["wmpath"];	// Watermark
+		$this->important = $params["important_checking"];
+		$this->upload    = $params['upload'];	// Upload enabled | disabled
 
 		//checking types of items
 		$this->audio = $params['audio_checking'];
@@ -327,7 +345,6 @@ class ImageList {
 			if( $this->page < 0 ) {
 				$this->page = 0;
 			}
-
 	   	header('X-Drupal-Cache: MISS');
 	   	header('X-Drupal-Dynamic-Cache: MISS');
 	  } else{
@@ -383,12 +400,14 @@ class ImageList {
 	   	$this->tpl['slideimage'] = file_get_contents ( $p . "/slideimage.html.twig" );			
 	  }
 
-		if( $this->access() ){
-			$this->tpl["EditForm"] = file_get_contents ( $p . "/EditForm.html.twig" );
-			$this->tpl["ImgEditForm"] = file_get_contents ( $p . "/ImgEditForm.html.twig" );
+		if( $this->access ){
+			$this->tpl["EditForm"] = file_get_contents ( $p . "/editform.html.twig" );
+			$this->tpl["ImgEditForm"] = file_get_contents ( $p . "/imgeditform.html.twig" );
+			$this->tpl["UploadForm"] = file_get_contents ( $p . "/uploadform.html.twig" );
 		}else {
 			$this->tpl["EditForm"] = "";
 			$this->tpl["ImgEditForm"] = "";
+			$this->tpl["UploadForm"] = "";
 		}
 	}
 
@@ -417,6 +436,87 @@ class ImageList {
 				$this->words[trim($a[0])] = trim($a[1]);
 			}
 		}
+	}
+
+	/**
+	 *  File upload
+	 * 
+	 */
+	function Upload(){
+		$smpl_uid   = $this->Request("smpl_uid", "", "POST");
+		$smpl_uname = $this->Request("smpl_uname", "", "POST");
+		$smpl_usub  = $this->Request("smpl_usub" , "", "POST");
+		$smpl_utype = $this->Request("smpl_utype", "", "POST");
+		$smpl_ulink = $this->Request("smpl_ulink", "", "POST");
+		$smpl_utime = $this->Request("smpl_utime", "", "POST");
+		$smpl_usize = $this->Request("smpl_usize", "", "POST");
+		$smpl_uimportance = $this->Request("smpl_uimportance", "", "POST");
+
+		$filename   = $_FILES[ 'smpl_uname']['name'];
+		$tmpname    = $_FILES[ 'smpl_uname']['tmp_name'];
+		$size       = $_FILES[ 'smpl_uname']['size'];
+		$ok         = ($_FILES[ 'smpl_uname']['error'] === 0);
+		 		
+		if( !($extok = stripos( $this->extensionstring("all") , pathinfo ( $filename , PATHINFO_EXTENSION ) ) > 0) ){
+			\Drupal::messenger()->addMessage( "Can not upload this file '$smpl_uname' is not enabled file type!", 'warning' );
+			return false;
+		}
+
+		if( $size > ini_parse_quantity( ini_get('post_max_size') ) ){
+			\Drupal::messenger()->addMessage( "Can not upload this file '$smpl_uname', because the size is too big!", 'warning' );
+			$ok = false;
+		}
+
+		$uri = str_replace("//","/", $this->root . $this->path );
+		
+		if( file_exists ($uri ."/".$filename)){
+			\Drupal::messenger()->addMessage( "Can not upload this file '$filename' to this place: '$this->path' because the file exists!", 'warning' );
+			$ok = false;
+		}
+
+		$ok = move_uploaded_file( $tmpname, $uri."/".$filename );
+		if( !$ok ){
+			\Drupal::messenger()->addMessage( "Can not upload this file '$filename'. Maybe the application not enough rights to this place: '$this->path' or other problems!", 'warning' );
+		}
+
+		//Save uploaded data into database
+		if( $ok ){
+			$ok = $this->InsertNewFile( $this->path, $filename, $smpl_usub, $smpl_utype, $smpl_ulink, $smpl_usize, $smpl_utime, (int) ($smpl_uimportance) );
+			if($ok){
+				\Drupal::messenger()->addMessage( " '$filename' added into database", 'notice' );
+			}else{
+				\Drupal::messenger()->addMessage( " There was '$filename' in the database table in this folder!", 'warning' );
+			}
+		}
+		
+		$this->RefreshFolder($this->path);
+		return $ok;
+	}
+/**
+ * Insert new record of item into the table 
+ */
+	function InsertNewfile( $path ="/", $name = "", $sub = "", $type ="", $link = "", $size = 0, $tim = 0, $importance = 0){
+		$tim .= "#";
+		$tim = str_replace(".#","", $tim);
+		$tim = str_replace([' ','.'],['','-'],$tim);
+		$date = date_create($tim);
+		$timstamp = date_timestamp_get($date); 
+		try{
+			$last_id = $query = $this->con->Insert('smplphotoalbum')
+				->fields([
+					'path'     => $path,
+					'name'     => $name,
+					'typ'      => $type,
+					'subtitle' => $sub,
+					'link'     => $link,
+					'size'     => $size,
+					'modified' => $timstamp,
+					'importance' => $importance
+				])->execute();
+		}	catch( \Throwable $e ){
+			$last_id = 0;
+		}	
+		return $last_id > 0;
 	}
 
 	/**
@@ -515,7 +615,7 @@ class ImageList {
 						'subtitle',
 						'link',
 						'size',
-						'modified'
+						'modified',						
 				])
 				->values([
 					'path' =>$path,
@@ -564,7 +664,7 @@ class ImageList {
 	 */
 	function MakeThumbnail($name, $source, $thumbnail, &$msg ) {
 		static $db = 0;
-		if (! $this->access ()) return true;
+		if (! $this->access ) return true;
 
 		$ext = strtolower ( pathinfo ( $name, PATHINFO_EXTENSION ) );
 		// Make new thumbnails from GIF, PNG or JPG | JPEG | BMP | WBMP | WEBP | XPM | XBM | AVIF
@@ -673,7 +773,7 @@ class ImageList {
 	 */
 	function Render() {
 		global $base_path;
-		$access = $this->access ();
+				
 		if( isset( $_SESSION['_symfony_flashes']['status'] ) &&
 				count( $_SESSION['_symfony_flashes']['status'] ) > 5
 		){
@@ -692,16 +792,16 @@ class ImageList {
 				}
 			}
 
-			if( $access && $dbnew > 0 ){
+			if( $this->access && $dbnew > 0 ){
 				\Drupal::messenger()->addMessage("Make '$dbnew' thumbnail(s) in: ". $thumbnail);
 			}
-			if($access && $dbupdate > 0){
+			if( $this->access && $dbupdate > 0){
 				\Drupal::messenger()->addMessage("Update '$dbupdate' thumbnail(s) in: ". $thumbnail);
 			}
 		}
 
 		//cache clear
-		if ( $access && $this->Request( 'SmplCacheClear') && $this->editok)  {
+		if ( $this->access && $this->Request( 'SmplCacheClear') && $this->access)  {
 			$this->CacheClear();
 		}
 
@@ -727,45 +827,72 @@ class ImageList {
 				"{{ wmpath }}",				
 				"{{ imagickversion }}",
 				"{{ imgeditform }}",
-				"{{ id }}" 
+				"{{ id }}",				
+				"{{ extimages }}",
+				"{{ extaudio }}",
+				"{{ extaudiohtml5 }}",
+				"{{ extvideo }}",
+				"{{ extvideohtml5 }}",
+				"{{ extapplication }}",
+				"{{ extcompressed }}",
+				"{{ extdocument }}",
+				"{{ extother }}",				
+				"{{ extensions }}",
+				"{{ maxsize }}"
 			],
 			[
 				$base_path,
 				$this->wmpath, 				
 				$ver[1], 
 				$imgeditform, 
-				$id
+				$id,
+				
+				"'".$this->extensionstring("image")."'",
+				"'".$this->extensionstring("audio")."'",
+				"'".$this->extensionstring("audiohtml5")."'",
+				"'".$this->extensionstring("video")."'",
+				"'".$this->extensionstring("videohtml5")."'",
+				"'".$this->extensionstring("app")."'",
+				"'".$this->extensionstring("cmp")."'",
+				"'".$this->extensionstring("doc")."'",
+				"'".$this->extensionstring("oth")."'",				
+				"'".$this->extensionstring("all")."'",
+				ini_parse_quantity( ini_get('post_max_size') )
 			],  
 			$strjs 
 		);
+
 		$strjs = str_replace([""],[],$strjs);
 
-		$str = "";
+		$strjs = str_replace(
+			[],
+			[],
+			$strjs
+		);
 
-		$str .= $this->tpl["smplphotoalbum"];
+		$str = $this->tpl["smplphotoalbum"];
 		
 		if($this->params["test"] || $this->params["method"] == "GET"){
 			$this->method = "get";
 		}
-		$str = str_ireplace("{{ method }}",$this->method ,$str);
+		$str = str_ireplace("{{ method }}", $this->method, $str);
 
 		//Egyedi oldalak
 		$origin = ($this->method == "POST" ) ? "./?".mt_rand() : "";
-		$str = str_replace("{{ action }}",$origin, $str);
+		$str    = str_replace("{{ action }}", $origin, $str);
 
-		if ($access) {
-			$str = str_replace( "{{ EditForm }}", $this->tpl["EditForm"] , $str);
-			$str = str_replace( "{{ ImgEditForm }}", $this->tpl["ImgEditForm"] , $str);
-			$str = str_replace( "{{ ImgEditDefault }}", $base_path . $this->modulepath . "/image/404.png", $str );
-			$str = str_replace( ["<editpath_cache>","</editpath_cache>" ] , "", $str );
-			$str = str_ireplace("{{ method }}",$this->method ,$str);
+		if ( $this->access ) {
+			$str = str_replace( 
+								[ "{{ EditForm }}", "{{ ImgEditForm }}"], 
+			          [ $this->tpl["EditForm"], $this->tpl["ImgEditForm"] ], 
+								$str
+							);
+			$str = str_replace( "{{ UploadForm }}", $this->upload ? $this->tpl["UploadForm"]: '' , $str );
+			$str = str_replace( "{{ ImgEditDefault }}", $base_path . $this->modulepath . "/image/404.png", $str );			
+			$str = str_ireplace( "{{ method }}",$this->method ,$str);
 			
 			//Test environment
-			if( $this->params['test'] ){
-				$str = str_replace( ['<Test>','</Test>'], '', $str );
-			}else{
-				$str = preg_replace ( "#<Test(.*?)<\/Test>#imxs",'', $str );
-			}
+			$this->TestModify($str);
 			
 			//IMGEdit teszt
 			if( $this->Request("imgedit") ){
@@ -773,8 +900,7 @@ class ImageList {
 			}
 
 		} else {
-			$str = str_replace ( ["{{ EditForm }}", "{{ ImgEditForm }}"],"", $str );
-			$str = preg_replace ( "#<editpath_cache(.*?)<\/editpath_cache>#imxs", "", $str );
+			$str = str_replace ( ["{{ EditForm }}", "{{ ImgEditForm }}", "{{ UploadForm }}"],"", $str );
 			$str = preg_replace ( "#<Test(.*?)<\/Test>#imxs","", $str );
 		}
 
@@ -793,22 +919,25 @@ class ImageList {
 			], $str);
 
 		// Statistics
-		$str = $this->Statist( $str );
+		$this->Statist( $str );
 
 		// Search / Filter
-		$str = $this->SearchFilter( $str );
+		$this->SearchFilter( $str );
+
+		// UploadButton
+		$this->UploadButton( $str );
 
 		// Graphic driver
-		$str = $this->GraphicDriver( $str );
+		$this->GraphicDriver( $str );
 
 		//Autoclose
-		$str = $this->AutoClose( $str );
+		$this->AutoClose( $str );
 
 		// Watermark
-    $str = $this->Watermark( $str );
+    $this->Watermark( $str );
 
 		//Recognition
-		$str = $this->Recognition( $str );
+		$this->Recognition( $str );
 
 		$str = str_replace("{{ Constrain_aspect_ratio }}", $this->words['Constrain aspect ratio'], $str);
 		$s = [ ];
@@ -844,23 +973,22 @@ class ImageList {
 
 	/**
 	 * Is there recognition icon on the Edit window
-	 * @param mixed $str 
-	 * @return string|string[]|null 
+	 * @param mixed $str 	 
 	 */
-	function Recognition($str){
+	function Recognition( string &$str ){
 		if( $this->params["ai"] ){
 			$str = str_replace( [ "<ai>","</ai>" ], "", $str );
 			$str = str_replace( "{{ AI_recognition }}", $this->words["AI recognition"], $str);
 		} else{
 			$str = preg_replace( "#<ai(.*?)<\/ai>#imxs", "", $str );
-		}
-		return $str;
+		}		
 	}
 	
 	/**
 	 * Statistics of actual path
+	 * @param string &$str
 	 */
-	function Statist(string $str){
+	function Statist(string &$str){
 	  if ($this->stat)
 	    $str = str_replace( "{{ statistics }}", $this->Statistics(), $str );
 	  else {
@@ -871,16 +999,14 @@ class ImageList {
 	    $str = str_replace( "{{ linktostat }}", '<div><a href="admin/config/smplphotoalbum/stat" target="_blank">' . $this->words["Link to statistics" ] . '</a></div>', $str );
 	  } else {
 	    $str = str_replace( "{{ linktostat }}", "", $str );
-	  }
-	  return $str;
+	  }	  
 	}
 
   /**
    * Search filter
-   * @param string $str
-   * @return string
+   * @param string &$str
    */
-	function SearchFilter(string $str){
+	function SearchFilter(string &$str){
 	  if (isset ( $this->params ['filter'] ) && $this->params ['filter']) {
 	    $str = str_replace(
 				[
@@ -896,16 +1022,39 @@ class ImageList {
 			, $str );
 	  } else {
 	    $str = preg_replace ( "#<Filter(.*?)<\/Filter>#imxs", "", $str );
-	  }
-	  return $str;
+	  }	  
+	}
+
+	/**
+	 * Upload button views or not
+	 * @param string &$str
+	 */
+	function UploadButton(string &$str){
+		if( !$this->upload ){
+			$str = preg_replace("#<UploadButton(.*?)<\/UploadButton>#imxs", "", $str );
+		}else{
+			$str = str_replace(['<UploadButton>','</UploadButton>'],'', $str);
+		}		
+	}
+
+	/**
+	 * Testing code from the main page
+	 * @param string $str
+	 * @return string
+	 */
+	function TestModify( string &$str ){
+		if( $this->params['test'] ){
+			$str = str_replace( ['<Test>','</Test>'], '', $str );
+		}else{
+			$str = preg_replace ( "#<Test(.*?)<\/Test>#imxs",'', $str );
+		}
 	}
 
 	/**
 	 * Graphic driver
 	 * @param string $str
-	 * @return string
 	 */
-	function GraphicDriver(string $str){
+	function GraphicDriver(string &$str){
 		$gv  =  gd_info();
 		$str = str_replace(
 			[
@@ -920,10 +1069,10 @@ class ImageList {
 			], $str);
 
 	  if(extension_loaded("Imagick")){
-	    $gv = \Imagick::getVersion();
+	    $gv      = \Imagick::getVersion();
 	    $imagick = $gv["versionString"];
-	    $str = str_replace('{{ ImagickVersion }}', $imagick, $str);
-	    $ver = [];
+	    $str     = str_replace('{{ ImagickVersion }}', $imagick, $str);
+	    $ver     = [];
 	    preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $imagick, $ver);
 	    $str = str_replace( [ '{{ ImgVer }}',	"{{ greadonly }}" ], [ $ver[1],'' ], $str);
 	  } else{
@@ -931,9 +1080,9 @@ class ImageList {
 	  }
 
 	  if($this->graphicdrv == "gd"){
-	    return str_replace( [ '{{ gdselected }}', '{{ imagickselected }}' ], [ "selected","" ], $str);
+	    $str = str_replace( [ '{{ gdselected }}', '{{ imagickselected }}' ], [ "selected","" ], $str);
 	  }else{
-	    return str_replace( [ '{{ gdselected }}', '{{ imagickselected }}' ], [ "", "selected" ], $str);
+	    $str = str_replace( [ '{{ gdselected }}', '{{ imagickselected }}' ], [ "", "selected" ], $str);
 	  }
 	}
 
@@ -942,7 +1091,7 @@ class ImageList {
 	 * @param string $str
 	 * @return mixed
 	 */
-	function Watermark(string $str){
+	function Watermark(string &$str){
 	  if($this->params["wm"]){
 	    $s = [
 	        "{{ wm }}",
@@ -983,21 +1132,19 @@ class ImageList {
 					''
 	    ];
 	  }
-	  return str_replace($s, $r, $str);
+	 $str = str_replace($s, $r, $str);	 
 	}
 
   /**
    *
    * @param string $str
-   * @return string
    */
-	function Autoclose(string $str){
+	function Autoclose(string &$str){
 	  if($this->params["autoclose"]){
 	    $str = str_replace("{{ autoclose }}","checked='checked'", $str);
 	  }else{
 	    $str = str_replace("{{ autoclose }}","", $str);
-	  }
-	  return $str;
+	  }	  
 	}
 
 	// Clear the caches of drupal
@@ -1109,7 +1256,7 @@ class ImageList {
 		}
 
 		foreach($this->Items AS $i => $Item) {
-			$str .= $Item->Render ( $this->editok );
+			$str .= $Item->Render ( $this->access );
 		}
 		return $str;
 	}
@@ -1282,7 +1429,7 @@ class ImageList {
 	 *
 	 * @return boolean
 	 */
-	function access() {
+	function RightAccess() {
 		return $this->user->id () == 1 || ($this->user->hasPermission ( "administer smplphotoalbum" ) || $this->user->hasPermission ( "edit smplphotoalbum" ));
 	}
 
@@ -1325,6 +1472,34 @@ class ImageList {
 
 	public function isdis($entry) {
 		return stripos( $this->params ["dis_extensions"], pathinfo ( $entry, PATHINFO_EXTENSION ) ) > 0;
+	}
+
+		/**
+	 * Extensions string
+	 */
+	function extensionstring( $p = "", $ar = false ){		
+		if ( $p == "all" ){
+			$exts = 
+			  $this->extensionstring("image").
+				$this->extensionstring("audio").
+				$this->extensionstring("audiohtml5").
+				$this->extensionstring("video").
+				$this->extensionstring("videohtml5").
+				$this->extensionstring("app").
+				$this->extensionstring("cmp").
+				$this->extensionstring("doc").
+				$this->extensionstring("oth");
+
+			if( $ar ){
+				$exts = trim( $exts );
+				$exts = str_replace("  "," ",$exts);				
+				$earray = [];
+				$earray = explode(" ",$exts);
+				return $earray;
+			}				
+			return $exts;
+		}
+		return $this->params[ $p."_extensions" ];
 	}
 
 	function type($entry) {
@@ -1392,8 +1567,11 @@ class ImageList {
    * @param mixed $key
    * @return string
    */
-  function Request( string $key, $default = '' ){
-		return \Drupal::request()->get($key, $default );
+  function Request( string $key, $default = '', $METHOD = "GET" ){
+		if($METHOD == "GET"){
+			return \Drupal::request()->get($key, $default );
+		}
+		return \Drupal::request()->request->get($key, $default);
   }
 
 	public function getSlide(){

@@ -228,7 +228,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['slidestyle'] = 'none';
     $this->params['translate']  = false;
     $this->params['lang']       = 'en';
-    $this->params['methods']    = 'POST';
+    $this->params['methods']    = 'POST';    
     
     if (! isset ( $this->params['icon'] )) {
       $this->params['icon'] = '_col';
@@ -243,7 +243,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['oth_extensions']        = " " . $this->params ['oth_extensions'] ." ";
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
     $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";
-    $this->params["ai"] = $this->params["ai"] && extension_loaded("curl") && extension_loaded("grpc");
+    $this->params["ai"] = $this->params["ai"] && extension_loaded("curl") && extension_loaded("grpc");    
   }
 
   /**
@@ -253,51 +253,50 @@ class FilterSmplphotoalbum extends FilterBase {
    */
   function ParamsChange($t) {
     $a = [
-        'path',
-        'number',
-        'width',
-        'sub',
-        'order',
-        'sortorder',
+        'ai',
+        'app',
         'ascdesc',
-        'filter',
-        'method',
+        'audio',
+        'author',
+        'autoclose',
         'capt',
-        'viewed',
+        'cmp',
+        'copyright',
+        'doc',
         'edit',
         'exif',
-        'stat',
-        'audio',
-        'video',
-        'doc',
-        'cmp',
-        'app',
-        'url',
-        'target',
+        'filter',
+        'graphicdrv',
+        'graphic',  
         'html5',
-        'title',
+        'icon',
+        'interval',
+        'lang',
+        'method',
         'notes',
+        'number',
+        'order',
+        'path',
         'slide',
         'slide_checking',
-        'slide_extensions',
-        'interval',
-        'style',
+        'slide_extensions',        
         'slidestyle',
-
-        'graphicdrv',
-        'graphic',
-        
-        'icon',
-        'wm',
-        'wmpath',
-        'wmalpha',
-        'copyright',
-        'author',
+        'sortorder',
+        'stat',
+        'style',
+        'sub',
+        'target',
         'test',
+        'title',
         'translate',
-        'lang',
-        'autoclose',
-        'ai'
+        'upload',
+        'url',
+        'video',
+        'viewed',
+        'width',
+        'wm',
+        'wmalpha',
+        'wmpath',
     ];
 
     $m = [];
@@ -315,13 +314,11 @@ class FilterSmplphotoalbum extends FilterBase {
             $v = (substr ( $v, 0, 1 ) != "/" ? "/" : "") . $v . (substr ( $v, 0, - 1 ) != "/" ? "/" : "");
             $this->params ['path'] = $v;
             break;
-          case "method"  : 
-            $this->params ['method']   = ( strtolower($v) == "get")? "GET" : "POST"; 
-            break;
-          case 'number'   : $this->params ['number']   = (int)($v); break;
-          case 'width'    : $this->params ['width']    = (int)($v); break;
-          case 'filter'   : $this->params ['filter']   = $this->truefalse($v); break;
-          case 'url '     : $this->params ['url']      = $this->truefalse($v); break;
+          case "method"   : $this->params ['method']  = ( strtolower($v) == "get")? "GET" : "POST"; break;
+          case 'number'   : $this->params ['number']  = (int)($v); break;
+          case 'width'    : $this->params ['width']   = (int)($v); break;
+          case 'filter'   : $this->params ['filter']  = $this->truefalse($v); break;
+          case 'url '     : $this->params ['url']     = $this->truefalse($v); break;
           case 'sortorder':$this->params ['sortorder']= $v; break;
           case 'sub'      : $this->params ['sub']     = $v; break;
           case 'order'    : $this->params ['order']   = $v; break;
@@ -330,6 +327,8 @@ class FilterSmplphotoalbum extends FilterBase {
           case 'viewed'   : $this->params ['viewed']  = $v; break;
           case 'smplbox'  : $this->params ['smplbox'] = $v; break;
           case 'edit'     : $this->params ['edit']    = $v; break;
+          case 'ai'       : $this->params ['ai']      = $this->params['ai'] && $this->truefalse( $v ); break;
+          case 'upload'   : $this->params ['upload']  = $this->params['upload'] && $this->truefalse( $v ); break;
           case 'exif'     : $this->params ['exif']    = $v; break;
           case 'stat'     : $this->params ['stat']    = $v; break;
           case 'private'  : $this->params ['private'] = $v; break;
@@ -351,6 +350,8 @@ class FilterSmplphotoalbum extends FilterBase {
           case 'style'     : $this->params ['style']      = $v; break;
           case 'height'    :
           case 'slidestyle': $this->params ['slidestyle'] = $v; break;
+
+          // Image editing
           case 'graphicdrv': //GD or Imagick
           case "graphic":
           case "grdrv":
@@ -363,14 +364,8 @@ class FilterSmplphotoalbum extends FilterBase {
             }            
             break;
           case 'autoclose' : $this->params['autoclose'] = (in_array($v, array(true,'true','True','TRUE',1,'1'))?true:false); break;          
-          case 'wm' :
-            $this->params['wm'] = ($this->truefalse($v))? 1:0;
-            break;
-
-          case 'wmpath'   :
-            $this->params ['wmpath'] = $v;
-            break;
-
+          case 'wm'        : $this->params['wm'] = ($this->truefalse($v))? 1:0; break;
+          case 'wmpath'    : $this->params ['wmpath'] = $v; break;
           case 'wmalpha'  :
             $v = (int) $v;
             if($v >0 && $v < 100 ){
@@ -379,8 +374,7 @@ class FilterSmplphotoalbum extends FilterBase {
               $this->params ['wmalpha'] = 10;
             }
             break;
-          case 'copyright': $this->params ['copyright'] = trim($v); break;
-          
+          case 'copyright': $this->params ['copyright'] = trim($v); break;          
           case 'author' :   $this->params ['author ']   = trim($v); break;
 
           // icon color or black & white
@@ -393,21 +387,9 @@ class FilterSmplphotoalbum extends FilterBase {
             }
             break;
           // Test framework
-          case 'test':
-            $this->params['test'] = $this->truefalse($v);
-            break;
-
-          case 'translate':
-            $this->params['translate'] = $this->truefalse($v);
-            break;
-
-          case 'lang':
-            $this->params['lang'] = $v;
-            break;
-
-          case 'ai':
-            $this->params['ai'] = $this->params['ai'] && $this->truefalse( $v );
-            break;
+          case 'test': $this->params['test'] = $this->truefalse($v); break;
+          case 'translate': $this->params['translate'] = $this->truefalse($v); break;
+          case 'lang'     : $this->params['lang'] = $v; break;
         }
       }
     }
@@ -485,6 +467,7 @@ class FilterSmplphotoalbum extends FilterBase {
         'url_checking',
 
         'edit',        // Edit description of files
+        'upload',      // Uploadable files
         'delete',      // Deletable files
         'imgedit',     // Editable images
         'temp',        // Temp. save edited files

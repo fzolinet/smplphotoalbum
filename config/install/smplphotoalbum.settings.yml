@@ -75,6 +75,7 @@ dis_extensions: 'php js module ini install xml html htm sql yml twig'
 edit: true 
 delete: true
 imgedit: true
+upload: true
 graphicdrv: 'gd'
 jpeg: -1
 png: -1

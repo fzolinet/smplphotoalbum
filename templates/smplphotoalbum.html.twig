@@ -16,11 +16,12 @@
 				<input id="smpl_filter" name="smpl_filter" class="smpl_search" type="search" maxlength="256" placeholder="{{ Filter }}" value="{{ FilterValue }}" title="Write in the filter expression" onclick="return false;">
 				<button id="SmplFilterBtn" name="SmplFilterBtn" title="{{ Filter }}" class="smpl_button smpl_filter_btn{{ icon }}" value="{{ Filter }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			</Filter>
-			<editpath_cache>
-				<button id="EditPath" name="EditPath" class="smpl_button smpl_edit_all{{ icon }}" onclick="return false;" value="{{ Edit Path }}" title="{{ Edit Path }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-				<button id="SmplCacheClear" name="SmplCacheClear" class="smpl_cache_clear{{ icon }} smpl_button" value="1" title="{{ Cache Clear }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-				<button id="SmplThumbnails" name="SmplThumbnails" class="smpl_thumb{{ icon }} smpl_button" value="1" title="{{ Refresh }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-			</editpath_cache>
+			<UploadButton>
+			  <button id="SmplUpload" name="SmplUpload" class="smpl_button smpl_upload_file{{ icon }}" onclick="return false;" value="{{ File Upload }}" title="{{ File Upload }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</UploadButton>			
+			<button id="EditPath" name="EditPath" class="smpl_button smpl_edit_all{{ icon }}" onclick="return false;" value="{{ Edit Path }}" title="{{ Edit Path }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button id="SmplCacheClear" name="SmplCacheClear" class="smpl_cache_clear{{ icon }} smpl_button" value="1" title="{{ Cache Clear }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button id="SmplThumbnails" name="SmplThumbnails" class="smpl_thumb{{ icon }} smpl_button" value="1" title="{{ Refresh }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<button id="SmplSlide" name="SmplSlide" class="smpl_slide{{ icon }} smpl_button" value="1" title="{{ Slideshow }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<button id="smpl_help_link" class="smpl_help_link{{ icon }} smpl_button" onclick="return false;" title="{{ Help }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
     </div>
@@ -44,6 +45,8 @@
 {{ EditForm }}
 
 {{ ImgEditForm }}
+
+{{ UploadForm }}
 
 <div id="smpl_img_back">
 	<div id="smpl_img_div">	

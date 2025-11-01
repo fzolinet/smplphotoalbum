@@ -76,6 +76,7 @@ Face edit
 Factor
 Filename
 File size
+File Upload
 Filter
 FilterValue
 Find edges
@@ -104,6 +105,8 @@ Inner
 Image
 Image Edit
 Image open in new tab
+Importance
+important
 Lens
 Level
 Lightning
@@ -124,6 +127,7 @@ Linear
 Link
 Link to statistics
 Mode
+Modified
 Name
 Name of data of this node
 Noise
@@ -195,6 +199,7 @@ Type
 Undo
 Unsharp
 Up
+Upload
 Thumbnail
 Url
 Value

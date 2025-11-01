@@ -1,4 +1,5 @@
 <?php
+use Drupal\Core\Database\Database;
 /**
  * Implements hook_requirements().
  * Check the requirements
@@ -54,7 +55,7 @@ function smplphotoalbum_uninstall() {
 }
 
 function smplphotoalbum_schema() {
-  $schema = array ();
+  $schema = [];
   $schema ['smplphotoalbum'] = array (
       'description' => 'Table for Simple Photoalbum.',
       'fields' => array (
@@ -128,6 +129,18 @@ function smplphotoalbum_schema() {
 }
 
 // update the module
-function smplphotoalbum_update_193(): void{
+function smplphotoalbum_update_19300(): void{
 
+}
+
+// Update the modul extended database with importance: -32768 .. 0 ... 32767
+function smplphotoalbum_update_19500(): void{
+    // ADD new field: importance
+    $spec = [
+      'type' => 'int',
+      'default' => 0,
+      'description' => 'Importance of items. The larger the important',
+    ];
+    $schema = Database::getConnection()->schema();
+    $schema->addField('smplphotoalbum','importance', $spec);
 }

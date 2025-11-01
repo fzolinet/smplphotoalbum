@@ -10,6 +10,7 @@ class Image {
 	protected $name = "";
 	protected $ext = "";     //Extension of item
 	public $filesize = 0;    // size of file;	
+	protected $importance = 0; // importance of item
 	
 	protected $icon ='';
 	protected $id ='0';      // id of item
@@ -20,13 +21,14 @@ class Image {
 	protected $path ='';	   // relativ path to item
 	public $subtitle ='';    // Actual subtitle below the image
 	protected $root ='';     // The root of photoalbums
+
 	//protected $rootabs ='';  //Absolute path
 	protected $smplbox ='';  // it helps to colorbox or any other similar module
 	protected $sortorder ='filename';	// type of order
 	protected $sub = '';     // Shows the subtitle of pictures
 	protected $test = false;
 	public $thdate = 0;      //date of thumbnail
-	protected $tpl= [];      //template array
+	protected $tpl = [];     //template array
 	protected $translate = false;
 	public    $type ='';
 	protected $url = false;
@@ -39,7 +41,7 @@ class Image {
 	use StringTranslationTrait;
 	
 	// Constructor
-	Function __construct($id, $subtitle, $viewnumber, $link, &$params, &$words, $entry = '', $type = 'image', $tpl = '') {
+	Function __construct($id, $subtitle, $viewnumber, $link, &$params, &$words, $entry = '', $importance = 0 , $type = 'image', $tpl = '') {
 		global $base_url;
 
 		$this->ascdesc = $params ['ascdesc'];
@@ -60,6 +62,7 @@ class Image {
 		$this->path = $params ['path'];
 		$this->root = $params ['root'];		
 		$this->sortorder = $params ['sortorder'];
+		$this->importance = (int) ($importance);
 		$this->smplbox = $params ['smplbox']; // It helps to vie an image in a lightbox or colorbox layer
 		$this->sub = $params ['sub'];
 		
@@ -295,6 +298,7 @@ class Image {
 				"{{ title }}",
 				"{{ linktn }}",
 				"{{ smplbox }}",
+				"{{ importance }}"
 		];
 		$r = [
 				$this->id,
@@ -302,6 +306,7 @@ class Image {
 				$this->name,
 				$linktn,
 				$this->smplbox,
+				$this->Importance()
 		];
 		
 		$str = $this->tpl;
@@ -326,7 +331,8 @@ class Image {
 				"{{ href }}",
 				"{{ linktn }}",
 				"{{ subtitle }}",
-				"{{ style }}"
+				"{{ style }}",
+				"{{ importance }}"
 		];
 		$r = [
 				$this->id,
@@ -335,6 +341,7 @@ class Image {
 				$linktn,
 				$this->subtitle ,
 				$style,
+				$this->Importance()
 		];
 		$str = $this->tpl;
 		return str_replace( $s, $r, $str );
@@ -358,6 +365,7 @@ class Image {
 			'{{ src }}',
 			'{{ style }}',
 			'{{ class }}',
+			'{{ importance }}'
 		];
 		$r = [
 				$this->id ,
@@ -365,6 +373,7 @@ class Image {
 				$src,
 				$sty,
 				"",
+				$this->Importance()
 		];
 		return str_replace( $s, $r, $str );
 	}
@@ -385,7 +394,8 @@ class Image {
 				"{{ style }}",
 				"{{ title }}" ,
 				"{{ class }}",
-				"{{ attrib }}"
+				"{{ attrib }}",
+				'{{ importance }}'
 		];
 		
 		$r = [
@@ -396,10 +406,26 @@ class Image {
 				$this->subtitle,
 				"",
 				"",
-				$this->test && strpos(" " . $this->name, "_smpl_testfile") ? 'smpl_test' :""
+				$this->test && strpos(" " . $this->name, "_smpl_testfile") ? 'smpl_test' :"",
+				$this->Importance()
 		];
 		$str = $this->tpl;
 		return str_replace( $s, $r, $str );
+	}
+
+	/**
+	 * Border color depends of importance
+	 */
+	function Importance(){		
+		$str = '';
+		if( $this->importance > 0 ){					
+			$grey  = hexdec("D1");
+			$red   = $grey + (int)( ( 255-$grey ) * ( $this->importance /255 ) );
+			$green = $blue = (int)( $grey *(1 - $this->importance/255));
+
+			$str = ' style="border: 2px solid rgb('.$red.','.$green.','.$blue.');"';
+		}
+		return $str;
 	}
 
 	/**

@@ -1,6 +1,5 @@
 Bugs:
 ~~~~
-- If the number of item more than number in the setting does not page!
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
@@ -13,6 +12,7 @@ ImageEdit
 
 Todo:
 ~~~~
+- fontosság: importance
 - A slideshow-ból gombbal a normál listára lehessen változtatni 
 - Add / Grain - under construction!!!
 http://localhost/fw3/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
@@ -85,7 +85,13 @@ Exif - ODT Opend Document...
 
 History:
 ~~~~~~~
-2025.10.21
+
+2025.10.31 - 1.9.4a
+- Importance in the orders
+- Insert data of items into the database 
+- Upload file to photoalbum
+
+2025.10.21 - 1.9.3ß2
 - Bug: pager did not worked, its ok.
 - bug: Img_edit.js: SaveSubmit did not worked
 - Little improvement for imgedit, edit windows
@@ -98,7 +104,7 @@ History:
 2025.09.23
 - Little design change
 
-2025.08.24  - 1.9.2ß
+2025.08.24 - 1.9.2ß
 - BUG: There was javascript errors when the user was admin and not photoalbum page - solved
 - Speed optimalization
 

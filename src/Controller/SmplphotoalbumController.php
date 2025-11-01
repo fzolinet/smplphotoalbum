@@ -101,7 +101,8 @@ class SmplphotoalbumController extends ControllerBase{
         'id',
         'path',
         'name',
-        'typ'
+        'typ',
+        'importance'
     ] )->condition( 's.id', $id, '=' );
     
     $rs = $qry->execute ();    
@@ -113,6 +114,7 @@ class SmplphotoalbumController extends ControllerBase{
       $a['name'] = $record->name;
       $a['path'] = $record->path;
       $a['typ']  = $record->typ;
+      $a['importance']  = $record->importance;
       $db++;
     }
 
@@ -131,7 +133,7 @@ class SmplphotoalbumController extends ControllerBase{
       //
       if($ok) {
         $img = $this->root . $path . $a["name"];        
-        if(file_exists( $img )) 
+        if( file_exists( $img ) ) 
           $ok = unlink( $img );
         else           
           $ok = false;
@@ -165,7 +167,9 @@ class SmplphotoalbumController extends ControllerBase{
         'id',
         'path',
         'name',
-        'typ',        
+        'typ', 
+        'link',
+        'importance'       
     ] )->condition( 's.id', $id, '=' )->execute();
     $a = $record->fetchAssoc();
 
@@ -199,8 +203,9 @@ class SmplphotoalbumController extends ControllerBase{
         'id',
         'name',
         'subtitle',
-        'typ',
-        'link'
+        'typ',        
+        'link',
+        'importance',
     ] )->condition( 's.id', $id, '=' )->execute();
 
     $a = $record->fetchAssoc();
@@ -226,7 +231,7 @@ class SmplphotoalbumController extends ControllerBase{
 
     $con = \Drupal::database();
     $qry = $con -> select( 'smplphotoalbum', 's' )
-                -> fields( 's', [ 'id', 'path', 'name', 'typ', 'subtitle', 'link' ] )
+                -> fields( 's', [ 'id', 'path', 'name', 'typ', 'subtitle', 'link', 'importance' ] )
                 -> condition( 's.id', $id, '=' );
     
     $record = $qry->execute();
@@ -279,14 +284,18 @@ class SmplphotoalbumController extends ControllerBase{
     }
       
     // change link
-    if( isset($json->link) && !empty($json->link) && $a['link'] != $json->link ){
+    if( isset( $json->link ) && !empty( $json->link ) && $a['link'] != $json->link ){
       $f['link'] =  $json->link;
     }
     // change type
-    if( isset($json->type) && !empty($json->type) && $a['typ'] != $json->type ){
+    if( isset( $json->type ) && !empty( $json->type ) && $a['typ'] != $json->type ){
       $f['typ'] =  $json->type;
     }
-      
+
+    // change importance
+    if( isset( $json->importance ) && $a['importance'] != $json->importance ){
+      $f['importance'] =  $json->importance;
+    }
     // Change subtitle
     $db = 0;
     if(count($f) >0 ){
@@ -294,15 +303,15 @@ class SmplphotoalbumController extends ControllerBase{
             ->fields( $f )
             ->condition( "id", $id, "=" )->execute();
   
-      $msg = "ID: ".$id. ": ";
+      \Drupal::messenger()->addStatus("ID: $id: '".$a['name']."'");
       foreach($f AS $i => $e){
-        $msg .= "'".$i. "' updated in the database\n";
+        \Drupal::messenger()->addStatus("=> '$i' : updated in the database");
       }   
     }else{
-      $msg = $this->t("There was nothing changed in the database"); 
+      \Drupal::messenger()->addStatus( $this->t("There was nothing changed in the database") ); 
     }  
 
-    \Drupal::messenger()->addMessage($msg, "status");
+    \Drupal::messenger()->addStatus($msg);
 
     $f['db'] = $db;
     $content = json_encode( $f );      
@@ -542,10 +551,10 @@ class SmplphotoalbumController extends ControllerBase{
     }
     for($j = $begin; $j < $end; $j ++) {
       $idx = ($db + $i + $j) % $db;
-      $a[$k]['id']    = $p[$idx]["id"];
-      $a[$k]['tnid']  = $i + $j;
-      $a[$k]['title'] = $p[$idx]["subtitle"];
-      $a[$k]['alt']   = $p[$idx]["subtitle"];
+      $a[ $k ]['id']    = $p[$idx]["id"];
+      $a[ $k ]['tnid']  = $i + $j;
+      $a[ $k ]['title'] = $p[$idx]["subtitle"];
+      $a[ $k ]['alt']   = $p[$idx]["subtitle"];
       $k ++;
     }
     return $a;
@@ -832,7 +841,8 @@ class SmplphotoalbumController extends ControllerBase{
         'name',
         'subtitle',
         'typ',
-        'link'
+        'link',
+        'importance'
     ] )->condition( 's.id', $id, '=' )->execute();
 
     $a = $record->fetchAssoc();
@@ -935,7 +945,8 @@ class SmplphotoalbumController extends ControllerBase{
         'subtitle',
         'typ',
         'viewnumber',
-        'link'
+        'link',
+        'importance'
     ] )->condition( 's.id', $id, '=' )->execute();
 
     $a = $record->fetchAssoc();
@@ -961,18 +972,22 @@ class SmplphotoalbumController extends ControllerBase{
     $json->subtitle = trim( $json->subtitle );
 
     $con = \Drupal::database();
-    $db = $con->update( "smplphotoalbum" )->fields( array(
-        "subtitle" => $json->subtitle,
-        "link" => $json->link,
-        "viewnumber" => $json->viewnumber
-    ) )->condition( "id", $id, "=" )->execute();
+    $db = $con->update( "smplphotoalbum" )
+          ->fields( [      
+              "subtitle" => $json->subtitle,
+              "link" => $json->link,
+              "viewnumber" => $json->viewnumber,
+              "importance" => $json->importance
+            ])
+          ->condition( "id", $id, "=" )->execute();
     
-    $content = json_encode( array(
-        "db" => $db,
-        "subtitle" => $json->subtitle,
-        "link" => $json->link,
-        "viewnumber" => $json->viewnumber
-    ) );
+    $content = json_encode( [
+        "db"         => $db,
+        "subtitle"   => $json->subtitle,
+        "link"       => $json->link,
+        "viewnumber" => $json->viewnumber,
+        "importance" => $json->importance
+    ]);
     $response->addCommand( new InsertCommand( '', $content, [] ) );
     return $response;
   }
@@ -1039,6 +1054,7 @@ class SmplphotoalbumController extends ControllerBase{
     }
     return $val;
   }
+
   /**
    * split the list of extensions
    * 
@@ -1048,6 +1064,7 @@ class SmplphotoalbumController extends ControllerBase{
     $b = $this->smpl_extensions();
     return implode( " ", $b );
   }
+
   function smpl_ext_replace($str, $r = "") {
     return str_ireplace( $this->smpl_extensions(), $r, $str );
   }
