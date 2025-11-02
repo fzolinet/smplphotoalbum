@@ -136,13 +136,6 @@ class SettingsForm extends ConfigFormBase {
      * )
      * ];
      */
-    $form ["default"] ['smplbox'] = [ 
-        '#type' => 'textfield',
-        '#title' => $this->t ( 'Class of thumbnails' ),
-        '#default_value' => ($cfg->get( 'smplbox' )) ?? "smplbox",
-        '#description' => $this->t ( "It is recommended to use the smplbox" ),
-        '#attributes' => [ "readonly" => "readonly" ] 
-    ];
     
     $form["default"] ["method"] = [
       "#type"  => 'select',
@@ -868,8 +861,7 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'root', $vals ['root'] )
         ->set( 'viewed', $vals ['viewed'] )
         ->set( 'exif', $vals ['exif'] )
-        ->set( 'stat', $vals ['stat'] )
-        ->set( 'smplbox', $vals ['smplbox'] )
+        ->set( 'stat', $vals ['stat'] )        
         ->set( 'order', $vals ['order'] )
         ->set( 'sortorder', $vals ['sortorder'] )
         ->set( 'filter', $vals ['filter'] )

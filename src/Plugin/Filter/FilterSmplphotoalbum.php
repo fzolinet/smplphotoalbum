@@ -197,9 +197,9 @@ class FilterSmplphotoalbum extends FilterBase {
   function RootCheck() { 
     $p = \Drupal::service( 'file_system' )->realpath( "public://" );
     $root = str_replace( "public://", $p."/", $this->params["root"] );
-    $root = str_replace( '\\', '/', $root );
-    $msg = '';
-    $msg .= ( strlen( $this->params["root"] ) < 1) ? $this->t ( 'The main folder of Simple Photoalbum has to set! Please fix it in /admin/config/fz/smplphotoalbum!' ) : '';
+    $root = $this->slash( $root );
+    
+    $msg = ( strlen( $this->params["root"] ) < 1) ? $this->t ( 'The main folder of Simple Photoalbum has to set! Please fix it in /admin/config/fz/smplphotoalbum!' ) : '';
     $msg .= ( $this->params["root"] == "/" || substr ( $root, 2 ) == ":/") ? $this->t ( 'Are you sure, the main folder of Simple Photoalbum is equal the server root?' ) : '';
     $msg .= substr( $this->params["root"], - 1, 1 ) == "/" ? $this->t ( "Simple Photoalbum Main folder must not end with '/'" ) : '';
     $msg .= ! is_dir( $this->params["root"] ) ? 'There is not the smplphotoalbum root folder' : '';
@@ -212,6 +212,14 @@ class FilterSmplphotoalbum extends FilterBase {
     return $msg;
   }
 
+	/**
+	 * it makes slash from backslash or double slash
+	 * @param mixed $p 
+	 * @return string|string[] 
+	 */
+	public function slash($p){
+		return str_replace(["\\","//"],'/',$p);
+	}
   /**
    * Set default parameters to use in module
    *   

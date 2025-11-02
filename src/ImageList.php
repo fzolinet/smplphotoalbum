@@ -372,10 +372,8 @@ class ImageList {
 	 * @return mixed
 	 */
 	function getRoot(string $root){
-	  $root = str_replace ( "public://", \Drupal::service( 'file_system' )->realpath( "public://" )."\\", $root);
-	  $root .= substr( $root, -1 ) != '/' ? "/" : '';
-	  $root = $this->slash( $root );
-	  return $root;
+	  $root = str_replace ( "public://", \Drupal::service( 'file_system' )->realpath( "public://" )."/", $root)."/";	  
+	  return $this->slash( $root );
 	}
 
 	/**
@@ -403,37 +401,37 @@ class ImageList {
 		if( $this->access ){
 			$this->tpl["editform"] = file_get_contents ( $p . "/editform.html.twig" );
 			$this->tpl["imgeditform"] = file_get_contents ( $p . "/imgeditform.html.twig" );
-			$this->tpl["UploadForm"] = file_get_contents ( $p . "/uploadform.html.twig" );
+			$this->tpl["uploadform"] = file_get_contents ( $p . "/uploadform.html.twig" );
 		}else {
 			$this->tpl["editform"] = "";
 			$this->tpl["imgeditform"] = "";
-			$this->tpl["UploadForm"] = "";
+			$this->tpl["uploadform"] = "";
 		}
 	}
 
 	/**
- 	 * Reads the words of translate
+ 	 * Reads the words of translating
 	 * @return
  	 */
 	function ReadWords(){
-		$this->translate  = strtolower(trim( $this->params['translate'] ));
-		if($this->translate){
-			$words = file($this->modulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
+		$this->translate  = strtolower( trim( $this->params['translate'] ) );
+		if( $this->translate ){
+			$words = file( $this->modulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
 		}else{
-			$words = file($this->modulepath ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+			$words = file( $this->modulepath ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
 		}
 		$words = str_replace( "_"," ", $words);
 		foreach($words AS $e){
-			$e = trim($e);
-			if( strpos(' '.$e,';')>0){
+			$e = trim( $e );
+			if( strpos( ' '.$e, ';' ) > 0 ){
 				continue;
 			}
-			$a = explode("=",$e);
+			$a = explode( "=", $e );
 
-			if(count( $a ) == 1) {
-				$this->words[$e] = $e;
+			if( count( $a ) == 1 ) {
+				$this->words[ $e ] = $e;
 			}else{
-				$this->words[trim($a[0])] = trim($a[1]);
+				$this->words[ trim( $a[0] ) ] = trim( $a[1] );
 			}
 		}
 	}
@@ -882,13 +880,19 @@ class ImageList {
 
 		if ( $this->access ) {
 			$str = str_replace( 
-								[ "{{ EditForm }}", "{{ ImgEditForm }}"], 
-			          [ $this->tpl["editform"], $this->tpl["imgeditform"] ], 
-								$str
-							);
-			$str = str_replace( "{{ UploadForm }}", $this->upload ? $this->tpl["UploadForm"]: '' , $str );
-			$str = str_replace( "{{ ImgEditDefault }}", $base_path . $this->modulepath . "/image/404.png", $str );			
-			$str = str_ireplace( "{{ method }}",$this->method ,$str);
+							[ "{{ EditForm }}", 
+								"{{ ImgEditForm }}", 
+								"{{ UploadForm }}",
+								"{{ ImgEditDefault }}",
+								"{{ method }}"
+							],
+			        [ $this->tpl["editform"], 
+							  $this->tpl["imgeditform"], 
+								$this->upload ? $this->tpl["uploadform"]: '',
+								$base_path . $this->modulepath . "/image/404.png",
+								$this->method
+							], $str
+						);										
 			
 			//Test environment
 			$this->TestModify($str);

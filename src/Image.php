@@ -5,29 +5,26 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 class Image {
 	protected $ascdesc = 'asc'; // order: asc or desc
 	protected $edit = false;	
-	public $entry = '';      // The name of file
+	public 		$entry = '';      // The name of file
+	protected $ext = "";     //Extension of item
+	public 		$filesize = 0;    // size of file;	
 	protected $html5 = false;
 	protected $name = "";
-	protected $ext = "";     //Extension of item
-	public $filesize = 0;    // size of file;	
-	protected $importance = 0; // importance of item
-	
+	protected $importance = 0; // importance of item	
 	protected $icon ='';
-	protected $id ='0';      // id of item
+	protected $id ='0';      	// id of item
 	protected $imgedit = false;
 	protected $lang = "en";
 	protected $link = "";    // link associated with image
 	protected $modulepath = ''; // module path in filesystem
 	protected $path ='';	   // relativ path to item
-	public $subtitle ='';    // Actual subtitle below the image
-	protected $root ='';     // The root of photoalbums
-
-	//protected $rootabs ='';  //Absolute path
 	protected $smplbox ='';  // it helps to colorbox or any other similar module
 	protected $sortorder ='filename';	// type of order
 	protected $sub = '';     // Shows the subtitle of pictures
+	public 		$subtitle =''; // Actual subtitle below the image
+	protected $root ='';     // The root of photoalbums
 	protected $test = false;
-	public $thdate = 0;      //date of thumbnail
+	public 		$thdate = 0;      //date of thumbnail
 	protected $tpl = [];     //template array
 	protected $translate = false;
 	public    $type ='';
@@ -44,39 +41,37 @@ class Image {
 	Function __construct($id, $subtitle, $viewnumber, $link, &$params, &$words, $entry = '', $importance = 0 , $type = 'image', $tpl = '') {
 		global $base_url;
 
-		$this->ascdesc = $params ['ascdesc'];
-		$this->edit = $params ['edit'];
-		$this->imgedit = $params["imgedit"];		
-		$this->entry = $entry;
-		$this->ext =  strtolower( pathinfo( $entry, PATHINFO_EXTENSION) );		
-		$this->filesize = @filesize ( $params ['root'] . $params ['path'] . $entry );		
-		$this->html5 = $params ['html5_checking'];
-		$this->icon = $params ['icon'];
-		$this->id = $id;
-		$this->lang = $params["lang"];
-		$this->viewnumber = $viewnumber;
-		$this->subtitle = $subtitle;
-		$this->link = $link;		
-		$this->modulepath = $params ['modulepath'];
-		$this->name = $entry;
-		$this->path = $params ['path'];
-		$this->root = $params ['root'];		
-		$this->sortorder = $params ['sortorder'];
+		$this->ascdesc    = $params ['ascdesc'];
+		$this->edit       = $params ['edit'];
+		$this->entry      = $entry;		
+		$this->ext        = strtolower( pathinfo( $entry, PATHINFO_EXTENSION) );		
+		$this->filesize   = @filesize ( $params ['root'] . $params ['path'] . $entry );		
+		$this->html5      = $params ['html5_checking'];
+		$this->icon       = $params ['icon'];
+		$this->id         = $id;
+		$this->imgedit    = $params["imgedit"];
 		$this->importance = (int) ($importance);
-		$this->smplbox = $params ['smplbox']; // It helps to vie an image in a lightbox or colorbox layer
-		$this->sub = $params ['sub'];
-		
-		$this->test = $params ["test"];
-		$this->thdate = @filemtime ( $params ['root'] . $params ['path'] . $entry );
-		$this->tpl = $tpl;
-		$this->translate = isset($params["translate"] )? $params['translate']: false;
-		$this->type = $type;
-		$this->url = $params ['url_checking'];
-		$this->v = $base_url . "/";
-		$this->viewed = $params ['viewed'];
-		
-		$this->width = $params ['width'];		
-		$this->words = $words;		
+		$this->lang       = $params["lang"];
+		$this->link 			= $link;
+		$this->modulepath = $params ['modulepath'];
+		$this->name 			= $entry;
+		$this->viewnumber = $viewnumber;
+		$this->path 			= $params ['path'];
+		$this->root 			= $params ['root'];		
+		$this->smplbox 		= $params ['smplbox']; // It helps to vie an image in a lightbox or colorbox layer
+		$this->sortorder 	= $params ['sortorder'];		
+		$this->sub 				= $params ['sub'];
+		$this->subtitle   = $subtitle;								
+		$this->test 			= $params ["test"];
+		$this->thdate 		= @filemtime ( $params ['root'] . $params ['path'] . $entry );
+		$this->tpl 				= $tpl;
+		$this->translate 	= isset($params["translate"] )? $params['translate']: false;
+		$this->type 			= $type;
+		$this->url 				= $params ['url_checking'];
+		$this->v 					= $base_url . "/";
+		$this->viewed 		= $params ['viewed'];		
+		$this->width 			= $params ['width'];		
+		$this->words 			= $words;		
 	}
 	
 	/**
@@ -85,64 +80,40 @@ class Image {
 	 * @param bool $editok
 	 * @return string
 	 */
-	function Render($editok) {
+	function Render( $editok ) {
 		switch ($this->type) {
-			case 'image' :
-				$str = $this->RenderImage();
-				break;
-			case 'video' :
-			  $str = $this->RenderOther();
-			  break;
-			case 'videohtml5' :
-				if ($this->html5){
-					$str = $this->RenderHTML5Video();
-				}else{
-					$str = $this->RenderOther();
-				}
-				break;
-			case 'audio' :
-			  $str = $this->RenderOther();
-			  break;
-			case 'audiohtml5' :
-				if ($this->html5){
-					$str = $this->RenderHTML5Audio();
-				}else{
-					$str = $this->RenderOther();
-				}
-				break;
-			default :
-				$str = $this->RenderOther();
+			case 'image'      : $str = $this->RenderImage(); break;
+			case 'video'      : $str = $this->RenderOther();  break;
+			case 'videohtml5' : $str = ($this->html5)? $this->RenderHTML5Video() : $this->RenderOther(); break;
+			case 'audio'     	: $str = $this->RenderOther(); break;
+			case 'audiohtml5' : $str = ( $this->html5 )? $this->RenderHTML5Audio(): $this->RenderOther();	break;
+			default : $str = $this->RenderOther();
 		}
 	
 		$str = str_replace( "{{ icon }}", $this->icon, $str );
-		if ($this->sub) {
-			$str = str_replace( '{{ subtitle }}', (empty ( $this->subtitle ) ? $this->name : $this->subtitle), $str );
+		if ( $this->sub ) {
+			$str = str_replace( '{{ subtitle }}', ( empty ( $this->subtitle ) ? $this->name : $this->subtitle ), $str );
 		}
+
 		// View number of views of item
-		$str = $this->ViewNumber( $str );
+		$this->ViewNumber( $str );
 	
 		// Show link of item
-		$str = $this->ShowLink( $str );
+		$this->ShowLink( $str );
+
 		// The file description
-		$str = $this->ShowProperties( $str );
+		$this->ShowProperties( $str );
 
 		// ImgEdit button
-		if( $editok && $this->edit && $this->imgedit &&
-				$this->type == "image" && 
-				! in_array( $this->ext, ["avif", "xbm", "xpm"] ) 
-		)
-		{
-			$str = $this->ShowImageEdit($str);
+		if( $editok && $this->edit && $this->imgedit && $this->type == "image" && !in_array( $this->ext, ["avif", "xbm", "xpm"] ) )	{
+			$this->ShowImageEdit( $str );
 		}else{
-			$str = $this->NoImageEdit($str);
+			$this->NoImageEdit( $str );
 		}
 
 		// Edit && Delete button
-		if ($editok && $this->edit ) {
-			$str = $this->ShowEdit( $str );
-		} else {
-			$str = $this->NoEdit( $str );
-		}
+		if ( $editok && $this->edit ) $this->ShowEdit( $str ) ;
+		else													$this->NoEdit( $str );
 		
 		return str_replace( 
 			[ 
@@ -160,9 +131,8 @@ class Image {
 	/**
 	 * Showlink
 	 * @param string $str
-	 * @return string
 	 */
-	function ShowLink(string $str) {
+	function ShowLink(string &$str) {
 		if ($this->url && !empty( $this->link )) {
 			$s = [
 				 "<Link>",
@@ -182,7 +152,6 @@ class Image {
 		} else {
 			$str = preg_replace('#<Link(.*?)Link>#imxs', "" , $str);
 		}
-		return $str;
 	}
 	
 	/**
@@ -190,12 +159,13 @@ class Image {
 	 * @param string $str
 	 * @return string
 	 */
-	function ViewNumber(string $str) {
+	function ViewNumber(string &$str) {
 		if ($this->viewed) {
-			return str_replace( '{{ viewnumber }}', $this->t ( "View" ) . ": " . $this->viewnumber, $str );
+			$str = str_replace( '{{ viewnumber }}', $this->t ( "View" ) . ": " . $this->viewnumber, $str );
+		} else{
+			$str = str_replace( '{{ viewnumber }}', '', $str );
+			$str = preg_replace( '/<div id="smpl_view[^<]*<\/div>/msxi', "", $str );
 		}
-		$str = str_replace( '{{ viewnumber }}', '', $str );
-		return preg_replace( '/<div id="smpl_view[^<]*<\/div>/msxi', "", $str );
 	}
 	
 	/**
@@ -203,7 +173,7 @@ class Image {
 	 * @param string $str
 	 * @return string
 	 */
-	function ShowProperties(string $str) {
+	function ShowProperties(string &$str) {
 		$s = [
 				"{{ ShowProperties }}",
 				"{{ desc }}",
@@ -220,7 +190,7 @@ class Image {
 				$this->words["File size"],
 				$this->ShowFileSize()
 		];
-		return str_replace( $s, $r, $str );
+		$str = str_replace( $s, $r, $str );
 	}
 
 /**
@@ -228,10 +198,16 @@ class Image {
 	 * @param string $str
 	 * @return string
 	 */
-	function ShowImageEdit( string $str) {
-		$str = str_replace( ['<ImgEdit>','</ImgEdit>'], '', $str );
-		$str = str_replace( '{{ Image Edit }}', $this->words['Image Edit'], $str );
-		return $str;
+	function ShowImageEdit( string &$str) {
+		$str = str_replace( 
+			[	'<ImgEdit>',
+				'</ImgEdit>', 
+				'{{ Image Edit }}'], 
+			[
+				'',
+				'', 
+				$this->words['Image Edit']
+			], $str );		
 	}
 
 	/**
@@ -239,30 +215,27 @@ class Image {
 	 * @param string $str
 	 * @return string
 	 */	
-	function NoImageEdit($str) {
-		return preg_replace("#<ImgEdit(.*?)<\/ImgEdit>#imxs", '', $str);
+	function NoImageEdit(string &$str) {
+		$str = preg_replace("#<ImgEdit(.*?)<\/ImgEdit>#imxs", '', $str);
 	}
 
 	/**
 	 * Show Edit buttons
 	 * @param string $str
-	 * 
-	 * @return string
 	 */
-	function ShowEdit( string $str) {		
-		$str = str_ireplace( ['<Edit>','</Edit>' ], '', $str );			
-		$str = str_replace( '{{ Caption Edit }}', $this->words['Caption Edit'], $str );
-		$str = str_replace( '{{ Delete }}', $this->words['Delete'], $str );
-		return $str;
+	function ShowEdit( string &$str) {		
+		$str = str_ireplace( [ '<Edit>','</Edit>' ], '', $str );			
+		$str = str_replace( 
+			[ '{{ Caption Edit }}', '{{ Delete }}' ], 
+			[ $this->words['Caption Edit'], $this->words['Delete'] ], $str );		
 	}
 
 	/**
 	 * Delete Edit && Delete buttons from template of items
-	 * @param string $str
-	 * @return string
+	 * @param string &$str
 	 */	
-	function NoEdit(string $str){
-		return preg_replace("#<Edit(.*?)<\/Edit>#imxs", '', $str);
+	function NoEdit(string &$str){
+		$str = preg_replace("#<Edit(.*?)<\/Edit>#imxs", '', $str);
 	}
 
 	/**
