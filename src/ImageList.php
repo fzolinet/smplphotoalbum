@@ -401,12 +401,12 @@ class ImageList {
 	  }
 
 		if( $this->access ){
-			$this->tpl["EditForm"] = file_get_contents ( $p . "/editform.html.twig" );
-			$this->tpl["ImgEditForm"] = file_get_contents ( $p . "/imgeditform.html.twig" );
+			$this->tpl["editform"] = file_get_contents ( $p . "/editform.html.twig" );
+			$this->tpl["imgeditform"] = file_get_contents ( $p . "/imgeditform.html.twig" );
 			$this->tpl["UploadForm"] = file_get_contents ( $p . "/uploadform.html.twig" );
 		}else {
-			$this->tpl["EditForm"] = "";
-			$this->tpl["ImgEditForm"] = "";
+			$this->tpl["editform"] = "";
+			$this->tpl["imgeditform"] = "";
 			$this->tpl["UploadForm"] = "";
 		}
 	}
@@ -805,8 +805,7 @@ class ImageList {
 			$this->CacheClear();
 		}
 
-		// Load smpl template
-		
+		// Load smpl template		
 		$strjs = "\n<script>".$this->tpl["js"]."</script>\n";
 		
 		$imgeditform = $this->Request("imgeditform","''");
@@ -884,7 +883,7 @@ class ImageList {
 		if ( $this->access ) {
 			$str = str_replace( 
 								[ "{{ EditForm }}", "{{ ImgEditForm }}"], 
-			          [ $this->tpl["EditForm"], $this->tpl["ImgEditForm"] ], 
+			          [ $this->tpl["editform"], $this->tpl["imgeditform"] ], 
 								$str
 							);
 			$str = str_replace( "{{ UploadForm }}", $this->upload ? $this->tpl["UploadForm"]: '' , $str );
