@@ -23,6 +23,7 @@ class ImageList {
 	protected $con; // Drupal database connection string
 	protected $copyright = "PiQasso Group";
 	protected $edit = false;
+	protected $upload = False;
 	protected $access = true;
 	protected $graphicdrv = "gd";
 	protected $filter = "";
@@ -308,8 +309,7 @@ class ImageList {
 		
 		$this->edit      = $params["edit"];		// Edit 
 		$this->imgedit   = $params["imgedit"];	// Image Edit
-		$this->wmpath    = $params["wmpath"];	// Watermark
-		$this->important = $params["important_checking"];
+		$this->wmpath    = $params["wmpath"];	// Watermark		
 		$this->upload    = $params['upload'];	// Upload enabled | disabled
 
 		//checking types of items
