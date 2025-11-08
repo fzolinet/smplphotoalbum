@@ -71,6 +71,7 @@
 				<button id="smpl_watermark" class="smpl_label smpl_actbutton">{{ Watermark }}</button>
 				<button id="smpl_vignette" class="smpl_label smpl_actbutton">{{ Vignette }}</button>
 				<button id="smpl_border" class="smpl_label smpl_actbutton">{{ Border }}</button>
+				<button id="smpl_bevel" class="smpl_label smpl_actbutton">{{ Bevel }}</button>
 			</div>
 
 			<div id="smpl_geometry_menu" class="smpl_menu">
@@ -183,6 +184,12 @@
 				{{ Inner }} {{ bevel }}&nbsp;<input id="smpl_border_innerbevel" type="number" class="SmplInputNarrow" min="0" max="50" value="3" title="Inner bevel">&nbsp;
 				{{ Outer }} {{ bevel }}&nbsp;<input id="smpl_border_outerbevel" type="number" class="SmplInputNarrow" min="0" max="50" value="3" title="Outer bevel">
 				{{ Height }}&nbsp;<input id="smpl_border_height" type="number" class="SmplInputNarrow" min="0" max="50" value="3" title="Height">
+			</div>
+			
+			<div id="smpl_bevel" class="smpl_imgedit_border">
+				<button id="smpl_bevel_done" onclick="return false;" class="smpl_actbutton" title="{{ Bevel }}">{{ Bevel }}</button>
+				{{ Width }}&nbsp;<input id="smpl_bevel_width" type="number" class="SmplInputNarrow" min="0" value="10" title="Inner bevel">&nbsp;
+				{{ Depht }}&nbsp;<input id="smpl_bevel_depht" type="number" class="SmplInputNarrow" min="1" max="50" value="1" title="Depht of bevel">
 			</div>
 
 			<!-- Geometry menu -->

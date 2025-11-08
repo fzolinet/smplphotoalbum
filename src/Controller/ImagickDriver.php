@@ -248,7 +248,6 @@ class ImagickDriver{
       $draw = new ImagickDraw();
       $fillcolor = new Imagickpixel();
       $fillcolor->setColor("white");
-     // $draw->setImageBorderColor( $fillcolor );
       $draw->setFillColor( $fillcolor );
       $draw->ellipse($cx, $cy, $r1, $r2, 0,360);
       $mask->drawImage($draw);
@@ -364,6 +363,51 @@ class ImagickDriver{
     return $img;
   }
 
+  function Bevel($img, $ob, $h){
+    $width  = $img->getImageWidth();
+    $height = $img->getImageHeight(); 
+    $img1 = new Imagick();
+    $PixelData = [];
+    for($x = 0; $x < $width; $x++){
+      for($y=0; $y < $height; $y++){
+        $IPix = $img->getImagePixelColor($x1,$y);        
+        $color = $IPix->getColor();
+        if( $x < $ob ){
+          $color["r"] += ( ( $ob-$x ) + 1 );
+          $color["g"] += ( ( $ob-$x ) + 1 );
+          $color["b"] += ( ( $ob-$x ) + 1 );
+        }
+        $PixelData[] = $color['r'];
+        $PixelData[] = $color['g'];
+        $PixelData[] = $color['b'];
+      }
+    }
+    $img->importImagePixels(0,0,$width,$height, 'RGB', Imagick::PIXEL_FORMAT_RAW, $pixelData);
+
+    /*for ($i = 0; $i < $ob; $i++){
+      $x1 = $ob - $i;
+      $x2 = $width - ($ob-$i);
+      $y1 = $ob-$i;
+      $y2 = $height - ($ob - $i);
+      $iPix = new ImagickPixel();
+      for($y = $y1; $y < $y2; $y++){        
+        $IPix = $img->getImagePixelColor($x1,$y);        
+        $color = $IPix->getColor();        
+        $color["r"] += ($i+1);
+        $color["g"] += ($i+1);
+        $color["b"] += ($i+1);        
+        $img->setImagePixelColor($x, $y, $color);
+        //
+        $color = $img->getImagePixelColor($x2,$y);
+        $color["r"] /= ($i+1);
+        $color["g"] /= ($i+1);
+        $color["b"] /= ($i+1);
+        $img->setImagePixelColor($x, $y, $color);
+      }
+    }*/
+
+    return $img;
+  }
   //-------------  Geometry menu -------------------
 
   /**

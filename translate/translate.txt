@@ -13,6 +13,7 @@ Auto histogram
 Auto orient
 Barrel
 Bestfit
+Bevel
 bevel
 Blue shift
 Blursize
@@ -49,6 +50,7 @@ cropped
 Date
 Darken
 Deep
+Depht
 default
 Degree of rotate
 Dehaze

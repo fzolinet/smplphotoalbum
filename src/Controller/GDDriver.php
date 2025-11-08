@@ -431,7 +431,8 @@ class GDDriver {
   /**
    * Helper function for Border
    *
-   * @param int $x1
+   * @param GdImage $img
+   * @param int $x1 - keret
    * @param int $y1
    * @param int $x2
    * @param int $y2
@@ -460,6 +461,37 @@ class GDDriver {
     imagefilledpolygon($img, $points, $c4);
   }
 
+  /**
+   * Bevel 
+   * @param GdImage $img
+   * @param $ob -width of bevel
+   * @param $depth of bevel 
+   */
+  function Bevel($img, $ob, $depht = 5){
+    $deltabright = ( (255 - $depht )  / ( (int)($ob) ) );
+    $h = 1;
+
+    for($x=0; $x < $ob; $x++){
+      $this->DeeperLighter( $img, $x, $x+1, $x, $this->height - $x, $deltabright * ( $ob-$x ) );
+      $this->DeeperLighter( $img, $this->width-$x-1, $this->width-$x, $x, $this->height - $x, -$deltabright * ( $ob-$x ) );      
+    }
+
+    for( $y=0; $y < $ob; $y++){
+      $this->DeeperLighter( $img, $y, $this->width - $y, $y, $y+1, $deltabright * ( $ob-$y ) );
+      $this->DeeperLighter( $img, $this->height - $y-1, $this->height - $y, $y, $y+1, -$deltabright * ( $ob-$y ) );
+    }
+
+    return $img;
+  }
+
+  function DeeperLighter( &$img, $x1, $x2, $y1, $y2, $percent ){
+    $w = $x2-$x1;
+    $h = $y2-$y1;
+    $img1 = imagecreatetrueColor( $w, $h );
+    $ok = imagecopy($img1, $img, 0,0, $x1, $y1, $w, $h);
+    $ok = $ok && imagefilter($img1, IMG_FILTER_BRIGHTNESS, $percent);
+    $ok = imagecopy($img, $img1, $x1, $y1, 0, 0, $w, $h );
+  }
   /******************************* Geometry menu ***********************/
 
   /**
@@ -1356,8 +1388,9 @@ class GDDriver {
     }
     return $img;
   }
+
   /**
-   *
+   * Sharp the Image
    * @param GDImage $img
    * @param float|int $radius
    * @param float|int $sigma
@@ -1495,7 +1528,7 @@ class GDDriver {
   }
 
   /**
-   * get x and y coord fron polar coords
+   * Get x and y coord from polar coords
    * @param mixed $cx
    * @param mixed $cy
    * @param mixed $r
@@ -1516,6 +1549,7 @@ class GDDriver {
   private function DegToRad($deg){
     return  $deg * M_PI / 180;
   }
+
   /**
    * Get polar coordinates from descartes
    * @param mixed $cx
@@ -1570,8 +1604,7 @@ class GDDriver {
   }
 
   /**
-
-  * get the histogram
+   * get the histogram
    * @param GDImage &$img 
    * @param int $width 
    * @param int $height 
@@ -1708,14 +1741,12 @@ class GDDriver {
     return [ "red"=> $imgred, "green" => $imggreen, "blue" => $imgblue ];
   }
 
-
   /**
    * Save image
    * @param GDImage $img
    * @param object $cfg
    * @param string $name
    * @param string $type
-
    * @return boolean
    */
   function Save($img, &$cfg, $name = "filename", $type = "jpeg") {
@@ -1798,6 +1829,7 @@ class GDDriver {
   function tempjpeg(&$img, $name){
     imagejpeg($img, $this->path.$name);
   }
+  
   function setType( $ext ){
     if($ext == "jpg") $ext = "jpeg";
     $this->ext = $ext;

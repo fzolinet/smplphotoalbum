@@ -12,10 +12,11 @@ ImageEdit
 
 Todo:
 ~~~~
-- fontosság: importance
-- A slideshow-ból gombbal a normál listára lehessen változtatni 
+https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
+https://www.geeksforgeeks.org/computer-vision/image-processing-algorithms-in-computer-vision/
+
 - Add / Grain - under construction!!!
-http://localhost/fw3/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
+https://fw3.com/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
 
 Enhance menu (under construction)
 - AI Face Edit

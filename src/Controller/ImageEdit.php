@@ -320,12 +320,6 @@ class ImageEdit {
         $this->img->redeye( $x1, $y1, $x2, $y2 );
         break;
 
-      case "repair" :
-        break;
-
-      case "skintune" :
-        break;
-
       //Add menu
       case "watermark" :
         $x1 = $this->Request( 'x1', 0 );
@@ -390,6 +384,11 @@ class ImageEdit {
         $outerbevel  = $this->Request( "outerbevel" , 3 );
         $height      = $this->Request( "height" , 3 );
         $this->img->Border( $bordercolor, $top, $innerbevel, $outerbevel, $height);
+        break;
+      case "bevel" :
+        $bevel = $this->Request("width",10);
+        $depht = $this->Request("depht",3);
+        $this->img->Bevel($bevel, $depht);
         break;
 
       //Rotate menu
@@ -537,7 +536,7 @@ class ImageEdit {
         $mode = $this->Request("mode", 1);
         $dynamic = $this->Request("dynamic", 254);
         $this->img->Normalize($this->graphicdrv, $channel, $mode, $dynamic );
-;        break;
+        break;
 
       case "gamma" :
         $gammain   = $this->Request( "gammain",  0 );
@@ -656,6 +655,9 @@ class ImageEdit {
           $angle = $this->Request( 'angle' , 90 );
           $this->img->Swirl( $angle);
           break;
+                
+      case "repair" :
+      case "skintune" :        
       case "exposure":
       case "levels":
       case "autolevels":

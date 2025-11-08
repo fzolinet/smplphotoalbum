@@ -500,6 +500,9 @@ class ImgManipulate{
     $this->dst_img = $this->gd->Border( $this->src_img, $bordercolor, $top, $innerbevel, $outerbevel, $height );
   }
 
+  public Function Bevel( $bevel, $depht ){
+    $this->dst_img = $this->gd->Bevel($this->src_img, $bevel, $depht );
+  }
   /**
    * Vignette
    *
