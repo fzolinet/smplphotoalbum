@@ -17,13 +17,21 @@ use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceExce
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 
-use Clarifai\ClarifaiClient;
+// Ai clients
 
+// Clarifai
+use Clarifai\ClarifaiClient;
 use Clarifai\Api\Data;
 use Clarifai\Api\Image;
 use Clarifai\Api\Input;
 use Clarifai\Api\PostModelOutputsRequest;
 use Clarifai\Api\Status\StatusCode;
+
+//Gemini
+use Gemini;
+use Gemini\Data\Blob;
+use Gemini\Enums\MimeType;
+
 use Drupal\smplphotoalbum\SlideShow;
 
 require_once realpath(__DIR__."/../../")."/vendor/autoload.php";
@@ -52,6 +60,7 @@ class SmplphotoalbumController extends ControllerBase{
 
     $this->root = $this->slash( $root );
     $this->TN = $this->cfg->get( 'TN' );
+    $this->aiclient = $this->cfg->get("aiclient");
   }
   
   // ...
@@ -855,10 +864,16 @@ class SmplphotoalbumController extends ControllerBase{
     }
 
     $p = $this->slash( $this->root. $a["path"]."/".$a["name"] );
-    $content = file_get_contents($p);      
-    $str = $this->ai_recognition( $content );  
     
-    if(!isset($str) || $str === null ){
+    // AI recognition
+    $content = file_get_contents($p);      
+    if( $this->aiclient == "clarifai" ){      
+      $str = $this->ai_recognition( $content );       
+    }else if( $this->aiclient == "googleai" ){      
+      $str = $this->ai_recognition_google( $content, $p );  
+    }    
+    
+    if(!isset( $str ) || $str === null ){
       $res = ["id" => "-1", "msg" => "There is no answer from AI!" ];
     } else{
       $res = ["id" => "1", "msg" => $str ];
@@ -868,16 +883,56 @@ class SmplphotoalbumController extends ControllerBase{
     $response->addCommand( new InsertCommand( '', $content, [] ) );
     return $response;
   }
+/**
+ * With google
+ * API key details
+ * API Key: AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck
+ * Name: Default Gemini API Key
+ * Project name: projects/818815699870
+ * Project number:818815699870
+ */
+function ai_recognition_google( $bytes, $p ){
+  $msg = "";
+  if(strtoupper( $_SERVER['REQUEST_METHOD']) !="POST"){
+    return $msg;
+  }
 
-  function ai_recognition( $bytes ){
-    $curl = extension_loaded("curl");
-    $grpc = extension_loaded("grpc");
-    $msg = "";
-    $msg .=  !$curl ? "Curl PHP extension not installed!" : "";
-    $msg .=  !$grpc ? "GRPC PHP extension not installed! (https://pecl.php.net/package/gRPC )" : "";
-    if(!empty($msg)){
-        return $msg;
-    }
+  //
+  $ext = strtolower( pathinfo( $p, PATHINFO_EXTENSION) );
+  switch($ext){
+    case 'jpg':
+    case 'jpeg':
+      $mimeType = MimeType::IMAGE_JPEG;
+      break;
+    case 'png':
+      $mimeType = MimeType::IMAGE_PNG;
+      break;
+  }
+
+  $yourAPIKey = "AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck";
+  $client = Gemini::client( $yourAPIKey );  
+  $result = $client
+    ->generativeModel(model: 'gemini-2.5-flash')
+    ->generateContent([
+        'What is on the picture?',
+        new Blob( 
+          mimeType: $mimeType, 
+          data: base64_encode( $bytes ) 
+        )
+      ]);
+  return $result->text();
+}
+
+function ai_recognition( $bytes ){
+
+  $curl = extension_loaded("curl");
+  $grpc = extension_loaded("grpc");
+  $msg = "";
+  $msg .=  !$curl ? "Curl PHP extension not installed!" : "";
+  $msg .=  !$grpc ? "GRPC PHP extension not installed! (https://pecl.php.net/package/gRPC )" : "";
+  if(!empty($msg)){
+    return $msg;
+  }
 
     //$MODEL_ID = 'aaa03c23b3724a16a56b629203edc62c';
     $MODEL_ID = 'general-image-recognition';
@@ -914,7 +969,7 @@ class SmplphotoalbumController extends ControllerBase{
     if ($code != StatusCode::SUCCESS) {
         throw new \Exception("Failure response: " . $description . " " . $details);
     }
-  
+
     $msg = " ";
     foreach ($response->getOutputs()[0]->getData()->getConcepts() as $concept) {
         $msg .= $concept->getName() . ": (" . number_format($concept->getValue(), 2) . "), ";

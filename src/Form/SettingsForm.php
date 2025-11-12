@@ -833,7 +833,19 @@ class SettingsForm extends ConfigFormBase {
         '#title' => $this->t("You can use image recognition"),
         '#default_value' =>  $AI && $cfgai,
         '#description'   => "AI is installed and you can use image recognition",         
-    ];      
+    ];
+    
+    $form["AI_settings"] ["aiclient"] = [
+        "#type" => 'select',
+        '#title' => $this->t("You can use image recognition with "),
+        '#options' => [
+            'clarifai' => "Clarifai client",
+            'googleai'   => 'Google API client',
+        ],
+        '#default_value' =>  !empty( $cfg->get("aiclient") ) ? $cfg->get("aiclient") : "clarifai",
+        '#description'   => "AI is installed and you can use image recognition",         
+    ];
+    
     if(!$AI ) {
         $form["AI_settings"] ["ai"] ['#attributes'] = [ "readonly" => "readonly", "disabled" => "disabled", "style" => "background-color:#DDD;" ];
     }
@@ -918,6 +930,7 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'icon', $vals ['icon'] )
         ->set( 'test', $vals ['test'])
         ->set( 'ai', $vals['ai'])
+        ->set('aiclient', $vals['aiclient'])
         
         ->save ();
   }

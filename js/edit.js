@@ -34,7 +34,7 @@
 				let data = JSON.parse(response[0].data);
 				$("input#smpl_edit_id").val(id);
 				$("input#smpl_name").val(data.name);
-				$("input#smpl_sub").val(data.subtitle);
+				$("textarea#smpl_sub").val(data.subtitle);
 				$("input#smpl_importance").val(data.importance);
 				$("select#smpl_type option").attr("selected", false).change();
 				$("select#smpl_type option[value='" + data.typ + "']").attr("selected", "selected").change();
@@ -74,7 +74,7 @@
 		SmplEditForm.hide();
 		$("input#smpl_edit_id").val('');
 		$("input#smpl_name").val('');
-		$("input#smpl_sub").val('');
+		$("textarea#smpl_sub").val('');
 		$("input#smpl_importance").val(0);
 		$("select#smpl_type option").attr("selected", false).change();
 		$("select#smpl_type option[value='image']").attr("selected", "selected").change();
@@ -91,7 +91,7 @@
 		let id = $("input#smpl_edit_id").val();
 		let formData = {
 			name: $("input#smpl_name").val(),
-			subtitle: $("input#smpl_sub").val(),
+			subtitle: $("textarea#smpl_sub").val(),
 			type: $("select#smpl_type option:selected").val(),
 			importance: $("input#smpl_importance").val(),
 			link: $("input#smpl_link").val(),
@@ -140,8 +140,8 @@
 				if (data.id == '-1') {
 					smpl.AlertC(data.msg);
 				} else {
-					var t = $("input#smpl_sub").val() + " !!! " + data.msg;
-					$("input#smpl_sub").val(t);
+					var t = $("textarea#smpl_sub").val() + " !!! " + data.msg;
+					$("textarea#smpl_sub").val(t);
 				}
 			},
 			error: function (response) {
