@@ -12,6 +12,9 @@ ImageEdit
 
 Todo:
 ~~~~
+- Text write on the image - under construction
+- AI generals something on the image
+
 https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
 https://www.geeksforgeeks.org/computer-vision/image-processing-algorithms-in-computer-vision/
 
@@ -86,6 +89,9 @@ Exif - ODT Opend Document...
 
 History:
 ~~~~~~~
+
+2025.11.08 - 1.9.5ß
+- Bevel
 
 2025.10.31 - 1.9.4a
 - Importance in the orders

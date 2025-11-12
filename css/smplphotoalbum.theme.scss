@@ -20,7 +20,7 @@
  $line-height:  1.2em;
  $narrow: 3.5em;
  $mid: 4.5em;
- $wide: 5.5em;
+ $wide: 6em;
   /* - end of default parameters -------*/
 .smpl_table_all {
   text-align: center;
@@ -961,7 +961,7 @@ select#smpl_mode, select#smpl_kind, select#smpl_filters, select#smpl_geom,
   background-position: calc(100% - 10px) 0.7em, calc(100% - 5px) 0.7em, 100% 0;
   background-size: 0.4em 0.4em, 0.4em 0.4em, 1.5em 1.7em;
   background-repeat: no-repeat;  
-  max-width: 15em;
+  max-width: 20em;
 }
 
 select#smpl_sortorder:focus, select#smpl_ascdesc:focus, select#smpl_rotate_deg:focus,
@@ -973,8 +973,7 @@ select#smpl_geom:focus {
   background-position: calc(100% - 5px) 0.7em, calc(100% - 10px) 0.7em, 100% 0;
   background-size: 0.4em 0.4em, 0.4em 0.4em, 1.5em 1.7em;
   background-repeat: no-repeat;  
-  outline: 0;
-  font-size: 0.8em;
+  outline: 0;  
 }
 
 .smpl_step, .smpl_que{

@@ -262,6 +262,7 @@
 			let cmd = "cmd=bevel";
 			cmd += "&width=" + $("#smpl_bevel_width").val();
 			cmd += "&depht=" + $("#smpl_bevel_depht").val();
+			cmd += "&direction=" + $("#smpl_bevel_direction").val();
 			smpl.edit(cmd);
 			label_actual("bevel");
 		});

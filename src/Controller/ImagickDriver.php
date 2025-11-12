@@ -356,6 +356,7 @@ class ImagickDriver{
    * @param int  $h  - height of border
    * @return Imagick
    */
+
   function Border( $img, $bordercolor, $t, $ib, $ob, $h ) {
     $width  = $t + $ib + $ob;
     $height = $h + $ib + $ob;    
@@ -363,51 +364,51 @@ class ImagickDriver{
     return $img;
   }
 
-  function Bevel($img, $ob, $h){
-    $width  = $img->getImageWidth();
-    $height = $img->getImageHeight(); 
-    $img1 = new Imagick();
-    $PixelData = [];
-    for($x = 0; $x < $width; $x++){
-      for($y=0; $y < $height; $y++){
-        $IPix = $img->getImagePixelColor($x1,$y);        
-        $color = $IPix->getColor();
-        if( $x < $ob ){
-          $color["r"] += ( ( $ob-$x ) + 1 );
-          $color["g"] += ( ( $ob-$x ) + 1 );
-          $color["b"] += ( ( $ob-$x ) + 1 );
-        }
-        $PixelData[] = $color['r'];
-        $PixelData[] = $color['g'];
-        $PixelData[] = $color['b'];
+  /**
+   * Bevel 
+   * @param GdImage $img
+   * @param $ob -width of bevel
+   * @param $depth of bevel 
+   */
+  function Bevel($img, $ob, $depht = 1, $direction = 0){
+    $deltabright =  100 / $ob;
+    $ob = (int) $ob;
+    $w = $this->width;
+    $h = $this->height;
+    $this->bt->SetMax(2*$ob);
+    $this->bt->setFreq( (int)( $ob / 2 ) );
+
+    for($x=0; $x < $ob; $x++){
+      $this->DeeperLighter( $img, $x     , $x+1 , $x, $h-$x, $deltabright * ( $ob-$x ) );
+      $this->DeeperLighter( $img, $w-1-$x, $w-$x, $x, $h-$x, -$deltabright * ( $ob-$x ) );
+      if($this->bt->Break($this->bt->cnt++)){
+        return false;
       }
     }
-    $img->importImagePixels(0,0,$width,$height, 'RGB', Imagick::PIXEL_FORMAT_RAW, $pixelData);
 
-    /*for ($i = 0; $i < $ob; $i++){
-      $x1 = $ob - $i;
-      $x2 = $width - ($ob-$i);
-      $y1 = $ob-$i;
-      $y2 = $height - ($ob - $i);
-      $iPix = new ImagickPixel();
-      for($y = $y1; $y < $y2; $y++){        
-        $IPix = $img->getImagePixelColor($x1,$y);        
-        $color = $IPix->getColor();        
-        $color["r"] += ($i+1);
-        $color["g"] += ($i+1);
-        $color["b"] += ($i+1);        
-        $img->setImagePixelColor($x, $y, $color);
-        //
-        $color = $img->getImagePixelColor($x2,$y);
-        $color["r"] /= ($i+1);
-        $color["g"] /= ($i+1);
-        $color["b"] /= ($i+1);
-        $img->setImagePixelColor($x, $y, $color);
+    for( $y=0; $y < $ob; $y++){
+      if($this->bt->Break($this->bt->cnt++)){
+        return false;
       }
-    }*/
+      $this->DeeperLighter( $img, $y, $w - $y - 1, $y       , $y+1     , $deltabright * ( $ob-$y ) );
+      $this->DeeperLighter( $img, $y, $w - $y - 1, $h-2 - $y, $h - $y-1, -$deltabright * ( $ob-$y ) );
+    }
 
     return $img;
   }
+
+  function DeeperLighter( &$img, $x1, $x2, $y1, $y2, $brightness = 0){
+    $brightness += 100;
+    $brightness = (int) $brightness;
+
+    $w = $x2-$x1;
+    $h = $y2-$y1;
+    $img1 = $img->clone();
+    $ok = $img1->cropImage($w, $h, $x1, $y1);
+    $img1->modulateImage($brightness, 100, 100);
+    $img->compositeImage($img1,Imagick::COMPOSITE_DEFAULT, $x1, $y1);    
+  }
+
   //-------------  Geometry menu -------------------
 
   /**

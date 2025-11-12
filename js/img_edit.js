@@ -415,12 +415,14 @@
 					if (step > que) {
 						$(".smpl_que").val(que + 1);
 					}
+
 					UndoRedo(smpl.idx, data.que, data.prev, data.next);
 					SaveButtons(true);
 					smpl.progress(false);
 				} catch (e) {
 					;
 				}
+				smpl.getHistogram();
 				smpl.progress(false);
 				return false;
 			},

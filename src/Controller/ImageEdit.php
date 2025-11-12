@@ -386,9 +386,10 @@ class ImageEdit {
         $this->img->Border( $bordercolor, $top, $innerbevel, $outerbevel, $height);
         break;
       case "bevel" :
-        $bevel = $this->Request("width",10);
-        $depht = $this->Request("depht",3);
-        $this->img->Bevel($bevel, $depht);
+        $bevel     = $this->Request("width",10);
+        $depht     = $this->Request("depht",3);
+        $direction = $this->Request("direction",0);
+        $this->img->Bevel($bevel, $depht, $direction);
         break;
 
       //Rotate menu

@@ -190,6 +190,7 @@
 				<button id="smpl_bevel_done" onclick="return false;" class="smpl_actbutton" title="{{ Bevel }}">{{ Bevel }}</button>
 				{{ Width }}&nbsp;<input id="smpl_bevel_width" type="number" class="SmplInputNarrow" min="0" value="10" title="Inner bevel">&nbsp;
 				{{ Depht }}&nbsp;<input id="smpl_bevel_depht" type="number" class="SmplInputNarrow" min="1" max="50" value="1" title="Depht of bevel">
+				{{ Direction }}&nbsp;<input id="smpl_bevel_direction" type="number" class="SmplInputNarrow" min="-180" max="180" value="0" title="Direction">
 			</div>
 
 			<!-- Geometry menu -->
@@ -421,7 +422,7 @@
 				&nbsp;{{ Level }}&nbsp;
 				<input id="smpl_noiselevel" class="SmplInputNarrow" type="number" step="1" min="1" max="100" value="10" title="Noise level: 1..100%">
 				&nbsp;{{ Type }}&nbsp;
-				<select id="smpl_noise_type" class="smpl_dropdown">
+				<select id="smpl_noise_type" class="smpl_input_wide smpl_dropdown">
 					<option value="uniform" selected>Uniform</option>
 					<option value="laplacian">Laplacian</option>
 					<option value="gaussian">Gaussian</option>
@@ -430,7 +431,7 @@
 					<option value="poisson">Poisson</option>
 				</select>
 				&nbsp;{{ Channel }}&nbsp;
-				<select id="smpl_addnoise_channel" title="Channel: Red, Green, Blue, Alpha, All" class="smpl_dropdown">
+				<select id="smpl_addnoise_channel" title="Channel: Red, Green, Blue, Alpha, All" class="smpl_input_wide smpl_dropdown">
 					<option value="default" selected>Default</option>
 					<option value="all">All</option>
 					<option value="r">Red</option>
@@ -441,7 +442,7 @@
 				</select><br />
 				<button id="smpl_denoise_done" onclick="return false;" class="smpl_actbutton">{{ Denoise }}</button>
 
-				<select id="smpl_denoise_type" title="Imageick: Denoise, Enhance mage">
+				<select id="smpl_denoise_type" title="Imageick: Denoise, Enhance mage" class="smpl_input_wide smpl_dropdown">
 					<option value="denoise" selected>Denoise</option>
 					<option class="smpl_imagick" value="enhance">Enhance</option>
 				</select>
@@ -486,7 +487,7 @@
 				</span>
 				<span class="smpl_gd">Blurlevel&nbsp;<input id="smpl_blurlevel" type="number" class="SmplInputNarrow" step="1" min="1" max="32" value="1" title="Radius:1..32"></span>
 				Type&nbsp;
-				<select id="smpl_blurtype" class="smpl_dropdown" title="Simple blur, Adaptive blur, Gaussian blur, Motion blur">
+				<select id="smpl_blurtype" class="smpl_input_wide smpl_dropdown" title="Simple blur, Adaptive blur, Gaussian blur, Motion blur">
 					<option value="blur" selected>Blur</option>
 					<option value="adaptiveblur" class="smpl_imagick">Adaptive</option>
 					<option value="gaussianblur">Gaussian</option>
@@ -494,7 +495,7 @@
 				</select>
 				<span class="smpl_imagick">
 					&nbsp;Channel&nbsp;
-					<select id="smpl_blur_channel" class="smpl_dropdown" title="Channel: Red, Green, Blue, Alpha, All">
+					<select id="smpl_blur_channel" class="smpl_input_wide smpl_dropdown" title="Channel: Red, Green, Blue, Alpha, All">
 						<option value="default" selected>Default</option>
 						<option value="all">All</option>
 						<option value="r">Red</option>
@@ -512,7 +513,7 @@
 
 			<div id="smpl_convolution" class="smpl_imgedit_border">
 				<button id="smpl_convolution_done" onclick="return false;" class="smpl_actbutton">{{ Convolution }}</button>&nbsp;
-				<select id="smpl_filters" class="smpl_dropdown">
+				<select id="smpl_filters" class="smpl_input_wide smpl_dropdown">
 					<option selected value="sharpen">{{ Sharpen }}</option>
 					<option value="edge">{{ Edge }}</option>
 					<option value="findedge">{{ Find edges }}</option>

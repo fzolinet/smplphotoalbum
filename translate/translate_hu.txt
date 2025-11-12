@@ -62,6 +62,7 @@ Denoise=Simítás
 Descending=Csökkenő
 Description=Leírás
 Detail=Leírás
+Direction=Irány
 Distortion=Torzít
 Document=Dokumentum
 Dodge=Világosít

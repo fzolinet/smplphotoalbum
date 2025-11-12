@@ -58,6 +58,7 @@ Delete
 Denoise
 Descending
 Detail
+Direction
 Distortion
 Document
 Dodge

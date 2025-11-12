@@ -9,6 +9,8 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
+        'e4c9b2466af4057cc73ca0bb2fbccd8a' => __DIR__ . '/..' . '/google-gemini-php/client/src/Gemini.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -22,11 +24,14 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php83\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Contracts\\Service\\' => 26,
+            'Symfony\\Contracts\\HttpClient\\' => 29,
             'Symfony\\Contracts\\Cache\\' => 24,
             'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\Process\\' => 26,
+            'Symfony\\Component\\HttpClient\\' => 29,
             'Symfony\\Component\\Cache\\' => 24,
             'Spatie\\TemporaryDirectory\\' => 26,
         ),
@@ -43,12 +48,18 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
             'PhpOffice\\Math\\' => 15,
             'PNGMetadata\\' => 12,
         ),
+        'N' => 
+        array (
+            'Nyholm\\Psr7\\' => 12,
+            'Nette\\' => 6,
+        ),
         'M' => 
         array (
             'Matrix\\' => 7,
         ),
         'H' => 
         array (
+            'Http\\Discovery\\' => 15,
             'Holiday\\' => 8,
         ),
         'G' => 
@@ -56,6 +67,7 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
             'Grpc\\' => 5,
             'Google\\Protobuf\\' => 16,
             'Google\\' => 7,
+            'Gemini\\' => 7,
             'GPBMetadata\\Google\\Protobuf\\' => 28,
             'GPBMetadata\\Google\\' => 19,
             'GPBMetadata\\' => 12,
@@ -89,6 +101,10 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         array (
             0 => __DIR__ . '/..' . '/phpoffice/math/tests/Math',
         ),
+        'Symfony\\Polyfill\\Php83\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php83',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -96,6 +112,10 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'Symfony\\Contracts\\Service\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
+        ),
+        'Symfony\\Contracts\\HttpClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/http-client-contracts',
         ),
         'Symfony\\Contracts\\Cache\\' => 
         array (
@@ -108,6 +128,10 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'Symfony\\Component\\Process\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/process',
+        ),
+        'Symfony\\Component\\HttpClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/http-client',
         ),
         'Symfony\\Component\\Cache\\' => 
         array (
@@ -158,9 +182,22 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         array (
             0 => __DIR__ . '/..' . '/joserick/png-metadata/src',
         ),
+        'Nyholm\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nyholm/psr7/src',
+        ),
+        'Nette\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nette/robot-loader/src',
+            1 => __DIR__ . '/..' . '/nette/utils/src',
+        ),
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Http\\Discovery\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/discovery/src',
         ),
         'Holiday\\' => 
         array (
@@ -177,6 +214,10 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'Google\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/common-protos/src',
+        ),
+        'Gemini\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google-gemini-php/client/src',
         ),
         'GPBMetadata\\Google\\Protobuf\\' => 
         array (
@@ -231,6 +272,15 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'AMFStream' => __DIR__ . '/..' . '/james-heinrich/getid3/getid3/module.audio-video.flv.php',
         'AVCSequenceParameterSetReader' => __DIR__ . '/..' . '/james-heinrich/getid3/getid3/module.audio-video.flv.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
+        'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
+        'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
+        'DateInvalidTimeZoneException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidTimeZoneException.php',
+        'DateMalformedIntervalStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedIntervalStringException.php',
+        'DateMalformedPeriodStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedPeriodStringException.php',
+        'DateMalformedStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedStringException.php',
+        'DateObjectError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateObjectError.php',
+        'DateRangeError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateRangeError.php',
         'Image_XMP' => __DIR__ . '/..' . '/james-heinrich/getid3/getid3/module.tag.xmp.php',
         'Nette\\ArgumentOutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\DeprecatedException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
@@ -249,6 +299,7 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'Nette\\NotImplementedException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\NotSupportedException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\OutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
+        'Nette\\ShouldNotHappenException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\SmartObject' => __DIR__ . '/..' . '/nette/utils/src/SmartObject.php',
         'Nette\\StaticClass' => __DIR__ . '/..' . '/nette/utils/src/StaticClass.php',
         'Nette\\UnexpectedValueException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
@@ -282,6 +333,8 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'Nette\\Utils\\Type' => __DIR__ . '/..' . '/nette/utils/src/Utils/Type.php',
         'Nette\\Utils\\UnknownImageFileException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\Validators' => __DIR__ . '/..' . '/nette/utils/src/Utils/Validators.php',
+        'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
+        'SQLite3Exception' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/SQLite3Exception.php',
         'getID3' => __DIR__ . '/..' . '/james-heinrich/getid3/getid3/getid3.php',
         'getID3_cached_dbm' => __DIR__ . '/..' . '/james-heinrich/getid3/getid3/extension.cache.dbm.php',
         'getID3_cached_mysql' => __DIR__ . '/..' . '/james-heinrich/getid3/getid3/extension.cache.mysql.php',

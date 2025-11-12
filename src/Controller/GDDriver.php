@@ -325,6 +325,7 @@ class GDDriver {
     $bri = $a * $b / ( $x + $a );
     return (int) $bri;
   }
+
   /**
    * Vignette Rectangle
    *
@@ -467,18 +468,27 @@ class GDDriver {
    * @param $ob -width of bevel
    * @param $depth of bevel 
    */
-  function Bevel($img, $ob, $depht = 5){
+  function Bevel($img, $ob, $depht = 1, $direction = 0 ){
     $deltabright = ( (255 - $depht )  / ( (int)($ob) ) );
-    $h = 1;
+    $w = $this->width;
+    $h = $this->height;   
+    $this->bt->SetMax(2*$ob);
+    $this->bt->setFreq( (int)( $ob / 2 ) );
 
     for($x=0; $x < $ob; $x++){
-      $this->DeeperLighter( $img, $x, $x+1, $x, $this->height - $x, $deltabright * ( $ob-$x ) );
-      $this->DeeperLighter( $img, $this->width-$x-1, $this->width-$x, $x, $this->height - $x, -$deltabright * ( $ob-$x ) );      
+      $this->DeeperLighter( $img, $x     , $x + 1 , $x, $h - $x, $deltabright * ( $ob-$x ) );
+      $this->DeeperLighter( $img, $w-2-$x, $w-1-$x, $x, $h - $x, -$deltabright * ( $ob-$x ) ); 
+      if($this->bt->Break($this->bt->cnt++)){
+        return false;
+      }     
     }
 
     for( $y=0; $y < $ob; $y++){
-      $this->DeeperLighter( $img, $y, $this->width - $y, $y, $y+1, $deltabright * ( $ob-$y ) );
-      $this->DeeperLighter( $img, $this->height - $y-1, $this->height - $y, $y, $y+1, -$deltabright * ( $ob-$y ) );
+      $this->DeeperLighter( $img, $y, $w - $y - 1, $y     , $y+1     , $deltabright * ( $ob-$y ) );
+      $this->DeeperLighter( $img, $y, $w - $y - 1, $h - 2- $y, $h - $y-1, -$deltabright * ( $ob-$y ) );
+      if($this->bt->Break($this->bt->cnt++)){
+        return false;
+      }
     }
 
     return $img;
