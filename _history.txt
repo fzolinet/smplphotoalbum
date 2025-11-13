@@ -90,7 +90,7 @@ Exif - ODT Opend Document...
 History:
 ~~~~~~~
 
-2025.11.12 - 1.9.6ß
+2025.11.13 - 1.9.6ß
 - AI Image Recognition with Gemini too
 
 2025.11.08 - 1.9.5ß

@@ -81,6 +81,10 @@ function smplphotoalbum_page_attachments( array &$page ){
   if ( $admin && isset( $GLOBALS["smplphotoalbum"] ) && $GLOBALS["smplphotoalbum"] ) {
     $page["#attached"]['library'][] = 'smplphotoalbum/smplphotoalbum-edit';  
   }
+  if ( $admin ) {
+    $page["#attached"]['library'][] = 'smplphotoalbum/smplphotoalbum-settings';  
+  }
+
 }
 
 /**

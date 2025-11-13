@@ -6,11 +6,12 @@ smplphotoalbum:
       #css/smplphotoalbum.theme.css: {preprocess: false}
   js:
     js/lib.js: {preprocess: false}
-    js/smpl.js: {preprocess: false}    
-    js/exif.js: {}    
+    js/smpl.js: {preprocess: false}
+    js/exif.js: {}
     js/filter.js: {}
-    js/test.js: {}    
-
+    js/test.js: {}
+    js/settings.js: {}
+    
   dependencies:
     - core/jquery
     - jquery_ui/core
@@ -56,7 +57,7 @@ smplphotoalbum-slide:
   js:
     js/slide.js: {preprocess: false}
     #js/slide.js: {}
-    
+
   dependencies:
     - core/jquery
     - jquery_ui/core
@@ -73,3 +74,12 @@ smplphotoalbum-stat:
   dependencies:
     - core/jquery
     - core/drupal.ajax
+
+smplphotoalbum-settings:
+  version: 1.x
+  js:
+    #js/settings.js: {preprocess: false}
+    js/settings.js: {}
+    
+  dependencies:
+    - core/jquery

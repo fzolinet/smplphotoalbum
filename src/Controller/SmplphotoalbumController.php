@@ -60,7 +60,8 @@ class SmplphotoalbumController extends ControllerBase{
 
     $this->root = $this->slash( $root );
     $this->TN = $this->cfg->get( 'TN' );
-    $this->aiclient = $this->cfg->get("aiclient");
+    $this->aiclarifai = $this->cfg->get("aiclarifai");
+    $this->aigemini = $this->cfg->get("aigemini");
   }
   
   // ...
@@ -867,9 +868,9 @@ class SmplphotoalbumController extends ControllerBase{
     
     // AI recognition
     $content = file_get_contents($p);      
-    if( $this->aiclient == "clarifai" ){      
+    if( $this->aiclarifai ){      
       $str = $this->ai_recognition( $content );       
-    }else if( $this->aiclient == "googleai" ){      
+    }else if( $this->aigemini ){      
       $str = $this->ai_recognition_google( $content, $p );  
     }    
     
@@ -884,12 +885,15 @@ class SmplphotoalbumController extends ControllerBase{
     return $response;
   }
 /**
- * With google
+ * With google Gemini client
  * API key details
  * API Key: AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck
  * Name: Default Gemini API Key
  * Project name: projects/818815699870
  * Project number:818815699870
+ * @param mixed $bytes - content of file
+ * @param mixed $p - file path 
+ * @return string
  */
 function ai_recognition_google( $bytes, $p ){
   $msg = "";
@@ -907,6 +911,22 @@ function ai_recognition_google( $bytes, $p ){
     case 'png':
       $mimeType = MimeType::IMAGE_PNG;
       break;
+    case 'webp':
+      $mimeType = MimeType::IMAGE_WEBP;
+      break;
+    case 'heic':
+      $mimeType = MimeType::IMAGE_HEIC;
+      break;
+    case 'heif':
+      $mimeType = MimeType::IMAGE_HEIF;
+      break;
+    default:
+      $mimeType = 'unknown';
+      break;
+  }
+
+  if( $mimeType == 'unknown' ){
+    return "Unknown image type for AI recognition!";
   }
 
   $yourAPIKey = "AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck";
@@ -915,14 +935,16 @@ function ai_recognition_google( $bytes, $p ){
     ->generativeModel(model: 'gemini-2.5-flash')
     ->generateContent([
         'What is on the picture?',
-        new Blob( 
-          mimeType: $mimeType, 
-          data: base64_encode( $bytes ) 
-        )
+        new Blob( mimeType: $mimeType, data: base64_encode( $bytes ) )
       ]);
   return $result->text();
 }
 
+/**
+ * With Clarifai client
+ * @param mixed $bytes 
+ * @return string 
+ */
 function ai_recognition( $bytes ){
 
   $curl = extension_loaded("curl");

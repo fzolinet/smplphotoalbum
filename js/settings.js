@@ -1,11 +1,15 @@
-(function ($, smpl) {
+(function ($) {
   $("#edit-aiclarifai").change(function () {
     $checked = $(this).prop('checked');
-    $('#edit-aigemini').prop('checked', !$checked)
+    if ($checked) {
+      $('#edit-aigemini').prop('checked', false)
+    }
   });
 
   $("#edit-aigemini").change(function () {
     $checked = $(this).prop('checked');
-    $('#edit-aiclarifai').prop('checked', !$checked)
+    if ($checked) {
+      $('#edit-aiclarifai').prop('checked', false)
+    }
   });
-})(jQuery, smpl);
+})(jQuery);

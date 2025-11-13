@@ -251,7 +251,8 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['oth_extensions']        = " " . $this->params ['oth_extensions'] ." ";
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
     $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";
-    $this->params["ai"] = $this->params["ai"] && extension_loaded("curl") && extension_loaded("grpc");    
+    $this->params["aiclarifai"]            = $this->params["aiclarifai"] && extension_loaded("curl") && extension_loaded("grpc");    
+    $this->params["aigemini"]              = $this->params["aigemini"];
   }
 
   /**
@@ -260,8 +261,9 @@ class FilterSmplphotoalbum extends FilterBase {
    * @return void 
    */
   function ParamsChange($t) {
-    $a = [
-        'ai',
+    $a = [        
+        'aiclarifai',
+        'aigemini',
         'app',
         'ascdesc',
         'audio',
@@ -334,8 +336,9 @@ class FilterSmplphotoalbum extends FilterBase {
           case 'capt'     : $this->params ['capt']    = $v; break;
           case 'viewed'   : $this->params ['viewed']  = $v; break;
           case 'smplbox'  : $this->params ['smplbox'] = $v; break;
-          case 'edit'     : $this->params ['edit']    = $v; break;
-          case 'ai'       : $this->params ['ai']      = $this->params['ai'] && $this->truefalse( $v ); break;
+          case 'edit'     : $this->params ['edit']    = $v; break;          
+//          case 'aiclarifai': $this->params ['aiclarifai'] = $this->params['aiclarifai'] && $this->truefalse( $v ); break;
+//          case 'aigemini' : $this->params ['aigemini'] = $this->params['aigemini'] && $this->truefalse( $v ); break;
           case 'upload'   : $this->params ['upload']  = $this->params['upload'] && $this->truefalse( $v ); break;
           case 'exif'     : $this->params ['exif']    = $v; break;
           case 'stat'     : $this->params ['stat']    = $v; break;
@@ -504,7 +507,10 @@ class FilterSmplphotoalbum extends FilterBase {
         'test',
         'translate',
         'lang',
-        'ai'
+
+        // ai - this is in the config
+        'aiclarifai',
+        'aigemini',
     ];
     $config = \Drupal::config ( 'smplphotoalbum.settings' );
     $cfg = [];

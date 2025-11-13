@@ -110,5 +110,5 @@ icon: '_col'
 test: FALSE
 
 #Image recognition
-ai: FALSE
-aiclient: 'clarifai'
+aiclarifai: TRUE
+aigemini: FALSE

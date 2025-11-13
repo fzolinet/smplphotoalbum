@@ -93,9 +93,6 @@ class ImageList {
 	protected $slide_title = "";
 	protected $slidestyle = "";
 	protected $style = "none";
-
-	//AI recognition
-	protected $ai = false;
 	
 	use StringTranslationTrait;
 	/**
@@ -979,7 +976,8 @@ class ImageList {
 	 * @param mixed $str 	 
 	 */
 	function Recognition( string &$str ){
-		if( $this->params["ai"] ){
+		$ai = ( $this->params['aiclarifai'] || $this->params['aigemini'] );		
+		if( $ai ){
 			$str = str_replace( [ "<ai>","</ai>" ], "", $str );
 			$str = str_replace( "{{ AI_recognition }}", $this->words["AI recognition"], $str);
 		} else{

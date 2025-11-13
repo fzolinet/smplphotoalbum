@@ -827,27 +827,25 @@ class SettingsForm extends ConfigFormBase {
         '#attributes'    => [ 'readonly' => 'readonly', 'disabled' => 'disabled', 'style' => 'background-color:#DDD;' ]       
     ];
    
-    $cfgai = $cfg->get("ai");
-    $form["AI_settings"] ["ai"] = [
+    $aiclarifai = $cfg->get("aiclarifai");
+    $aigemini   = $cfg->get('aigemini');
+
+    $form["AI_settings"] ["aiclarifai"] = [
         "#type" => 'checkbox',
-        '#title' => $this->t("You can use image recognition"),
-        '#default_value' =>  $AI && $cfgai,
-        '#description'   => "AI is installed and you can use image recognition",         
+        '#title' => $this->t("You can use image recognition with Clarifai client"),
+        '#default_value' =>  ($AI && $aiclarifai) && !$aigemini,
+        '#description'   => "AI is installed and you can use image recognition Clarifai client", 
     ];
     
-    $form["AI_settings"] ["aiclient"] = [
-        "#type" => 'select',
-        '#title' => $this->t("You can use image recognition with "),
-        '#options' => [
-            'clarifai' => "Clarifai client",
-            'googleai'   => 'Google API client',
-        ],
-        '#default_value' =>  !empty( $cfg->get("aiclient") ) ? $cfg->get("aiclient") : "clarifai",
-        '#description'   => "AI is installed and you can use image recognition",         
+    $form["AI_settings"] ["aigemini"] = [
+        "#type" => 'checkbox',
+        '#title' => $this->t("You can use image recognition with GEMINI client"),
+        '#default_value' => $aigemini && !$aiclarifai,
+        '#description'   => "Image recognition with GEMINI client",         
     ];
     
-    if(!$AI ) {
-        $form["AI_settings"] ["ai"] ['#attributes'] = [ "readonly" => "readonly", "disabled" => "disabled", "style" => "background-color:#DDD;" ];
+    if(!($AI && $aiclarifai) && !$aigemini ) {
+        $form["AI_settings"] ["aiclarifai"] ['#attributes'] = [ "readonly" => "readonly", "disabled" => "disabled", "style" => "background-color:#DDD;" ];
     }
 
     return parent::buildForm ( $form, $form_state );
@@ -929,8 +927,8 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'slstyle', $vals ['slstyle'] )        
         ->set( 'icon', $vals ['icon'] )
         ->set( 'test', $vals ['test'])
-        ->set( 'ai', $vals['ai'])
-        ->set('aiclient', $vals['aiclient'])
+        ->set( 'aiclarifai', $vals['aiclarifai'])
+        ->set( 'aigemini', $vals['aigemini'])
         
         ->save ();
   }
