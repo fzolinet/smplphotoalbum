@@ -90,7 +90,9 @@ Exif - ODT Opend Document...
 History:
 ~~~~~~~
 
-2025.11.13 - 1.9.6ß
+2025.11.16 - 1.9.6ß
+- smpl.AlertC, smpl.ErrorC
+- bug: Upload file
 - AI Image Recognition with Gemini too
 
 2025.11.08 - 1.9.5ß
@@ -103,7 +105,7 @@ History:
 
 2025.10.21 - 1.9.3ß2
 - Bug: pager did not worked, its ok.
-- bug: Img_edit.js: SaveSubmit did not worked
+- bug: img_edit.js: SaveSubmit did not worked
 - Little improvement for imgedit, edit windows
 - Popup windows (imgedit, edit) positioning
 
@@ -115,7 +117,7 @@ History:
 - Little design change
 
 2025.08.24 - 1.9.2ß
-- BUG: There was javascript errors when the user was admin and not photoalbum page - solved
+- bug: There was javascript errors when the user was admin and not photoalbum page - solved
 - Speed optimalization
 
 2025.07.30

@@ -4,6 +4,8 @@
 Add=Hozzáadás
 Add noise=Zaj hozzáadás
 AI_recognition=MI képfelismerés
+AI image recognition Gemini client=MI képfelismerés Gemini klienssel
+AI image recognition Clarifai client=MI képfelismerés Clarifai klienssel
 Alpha=Alfa
 Amount=Mérték
 Application=Alkalmazás
@@ -144,6 +146,7 @@ Number of items=Tételek száma
 Number of views=Nézettség
 Average of views=Átlagos nézettség
 Oil=Olaj
+Ok=Ok
 Original=Eredeti
 Original size=Eredeti méret
 Other=Egyéb

@@ -1,6 +1,8 @@
 Add
 Add noise
 AI_recognition
+AI image recognition Gemini client
+AI image recognition Clarifai client
 Alpha
 Amount
 Application
@@ -140,6 +142,7 @@ Number of items
 Number of views
 Average of views
 Oil
+Ok
 Original
 Original size
 Other

@@ -980,8 +980,11 @@ class ImageList {
 		if( $ai ){
 			$str = str_replace( [ "<ai>","</ai>" ], "", $str );
 			$str = str_replace( "{{ AI_recognition }}", $this->words["AI recognition"], $str);
+			$ai_info = $this->params['aigemini'] ? $this->words["AI image recognition Gemini client"] : $this->words["AI image recognition Clarifai client"];
+			$str = str_replace( "{{ AI_recognition_info }}", $ai_info, $str);
 		} else{
 			$str = preg_replace( "#<ai(.*?)<\/ai>#imxs", "", $str );
+
 		}		
 	}
 	

@@ -180,7 +180,7 @@ class FilterSmplphotoalbum extends FilterBase {
     }
 
     // AI using
-    if( $this->params["ai"] ){
+    if( $this->params["aiclarifai"] || $this->params["aigemini"] ){
       $lib[] = "smplphotoalbum/smplphotoalbum-ai";
     }
 

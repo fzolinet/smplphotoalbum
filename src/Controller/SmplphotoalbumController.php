@@ -44,6 +44,8 @@ class SmplphotoalbumController extends ControllerBase{
   private $TN;
   private $sess;
   private $wm;
+  private $aiclarifai;
+  private $aigemini;
   
   /**
    * Class constructor.
@@ -830,18 +832,11 @@ class SmplphotoalbumController extends ControllerBase{
     $curl = extension_loaded("curl");
     $grpc = extension_loaded("grpc");
 
-    if(!($curl && $grpc)){
-      $str = json_encode( ["id" => "-1", "msg" => "'cUrl or GRPC PHP extension is not installed!" ] );
+    if( $this->aiclarifai && !( $curl && $grpc ) ){
+      $str = json_encode( ["id" => "-1", "msg" => "Clarifai client does not works, because cUrl or GRPC PHP extension is not installed!" ] );
       $response->addCommand( new InsertCommand( '', $str, [] ) );
       return $response;
     }
-
-    $AI = $this->cfg->get( 'ai' );
-    if(!$AI){
-      $str = json_encode( ["id" => "-1", "msg" => "AI setting is disabled!" ] );     
-      $response->addCommand( new InsertCommand( '', $str, [] ) );
-      return $response;
-    }  
 
     // Database calling
     $con = \Drupal::database();
@@ -858,7 +853,7 @@ class SmplphotoalbumController extends ControllerBase{
     $a = $record->fetchAssoc();
 
     //no Image
-    if($a['typ'] != "image"){
+    if( $a[ 'typ' ] != "image" ){
       $str = json_encode( ["id" => "-1", "msg" => "The type of file does not 'image'!" ] );     
       $response->addCommand( new InsertCommand( '', $str, [] ) );
       return $response;
@@ -869,14 +864,17 @@ class SmplphotoalbumController extends ControllerBase{
     // AI recognition
     $content = file_get_contents($p);      
     if( $this->aiclarifai ){      
-      $str = $this->ai_recognition( $content );       
+      $str = $this->ai_recognition( $content ); 
     }else if( $this->aigemini ){      
-      $str = $this->ai_recognition_google( $content, $p );  
+      $str = $this->ai_recognition_google( $content, $p );      
     }    
     
     if(!isset( $str ) || $str === null ){
       $res = ["id" => "-1", "msg" => "There is no answer from AI!" ];
-    } else{
+    } else if( strpos( " " . $str, "error" ) > 0 ){
+      $res = ["id" => "-2", "msg" => "The Gemini server is too busy! Come back later!!!"];
+    }
+    else{
       $res = ["id" => "1", "msg" => $str ];
     }    
     

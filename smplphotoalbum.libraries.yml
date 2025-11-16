@@ -51,6 +51,7 @@ smplphotoalbum-edit:
     - core/once
     - core/drupal
     - core/drupal.ajax
+    - core/drupal.message
 
 smplphotoalbum-slide:
   version: 1.x

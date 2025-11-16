@@ -1061,3 +1061,39 @@ select#smpl_geom:focus {
   line-height: 0.8em;
   font-size: 0.8em;
 }
+
+// Javascript messages AlertC
+#smpl-message{  
+  position: absolute;
+  display: none;
+  width: 50%;  
+  top: 11em;
+  left: 100px; 
+  border: $BorderWidth $BorderStyle darken( $BorderColor,10% );
+  border-radius: $BorderRadius; 
+  text-align: center;
+  z-index:256;
+  padding: calc( $padding / 2);  
+}
+#smpl-message-title {
+  font-weight: 700; 
+}
+#smpl-message-content {
+  text-align:center;
+  padding: calc( $padding / 2);
+  font-size: small;
+  font-weight: 600;
+  color: white;
+  line-height: 2em;
+}
+
+.smpl-message-error {    
+  background-color: red;
+}
+.smpl-message-warning {
+  background-color: orange; 
+  color: black; 
+}
+.smpl-message-notes {
+  background-color: green;
+}

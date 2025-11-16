@@ -7,13 +7,13 @@
   */
   $('a.smpl_desc_a').click(function(){
 		let id  = $(this).attr('id').substring(5);
-		let pos = $(this).position(); 		
+		let pos = $(this).position(); 
 		let obj = $("div#DescSub"+id);
 		obj.css('left',pos.left + 'px');
 		obj.css('top',pos.top+ 'px');
 		obj.draggable();
 		smpl.progress(true);
-		let url = smpl.ajax + "/exif/" + id;		
+		let url = smpl.ajax + "/exif/" + id;
 		$.ajax( {
 			url: url,
 			type: "GET",
@@ -22,12 +22,12 @@
 				$("div#Exif" + id).html(s);
 				smpl.progress(false);
 				obj.show();
-				smpl.desc_info_show = true;				
+				smpl.desc_info_show = true;
 				smpl.exif = id;
 			},
 			error: function(response){
-				smpl.progress(false);				
-				alert("Error in server side. Please come back later");
+				smpl.progress(false);
+				smpl.ErrorC("Error in server side. Please come back later");
 			}
 		});
 	});

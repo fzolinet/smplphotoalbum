@@ -137,10 +137,10 @@
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
-				if (data.id == '-1') {
-					smpl.AlertC(data.msg);
+				if (data.id == '-1' || data.id == '-2') {
+					smpl.ErrorC(data.msg);
 				} else {
-					var t = $("textarea#smpl_sub").val() + " !!! " + data.msg;
+					var t = $("textarea#smpl_sub").val() + " \n!!! " + data.msg;
 					$("textarea#smpl_sub").val(t);
 				}
 			},

@@ -62,7 +62,7 @@
   $("#SmplUploadSubmit").click(function () {
     let id = $("input#smpl_uid").val();
     if ($("#smpl_uname").val().length < 1) {
-      alert('Client side validation: There is no filename!');
+      smpl.AlertC('Client side validation: There is no filename!', 'warning');
       return false;
     }
     let formData = {
@@ -80,7 +80,7 @@
       return true;
     }
     smpl.progress(false);
-    alert('Client side validation: Not allowed File type!');
+    smpl.AlertC('Client side validation: Not allowed File type!', 'warning');
     return false;
   });
 
@@ -90,14 +90,14 @@
   $("#smpl_uname").change(function () {
     let fname = $(this).val();
     if (fname.length < 1) {
-      alert('Client side validation: There is no filename!');
+      smpl.AlertC('Client side validation: There is no filename!', 'warning');
       return;
     }
 
     //Max size
     var size = document.getElementById("smpl_uname").files[0].size;
     if (size > smpl.maxsize) {
-      alert("The file '" + fname + "' is too big! Max size of file is: " + smpl.maxsize + " bytes");
+      smpl.AlertC("The file '" + fname + "' is too big! Max size of file is: " + smpl.maxsize + " bytes", "warning");
       return;
     }
     $("input#smpl_usize").val(size);
@@ -106,11 +106,11 @@
     $("input#smpl_utime").val(new Date(tim).toLocaleDateString());
     var oktype = smpl.Validation(fname);
     if (!oktype) {
-      alert('Client side validation: Not allowed File type!');
+      smpl.AlertC('Client side validation: Not allowed File type!', 'warning');
     } else {
       let ar = fname.split(".");
       let len = ar.length;
-      let extension = ar[len - 1];
+      let extension = (ar[len - 1]).toLowerCase();
       if (smpl.images.includes(extension)) {
         selvalue = "image";
       } else if (smpl.audio.includes(extension)) {

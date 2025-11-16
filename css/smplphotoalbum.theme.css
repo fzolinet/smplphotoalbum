@@ -1518,4 +1518,43 @@ select#smpl_geom:focus {
   display: none;
   line-height: 0.8em;
   font-size: 0.8em;
+}
+
+#smpl-message {
+  position: absolute;
+  display: none;
+  width: 50%;
+  top: 11em;
+  left: 100px;
+  border: 1px solid rgb(182.5, 182.5, 182.5);
+  border-radius: 0.2em;
+  text-align: center;
+  z-index: 256;
+  padding: 0.5em;
+}
+
+#smpl-message-title {
+  font-weight: 700;
+}
+
+#smpl-message-content {
+  text-align: center;
+  padding: 0.5em;
+  font-size: small;
+  font-weight: 600;
+  color: white;
+  line-height: 2em;
+}
+
+.smpl-message-error {
+  background-color: red;
+}
+
+.smpl-message-warning {
+  background-color: orange;
+  color: black;
+}
+
+.smpl-message-notes {
+  background-color: green;
 }/*# sourceMappingURL=smplphotoalbum.theme.css.map */

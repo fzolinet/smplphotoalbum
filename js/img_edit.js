@@ -383,15 +383,15 @@
 					smpl.progress(false);
 
 					if (data.ok == "-1") {
-						smpl.AlertC("Another process works on this file!");
+						smpl.AlertC("Another process works on this file!", "warning");
 						smpl.progress(false);
 						return false;
 					} else if (data.ok == "-2") {
-						smpl.AlertC(data.msg);
+						smpl.ErrorC(data.msg);
 						smpl.progress(false);
 						return false;
 					} else if (data.ok == "-3") {
-						smpl.AlertC(data.msg);
+						smpl.Error(data.msg);
 						smpl.progress(false);
 						return false;
 					}
@@ -428,7 +428,7 @@
 			},
 			error: function (response) {
 				smpl.progress(false);
-				alert(response);
+				smpl.ErrorC(response);
 				return false;
 			},
 		});
@@ -454,7 +454,7 @@
 				let data = JSON.parse(response[0].data);
 				if (data.ok == "-2") {
 					smpl.progress(false);
-					alert(data.msg);
+					smpl.AlertC(data.msg);
 					return false;
 				}
 				//Load image
@@ -476,7 +476,7 @@
 			},
 			error: function (response) {
 				smpl.progress(false);
-				alert(Drupal.t("Error on server side: ") + response.responseText);
+				smpl.ErrorC(response.responseText);
 				return false;
 			},
 		});
@@ -525,7 +525,7 @@
 	$("#SmplSaveAsOK").click(function () {
 		var newname = $("input#smpl_saveas_input").val();
 		if (smpl.name == newname) {
-			smpl.AlertC('The new name is the same as the original');
+			smpl.ErrorC('The new name is the same as the original');
 			return false;
 		}
 		let url = smpl.ajax + "/imgedit/saveas/" + smpl.tempname + "/" + newname;
@@ -577,7 +577,7 @@
 			},
 			error: function (response) {
 				smpl.progress(false);
-				smpl.AlertC("Error on server side: " + smpl.id);
+				smpl.ErrorC(smpl.id);
 			},
 		});
 		SaveButtons($, false);
@@ -632,7 +632,7 @@
 			},
 			error: function (response) {
 				smpl.progress(false);
-				alert(Drupal.t("Error on server side") + ": " + smpl.id);
+				smpl.ErrorC(smpl.id);
 				return false;
 			},
 		});
@@ -659,7 +659,7 @@
 			error: function (response) {
 				var data = JSON.parse(response[0].data);
 				smpl.progress(false);
-				smpl.AlertC("Error on server side: " + smpl.id);
+				smpl.ErrorC(smpl.id);
 				return false;
 			},
 		});

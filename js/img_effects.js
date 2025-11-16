@@ -134,7 +134,7 @@
 			let x2 = $("#smpl_x2").val();
 			let y2 = $("#smpl_y2").val();
 			if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2) || (x1 == x2 || y1 == y2)) {
-				alert(Drupal.t("Select an area!"));
+				smpl.AlertC(Drupal.t("Select an area!"));
 				return;
 			}
 
@@ -196,7 +196,7 @@
 			let x2 = $("#smpl_x2").val();
 			let y2 = $("#smpl_y2").val();
 			if (isNaN(x1) || isNaN(y1) && isNaN(x2) || isNaN(y2) || (x1 == x2 || y1 == y2)) {
-				alert(Drupal.t("Select an area!"));
+				smpl.AlertC(Drupal.t("Select an area!"));
 				return;
 			}
 
