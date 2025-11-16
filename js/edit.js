@@ -41,8 +41,10 @@
 				$("input#smpl_link").val(data.link);
 				if (data.typ == "image") {
 					$("#smplairecognition").show();
+					$("#smplairecognition-info").show();
 				} else {
 					$("#smplairecognition").hide();
+					$("#smplairecognition-info").hide();
 				}
 				let pos = $("#SubBtn" + id).offset();
 				let dy = parseFloat($("html").css("font-size")) * 5;
