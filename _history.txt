@@ -80,9 +80,6 @@ GD
 - Edit mp3 ID tags, long of file ...
 - Write tags into image exif - jpeg possible
 - Write png image Author & Copyright info - it is not possible
-
-Exif - ODT Opend Document...
-
 - Let the blur pixel iteration's size bigger or change...
 - If the window too big and the screen too small
 - Light EQ
@@ -91,6 +88,8 @@ History:
 ~~~~~~~
 
 2025.11.16 - 1.9.6ß
+- Bug: XML2assoc
+- Bug: Exif - ODT Opend Document exif info
 - smpl.AlertC, smpl.ErrorC
 - bug: Upload file
 - AI Image Recognition with Gemini too

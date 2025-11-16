@@ -184,7 +184,7 @@ class Image {
 		];
 		$r = [
 				$this->words['Properties' ],
-				$this->subtitle,
+				"$this->entry => '$this->subtitle'",
 				$this->words["Last modified" ],
 				date( 'Y.m.d', $this->thdate ),
 				$this->words["File size"],

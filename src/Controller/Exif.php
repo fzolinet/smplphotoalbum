@@ -130,9 +130,12 @@ class Exif{
 
   public function __construct($a, &$cfg) {  
     $this->mp    = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
-    $this->path  = $a ['path'];
-    $this->entry = $a ['name'];
-    $this->type  = $a ['typ'];
+    $this->path       = $a ['path'];
+    $this->entry      = $a ['name'];
+    $this->type       = $a ['typ'];
+    $this->viewnumber = $a ['viewnumber'];
+    $this->subtitle   = $a ['subtitle'];
+
     $this->cfg   = $cfg;//
     $root        = $cfg->get ( "root" );
     $root        = str_replace( "\\", "/", \Drupal::service ( 'file_system' )->realpath ( $root ) ) . "/";

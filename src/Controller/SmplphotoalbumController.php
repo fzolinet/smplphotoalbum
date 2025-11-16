@@ -169,10 +169,6 @@ class SmplphotoalbumController extends ControllerBase{
    */
   public function exif($id = 1) {
     $response = new AjaxResponse();
-    /*if(! $this->access()) {
-      $response->addCommand( new InsertCommand( '', "", [] ) );
-      return $response;
-    }*/
 
     $con = \Drupal::database();
     $record = $con->select( 'smplphotoalbum', 's' )->fields( 's', [
@@ -180,6 +176,8 @@ class SmplphotoalbumController extends ControllerBase{
         'path',
         'name',
         'typ', 
+        'viewnumber',
+        'subtitle',
         'link',
         'importance'       
     ] )->condition( 's.id', $id, '=' )->execute();

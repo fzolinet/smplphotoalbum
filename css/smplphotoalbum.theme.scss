@@ -244,7 +244,7 @@ select, input{
 
 select{
   padding-inline-start: 0 !important;
-  padding-inline-end: 0 !important;
+  /*padding-inline-end: 0 !important;*/
 }
 
 .right_corner{
@@ -404,6 +404,7 @@ table.smpl_exif_table > {
   border-bottom-width: 1px;
   border-bottom-color: $BorderColor;
   border-bottom-style: solid;
+  font-weight: 600;
 }
 
 .smpl_desc_info {

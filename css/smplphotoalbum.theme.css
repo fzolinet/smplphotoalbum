@@ -227,7 +227,7 @@ select, input {
 
 select {
   padding-inline-start: 0 !important;
-  padding-inline-end: 0 !important;
+  /*padding-inline-end: 0 !important;*/
 }
 
 .right_corner {
@@ -858,6 +858,7 @@ button#SmplImgEditFormSaveAsCancel {
   border-bottom-width: 1px;
   border-bottom-color: #D0D0D0;
   border-bottom-style: solid;
+  font-weight: 600;
 }
 
 .smpl_desc_info {

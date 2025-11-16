@@ -108,9 +108,7 @@ class Xml2Assoc {
             }
           } else {
             $mOldVar = $aAssocXML [$oXml->name];
-            $aAssocXML [$oXml->name] = array (
-                $mOldVar 
-            );
+            $aAssocXML [$oXml->name] = [ $mOldVar ];
             if ($oXml->hasAttributes) {
               $aAssocXML [$oXml->name] [] = $oXml->isEmptyElement ? '' : $this->parseXML ( $oXml );
             } else {
@@ -123,19 +121,25 @@ class Xml2Assoc {
           }
           
           if (isset($oXml->hasAttributes)) {
-            $mElement = & $aAssocXML [$oXml->name] [count ( $aAssocXML [$oXml->name] ) - 1];
-            while ( $oXml->moveToNextAttribute () ) {
-              $mElement [$oXml->name] = $oXml->value;
-            }
+            if(is_array($aAssocXML[$oXml->name])){
+              $idx = count ( $aAssocXML [$oXml->name] );
+              $mElement = & $aAssocXML [$oXml->name] [ $idx - 1];
+              while ( $oXml->moveToNextAttribute () ) {
+                if(is_array($mElement)){
+                  $mElement [ $oXml->name ] = $oXml->value;
+                }else{
+                  $mElement = [];
+                  $mElement [ $oXml->name ] = $oXml->value;
+                }                
+              }
+            }                                     
           }
           break;
         case \XMLReader::TEXT :
-        case \XMLReader::CDATA :
-          
+        case \XMLReader::CDATA :          
           $aAssocXML [++ $iDc] = $oXml->value;
       }
-    }
-    
+    }    
     return $aAssocXML;
   }
   
