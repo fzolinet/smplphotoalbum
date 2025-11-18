@@ -139,6 +139,7 @@
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
+				data.id = "-1";
 				if (data.id == '-1' || data.id == '-2') {
 					smpl.ErrorC(data.msg);
 				} else {

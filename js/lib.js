@@ -104,7 +104,7 @@ function setDivInWindow(w, pos) {
 /**
  * Innen a jQuery lib-ek
  */
-(function ($, Drupal, smpl) {
+(function ($, Drupal, smpl, swal) {
   /**
    * Progress indicator on/off
    * @param Boolean on 
@@ -191,49 +191,30 @@ function setDivInWindow(w, pos) {
    * @param {*} status - status code
    */
   smpl.AlertC = function (cmd, status) {
-    if (status === undefined) {
-      status = 'status';
-    }
-
-    $("#smpl-message-content").text(Drupal.t(cmd));
+    var cl;
     switch (status) {
-      case 'error': $cl = "smpl-message-error"; $title = "Error message"; break;
-      case 'warning': $cl = "smpl-message-warning"; $title = "Warning message"; break;
-      case 'status': $cl = "smpl-message-status"; $title = "Status message"; break;
+      case 'error': cl = "smpl-message-error"; title = "Error message"; break;
+      case 'warning': cl = "smpl-message-warning"; title = "Warning message"; break;
+      case 'status': cl = "smpl-message-status"; title = "Status message"; break;
     }
-
-    $('#smpl-message-title').html($title);
-    $('#smpl-message').addClass($cl).show();
-    $('#smpl-message-ok').off('click').on('click', function () {
-      $('#smpl-message').removeClass($cl).hide();
+    swal(cmd, {
+      className: cl,
+      title: title,
     });
   }
+
   /**
     * ErrorC - Error alert
     * @param {*} cmd
     */
   smpl.ErrorC = function (cmd) {
-    smpl.AlertC("Error on server side: " + cmd, 'error');
-  }
-
-  $smpl.ConfirmC() = function (msg, title = 'Confirmation') {
-    $answer = false;
-    $('#smpl-confirm-content').html(Drupal.t(msg));
-    $('#smpl-confirm-title').html(Drupal.t(title));
-    $('#smpl-confirm').show();
-    $('#smpl-confirm-ok').off('click').on('click', function () {
-      $answer = true;
-      $('#smpl-confirm').hide();
+    swal("Error on server side: " + cmd, {
+      className: "smpl-message-error",
+      title: "Error message",
     });
-
-    $('#smpl-confirm-cancel').off('click').on('click', function () {
-      $answer = false;
-      $('#smpl-confirm').hide();
-    });
-    return answer;
   }
 
   // Draggable window
   $('#smpl-message').draggable();
 
-})(jQuery, Drupal, smpl);
+})(jQuery, Drupal, smpl, swal);

@@ -5,6 +5,7 @@ smplphotoalbum:
       css/smplphotoalbum.theme.css: {}
       #css/smplphotoalbum.theme.css: {preprocess: false}
   js:
+    js/sweetalert/sweetalert.min.js: {}
     js/lib.js: {preprocess: false}
     js/smpl.js: {preprocess: false}
     js/exif.js: {}
@@ -26,7 +27,7 @@ smplphotoalbum-edit:
   js:
     js/mousewheel/jquery.mousewheel.min.js: {}
     js/jcanvas/dist/min/jcanvas.min.js: {}    
-    js/jcanvas/dist/min/jcanvas-handles.min.js: {}
+    js/jcanvas/dist/min/jcanvas-handles.min.js: {}    
     js/delete.js: {}
     js/edit.js: {}
     js/upload.js: {}    
