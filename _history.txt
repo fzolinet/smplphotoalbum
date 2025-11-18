@@ -90,6 +90,8 @@ GD
 
 History:
 ~~~~~~~
+2025.11.18 - 1.9.6-beta2
+- sweetalert.min.js: smpl.AlertC, smpl.ErrorC
 
 2025.11.16 - 1.9.6ß
 - Bug: XML2assoc
