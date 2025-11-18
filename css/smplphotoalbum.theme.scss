@@ -1,26 +1,34 @@
+@use 'sass:color';
 /* Default parameters*/
- $BorderColor: #D0D0D0;
- $BorderWidth: 1px;
- $BorderStyle: solid;
- $BorderRadius: 0.2em;
- $BorderBigRadius: 7px;
- $BorderSettings: $BorderWidth $BorderStyle $BorderColor;
- $fontSize: 0.8em;
- $padding: 1em;
- $paddingHalf: calc($padding/2);
- $BkgEditColor: #DFEDF7;
- $BkgViewColor: #EDF5FA;
- $BkgDivColor: #202020;
- $BkgViewButtonColor: $BkgViewColor;
- $BkgActButtonColor: darken($BkgViewColor, 20%);
- $BkgProgressColor: #383838;
- $BkgGrey: #CCC;
+$BorderColor: #D0D0D0;
+$BorderDarker10: color.scale( $BorderColor, $lightness:-10%);
+$BorderDarker20: color.scale( $BorderColor, $lightness:-20%);
+$BorderDarker30: color.scale( $BorderColor, $lightness:-30%);
+
+$BorderWidth: 1px;
+$BorderStyle: solid;
+$BorderRadius: 0.2em;
+$BorderBigRadius: 7px;
+$BorderSettings: $BorderWidth $BorderStyle $BorderColor;
+$BorderSettings10: $BorderWidth $BorderStyle $BorderDarker10;
+$BorderSettings20: $BorderWidth $BorderStyle $BorderDarker20;
+$BorderSettings30: $BorderWidth $BorderStyle $BorderDarker30;
+$BorderRidge: 2px ridge $BorderColor;
+$fontSize: 0.8em;
+$padding: 1em;
+$paddingHalf: calc($padding/2);
+$BkgEditColor: #DFEDF7;
+$BkgViewColor: #EDF5FA;
+$BkgDivColor: #202020;
+$BkgViewButtonColor: $BkgViewColor;
+$BkgActButtonColor: color.scale($BkgViewColor, $lightness:-20%);
+$BkgProgressColor: #383838;
+$BkgGrey: #CCC;
  
- 
- $line-height:  1.2em;
- $narrow: 3.5em;
- $mid: 4.5em;
- $wide: 6em;
+$line-height:  1.2em;
+$narrow: 3.5em;
+$mid: 4.5em;
+$wide: 6em;
   /* - end of default parameters -------*/
 .smpl_table_all {
   text-align: center;
@@ -43,21 +51,21 @@
 
 #smpl_point_area,
 #smpl_zoom_area,
-#smpl_histogram_area
-{
+#smpl_histogram_area {
   display:block;
 }
-.smpl_hist_img{
+.smpl_hist_img {
   width:100px;
   height:5em;
   border: $BorderSettings;
 }
+
 #smpl_histogram_area{
   display: flex;
   align-items: center;
 }
 
-:is(.smpl_table) td, :is(.smpl_table) th{
+:is(.smpl_table) td, :is(.smpl_table) th {
   padding-block: 0 !important;
   padding-inline-end:0 !important;
   padding-inline-start:0 !important;
@@ -100,9 +108,9 @@ a.smpl_a:hover {
 }
 
 .smpl_img {  
+  max-height: 120px;
   max-width: 100%;
-  height: auto;
-  max-height: 120px;	
+  height: auto;  	
   display: block;
   margin-left: auto;
   margin-right: auto !important;
@@ -112,6 +120,7 @@ a.smpl_a:hover {
 .smploth{
 	margin-top:0.2em;
 }
+
 .smpl_view_last, .smpl_view_number {
   display: block;
 }
@@ -119,17 +128,19 @@ a.smpl_a:hover {
 #smpl_glogo{
   height: 1.1em;
 }
+
 .smpl_view, .smpl_size, .smpl_exif, .smpl_exif_div, 
 .smpl_date, .smpl_desc_a, .smpl_tax, .smpl_list, #smpl_list {
   text-align: center;
   font-size: $fontSize; 
 }
 
-#smpl_sub, #smpl_usub{
+#smpl_sub, #smpl_usub {
   width: 80%;
 }
 
-.smpl_sub_text, .smpl_view_text, .smpl_size_text, .smpl_date_text {
+.smpl_sub_text, .smpl_view_text, 
+.smpl_size_text, .smpl_date_text {
   display: inline;
   border-width: 0;
   display: inline;
@@ -137,7 +148,7 @@ a.smpl_a:hover {
   clear: both;
 }
 
-#smpl_usize, #smpl_utime{
+#smpl_usize, #smpl_utime {
   width: 10em !important;
   max-width: 10em !important;
   text-align: right;
@@ -193,8 +204,8 @@ div#sortorder{
 }
 
 /* buttons */
-.smpl_pager_button > button
-.smpl_url_plus, .smpl_sel, #smpl_list, #smpl_sortorder, #smpl_ascdesc {
+.smpl_pager_button > button, .smpl_url_plus, 
+.smpl_sel, #smpl_list, #smpl_sortorder, #smpl_ascdesc {
   font-size: 0.8em;
   border-radius: $BorderRadius;
   margin: 2px;
@@ -217,39 +228,30 @@ div#sortorder{
   border-radius: $BorderRadius;
 }
 
-.smpl_button{
+.smpl_button {
   background-position: center 66%;
   background-repeat: no-repeat;
   cursor: pointer !important;
   height: var(--sp1-5);
   background-position-y: center;
-  border: $BorderSettings;
+  border: $BorderSettings20;
   border-radius: $BorderRadius;
 }
 
 .smpl_help_link:hover {  cursor: help; }
 
-.smpl_hist_img{
-  display: inline;
-}
+.smpl_hist_img{ display: inline; }
 
-button{ 
-  height: var(--sp1-5) !important; 
-}
+button{ height: var(--sp1-5) !important; }
 
 select, input{
   height: var(--sp1-5) !important;    
   min-height: var(--sp1-5) !important;  
 }
 
-select{
-  padding-inline-start: 0 !important;
-  /*padding-inline-end: 0 !important;*/
-}
+select{ padding-inline-start: 0 !important; }
 
-.right_corner{
-  float: right
-}
+.right_corner{ float: right }
 
 $icons: ( _col, _bw ); @each $icon in $icons {
 .smpl_ai#{$icon}          {background-image: url("../image/b_ai#{$icon}.png");}
@@ -327,15 +329,16 @@ div#smpl_saveas{
   display:none;
   z-index:10;
   position: absolute;
-  border: $BorderWidth $BorderStyle darken( $BorderColor,25%);
+  border: $BorderSettings30;
   border-radius: $BorderRadius;
   padding: 0.5em;
   left:38%;
   background-color: $BkgEditColor;
 }
+
 input#smpl_saveas_input, 
 button#SmplImgEditFormSaveAsOK, 
-button#SmplImgEditFormSaveAsCancel{
+button#SmplImgEditFormSaveAsCancel {
   vertical-align: middle;
 }
 
@@ -363,9 +366,8 @@ button#SmplImgEditFormSaveAsCancel{
 }
 
 /* Exif settings*/
-.smpl_exif_div{
-  border-top:$BorderSettings;  
-}
+.smpl_exif_div{ border-top: $BorderSettings; }
+
 table.smpl_exif_table > {
   border-top: $BorderSettings;
   border-bottom:$BorderSettings;
@@ -383,9 +385,7 @@ table.smpl_exif_table > {
 .smpl_exif_td {
   text-align: left;
   height: 0.8em;
-  border-right-width: $BorderWidth;
-  border-right-style: $BorderStyle;
-  border-right-color: $BorderColor;
+  border-right: $BorderSettings;
   text-wrap: nowrap;
 }
 
@@ -401,9 +401,7 @@ table.smpl_exif_table > {
 }
 
 .smpl_desc_title {
-  border-bottom-width: 1px;
-  border-bottom-color: $BorderColor;
-  border-bottom-style: solid;
+  border-bottom: $BorderSettings;
   font-weight: 600;
 }
 
@@ -411,10 +409,6 @@ table.smpl_exif_table > {
   display: none;
   position: absolute;
   text-align: left;
-  border-width: $BorderWidth;
-  border-style: $BorderStyle;
-  background-color: $BkgViewColor;
-  padding: $paddingHalf;
   z-index: 256;
   cursor: pointer;
 }
@@ -492,9 +486,9 @@ div#SmplEditFormData, div#SmplUploadFormData {
 /* Img Edit css settings */
 .smpl_edit_form, 
 .smpl_imgedit_form,
-.smpl_upload_form {  
-  border-style: ridge;  
-  border-color: $BorderColor;
+.smpl_upload_form,
+.smpl_desc_info {  
+  border: $BorderRidge;
   padding: 8px;
   background-color: $BkgGrey;
 }
@@ -550,7 +544,7 @@ canvas#SmplCanvas{
 .smpl_upload_title,
 .smpl_edit_props
 {
-  border-bottom: 1px solid darken($BorderColor, 20%);
+  border-bottom: 1px solid $BorderDarker20;
   margin-bottom: 0.1em; 
 }
  
@@ -586,7 +580,7 @@ div.smpl_menu{
 
 #smpl_zoom_area,
 .smpl_imgedit_border {
-  border-top: solid 1px darken( $BorderColor,10% );
+  border-top: solid 1px $BorderDarker20;
   vertical-align: middle;
   margin-bottom: 0.1em;   
 }
@@ -686,6 +680,12 @@ input[type="number"]{
 .smpl_input_text{
   width: 8em;
 }
+[type="color"], [type="date"], [type="datetime-local"], 
+[type="email"], [type="file"], [type="month"], [type="number"],
+[type="password"], [type="search"], [type="tel"], [type="text"], 
+[type="time"], [type="url"], [type="week"], textarea{
+  font-size:initial
+ }
 
 .smpl_readonly {
   border: none;
@@ -739,14 +739,11 @@ div#SmplCanvasContainer{
   height: 99%;
   position: absolute;
   top: 11em;
-  left: 100px;
-  background-color: $BkgGrey;
+  left: 100px;  
   z-index: 1023;
   text-align: left;
   padding: 0.5em;
-  resize: both;
-  border: 2px ridge $BorderColor;
-  border-radius: $BorderRadius;
+  resize: both;    
   cursor: grab;
 }
 
@@ -1054,7 +1051,7 @@ select#smpl_geom:focus {
   top: 47.5%;
   left: 54%;
   z-index: 128;
-  border: $BorderWidth $BorderStyle darken( $BorderColor,10% );
+  border: $BorderWidth $BorderStyle $BorderDarker10;
   border-radius: $BorderRadius;
   background-color: $BkgProgressColor;
   color: #d7dadd; 
@@ -1070,7 +1067,7 @@ select#smpl_geom:focus {
   width: 50%;  
   top: 11em;
   left: 100px; 
-  border: $BorderWidth $BorderStyle darken( $BorderColor,10% );
+  border: $BorderWidth $BorderStyle $BorderDarker10;
   border-radius: $BorderRadius; 
   text-align: center;
   z-index:256;

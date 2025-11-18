@@ -112,3 +112,6 @@ test: FALSE
 #Image recognition
 aiclarifai: TRUE
 aigemini: FALSE
+
+# important the first in list
+important: TRUE

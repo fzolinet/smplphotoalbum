@@ -236,7 +236,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['slidestyle'] = 'none';
     $this->params['translate']  = false;
     $this->params['lang']       = 'en';
-    $this->params['methods']    = 'POST';    
+    $this->params['methods']    = 'POST';   
     
     if (! isset ( $this->params['icon'] )) {
       $this->params['icon'] = '_col';
@@ -252,7 +252,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
     $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";
     $this->params["aiclarifai"]            = $this->params["aiclarifai"] && extension_loaded("curl") && extension_loaded("grpc");    
-    $this->params["aigemini"]              = $this->params["aigemini"];
+    $this->params["aigemini"]              = $this->params["aigemini"];    
   }
 
   /**
@@ -280,6 +280,7 @@ class FilterSmplphotoalbum extends FilterBase {
         'graphic',  
         'html5',
         'icon',
+        'important',       
         'interval',
         'lang',
         'method',
@@ -319,50 +320,18 @@ class FilterSmplphotoalbum extends FilterBase {
 
         $v = trim ( str_ireplace ( ["{" . $e . ":","}" ], ["",""], $m [0] ) );
         switch ($e) {
-          case 'path' :
-            $v = str_replace ( "\\", "/", $v );
-            $v = (substr ( $v, 0, 1 ) != "/" ? "/" : "") . $v . (substr ( $v, 0, - 1 ) != "/" ? "/" : "");
-            $this->params ['path'] = $v;
-            break;
-          case "method"   : $this->params ['method']  = ( strtolower($v) == "get")? "GET" : "POST"; break;
-          case 'number'   : $this->params ['number']  = (int)($v); break;
-          case 'width'    : $this->params ['width']   = (int)($v); break;
-          case 'filter'   : $this->params ['filter']  = $this->truefalse($v); break;
-          case 'url '     : $this->params ['url']     = $this->truefalse($v); break;
-          case 'sortorder':$this->params ['sortorder']= $v; break;
-          case 'sub'      : $this->params ['sub']     = $v; break;
-          case 'order'    : $this->params ['order']   = $v; break;
-          case 'ascdesc'  : $this->params ['ascdesc'] = $v; break;
-          case 'capt'     : $this->params ['capt']    = $v; break;
-          case 'viewed'   : $this->params ['viewed']  = $v; break;
-          case 'smplbox'  : $this->params ['smplbox'] = $v; break;
-          case 'edit'     : $this->params ['edit']    = $v; break;          
-//          case 'aiclarifai': $this->params ['aiclarifai'] = $this->params['aiclarifai'] && $this->truefalse( $v ); break;
-//          case 'aigemini' : $this->params ['aigemini'] = $this->params['aigemini'] && $this->truefalse( $v ); break;
-          case 'upload'   : $this->params ['upload']  = $this->params['upload'] && $this->truefalse( $v ); break;
-          case 'exif'     : $this->params ['exif']    = $v; break;
-          case 'stat'     : $this->params ['stat']    = $v; break;
-          case 'private'  : $this->params ['private'] = $v; break;
-          case 'keywords' : $this->params ['keywords']= $v; break;
-          case 'audio'    : $this->params ['audio']   = $v; break;
-          case 'video'    : $this->params ['video']   = $v; break;
-          case 'doc'      : $this->params ['doc']     = $v; break;
-          case 'cmp'      : $this->params ['cmp']     = $v; break;
-          case 'app'      : $this->params ['app']     = $v; break;
-          case 'target'   : $this->params ['target']  = $v; break;
-          case 'title'    : $this->params ['title']   = !empty(trim ($v)) ? trim($v):""; break;
-          case 'lazy'     : $this->params ['lazy']    = (in_array($v, array(true,'true','True','TRUE',1,'1'))?true:false); break;
-          case 'html5'    : $this->params ['html5']   = $this->truefalse($v); break;
-          case 'notes'    : $this->params ['notes']   = $v; break;
-
-          // because of slide
-          case 'slide'     : $this->params ['slide']      = $this->truefalse($v);break;
-          case 'interval'  : $this->params ['interval']   = $v; break;
-          case 'style'     : $this->params ['style']      = $v; break;
-          case 'height'    :
-          case 'slidestyle': $this->params ['slidestyle'] = $v; break;
-
-          // Image editing
+          case 'app'      : $this->params ['app']       = $v; break;
+          case 'ascdesc'  : $this->params ['ascdesc']   = $v; break;
+          case 'audio'    : $this->params ['audio']     = $v; break;          
+          case 'author'   : $this->params ['author ']   = trim($v); break;
+          case 'autoclose': $this->params ['autoclose'] = $this->truefalse($v); break;          
+          case 'capt'     : $this->params ['capt']      = $v; break;
+          case 'cmp'      : $this->params ['cmp']       = $v; break;                    
+          case 'copyright': $this->params ['copyright'] = trim($v); break;          
+          case 'doc'      : $this->params ['doc']       = $v; break;
+          case 'edit'     : $this->params ['edit']      = $v; break;          
+          case 'exif'     : $this->params ['exif']      = $v; break;
+          case 'filter'   : $this->params ['filter']    = $this->truefalse($v); break;
           case 'graphicdrv': //GD or Imagick
           case "graphic":
           case "grdrv":
@@ -374,33 +343,69 @@ class FilterSmplphotoalbum extends FilterBase {
               }
             }            
             break;
-          case 'autoclose' : $this->params['autoclose'] = (in_array($v, array(true,'true','True','TRUE',1,'1'))?true:false); break;          
-          case 'wm'        : $this->params['wm'] = ($this->truefalse($v))? 1:0; break;
-          case 'wmpath'    : $this->params ['wmpath'] = $v; break;
-          case 'wmalpha'  :
-            $v = (int) $v;
-            if($v >0 && $v < 100 ){
-              $this->params ['wmalpha'] = $v;
-            }else{
-              $this->params ['wmalpha'] = 10;
-            }
-            break;
-          case 'copyright': $this->params ['copyright'] = trim($v); break;          
-          case 'author' :   $this->params ['author ']   = trim($v); break;
-
+          case 'height'   : $this->params['height'] = $v; break;
+          case 'html5'    : $this->params ['html5'] = $this->truefalse($v); break;
           // icon color or black & white
           case 'icon' :
-            $v = strtolower(trim($v));
+            $v = strtolower( trim( $v ) );
             if(in_array($v,['bw','_bw','blackandwhite','black&white','b&w'])){
               $this->params ['icon'] ='_bw';
             }else{
               $this->params ['icon'] ='_col';
             }
             break;
-          // Test framework
-          case 'test': $this->params['test'] = $this->truefalse($v); break;
-          case 'translate': $this->params['translate'] = $this->truefalse($v); break;
-          case 'lang'     : $this->params['lang'] = $v; break;
+          case 'important': $this->params ['important']= $this->truefalse($v); break;
+          case 'interval' : $this->params ['interval'] = $v; break;
+          case 'keywords' : $this->params ['keywords'] = $v; break;
+          case 'lang'     : $this->params ['lang']     = $v; break;
+          case 'lazy'     : $this->params ['lazy']     = $this->truefalse($v); break;
+          case "method"   : $this->params ['method']   = ( strtolower($v) == "get")? "GET" : "POST"; break;
+          case 'notes'    : $this->params ['notes']    = $v; break;
+          case 'number'   : $this->params ['number']   = (int)($v); break;
+          case 'order'    : $this->params ['order']    = $v; break;
+          // path of folder from photoalbum folder
+          case 'path' :
+            $v = str_replace ( "\\", "/", $v );
+            $v = (substr ( $v, 0, 1 ) != "/" ? "/" : "") . $v . (substr ( $v, 0, - 1 ) != "/" ? "/" : "");
+            $this->params ['path'] = $v;
+            break;
+          case 'private'   : $this->params ['private'] = $v; break;    // private store          
+          // is this slideshow
+          case 'slide'     : $this->params ['slide']     = $this->truefalse($v); break;
+          // style of slide
+          case 'slidestyle': $this->params ['slidestyle']= $v; break;
+          // style of smplbox
+          case 'smplbox'   : $this->params ['smplbox']   = $v; break;
+          // default sortorder
+          case 'sortorder' : $this->params ['sortorder'] = $v; break;
+          // is there statistic
+          case 'stat'      : $this->params ['stat']      = $v; break;
+          // style of album
+          case 'style'     : $this->params ['style']     = $v; break;
+          // is there subtitles
+          case 'sub'       : $this->params ['sub']       = $v; break;
+          // target of url
+          case 'target'    : $this->params ['target']    = $v; break;
+          case 'test'      : $this->params ['test']      = $this->truefalse($v); break;
+          // Title of album
+          case 'title'     : $this->params ['title']     = !empty(trim ($v)) ? trim($v):""; break;
+          // Is there translation
+          case 'translate' : $this->params ['translate'] = $this->truefalse($v); break; 
+          // Is there file upload
+          case 'upload'    : $this->params ['upload']    = $this->params['upload'] && $this->truefalse( $v ); break;
+          // Is there url
+          case 'url '      : $this->params ['url']       = $this->truefalse($v); break;
+          case 'video'     : $this->params ['video']     = $v; break;
+          // show the vieved number of items
+          case 'viewed'    : $this->params ['viewed']    = $v; break;
+          // width of container of items
+          case 'width'     : $this->params ['width']     = (int)($v); break;
+          // is there watermark
+          case 'wm'        : $this->params ['wm']        = ($this->truefalse($v))? 1:0; break;
+          // path of default watermark image
+          case 'wmpath'    : $this->params ['wmpath']    = $v; break;
+          // alpha of watermark image
+          case 'wmalpha'   : $this->params ['wmalpha']   = ($v >0 && $v < 100 ) ? (int) $v : 10; break;    
         }
       }
     }
@@ -423,94 +428,103 @@ class FilterSmplphotoalbum extends FilterBase {
    */
   private function getConfig() {
     $index = [
-        'number', // From D8 version
-        'width',  // default width of images in px
-        'sub',    // subtitles: enable / disable
-        'root',
-        'viewed', // viewed counter. enable / disable
-        'exif',   // Exif informations: enable / disable
-        'stat',   // Statistics: enable / disable
-        'smplbox', // It helps to view the image in a lightbox,
-        'method', // The method of smpl form
+      // ai - this is in the config
+      'aiclarifai',
+      'aigemini',
+      'number', // How many item are in a page
+      'width',  // default width of images in px
+      'sub',    // subtitles: enable / disable
+      'root',   // root folder of smplphotoalbum 
+      'viewed', // viewed counter. enable / disable
+      'exif',   // Exif informations: enable / disable
+      'stat',   // Statistics: enable / disable
+      'smplbox',// It helps to view the image in a lightbox,
+      'method', // The method of smpl form
 
-        'order',  // viewing order
-        'sortorder',
-        'ascdesc',
-        'filter', // filter of items
-        'private',
-        'lazy',
+      // sorting
+      'order',  // viewing order
+      'sortorder',
+      'ascdesc', // Ascending / Descending order
+      'important', // Important items always on the top
+      'filter', // filter of items
 
-        // Check database
-        'check',
-        'number_of_checking',
-        'from',
-        'keywords',
+      'private',
+      'lazy', // lazy loading of images
 
-        // Subtitle auto change
-        'subtitle_change',
-        'subtitle_change_text',
-        // Document extensions
-        'image_extensions',
-        'image_checking',
-        'audio_checking',
-        'audio_extensions',
-        'audiohtml5_extensions',
+      // Check database
+      'check',
+      'number_of_checking',
+      'from',
+      'keywords',
 
-        'video_checking',
-        'video_extensions',
-        'videohtml5_extensions',
-        'html5_checking',
+      // Subtitle auto change
+      'subtitle_change',
+      'subtitle_change_text',
+      
+      // Document extensions
+      'image_extensions', // it is a list of extensions for images
+      'image_checking',
 
-        'doc_checking',
-        'doc_extensions',
+      'audio_checking',
+      'audio_extensions',
+      'audiohtml5_extensions',
 
-        'cmp_checking',
-        'cmp_extensions',
+      'video_checking',
+      'video_extensions',
+      'videohtml5_extensions',
+      'html5_checking',
 
-        'app_checking',
-        'app_extensions',
+      'doc_checking',
+      'doc_extensions',
 
-        'oth_checking',
-        'oth_extensions',
+      'cmp_checking',
+      'cmp_extensions',
 
-        'dis_checking',
-        'dis_extensions',
-        'url_checking',
+      'app_checking',
+      'app_extensions',
 
-        'edit',        // Edit description of files
-        'upload',      // Uploadable files
-        'delete',      // Deletable files
-        'imgedit',     // Editable images
-        'temp',        // Temp. save edited files
-                       // Service
-        'menu_rebuild_needed',
-        'menu_rebuild_directaccess',
+      'oth_checking',
+      'oth_extensions',
 
-        // URL for images
-        'url',
-        'url_target',
-        // Slideshow
-        'slide_checking',
-        'slide_extensions',
-        'interval',
-        'style',
-        'slstyle',
-        'graphicdrv',
-        'autoclose',
-        //Watermark
-        'wm',
-        'wmpath',
-        'wmalpha',
-        'copyright',
-        'author',
-        'icon',
-        'test',
-        'translate',
-        'lang',
+      'dis_checking',
+      'dis_extensions',
+      'url_checking',
 
-        // ai - this is in the config
-        'aiclarifai',
-        'aigemini',
+      'edit',        // Edit description of files
+      'upload',      // Uploadable files
+      'delete',      // Deletable files
+      'imgedit',     // Editable images
+      'temp',        // Temp. save edited files
+      
+      // Service
+      'menu_rebuild_needed',
+      'menu_rebuild_directaccess',
+
+      // URL for images
+      'url',
+      'url_target',
+      
+      // Slideshow
+      'slide_checking',
+      'slide_extensions',
+      'interval',
+      'style',
+      'slstyle',
+      'graphicdrv',
+      'autoclose',
+      
+      //Watermark
+      'wm',
+      'wmpath',
+      'wmalpha',
+      'copyright',
+      'author',
+      'icon',
+      //testing
+      'test',
+      //translation
+      'translate',
+      'lang',
     ];
     $config = \Drupal::config ( 'smplphotoalbum.settings' );
     $cfg = [];

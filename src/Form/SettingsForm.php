@@ -246,7 +246,14 @@ class SettingsForm extends ConfigFormBase {
         '#type' => 'fieldset',
         '#title' => $this->t ( 'Ordering options' ),
         '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#collapsed' => TRUE,        
+    ];
+
+    $form['order']['important'] =[
+        '#type' => 'checkbox',
+        '#title' => $this->t('Important items always on the top'),
+        '#default_value' => $cfg->get('important'),
+        '#description' => $this->t("If an item is important it is always on the top of the list.")
     ];
     
     $form ['order'] ['order'] = [ 
@@ -270,7 +277,7 @@ class SettingsForm extends ConfigFormBase {
             'view' => $this->t ( 'Sort files by number of views' ) 
         ),
         '#description' => $this->t ( "Default sortorder. Wich property of itemst is the source of order (filename, size, dates, etc." ) 
-    ];
+    ];    
     
     $form ['order'] ['ascdesc'] = [ 
         '#type' => 'select',
@@ -514,6 +521,7 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "Default watermark text. You can write it into the items ( image, audio file) of Simple Photoalbum." ),
         '#disabled' => ! $cfg->get( 'imgedit' )
     ];
+
     /**
      * Service settings
      */
@@ -788,6 +796,7 @@ class SettingsForm extends ConfigFormBase {
         '#title' => $this->t ( 'Slide the images' ),
         '#default_value' => $cfg->get( 'slide_checking' ) 
     ];
+
     $form ['slideshow_settings'] ['slide_extensions'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'List of extensions of slideshow files' ),
@@ -929,6 +938,7 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'test', $vals ['test'])
         ->set( 'aiclarifai', $vals['aiclarifai'])
         ->set( 'aigemini', $vals['aigemini'])
+        ->set( 'important', $vals['important'])
         
         ->save ();
   }

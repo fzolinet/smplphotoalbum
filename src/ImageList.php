@@ -208,10 +208,13 @@ class ImageList {
 		if($this->page <0 ) $this->page = 0;
 		
 		// ORDER BY
-		$order = "";
+
+		if($this->params['important'] ){
+			$query->orderBy( 'importance', 'DESC');		
+		}
 		
 		if ( $this->order && $this->sortorder != "-") {
-
+			$order = "";
 			switch (substr ( $this->sortorder, 0, 2 )) {
 				case 'filename':
 				case 'fi' : $order = "name"; break;
@@ -623,7 +626,7 @@ class ImageList {
 					'modified' => $time
 				]);			
 			$x = $qry->execute();		
-			$msg .= "'$name' ($type) added to DB";
+			$msg .= " '$name' ($type) added to DB";
 		}
 		return $msg;
 	}
@@ -638,13 +641,13 @@ class ImageList {
 		if( !file_exists( $thumbnail ) ){	
 
 			$this->MakeThumbnail(	$name, $source, $thumbnail, $msg);
-			$msg = "New thumbnail '$name'";
+			$msg = "New thumbnail '$name' => ";
 
 		}elseif( filemtime($thumbnail) < filemtime($source)){
 
 			unlink($thumbnail);
 			$this->MakeThumbnail(	$name, $source, $thumbnail, $msg);
-			$msg ="Refreshed thumbnail '$name'";
+			$msg ="Refreshed thumbnail '$name' => ";
 
 		}
 		return $msg;

@@ -215,6 +215,24 @@ function setDivInWindow(w, pos) {
   smpl.ErrorC = function (cmd) {
     smpl.AlertC("Error on server side: " + cmd, 'error');
   }
+
+  $smpl.ConfirmC() = function (msg, title = 'Confirmation') {
+    $answer = false;
+    $('#smpl-confirm-content').html(Drupal.t(msg));
+    $('#smpl-confirm-title').html(Drupal.t(title));
+    $('#smpl-confirm').show();
+    $('#smpl-confirm-ok').off('click').on('click', function () {
+      $answer = true;
+      $('#smpl-confirm').hide();
+    });
+
+    $('#smpl-confirm-cancel').off('click').on('click', function () {
+      $answer = false;
+      $('#smpl-confirm').hide();
+    });
+    return answer;
+  }
+
   // Draggable window
   $('#smpl-message').draggable();
 

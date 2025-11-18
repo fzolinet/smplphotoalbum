@@ -80,9 +80,9 @@ a.smpl_a:hover {
 }
 
 .smpl_img {
+  max-height: 120px;
   max-width: 100%;
   height: auto;
-  max-height: 120px;
   display: block;
   margin-left: auto;
   margin-right: auto !important;
@@ -111,7 +111,8 @@ a.smpl_a:hover {
   width: 80%;
 }
 
-.smpl_sub_text, .smpl_view_text, .smpl_size_text, .smpl_date_text {
+.smpl_sub_text, .smpl_view_text,
+.smpl_size_text, .smpl_date_text {
   display: inline;
   border-width: 0;
   display: inline;
@@ -174,7 +175,7 @@ div#sortorder {
 }
 
 /* buttons */
-.smpl_pager_button > button .smpl_url_plus,
+.smpl_pager_button > button, .smpl_url_plus,
 .smpl_sel, #smpl_list, #smpl_sortorder, #smpl_ascdesc {
   font-size: 0.8em;
   border-radius: 0.2em;
@@ -204,7 +205,7 @@ div#sortorder {
   cursor: pointer !important;
   height: var(--sp1-5);
   background-position-y: center;
-  border: 1px solid #D0D0D0;
+  border: 1px solid rgb(166.4, 166.4, 166.4);
   border-radius: 0.2em;
 }
 
@@ -227,7 +228,6 @@ select, input {
 
 select {
   padding-inline-start: 0 !important;
-  /*padding-inline-end: 0 !important;*/
 }
 
 .right_corner {
@@ -783,7 +783,7 @@ div#smpl_saveas {
   display: none;
   z-index: 10;
   position: absolute;
-  border: 1px solid rgb(144.25, 144.25, 144.25);
+  border: 1px solid rgb(145.6, 145.6, 145.6);
   border-radius: 0.2em;
   padding: 0.5em;
   left: 38%;
@@ -816,7 +816,7 @@ button#SmplImgEditFormSaveAsCancel {
 }
 
 .smpl_pager_current {
-  background-color: rgb(157.1739130435, 200.652173913, 227.8260869565);
+  background-color: rgb(160.7739130435, 202.652173913, 228.8260869565);
   border-radius: 0.2em;
 }
 
@@ -837,9 +837,7 @@ button#SmplImgEditFormSaveAsCancel {
 .smpl_exif_td {
   text-align: left;
   height: 0.8em;
-  border-right-width: 1px;
-  border-right-style: solid;
-  border-right-color: #D0D0D0;
+  border-right: 1px solid #D0D0D0;
   text-wrap: nowrap;
 }
 
@@ -855,9 +853,7 @@ button#SmplImgEditFormSaveAsCancel {
 }
 
 .smpl_desc_title {
-  border-bottom-width: 1px;
-  border-bottom-color: #D0D0D0;
-  border-bottom-style: solid;
+  border-bottom: 1px solid #D0D0D0;
   font-weight: 600;
 }
 
@@ -865,10 +861,6 @@ button#SmplImgEditFormSaveAsCancel {
   display: none;
   position: absolute;
   text-align: left;
-  border-width: 1px;
-  border-style: solid;
-  background-color: #EDF5FA;
-  padding: 0.5em;
   z-index: 256;
   cursor: pointer;
 }
@@ -947,9 +939,9 @@ div#SmplEditFormData, div#SmplUploadFormData {
 /* Img Edit css settings */
 .smpl_edit_form,
 .smpl_imgedit_form,
-.smpl_upload_form {
-  border-style: ridge;
-  border-color: #D0D0D0;
+.smpl_upload_form,
+.smpl_desc_info {
+  border: 2px ridge #D0D0D0;
   padding: 8px;
   background-color: #CCC;
 }
@@ -1004,7 +996,7 @@ canvas#SmplCanvas {
 .smpl_edit_title,
 .smpl_upload_title,
 .smpl_edit_props {
-  border-bottom: 1px solid #9d9d9d;
+  border-bottom: 1px solid rgb(166.4, 166.4, 166.4);
   margin-bottom: 0.1em;
 }
 
@@ -1040,7 +1032,7 @@ div.smpl_menu {
 
 #smpl_zoom_area,
 .smpl_imgedit_border {
-  border-top: solid 1px rgb(182.5, 182.5, 182.5);
+  border-top: solid 1px rgb(166.4, 166.4, 166.4);
   vertical-align: middle;
   margin-bottom: 0.1em;
 }
@@ -1071,7 +1063,7 @@ label.smpl_label {
 }
 
 label.smpl_label:hover {
-  background-color: rgb(157.1739130435, 200.652173913, 227.8260869565);
+  background-color: rgb(160.7739130435, 202.652173913, 228.8260869565);
   cursor: pointer;
 }
 
@@ -1143,6 +1135,13 @@ input[type=number] {
 
 .smpl_input_text {
   width: 8em;
+}
+
+[type=color], [type=date], [type=datetime-local],
+[type=email], [type=file], [type=month], [type=number],
+[type=password], [type=search], [type=tel], [type=text],
+[type=time], [type=url], [type=week], textarea {
+  font-size: initial;
 }
 
 .smpl_readonly {
@@ -1289,12 +1288,12 @@ div.smpl_label {
 }
 
 label.smpl_label:hover {
-  background-color: rgb(157.1739130435, 200.652173913, 227.8260869565);
+  background-color: rgb(160.7739130435, 202.652173913, 228.8260869565);
   cursor: pointer;
 }
 
 .smpl_label_actual {
-  background-color: rgb(157.1739130435, 200.652173913, 227.8260869565);
+  background-color: rgb(160.7739130435, 202.652173913, 228.8260869565);
   filter: brightness(80%);
   cursor: default !important;
 }
@@ -1512,7 +1511,7 @@ select#smpl_geom:focus {
   top: 47.5%;
   left: 54%;
   z-index: 128;
-  border: 1px solid rgb(182.5, 182.5, 182.5);
+  border: 1px solid rgb(187.2, 187.2, 187.2);
   border-radius: 0.2em;
   background-color: #383838;
   color: #d7dadd;
@@ -1527,7 +1526,7 @@ select#smpl_geom:focus {
   width: 50%;
   top: 11em;
   left: 100px;
-  border: 1px solid rgb(182.5, 182.5, 182.5);
+  border: 1px solid rgb(187.2, 187.2, 187.2);
   border-radius: 0.2em;
   text-align: center;
   z-index: 256;
