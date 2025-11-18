@@ -12,7 +12,7 @@ ImageEdit
 
 Todo:
 ~~~~
-- When the important checked, then the first order is the:important desc
+
 - Automate normalize is default on image 
 - AI generals something on the image
 - Text write on the image - under construction
@@ -92,6 +92,7 @@ History:
 ~~~~~~~
 2025.11.18 - 1.9.6-beta2
 - sweetalert.min.js: smpl.AlertC, smpl.ErrorC
+- When the important checked, then the first order is the:important desc
 
 2025.11.16 - 1.9.6ß
 - Bug: XML2assoc
