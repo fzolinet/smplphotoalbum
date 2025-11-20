@@ -1,5 +1,12 @@
 @use 'sass:color';
 /* Default parameters*/
+$BkgError: #f88f8f;
+$ColorError: color.scale( $BkgError, $lightness:-80%);
+$BkgWarning: rgb(255,203,179);
+$ColorWarning: color.scale($BkgWarning, $lightness: -80%);
+$BkgNotes: #f3faef;
+$ColorNotes: color.scale($BkgNotes, $lightness: -80%);
+
 $BorderColor: #D0D0D0;
 $BorderDarker10: color.scale( $BorderColor, $lightness:-10%);
 $BorderDarker20: color.scale( $BorderColor, $lightness:-20%);
@@ -8,20 +15,22 @@ $BorderDarker30: color.scale( $BorderColor, $lightness:-30%);
 $BorderWidth: 1px;
 $BorderStyle: solid;
 $BorderRadius: 0.2em;
-$BorderBigRadius: 7px;
+$BorderBigRadius: 0.5em;
 $BorderSettings: $BorderWidth $BorderStyle $BorderColor;
 $BorderSettings10: $BorderWidth $BorderStyle $BorderDarker10;
 $BorderSettings20: $BorderWidth $BorderStyle $BorderDarker20;
 $BorderSettings30: $BorderWidth $BorderStyle $BorderDarker30;
 $BorderRidge: 2px ridge $BorderColor;
 $fontSize: 0.8em;
-$padding: 1em;
-$paddingHalf: calc($padding/2);
+
+$Padding: 1em;
+$PaddingHalf: calc($Padding/2);
+
 $BkgEditColor: #DFEDF7;
 $BkgViewColor: #EDF5FA;
 $BkgDivColor: #202020;
 $BkgViewButtonColor: $BkgViewColor;
-$BkgActButtonColor: color.scale($BkgViewColor, $lightness:-20%);
+$BkgActButtonColor: color.scale( $BkgViewColor, $lightness:-20% );
 $BkgProgressColor: #383838;
 $BkgGrey: #CCC;
  
@@ -352,10 +361,10 @@ button#SmplImgEditFormSaveAsCancel {
   background-color: $BkgViewButtonColor;
   border-radius: $BorderRadius;
   cursor: pointer;
-  padding-top: calc($padding / 2 );
-  padding-bottom: calc($padding / 2 );
-  padding-left: $padding;
-  padding-right: $padding;
+  padding-top: $PaddingHalf;
+  padding-bottom: $PaddingHalf;
+  padding-left: $Padding;
+  padding-right: $Padding;
   font-size: small;
   text-align: center;
 }
@@ -385,7 +394,7 @@ table.smpl_exif_table > {
 .smpl_exif_td {
   text-align: left;
   height: 0.8em;
-  border-right: $BorderSettings;
+  border-right: $BorderSettings10;
   text-wrap: nowrap;
 }
 
@@ -419,14 +428,13 @@ table.smpl_exif_table > {
   justify-content: center;
   position: relative;
   top: 0em;
-  padding: 0.5em;
-  overflow: auto;
+  padding: $Padding;
+  /*overflow: auto;*/
   margin: 0 auto;
 }
 
 #smpl_stat_table {
-  border: $BorderSettings;
-  border-radius:$BorderRadius;
+border-collapse: inherit;
 }
 
 #smpl_stat_table >tbody>tr>th,
@@ -441,7 +449,7 @@ table.smpl_exif_table > {
 }
 .smpl_stat_tdleft {
   text-align: left;
-  border-right: $BorderWidth $BorderStyle $BorderColor;
+  border-right: $BorderSettings20;
 }
 
 .smpl_stat_tdval {
@@ -487,9 +495,13 @@ div#SmplEditFormData, div#SmplUploadFormData {
 .smpl_edit_form, 
 .smpl_imgedit_form,
 .smpl_upload_form,
-.smpl_desc_info {  
+.smpl_desc_info,
+#smpl_stat_table,
+.smpl_help 
+ {  
   border: $BorderRidge;
-  padding: 8px;
+  border-radius: $BorderRadius;
+  padding: $PaddingHalf;
   background-color: $BkgGrey;
 }
 
@@ -532,16 +544,20 @@ canvas#SmplCanvas{
   border: $BorderSettings;
 }
 
-.smpl_edit_title, 
-.smpl_upload_title {
+.smpl_pop_title
+{
   max-width: 100%;
   text-align: left;  
   font-weight: bold;
   font-size:1.2em;
 }
+.smpl_pop_title > h3{
+  display: inline;
+  margin:0;
+  padding:0;
+}
 
-.smpl_edit_title, 
-.smpl_upload_title,
+.smpl_pop_title,
 .smpl_edit_props
 {
   border-bottom: 1px solid $BorderDarker20;
@@ -741,8 +757,7 @@ div#SmplCanvasContainer{
   top: 11em;
   left: 100px;  
   z-index: 1023;
-  text-align: left;
-  padding: 0.5em;
+  text-align: left;  
   resize: both;    
   cursor: grab;
 }
@@ -792,8 +807,8 @@ select#smpl_sortorder, select#smpl_ascdesc {
   left: 50%;
   max-width: 80%;
   transform: translate(-50%, -45%);
-  display: flex;
-  justify-content: center;
+  /*display: flex;
+  justify-content: center;*/
   border: 1px ridge $BorderColor;
   padding:0;
 }
@@ -844,7 +859,7 @@ label.smpl_label:hover {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%;
+  /*height: 100%;*/
   width: 100%;
 }
 
@@ -1047,7 +1062,7 @@ select#smpl_geom:focus {
 
 #smpl_progress{
   position: fixed;
-  padding: $padding;
+  padding: $Padding;
   top: 47.5%;
   left: 54%;
   z-index: 128;
@@ -1071,14 +1086,14 @@ select#smpl_geom:focus {
   border-radius: $BorderRadius; 
   text-align: center;
   z-index:256;
-  padding: calc( $padding / 2);  
+  padding: $PaddingHalf;  
 }
 #smpl-message-title {
   font-weight: 700; 
 }
 #smpl-message-content {
   text-align:center;
-  padding: calc( $padding / 2);
+  padding: $PaddingHalf;
   font-size: small;
   font-weight: 600;
   color: white;
@@ -1086,12 +1101,16 @@ select#smpl_geom:focus {
 }
 
 .smpl-message-error {    
-  background-color: red;
+  background-color: $BkgError;
+  color: $ColorError;
 }
 .smpl-message-warning {
-  background-color: orange; 
+  background-color: $BkgWarning ;
   color: black; 
 }
 .smpl-message-notes {
-  background-color: green;
+  background-color: $BkgNotes;
+  color: black;
 }
+.swal-button{height:fit-content !important;}
+.swal-modal{background-color:$BkgError ;}

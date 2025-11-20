@@ -3,8 +3,7 @@
  */
 (function ($, Drupal, smpl) {
   /* Global variables */
-  var win = $(window);
-
+  //var win = $(window);
 
   //view
   $('.smpl_image_link').click(function () {

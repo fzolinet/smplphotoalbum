@@ -837,7 +837,7 @@ button#SmplImgEditFormSaveAsCancel {
 .smpl_exif_td {
   text-align: left;
   height: 0.8em;
-  border-right: 1px solid #D0D0D0;
+  border-right: 1px solid rgb(187.2, 187.2, 187.2);
   text-wrap: nowrap;
 }
 
@@ -871,14 +871,13 @@ button#SmplImgEditFormSaveAsCancel {
   justify-content: center;
   position: relative;
   top: 0em;
-  padding: 0.5em;
-  overflow: auto;
+  padding: 1em;
+  /*overflow: auto;*/
   margin: 0 auto;
 }
 
 #smpl_stat_table {
-  border: 1px solid #D0D0D0;
-  border-radius: 0.2em;
+  border-collapse: inherit;
 }
 
 #smpl_stat_table > tbody > tr > th,
@@ -893,7 +892,7 @@ button#SmplImgEditFormSaveAsCancel {
 
 .smpl_stat_tdleft {
   text-align: left;
-  border-right: 1px solid #D0D0D0;
+  border-right: 1px solid rgb(166.4, 166.4, 166.4);
 }
 
 .smpl_stat_tdval {
@@ -940,9 +939,12 @@ div#SmplEditFormData, div#SmplUploadFormData {
 .smpl_edit_form,
 .smpl_imgedit_form,
 .smpl_upload_form,
-.smpl_desc_info {
+.smpl_desc_info,
+#smpl_stat_table,
+.smpl_help {
   border: 2px ridge #D0D0D0;
-  padding: 8px;
+  border-radius: 0.2em;
+  padding: 0.5em;
   background-color: #CCC;
 }
 
@@ -985,16 +987,20 @@ canvas#SmplCanvas {
   border: 1px solid #D0D0D0;
 }
 
-.smpl_edit_title,
-.smpl_upload_title {
+.smpl_pop_title {
   max-width: 100%;
   text-align: left;
   font-weight: bold;
   font-size: 1.2em;
 }
 
-.smpl_edit_title,
-.smpl_upload_title,
+.smpl_pop_title > h3 {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.smpl_pop_title,
 .smpl_edit_props {
   border-bottom: 1px solid rgb(166.4, 166.4, 166.4);
   margin-bottom: 0.1em;
@@ -1198,13 +1204,9 @@ div#SmplCanvasContainer {
   position: absolute;
   top: 11em;
   left: 100px;
-  background-color: #CCC;
   z-index: 1023;
   text-align: left;
-  padding: 0.5em;
   resize: both;
-  border: 2px ridge #D0D0D0;
-  border-radius: 0.2em;
   cursor: grab;
 }
 
@@ -1253,8 +1255,8 @@ select#smpl_sortorder, select#smpl_ascdesc {
   left: 50%;
   max-width: 80%;
   transform: translate(-50%, -45%);
-  display: flex;
-  justify-content: center;
+  /*display: flex;
+  justify-content: center;*/
   border: 1px ridge #D0D0D0;
   padding: 0;
 }
@@ -1305,7 +1307,7 @@ label.smpl_label:hover {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%;
+  /*height: 100%;*/
   width: 100%;
 }
 
@@ -1547,14 +1549,25 @@ select#smpl_geom:focus {
 }
 
 .smpl-message-error {
-  background-color: red;
+  background-color: #f88f8f;
+  color: rgb(73.6, 4.6, 4.6);
 }
 
 .smpl-message-warning {
-  background-color: orange;
+  background-color: rgb(255, 203, 179);
   color: black;
 }
 
 .smpl-message-notes {
-  background-color: green;
+  background-color: #f3faef;
+  color: black;
+}
+
+.swal-button {
+  height: -moz-fit-content !important;
+  height: fit-content !important;
+}
+
+.swal-modal {
+  background-color: #f88f8f;
 }/*# sourceMappingURL=smplphotoalbum.theme.css.map */

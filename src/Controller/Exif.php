@@ -322,26 +322,20 @@ class Exif{
     $finfo ['Timestamp'] = date ( "Y.m.d H:i:m ?", $t );
     $oslang = $itsf->getOriginalOSLanguage ();
     $finfo ["Language"] = $oslang->getLanguageName ();
-    $finfo ["Country"] = $oslang->getCountryName ();
-    // Here delete the non used items
-
-    $out = $this->media ( $finfo, $this->t ( "CHM compressed file" ) );
-    return $out;
+    $finfo ["Country"] = $oslang->getCountryName ();    
+    return $this->media ( $finfo, $this->t ( "CHM compressed file" ) );    
   }
+
   function _rar() {
     $finfo = $this->GetID3->analyze ( $this->p );
-    $finfo = $this->arrayflat ( $finfo );
-    // Here delete the non used items
-    
-    $out = $this->media ( $finfo, $this->t ( "Rar compressed file" ) );
-    return $out;
+    $finfo = $this->arrayflat ( $finfo );      
+    return $this->media ( $finfo, $this->t ( "Rar compressed file" ) );     
   }
+  
   function _zip() {
     $finfo = $this->GetID3->analyze ( $this->p );
-    $finfo = $this->arrayflat ( $finfo );
-    // Here delete the non used items
-    $out = $this->media ( $finfo, $this->t ( "Zip compressed file" ) );
-    return $out;
+    $finfo = $this->arrayflat ( $finfo );    
+    return $this->media ( $finfo, $this->t ( "Zip compressed file" ) );
   }
   
   /**

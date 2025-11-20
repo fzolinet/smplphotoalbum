@@ -214,7 +214,7 @@
 
 	/**
 	 * Load an image
-	 * @param data
+	 * @param object data
 	 * @returns
 	 */
 	function load(data) {
