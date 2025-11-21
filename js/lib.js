@@ -198,10 +198,32 @@ function setDivInWindow(w, pos) {
       case 'status': cl = "smpl-message-status"; title = "Status message"; break;
     }
     swal(cmd, {
-      className: cl,
       title: title,
     });
+    $("div.swal-modal").removeClass("smpl-message-error");
+    $("div.swal-modal").removeClass("smpl-message-warning");
+    $("div.swal-modal").removeClass("smpl-message-notes");
+    $("div.swal-modal").addClass(cl);
+
   }
+  /* Warning popup box
+  */ smpl.ConfirmC = function (cmd) {
+    swal({
+      text: cmd,
+      title: "warning",
+      className: "smpl-message-warning",
+      buttons: true,
+      closeOnClickOutside: true,
+      closeOnEsc: true,
+      dangerMode: true,
+    });
+    $("div.swal-modal").removeClass("smpl-message-error");
+    $("div.swal-modal").removeClass("smpl-message-warning");
+    $("div.swal-modal").removeClass("smpl-message-notes");
+    $("div.swal-modal").addClass("smpl-message-warning");
+  }
+
+
 
   /**
     * ErrorC - Error alert
@@ -209,9 +231,12 @@ function setDivInWindow(w, pos) {
     */
   smpl.ErrorC = function (cmd) {
     swal("Error on server side: " + cmd, {
-      className: "smpl-message-error",
       title: "Error message",
     });
+    $("div.swal-modal").removeClass("smpl-message-error");
+    $("div.swal-modal").removeClass("smpl-message-warning");
+    $("div.swal-modal").removeClass("smpl-message-notes");
+    $("div.swal-modal").addClass("smpl-message-error");
   }
 
   // Draggable window

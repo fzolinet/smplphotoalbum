@@ -12,7 +12,14 @@ ImageEdit
 
 Todo:
 ~~~~
-
+- Change the folders with mouse - more level 
+  When first run => The path variable go into SESSION
+	Show every folde icon without "_tn_"
+	
+	If click on folder the path longer with that folder
+	if click ".." the path will be shorter and go into SESSION
+	the _tn_ folder excluded
+	If write the /folder or similar the server side check the folder exists 
 - Automate normalize is default on image 
 - AI generals something on the image
 - Text write on the image - under construction

@@ -398,7 +398,7 @@ class SmplphotoalbumController extends ControllerBase{
         $a[$i] = ".".$e;
     }
     $s = str_ireplace( $a, '', $s );
-    $s = trim( str_replace( ["-","_",'.'], [" "," ",""], $s ) );
+    $s = trim( str_replace( ["-","_"], [" "," "], $s ) );
     return $s;
   }
 

@@ -12,6 +12,7 @@
 		swal({
 			text: smpl.words.Delete + ": '" + name + "'?",
 			title: "Are you sure?",
+			className: "smpl-message-warning",
 			buttons: true,
 			closeOnClickOutside: true,
 			closeOnEsc: true,

@@ -2,7 +2,7 @@
  * Edit properties of image
  */
 
-(function ($, Drupal, smpl) {
+(function ($, Drupal, smpl, swal) {
 	//Edit button
 	$('.smpl_edit').mouseover(function () {
 		$(this).css('cursor', 'pointer');
@@ -25,6 +25,7 @@
 
 	$("button[id*='SubBtn']").click(function (e) {
 		let id = $(this).attr('id').substring(6);
+		smpl.editsaved = false;
 		smpl.progress(true);
 		let url = smpl.ajax + "/edit/" + id;
 		$.ajax({
@@ -58,8 +59,6 @@
 					pos.left = ww - w - 2 * dy;
 				}
 				SmplEditForm.offset({ top: pos.top + dy, left: pos.left });
-
-				//setDivInWindow( SmplEditForm, pos );
 				smpl.progress(false);
 			},
 			error: function (response) {
@@ -73,14 +72,33 @@
 	 * @return false
 		 */
 	$("#SmplEClose").click(function (e) {
-		SmplEditForm.hide();
-		$("input#smpl_edit_id").val('');
-		$("input#smpl_name").val('');
-		$("textarea#smpl_sub").val('');
-		$("input#smpl_importance").val(0);
-		$("select#smpl_type option").attr("selected", false).change();
-		$("select#smpl_type option[value='image']").attr("selected", "selected").change();
-		$("input#smpl_link").val('');
+		if (smpl.editsaved === false) {
+			swal({
+				html: 'Do you want to close?',
+				title: "The changed properties not saved",
+				className: "smpl-message-warning",
+				buttons: true,
+				closeOnClickOutside: true,
+				closeOnEsc: true,
+				dangerMode: true,
+				icon: "warning",
+			})
+				.then((ok) => {
+					if (ok) {
+						smpl.editsaved = true;
+						SmplEditForm.hide();
+						$("input#smpl_edit_id").val('');
+						$("input#smpl_name").val('');
+						$("textarea#smpl_sub").val('');
+						$("input#smpl_importance").val(0);
+						$("select#smpl_type option").attr("selected", false).change();
+						$("select#smpl_type option[value='image']").attr("selected", "selected").change();
+						$("input#smpl_link").val('');
+					}
+					e.preventDefault();
+					return false;
+				});
+		}
 		e.preventDefault();
 		return false;
 	});
@@ -115,12 +133,13 @@
 				$("input#smpl_link").val('');
 				$("input#smpl_importance").val('0');
 				smpl.progress(false);
+				smpl.editsaved = true;
 				SmplEditForm.hide();
 			},
 			error: function (response) {
 				smpl.progress(false);
 				SmplEditForm.hide();
-				fz_t('JSON error: ' + response.toString());
+				smpl.ErrorC('JSON error: ' + response.toString());
 			},
 		});
 		return false;
@@ -139,7 +158,6 @@
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
-				data.id = "-1";
 				if (data.id == '-1' || data.id == '-2') {
 					smpl.ErrorC(data.msg);
 				} else {
@@ -153,4 +171,4 @@
 			}
 		});
 	});
-})(jQuery, Drupal, smpl);
+})(jQuery, Drupal, smpl, swal);

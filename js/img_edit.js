@@ -164,7 +164,7 @@
 			},
 			error: function (response) {
 				smpl.progress(false);
-				fz_t("Error on server side: " + smpl.id);
+				smpl.ErrorC(smpl.id);
 			},
 		});
 	}
@@ -234,6 +234,7 @@
 		if (!smpl.isUndefined(data.avgcolor)) {
 			smpl.stroke = smpl.EyeDropInvertColor(data.avgcolor);
 		}
+
 		if (smpl.idx == 0) {
 			smpl.owidth = smpl.width;
 			smpl.oheight = smpl.height;
@@ -261,7 +262,7 @@
 		else smpl.hideHistogram();
 
 		// jpeg or png data of copyright && author
-		if (data.ext == "jpeg" || data.ext == "png") {
+		if (data.ext == "jpeg" || data.ext == "jpg" || data.ext == "png") {
 			$(".smpl_wmspan").show();
 			$("#smpl_watermark_copyright").val(data.copyright);
 			$("#smpl_watermark_author").val(data.author);
@@ -270,7 +271,7 @@
 			$("#smpl_watermark_copyright").val('');
 			$("#smpl_watermark_author").val('');
 		}
-
+		smpl.imgimgeditsaved = false;
 		UndoRedo(data.idx, data.que, data.prev, data.next);
 		SmplImgEditForm.show();
 		smpl.progress(false);
@@ -293,9 +294,9 @@
 	}
 	/**
 	 * Load Image to image tag && Canvas
-	 * @param src    - source link of image
-	 * @param width  - width of image
-	 * @param height - height of image
+	 * @param src - source link of image
+	 * @param dx  - width of image
+	 * @param dy  - height of image
 	 * @returns
 	 */
 	function load_img(src, dx, dy) {
@@ -401,6 +402,8 @@
 						smpl.height = parseInt(data.height);
 					}
 
+					smpl.imgeditsaved = false;
+
 					smpl.idx = data.idx;
 					smpl.tempname = data.tempname;
 					load_img(ImgUrl(smpl.idx), smpl.width, smpl.height);
@@ -420,8 +423,9 @@
 					SaveButtons(true);
 					smpl.progress(false);
 				} catch (e) {
-					;
+					smpl.ErrorC(e.message);
 				}
+
 				smpl.getHistogram();
 				smpl.progress(false);
 				return false;
@@ -440,6 +444,7 @@
 	 */
 	$("button[class*='smpl_imgedit']").click(function (e) {
 		smpl.id = $(this).attr('id').substring(6);    //which button => id
+		smpl.imgeditsaved = true;
 		LoadEditForm();
 	});
 
@@ -454,7 +459,7 @@
 				let data = JSON.parse(response[0].data);
 				if (data.ok == "-2") {
 					smpl.progress(false);
-					smpl.AlertC(data.msg);
+					smpl.ErrorC(data.msg);
 					return false;
 				}
 				//Load image
@@ -493,15 +498,16 @@
 			type: "GET",
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
+				$("img#smpltn" + smpl.id).attr("src", data.link);
+				smpl.imgeditsaved = true;
 				smpl.progress(false);
-				$("img#smpltn" + smpl.id).attr("src", data.link)
 				SmplImgEditForm.hide();
 				return false;
 			},
 			error: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
-				fz_t("Error on server side: " + smpl.id);
+				smpl.ErrorC(smpl.id);
 				return false;
 			},
 		});
@@ -543,14 +549,14 @@
 			error: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
-				fz_t("Error on server side: " + smpl.id);
+				smpl.ErrorC(smpl.id);
 				return false;
 			},
 		});
 		return false;
 	});
 
-	// ---- Cancel Button
+	// ---- Cancel Button -----------
 	$("#SmplCancel").click(function () {
 		Cancel();
 	});
@@ -562,11 +568,35 @@
 	})
 
 	/**
-	 * cancel the modified image and close the window
+	 * Cancel the modified image and close the window
 	 */
 	$("#SmplClose").click(function () {
+		if (!smpl.imgeditsaved) {
+			swal({
+				text: smpl.words.Edit_not_saved,
+				title: "The changed image not saved. Do you want to close?",
+				className: "smpl-message-warning",
+				buttons: true,
+				closeOnClickOutside: true,
+				closeOnEsc: true,
+				dangerMode: true,
+				icon: "warning",
+			})
+				.then((ok) => {
+					if (ok) {
+						CloseAjax();
+						SaveButtons($, false);
+						SmplImgEditForm.hide();
+					}
+					return false;
+				});
+		}
+		return false;
+	});
+
+	function CloseAjax() {
 		let url = smpl.ajax + "/imgedit/" + smpl.id + "/close";
-		smpl.progress(true)
+		smpl.progress(true);
 		$.ajax({
 			url: url,
 			type: "GET",
@@ -574,16 +604,14 @@
 				let data = JSON.parse(response[0].data);
 				UndoRedo(0, 0, false);
 				smpl.progress(false);
+				smpl.imgeditsaved = true
 			},
 			error: function (response) {
 				smpl.progress(false);
 				smpl.ErrorC(smpl.id);
 			},
 		});
-		SaveButtons($, false);
-		SmplImgEditForm.hide();
-		return false;
-	});
+	}
 
 	/**
 	 * Show Original image

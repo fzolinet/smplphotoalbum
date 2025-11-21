@@ -2,7 +2,7 @@
 /* Default parameters*/
 $BkgError: #f88f8f;
 $ColorError: color.scale( $BkgError, $lightness:-80%);
-$BkgWarning: rgb(255,203,179);
+$BkgWarning: #fde3cc;
 $ColorWarning: color.scale($BkgWarning, $lightness: -80%);
 $BkgNotes: #f3faef;
 $ColorNotes: color.scale($BkgNotes, $lightness: -80%);
@@ -1105,12 +1105,17 @@ select#smpl_geom:focus {
   color: $ColorError;
 }
 .smpl-message-warning {
-  background-color: $BkgWarning ;
-  color: black; 
+  background-color: $BkgWarning;
+  color: $ColorWarning;
 }
 .smpl-message-notes {
   background-color: $BkgNotes;
-  color: black;
+  color: $ColorNotes;
 }
-.swal-button{height:fit-content !important;}
-.swal-modal{background-color:$BkgError ;}
+.swal-modal{
+  width:400px !important;
+  border: $BorderSettings30;
+}
+.swal-button{
+  height:fit-content !important;
+}
