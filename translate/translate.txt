@@ -135,6 +135,7 @@ Mode
 Modified
 Name
 Name of data of this node
+New folder
 Noise
 Normalize
 Nothing

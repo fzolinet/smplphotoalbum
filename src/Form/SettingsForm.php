@@ -587,6 +587,13 @@ class SettingsForm extends ConfigFormBase {
         '#collapsible' => TRUE,
         '#collapsed' => TRUE 
     ];
+
+    $form['types_settings']['folders'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t ( 'Lists the folders' ),
+        '#default_value' => $cfg->get( 'folders' ),
+        '#description' => $this->t ( "If it is checked the folders are listed too. Other words more levels of galleries are visible." ), 
+    ];
     
     $form ['types_settings'] ['html5_checking'] = [ 
         '#type' => 'checkbox',
@@ -939,6 +946,7 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'aiclarifai', $vals['aiclarifai'])
         ->set( 'aigemini', $vals['aigemini'])
         ->set( 'important', $vals['important'])
+        ->set( 'folders', $vals['folders'])
         
         ->save ();
   }

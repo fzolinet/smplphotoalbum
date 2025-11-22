@@ -276,6 +276,7 @@ class FilterSmplphotoalbum extends FilterBase {
         'edit',
         'exif',
         'filter',
+        'folders',
         'graphicdrv',
         'graphic',  
         'html5',
@@ -284,6 +285,7 @@ class FilterSmplphotoalbum extends FilterBase {
         'interval',
         'lang',
         'method',
+        'newfolder',
         'notes',
         'number',
         'order',
@@ -332,6 +334,7 @@ class FilterSmplphotoalbum extends FilterBase {
           case 'edit'     : $this->params ['edit']      = $v; break;          
           case 'exif'     : $this->params ['exif']      = $v; break;
           case 'filter'   : $this->params ['filter']    = $this->truefalse($v); break;
+          case 'folders'  : $this->params ['folders']   = $this->truefalse($v); break;
           case 'graphicdrv': //GD or Imagick
           case "graphic":
           case "grdrv":
@@ -447,6 +450,7 @@ class FilterSmplphotoalbum extends FilterBase {
       'ascdesc', // Ascending / Descending order
       'important', // Important items always on the top
       'filter', // filter of items
+      'folders', // folder view enable / disable
 
       'private',
       'lazy', // lazy loading of images
@@ -520,8 +524,10 @@ class FilterSmplphotoalbum extends FilterBase {
       'copyright',
       'author',
       'icon',
+
       //testing
       'test',
+      
       //translation
       'translate',
       'lang',

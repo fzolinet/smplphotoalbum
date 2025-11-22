@@ -138,6 +138,7 @@ Mode=Mód
 Modified=Módosítva
 Name=név
 Name of data of this node=Az oldal adatainak elnevezése
+New folder=Új mappa
 Noise=Zaj
 Next=Köv
 Normalize=Normalizálás

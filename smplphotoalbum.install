@@ -60,28 +60,28 @@ function smplphotoalbum_schema() {
       'description' => 'Table for Simple Photoalbum.',
       'fields' => array (
           'id' => [
-              'description' => 'Image id',
+              'description' => 'File id',
               'type' => 'serial',
               'unsigned' => TRUE,
               'not null' => TRUE,
               'size' => 'normal' 
           ],
           'path' => [
-              'description' => 'Image path',
+              'description' => 'File path',
               'type' => 'varchar',
               'not null' => FALSE,
               'length' => 255,
               'default' => '' 
           ],
           'name' => [
-              'description' =>  'Name of item' ,
+              'description' =>  'Name of file' ,
               'type' => 'varchar',
               'length' => 255,
               'not null' => FALSE,
               'default' => '' 
           ],
           'typ' => [
-              'description' => 'Type of file.',
+              'description' => 'Type of file or folder.',
               'type' => 'varchar',
               'length' => 20,
               'not null' => FALSE,
@@ -100,7 +100,7 @@ function smplphotoalbum_schema() {
               'not null' => FALSE 
           ],
           'link' => [
-              'description' =>  'URL association of file ',
+              'description' =>  'URL association of file or folder ',
               'type' => 'varchar',
               'length' => 255,
               'not null' => FALSE,
@@ -139,7 +139,7 @@ function smplphotoalbum_update_19500(): void{
     $spec = [
       'type' => 'int',
       'default' => 0,
-      'description' => 'Importance of items. The larger the important',
+      'description' => 'Importance of files. The larger the important',
     ];
     $schema = Database::getConnection()->schema();
     $schema->addField('smplphotoalbum','importance', $spec);

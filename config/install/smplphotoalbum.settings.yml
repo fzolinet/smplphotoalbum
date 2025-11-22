@@ -115,3 +115,6 @@ aigemini: FALSE
 
 # important the first in list
 important: TRUE
+
+#more level folders
+folders: TRUE

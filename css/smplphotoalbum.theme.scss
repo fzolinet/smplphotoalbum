@@ -308,6 +308,7 @@ $icons: ( _col, _bw ); @each $icon in $icons {
 .smpl_lighting#{$icon}    {background-image: url("../image/b_lighting#{$icon}.png");}
 .smpl_liquify#{$icon}     {background-image: url("../image/b_liquify#{$icon}.png");}
 .smpl_noise#{$icon}       {background-image: url("../image/b_noise#{$icon}.png");}
+.smpl_folder#{$icon}      {background-image: url("../image/b_folder#{$icon}.png");}
 .smpl_perspective#{$icon} {background-image: url("../image/b_perspective#{$icon}.png");}
 .smpl_redeye#{$icon}      {background-image: url("../image/b_redeye#{$icon}.png");}
 .smpl_redo#{$icon}        {background-image: url("../image/b_redo#{$icon}.png");}

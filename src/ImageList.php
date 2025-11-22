@@ -31,35 +31,37 @@ class ImageList {
 	protected $method = "post";
 	protected $icon = "_col";
 	//protected $ImageArray = [ 'avif', 'jpg', 'jpeg', 'JPG', "JPEG", 'png', 'bmp', 'xbm', 'xpm', 'wbmp', 'webp' ];
-	protected $imgedit = false;
-	protected $ImgNumber = 0;  	// the number of showing item (there are hidden items)
-	protected $ImgProps = [];  	// the image properties
-	protected $keywords  = ''; 	// SEO captions into the keywords meta tag
-	protected $lang = "en";    	// Actual language
-	protected $modulepath =''; 	// path of module in filesystem
-	protected $number;         	// Length of a page
-	protected $numitems = 0;
-	protected $order = false;  	// sorting the items
-	protected $path = "";
-	protected $page = 0;       	// No. of actual page
-	protected $pagenumber = 0; 	// number of all pages
-	protected $pagelength = 1;	//length of a page
-	protected $params;         	// copy of params (maybe not the best choice)
-	protected $private;       	// Using private file system
-	protected $request;
-	protected $requestUri = '';
-	protected $root = "";     	// root folder of photoalbum	
-	protected $sess = '';  			//Drupal session handling
-	protected $smplbox = "smplbox"; // It helps to shows the image in a lightbox or colorbox
+	protected $imgedit    = false;
+	protected $ImgNumber  = 0;  	// the number of showing item (there are hidden items)
+	protected $ImgProps   = [];  	// the image properties
+	protected $keywords   = ''; 	// SEO captions into the keywords meta tag
+	protected $lang       = "en"; // Actual language
+	protected $modulepath =''; 	  // path of module in filesystem
+	protected $number;         	  // Length of a page
+	protected $numitems   = 0;
+	protected $order      = false;// sorting the items
+	protected $path       = "";   // relative path to photoalbum folder
+	protected $page       = 0;    // No. of actual page
+	protected $pagenumber = 0; 		// number of pages
+	protected $pagelength = 1;	  // length of a page
+	protected $params;         	  // copy of params (maybe not the best choice)
+	protected $private;       	  // Using private file system
+	protected $request;           // request object
+	protected $requestUri = '';   
+	protected $root      = "";    // root folder of photoalbum	
+	protected $folders   = FALSE; // list of folders
+	protected $subfolder = "";    // path of actual folder 
+	protected $sess      = ''; 	  // Drupal session handling
+	protected $smplbox   = "smplbox"; // It helps to shows the image in a lightbox or colorbox
 	protected $sortorder = 'filename'; // source of compare
-	protected $stat = '';     	// statistics
-	protected $sub = true;			// Enable/disable the subtitles
+	protected $stat = '';     	  // statistics
+	protected $sub = true;			  // Enable/disable the subtitles
 	protected $sumviews = 0;
-	protected $tags = '';    	// keywords and descriptions metatag
-	protected $title = '';   	// Title of page
-	protected $notes = '';		// Notes of page
-	protected $tpl = [];     	// array of templates
-	protected $html5;
+	protected $tags = '';    	    // keywords and descriptions metatag
+	protected $title = '';   	    // Title of page
+	protected $notes = '';		    // Notes of page
+	protected $tpl = [];     	    // array of templates
+	protected $html5;							// using html5 video & audio tags
 
 	//translating
 	protected $translate = false;
@@ -78,7 +80,7 @@ class ImageList {
 	protected $doc = 1;
 	protected $oth = 1;
 	protected $video = 1;
-
+	
 	// Slideshow
 	protected $Slide;
 	protected $interval = 10;
@@ -101,17 +103,17 @@ class ImageList {
 	 * @param array $params
 	 */
 	function __construct(&$params) {		
-		$this->user 	= \Drupal::currentUser();
-
-		$this->request= \Drupal::request();
-		$this->sess   = \Drupal::request()->getSession();	
-		$this->con    = \Drupal::database();
+		$this->user 		= \Drupal::currentUser();
+		$this->request	= \Drupal::request();
+		$this->sess   	= \Drupal::request()->getSession();	
+		$this->con    	= \Drupal::database();
 		
-		//$Items            = [];
+		//$Items          = [];
 		$this->params     = $params;
 		$this->preSettings( $params );		
 		$root             = $this->root;
 		$path             = $this->path;
+		
 		$this->slide_path	= $this->path;
 		$this->access     = $this->RightAccess();
 
@@ -123,14 +125,19 @@ class ImageList {
 			}
 		}
 
+		//List of folder: get folder from Request or session. Check the subfolder
+		if( $this->folders ){
+			$this->subfolder = $this->Subfolder();			
+		}
+
 		// Make an Image object
-		if (!is_dir ( $root . $path )) {
+		if (!is_dir ( $root . $path . $this->subfolder)) {
 			\Drupal::messenger()->addMessage( 
 				$this->t( "Set the right folder in settings of Smplphotoalbum. This is not a folder: " ) . $root . $path.'"'
 			);
 		}
 		
-		$tempfolder = $this->slash( $root . $path . self::TN);
+		$tempfolder = $this->slash( $root . $path  . self::TN);
 
 		$ok = \Drupal::service ( "file_system" )->prepareDirectory ( $tempfolder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS );
 
@@ -139,13 +146,13 @@ class ImageList {
 		}
 
 		// Make thumbnail folders if not exists
-		if (! is_dir ( $this->root . $path . self::TN )) {
-			mkdir ( $this->root . $path . self::TN );
+		if (! is_dir ( $this->root . $path . $this->subfolder . self::TN )) {
+			mkdir ( $this->root . $path . $this->subfolder . self::TN );
 		}
 
 		//Thumbnails refresh
 		if( $this->Request('SmplThumbnails')  && $this->access ) {
-			$this->RefreshFolder($path);
+			$this->RefreshFolder($path . $this->subfolder );
 		}
 		
 		//Upload file enabled		
@@ -311,7 +318,7 @@ class ImageList {
 		$this->imgedit   = $params["imgedit"];	// Image Edit
 		$this->wmpath    = $params["wmpath"];	// Watermark		
 		$this->upload    = $params['upload'];	// Upload enabled | disabled
-
+		$this->folders   = $params['folders']; //List of folders enabled | disabled
 		//checking types of items
 		$this->audio = $params['audio_checking'];
 		$this->video = $params['video_checking'];
@@ -322,9 +329,10 @@ class ImageList {
 		$this->dis   = $params['dis_checking'];
 		$this->html5 = $params['html5_checking']; // Use the html5 widgets
 		$this->url   = $params['url_checking'];
+		
 		$this->title = isset ( $params['title'] ) && !empty( $params[ 'title' ] ) ? '<h2 class="smpl_title">' . $params['title'] . '</h2>' : '';
 		$this->notes = isset ( $params['notes'] ) && !empty( $params[ 'notes' ] ) ? '<div class="smpl_notes">' . $params['notes'] . '</div>' : '';
-
+		
 		// Slideshow
 		if( $this->Request("SmplSlide", false) ){
 			$params['slide'] = true;
@@ -399,9 +407,10 @@ class ImageList {
 	  }
 
 		if( $this->access ){
-			$this->tpl["editform"] = file_get_contents ( $p . "/editform.html.twig" );
-			$this->tpl["imgeditform"] = file_get_contents ( $p . "/imgeditform.html.twig" );
+			$this->tpl["editform"]   = file_get_contents ( $p . "/editform.html.twig" );
+			$this->tpl["imgeditform"]= file_get_contents ( $p . "/imgeditform.html.twig" );
 			$this->tpl["uploadform"] = file_get_contents ( $p . "/uploadform.html.twig" );
+			$this->tpl["folderform"] = file_get_contents ( $p . "/folderform.html.twig" );
 		}else {
 			$this->tpl["editform"] = "";
 			$this->tpl["imgeditform"] = "";
@@ -436,12 +445,40 @@ class ImageList {
 		}
 	}
 
+	// New dFolder makes
+	function NewFolder(){
+		$uid   = $this->Request("smpl_fid"  , "", "POST");
+		$folder= $this->Request("smpl_fname", "", "POST");
+		$sub   = $this->Request("smpl_fsub" , "", "POST");
+		$type  = "folder";
+		$link  = $this->Request("smpl_flink", "", "POST");
+		$time  = $this->Request("smpl_ftime", "", "POST");
+		$size  = $this->Request("smpl_fsize", "", "POST");
+		
+		if(
+			strpos(" " . $folder, ".." ) > 0 || 
+		 	strpos(" " . $folder, ".." ) > 0 || 
+			strpos(" " . $folder, " ") > 0  
+		){
+			 \Drupal::messenger()->addMessage("There is not enable folder name '.$folder' ");
+			 return "-1";
+		};
+
+		$folder = ( substr( $folder, -1 ) != "/" ) ? $folder .= "/": $folder;	
+
+		$uri = str_replace("//","/", $this->root . $this->path . $this->subfolder );
+		$ok = mkdir( $uri, 0777 );
+
+
+		return ($ok ? "1" : "-2");
+	}
+
 	/**
 	 *  File upload
 	 * 
 	 */
 	function Upload(){
-		$smpl_uid   = $this->Request("smpl_uid", "", "POST");
+		$smpl_uid   = $this->Request("smpl_uid"  , "", "POST");
 		$smpl_uname = $this->Request("smpl_uname", "", "POST");
 		$smpl_usub  = $this->Request("smpl_usub" , "", "POST");
 		$smpl_utype = $this->Request("smpl_utype", "", "POST");
@@ -453,7 +490,7 @@ class ImageList {
 		$filename   = $_FILES[ 'smpl_uname']['name'];
 		$tmpname    = $_FILES[ 'smpl_uname']['tmp_name'];
 		$size       = $_FILES[ 'smpl_uname']['size'];
-		$ok         = ($_FILES[ 'smpl_uname']['error'] === 0);
+		$ok         = $_FILES[ 'smpl_uname']['error'] === 0;
 		 		
 		if( !($extok = stripos( $this->extensionstring("all") , pathinfo ( $filename , PATHINFO_EXTENSION ) ) > 0) ){
 			\Drupal::messenger()->addMessage( "Can not upload this file '$smpl_uname' is not enabled file type!", 'warning' );
@@ -465,21 +502,21 @@ class ImageList {
 			$ok = false;
 		}
 
-		$uri = str_replace("//","/", $this->root . $this->path );
+		$uri = str_replace("//","/", $this->root . $this->path . $this->subfolder );
 		
 		if( file_exists ($uri ."/".$filename)){
-			\Drupal::messenger()->addMessage( "Can not upload this file '$filename' to this place: '$this->path' because the file exists!", 'warning' );
+			\Drupal::messenger()->addMessage( "Can not upload this file '$filename' to this place: '$this->path" . $this->subfolder."' because the file exists!", 'warning' );
 			$ok = false;
 		}
 
 		$ok = move_uploaded_file( $tmpname, $uri."/".$filename );
 		if( !$ok ){
-			\Drupal::messenger()->addMessage( "Can not upload this file '$filename'. Maybe the application not enough rights to this place: '$this->path' or other problems!", 'warning' );
+			\Drupal::messenger()->addMessage( "Can not upload this file '$filename'. Maybe the application not enough rights to this place: '" . $this->path. $this->subfolder . "' or other problems!", 'warning' );
 		}
 
 		//Save uploaded data into database
 		if( $ok ){
-			$ok = $this->InsertNewFile( $this->path, $filename, $smpl_usub, $smpl_utype, $smpl_ulink, $smpl_usize, $smpl_utime, (int) ($smpl_uimportance) );
+			$ok = $this->InsertNewFile( $this->path . $this->$subfolder, $filename, $smpl_usub, $smpl_utype, $smpl_ulink, $smpl_usize, $smpl_utime, (int) ($smpl_uimportance) );
 			if($ok){
 				\Drupal::messenger()->addMessage( " '$filename' added into database", 'notice' );
 			}else{
@@ -487,9 +524,10 @@ class ImageList {
 			}
 		}
 		
-		$this->RefreshFolder($this->path);
+		$this->RefreshFolder($this->path . $this->subfolder);
 		return $ok;
 	}
+
 /**
  * Insert new record of item into the table 
  */
@@ -884,12 +922,14 @@ class ImageList {
 								"{{ ImgEditForm }}", 
 								"{{ UploadForm }}",
 								"{{ ImgEditDefault }}",
+								"{{ NewFolderForm }}",
 								"{{ method }}"
 							],
 			        [ $this->tpl["editform"], 
 							  $this->tpl["imgeditform"], 
 								$this->upload ? $this->tpl["uploadform"]: '',
 								$base_path . $this->modulepath . "/image/404.png",
+								$this->folders ? $this->tpl["folderform"]: '',
 								$this->method
 							], $str
 						);										
@@ -1592,5 +1632,30 @@ class ImageList {
 	 */
 	public function slash($p){
 		return str_replace(["\\","//"],'/',$p);
+	}
+	/**
+	 * Check The subfolder syntax 
+	 */
+	function Subfolder(){
+			$this->subfolder = $this->sess->get('subfolder', $this->subfolder );
+			$this->subfolder = $this->slash( $this->subfolder ); // biztonsági ellenőrzés
+			if( $folder_t = $this->Request("subfolder", false )){							
+				$folder_t = $this->slash( trim( $folder_t ) );
+
+				//Is there '..' anywhere when the path longer than 2 characters or is there '_tn_' anywhere
+				if( 
+					( strlen($folder_t) > 2 && strpos(" ".$folder_t, "..") > 1 ) || 
+					( strpos(" ".$folder_t, self::TN) > 1 )
+				)
+				{
+					\Drupal::messenger()->addMessage($this->t('There is invalid folder path in the subfolder path.').": '".$folder_t."'", 'warning' );
+					$folder_t = str_replace( "..", "", $folder_t );
+					$folder_t = str_replace( self::TN, "", $folder_t );
+				}
+
+				// Végződik-e / jellel
+				$folder_t = ( substr( $folder_t, -1 ) != "/" ) ? $folder_t .= "/": $folder_t;				
+				$this->subfolder = $folder_t;
+			}			
 	}
 }

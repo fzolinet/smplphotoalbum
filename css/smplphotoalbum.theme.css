@@ -414,6 +414,10 @@ select {
   background-image: url("../image/b_noise_col.png");
 }
 
+.smpl_folder_col {
+  background-image: url("../image/b_folder_col.png");
+}
+
 .smpl_perspective_col {
   background-image: url("../image/b_perspective_col.png");
 }
@@ -684,6 +688,10 @@ select {
 
 .smpl_noise_bw {
   background-image: url("../image/b_noise_bw.png");
+}
+
+.smpl_folder_bw {
+  background-image: url("../image/b_folder_bw.png");
 }
 
 .smpl_perspective_bw {

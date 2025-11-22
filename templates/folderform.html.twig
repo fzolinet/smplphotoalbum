@@ -1,0 +1,40 @@
+<!-- Folder Form -->
+<div id="SmplFolderForm" class="smpl_folder_form">
+	<form id="SmplFolderForm" name="SmplFolderForm" METHOD="post">
+		<div id="SmplFolderFormInner">
+			<input id="smpl_fid" type="hidden" name="smpl_fid" value="SmplFolderForm" />
+			<div class="smpl_pop_title">
+				<h3>{{ New folder }}</h3>
+				<button id="SmplFolderClose" name="SmplFolderClose" class="smpl_close{{ icon }} smpl_button right_corner" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>					
+				<button id="SmplFolderSubmit" name="SmplFolderSubmit" class="smpl_save{{ icon }} smpl_button right_corner" title="{{ Save }}" value="SmplNewFolderSubmit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</div>
+			<table id="SmplNewFolderTable">
+				<tr>
+					<th colspan='2'>{{ Name }}</th>
+					<th>{{ Value }}</th>
+				</tr>
+				<tr>
+					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_fname">{{ Foldername }}</label></td>
+					<td align="left" valign="top">
+						<input type='file' id="smpl_fname" name="smpl_fname" value="" size="50" maxlength="255" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_ftime">{{ Created }} | {{ Modified }}</label></td>
+					<td align="left"><input type='text' id="smpl_ftime" name="smpl_ftime" value="" readonly="readonly" />&nbsp;						
+					</td>
+				</tr>					
+				<tr>
+					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_fsub">{{ Subtitle }}</label></td>
+					<td align="left" valign="top"><input type='text' id="smpl_fsub" name="smpl_fsub" value="" size="50" maxlength="255"/>&nbsp;						
+					</td>
+				</tr>
+				<tr>
+					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_flink">{{ Url }}</label></td>
+					<td align="left" valign="top"><input id="smpl_flink" type='text' name="smpl_flink" value="" size="50" maxlength="255"/></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+</div>
+<!-- Folder Form -->

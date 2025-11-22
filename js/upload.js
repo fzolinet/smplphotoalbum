@@ -4,13 +4,6 @@
 
 (function ($, Drupal, smpl) {
   //Edit button
-  $('.smpl_upload').mouseover(function () {
-    $(this).css('cursor', 'pointer');
-  });
-
-  $('.smpl_upload').mouseout(function () {
-    $(this).css('cursor', 'default');
-  });
 
   /**
    * Upload command to show / hide the Upload form of properties   
