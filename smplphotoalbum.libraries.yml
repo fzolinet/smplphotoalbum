@@ -31,6 +31,7 @@ smplphotoalbum-edit:
     js/delete.js: {}
     js/edit.js: {}
     js/upload.js: {}    
+    js/folder.js: {}  
     js/editpath.js: {}
     js/img_eyedrop.js: {preprocess: false}
     js/img_distortion.js: {preprocess: false}

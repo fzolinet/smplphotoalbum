@@ -1,8 +1,7 @@
 <!-- Folder Form -->
 <div id="SmplFolderForm" class="smpl_folder_form">
 	<form id="SmplFolderForm" name="SmplFolderForm" METHOD="post">
-		<div id="SmplFolderFormInner">
-			<input id="smpl_fid" type="hidden" name="smpl_fid" value="SmplFolderForm" />
+		<div id="SmplFolderFormInner">			
 			<div class="smpl_pop_title">
 				<h3>{{ New folder }}</h3>
 				<button id="SmplFolderClose" name="SmplFolderClose" class="smpl_close{{ icon }} smpl_button right_corner" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>					
@@ -16,7 +15,7 @@
 				<tr>
 					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_fname">{{ Foldername }}</label></td>
 					<td align="left" valign="top">
-						<input type='file' id="smpl_fname" name="smpl_fname" value="" size="50" maxlength="255" />
+						<input type='text' id="smpl_fname" name="smpl_fname" value="" size="50" maxlength="255" title="Name of folder. Can not use dot, slash, backslash, space characters and js code in the name of folder!" alt="Name of folder"/>
 					</td>
 				</tr>
 				<tr>

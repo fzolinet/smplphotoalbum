@@ -3,8 +3,6 @@
  */
 
 (function ($, Drupal, smpl) {
-  //Edit button
-
   /**
    * Upload command to show / hide the Upload form of properties   
    */
@@ -65,15 +63,13 @@
       link: $("input#smpl_ulink").val(),
       importance: $("input#smpl_uimportance").val(),
     };
-    smpl.progress(true);
 
     // client side validation
     var fname = $("#smpl_uname").val();
-    if (smpl.Validation(fname)) {
+    if (smpl.Validation(fname, true)) {
       return true;
     }
-    smpl.progress(false);
-    smpl.AlertC('Client side validation: Not allowed File type!', 'warning');
+    smpl.AlertC("Client side validation: There is no enabled File name or type: '" + fname + "' !", 'warning');
     return false;
   });
 
@@ -82,8 +78,8 @@
    */
   $("#smpl_uname").change(function () {
     let fname = $(this).val();
-    if (fname.length < 1) {
-      smpl.AlertC('Client side validation: There is no filename!', 'warning');
+    if (!smpl.Validation(fname, true)) {
+      smpl.AlertC("Client side validation: There is no enabled File name or type: '" + fname + "'!", 'warning');
       return;
     }
 
@@ -97,40 +93,22 @@
 
     var tim = document.getElementById('smpl_uname').files[0].lastModified;
     $("input#smpl_utime").val(new Date(tim).toLocaleDateString());
-    var oktype = smpl.Validation(fname);
-    if (!oktype) {
-      smpl.AlertC('Client side validation: Not allowed File type!', 'warning');
-    } else {
-      let ar = fname.split(".");
-      let len = ar.length;
-      let extension = (ar[len - 1]).toLowerCase();
-      if (smpl.images.includes(extension)) {
-        selvalue = "image";
-      } else if (smpl.audio.includes(extension)) {
-        selvalue = "audio";
-      } else if (smpl.audiohtml5.includes(extension)) {
-        selvalue = "audiohtml5";
-      } else if (smpl.video.includes(extension)) {
-        selvalue = "video";
-      } else if (smpl.videohtml5.includes(extension)) {
-        selvalue = "videohtml5";
-      } else if (smpl.application.includes(extension)) {
-        selvalue = "app";
-      } else if (smpl.compressed.includes(extension)) {
-        selvalue = "cmp";
-      } else if (smpl.document.includes(extension)) {
-        selvalue = "doc";
-      } else if (smpl.other.includes(extension)) {
-        selvalue = "other";
-      }
-      $("#smpl_utype option[value=" + selvalue + "]").attr("selected", true);
-    }
-  })
 
-  smpl.Validation = function (fname) {
     let ar = fname.split(".");
     let len = ar.length;
     let extension = (ar[len - 1]).toLowerCase();
-    return smpl.extensions.includes(extension);
-  }
+    let selvalue;
+    if (smpl.images.includes(extension)) selvalue = "image";
+    else if (smpl.audio.includes(extension)) selvalue = "audio";
+    else if (smpl.audiohtml5.includes(extension)) selvalue = "audiohtml5";
+    else if (smpl.video.includes(extension)) selvalue = "video";
+    else if (smpl.videohtml5.includes(extension)) selvalue = "videohtml5";
+    else if (smpl.application.includes(extension)) selvalue = "app";
+    else if (smpl.compressed.includes(extension)) selvalue = "cmp";
+    else if (smpl.document.includes(extension)) selvalue = "doc";
+    else if (smpl.other.includes(extension)) selvalue = "other";
+
+    $("#smpl_utype option[value=" + selvalue + "]").attr("selected", true);
+  })
+
 })(jQuery, Drupal, smpl);

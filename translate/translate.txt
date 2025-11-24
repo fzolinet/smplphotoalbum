@@ -46,6 +46,7 @@ Correction
 Correction Strength
 This text saved into the Copyright IPTC/exif field of image only jpeg file
 This text saved into the Author / owner IPTC field of image only jpeg file
+Created
 Creator
 Crop
 cropped
@@ -89,6 +90,7 @@ Fisheye
 Flip
 Flip vertically
 Flip horizontally
+Foldername
 Frame
 Frame color
 fsize

@@ -15,9 +15,9 @@
 
   // Upload Window open
   $("#SmplFolder").click(function (e) {
-    let pos = $("#SmpFolder").offset();
+    let pos = $("#SmplFolder").offset();
     let dy = parseFloat($("html").css("font-size")) * 5;
-    SmplfolderForm.show();
+    SmplFolderForm.show();
     let w = SmplFolderForm.width();
     let ww = window.innerWidth;
     pos.left = (ww - w) * 0.5;
@@ -29,6 +29,12 @@
     SmplFolderForm.offset({ top: pos.top + dy, left: pos.left });
   });
 
+  $("#smpl_fname").change(function () {
+    let fname = $(this).val();
+    if (!smpl.Validation(fname, false)) {
+      smpl.AlertC("Client side validation: There is no enabled folder name: '" + fname + "' !", 'warning');
+    }
+  });
   /**
    * click on cancel button of windows of properties
    * @return false
@@ -55,8 +61,9 @@
     // - It can't is empty
     // - Disabled character '.'
     // - Can not in space
-    if (fname.length < 1 || fname.includes(".") || fname.includes(" ")) {
-      smpl.AlertC('Client side validation: There is no enabled folder name !', 'warning');
+    // - script
+    if (!smpl.Validation(fname)) {
+      smpl.AlertC("Client side validation: There is no enabled folder name: '" + fname + "' !", 'warning');
       return false;
     }
 

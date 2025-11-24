@@ -32,6 +32,37 @@ function fz_t(data, show = -1) {
     e.style.display = 'none';
   }
 }
+
+
+/**
+  * Filename and extension validation
+  * @param {string} fname 
+  * @param {string} ext 
+  * @return
+  */
+smpl.Validation = function (fname, ext) {
+  // Too short
+  if (fname.length < 1) return false;
+  if (ext) {
+    let ar = fname.split(".");
+    fname = ar[0];
+  }
+  //
+  const disabled = " .<>|([]{},\/áéíóöőúüűÁÉÍÓÖŐÚŰ ";
+  let i = 0;
+  while (i < disabled.length && !fname.includes(disabled.substring(i, i + 1))) {
+    i++;
+  }
+  if (i < disabled.length) return false;
+
+  // Dont check the extension
+  if (typeof ext === undefined || !ext) return true;
+
+  //extension checking    
+  let extension = (ar[ar.length - 1]).toLowerCase();
+  return smpl.extensions.includes(extension);
+}
+
 /**
  * Get cookie
  * @returns false
@@ -49,6 +80,7 @@ smpl.getcookie = function (name) {
   }
   return false;
 }
+
 
 /**
  * Setcookie
@@ -222,8 +254,6 @@ function setDivInWindow(w, pos) {
     $("div.swal-modal").removeClass("smpl-message-notes");
     $("div.swal-modal").addClass("smpl-message-warning");
   }
-
-
 
   /**
     * ErrorC - Error alert

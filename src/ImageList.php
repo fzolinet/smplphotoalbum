@@ -16,6 +16,7 @@ class ImageList {
 	const SMPLADMIN = 'smpllist';
 	const SMPLTEST = false;
 	const TN = '_tn_/';
+	protected $temp = '';	// Temporary editing file
 	public $Items = [];
 	protected $ascdesc = "asc"; // sorting order ascending or descending
 	protected $author    = "PiQasso Group";
@@ -127,7 +128,7 @@ class ImageList {
 
 		//List of folder: get folder from Request or session. Check the subfolder
 		if( $this->folders ){
-			$this->subfolder = $this->Subfolder();			
+			$this->NewFolder();
 		}
 
 		// Make an Image object
@@ -445,31 +446,43 @@ class ImageList {
 		}
 	}
 
-	// New dFolder makes
-	function NewFolder(){
-		$uid   = $this->Request("smpl_fid"  , "", "POST");
-		$folder= $this->Request("smpl_fname", "", "POST");
+	// New Folder makes
+	function NewFolder(){		
+		$fname = $this->Request("smpl_fname", "", "POST");
 		$sub   = $this->Request("smpl_fsub" , "", "POST");
 		$type  = "folder";
 		$link  = $this->Request("smpl_flink", "", "POST");
 		$time  = $this->Request("smpl_ftime", "", "POST");
 		$size  = $this->Request("smpl_fsize", "", "POST");
 		
-		if(
-			strpos(" " . $folder, ".." ) > 0 || 
-		 	strpos(" " . $folder, ".." ) > 0 || 
-			strpos(" " . $folder, " ") > 0  
-		){
-			 \Drupal::messenger()->addMessage("There is not enable folder name '.$folder' ");
-			 return "-1";
-		};
+		$this->subfolder = $this->sess->get('subfolder', $this->subfolder );
+		$this->subfolder = $this->slash( $this->subfolder ); // biztonsági ellenőrzés
+		
+		if (empty( $fname ) ) return $false;
+		
+		$fname = $this->slash( trim( $fname ) );
 
-		$folder = ( substr( $folder, -1 ) != "/" ) ? $folder .= "/": $folder;	
+		$ok = $this->Validation( $fname ); // folder name validation 
+		if( !$ok )
+		{
+			\Drupal::messenger()->addMessage( $this->t("There is disabled folder path in the subfolder path.'").": '$fname'", 'error' );
+			return false;
+		}
 
-		$uri = str_replace("//","/", $this->root . $this->path . $this->subfolder );
+		// Végződik-e / jellel						
+		$uri = str_replace("//","/", $this->root . $this->path . $this->subfolder . $fname );
+		if(is_dir($uri)){
+			\Drupal::messenger()->addMessage( $this->t("This subfolder already exists: ") ." '$fname'", 'error' );			
+			return false;
+		}
 		$ok = mkdir( $uri, 0777 );
-
-
+		$tim = time();
+		if(!$ok){
+			\Drupal::messenger()->addMessage( $this->t("Can not make this subfolder. Maybe the permission is the problem')") .": '$fname'", 'error' );
+			return false;
+		}
+		$this->InsertNewfile( $this->path . $this->$subfolder, $fname , $sub , $type , $link, 0, $tim, 0 );
+		$this->RefreshFolder( $this->path . $this->subfolder );
 		return ($ok ? "1" : "-2");
 	}
 
@@ -477,8 +490,7 @@ class ImageList {
 	 *  File upload
 	 * 
 	 */
-	function Upload(){
-		$smpl_uid   = $this->Request("smpl_uid"  , "", "POST");
+	function Upload(){		
 		$smpl_uname = $this->Request("smpl_uname", "", "POST");
 		$smpl_usub  = $this->Request("smpl_usub" , "", "POST");
 		$smpl_utype = $this->Request("smpl_utype", "", "POST");
@@ -530,13 +542,26 @@ class ImageList {
 
 /**
  * Insert new record of item into the table 
+ * @param string $path  - path of item
+ * @param string $name  - file or folder name
+ * @param string $sub   - subtitle
+ * @param string $type  - type of item
+ * @param string $link  - Link if has
+ * @param integer $size - size in bytes
+ * @param integer $tim  - Modified or created time
+ * @return int - last id in the table
  */
 	function InsertNewfile( $path ="/", $name = "", $sub = "", $type ="", $link = "", $size = 0, $tim = 0, $importance = 0){
-		$tim .= "#";
-		$tim = str_replace(".#","", $tim);
-		$tim = str_replace([' ','.'],['','-'],$tim);
-		$date = date_create($tim);
-		$timstamp = date_timestamp_get($date); 
+		if( is_string($tim) ){
+			$tim .= "#";
+			$tim = str_replace(".#","", $tim);
+			$tim = str_replace( [' ','.'], ['','-'], $tim);
+			$date = date_create($tim);
+			$timestamp = date_timestamp_get($date); 
+		}else{
+			$timestamp = $tim;
+		}
+	
 		try{
 			$last_id = $query = $this->con->Insert('smplphotoalbum')
 				->fields([
@@ -546,7 +571,7 @@ class ImageList {
 					'subtitle' => $sub,
 					'link'     => $link,
 					'size'     => $size,
-					'modified' => $timstamp,
+					'modified' => $timestamp,
 					'importance' => $importance
 				])->execute();
 		}	catch( \Throwable $e ){
@@ -639,7 +664,7 @@ class ImageList {
 				$msg .= "Datas of '".$name."' updated";
 			}			
 		}elseif ($db == 0 ){
-			$type = $this->type( $name );
+			$type = $this->Type( $name );
 			$size = filesize( $source );
 			$time = filemtime( $source );
 			$qry = $this->con->insert("smplphotoalbum")
@@ -1521,8 +1546,11 @@ class ImageList {
 		return stripos( $this->params ["dis_extensions"], pathinfo ( $entry, PATHINFO_EXTENSION ) ) > 0;
 	}
 
-		/**
+	/**
 	 * Extensions string
+	 * @param string $p  - Wich type check
+	 * @param boolean $ar - Extensions give baack in array not string
+	 * @return string|array extensions
 	 */
 	function extensionstring( $p = "", $ar = false ){		
 		if ( $p == "all" ){
@@ -1549,29 +1577,23 @@ class ImageList {
 		return $this->params[ $p."_extensions" ];
 	}
 
-	function type($entry) {
-		if ($this->isimage ( $entry ))
-			$type = "image";
-		elseif ($this->isaudiohtml5 ( $entry ))
-			$type = "audiohtml5";
-		elseif ($this->isaudio ( $entry ))
-			$type = "audio";
-		elseif ($this->isvideohtml5 ( $entry ))
-			$type = "videohtml5";
-		elseif ($this->isvideo ( $entry ))
-			$type = "video";
-		elseif ($this->isdoc ( $entry ))
-			$type = "doc";
-		elseif ($this->iscmp ( $entry ))
-			$type = "cmp";
-		elseif ($this->isapp ( $entry ))
-			$type = "app";
-		elseif ($this->isoth ( $entry ))
-			$type = "oth";
-		elseif ($this->isdis ( $entry ))
-			$type = "dis";
-		else
-			$type = "dis";
+	/**
+	 * Filetype
+ 	 * @param $entry
+	 * @return type
+ 	 */
+	function Type($entry) {
+		if ($this->isimage ( $entry )) $type = "image";
+		elseif ($this->isaudiohtml5 ( $entry ))	$type = "audiohtml5";
+		elseif ($this->isaudio ( $entry )) $type = "audio";
+		elseif ($this->isvideohtml5 ( $entry ))	$type = "videohtml5";
+		elseif ($this->isvideo ( $entry )) $type = "video";
+		elseif ($this->isdoc ( $entry )) $type = "doc";
+		elseif ($this->iscmp ( $entry )) $type = "cmp";
+		elseif ($this->isapp ( $entry )) $type = "app";
+		elseif ($this->isoth ( $entry )) $type = "oth";
+		elseif ($this->isdis ( $entry )) $type = "dis";
+		else $type = "dis";
 		return $type;
 	}
 
@@ -1633,29 +1655,32 @@ class ImageList {
 	public function slash($p){
 		return str_replace(["\\","//"],'/',$p);
 	}
+
 	/**
-	 * Check The subfolder syntax 
+	 * Filename / Subfolder name validation
 	 */
-	function Subfolder(){
-			$this->subfolder = $this->sess->get('subfolder', $this->subfolder );
-			$this->subfolder = $this->slash( $this->subfolder ); // biztonsági ellenőrzés
-			if( $folder_t = $this->Request("subfolder", false )){							
-				$folder_t = $this->slash( trim( $folder_t ) );
+	function Validation($fname, $ext = false){
+		if (strlen($fname) < 1) return false;
+  	if ($ext) {
+    	$ar = str_split($fname);
+      $fname = ar[0];			
+  	}
+		// Disabled subfolder name
+		if( $fname == Self::TN || $fname == $this->temp ) return false;
+  	//
+  	$disabled = " .<>|([]{},\/áéíóöőúüű ";
+  	$i = 0;
+  	while ( $i < strlen( $disabled ) && ! stripos( $fname, substr( $disabled, $i, 1 ) ) ) {
+    	$i++;
+  	}
+  	if ($i < strlen($disabled)) return false;
 
-				//Is there '..' anywhere when the path longer than 2 characters or is there '_tn_' anywhere
-				if( 
-					( strlen($folder_t) > 2 && strpos(" ".$folder_t, "..") > 1 ) || 
-					( strpos(" ".$folder_t, self::TN) > 1 )
-				)
-				{
-					\Drupal::messenger()->addMessage($this->t('There is invalid folder path in the subfolder path.').": '".$folder_t."'", 'warning' );
-					$folder_t = str_replace( "..", "", $folder_t );
-					$folder_t = str_replace( self::TN, "", $folder_t );
-				}
+  // Dont check the extension
+  if ( !$ext) return true;
 
-				// Végződik-e / jellel
-				$folder_t = ( substr( $folder_t, -1 ) != "/" ) ? $folder_t .= "/": $folder_t;				
-				$this->subfolder = $folder_t;
-			}			
+  //extension checking    
+  $extension = strtolower ( $ar[strlen($ar) - 1] );
+	$ExtString = $this->extensionstring("all", false );
+  return stripos($extension, $ExtString);
 	}
 }

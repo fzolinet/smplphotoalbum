@@ -908,7 +908,9 @@ button#SmplImgEditFormSaveAsCancel {
 }
 
 /* visibility, position, etc*/
-div#SmplEditForm, div#SmplUploadForm {
+div#SmplEditForm,
+div#SmplUploadForm,
+div#SmplFolderForm {
   display: none;
   z-index: 2;
   justify-content: center;
@@ -920,24 +922,27 @@ div#SmplEditForm, div#SmplUploadForm {
 
 /*--------- EditForm --------------*/
 div#SmplEditForm > table > tr > td,
-div#SmplUploadForm > table > tr > td {
+div#SmplUploadForm > table > tr > td div#Smplfolderform > table > tr > td {
   text-align: left;
 }
 
-div#SmplEditFormData, div#SmplUploadFormData {
+div#SmplEditFormData,
+div#SmplUploadFormData,
+div#SmplFolderFormData {
   border: 0;
   padding: 0;
   margin: 0;
 }
 
-/* ---------- UploadForm ------------------- */
+/* ---------- UploadForm, FolderForm ------------------- */
 #smpl_uname {
   padding: 0 !important;
   border: 0 !important;
   background-color: transparent !important;
 }
 
-#SmplUploadTable {
+#SmplUploadTable,
+#SmplFolderTable {
   margin-block-start: 0;
   margin-block-end: 0;
 }
@@ -947,6 +952,7 @@ div#SmplEditFormData, div#SmplUploadFormData {
 .smpl_edit_form,
 .smpl_imgedit_form,
 .smpl_upload_form,
+.smpl_folder_form,
 .smpl_desc_info,
 #smpl_stat_table,
 .smpl_help {
