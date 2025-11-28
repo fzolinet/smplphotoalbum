@@ -218,8 +218,8 @@ class ImageList {
 		
 		// ORDER BY
     if($this->folders){
-			$query->addExpression("STRCMP( typ , 'folder' )", 'folder');
-			$query->orderBy( "folder", $this->ascdesc );
+			$query->addExpression("IF( STRCMP( typ, 'folder' ),1,0) ", 'fldorder');
+			$query->orderBy( "fldorder", $this->ascdesc );
 		}
 
 		if($this->params['important'] ){
@@ -251,7 +251,8 @@ class ImageList {
 	
 //---------------------------------------
 		$RSArray = $rs->fetchAllAssoc('id');
-		// number of records		
+		// number of records	
+		fz_t($RSArray);	
 		$db = 0;
 		foreach( $RSArray AS $id => $RS ){
 			if ( !file_exists( $this->slash( $this->root . $this->path . $RS->name ) ) ){
@@ -606,7 +607,7 @@ class ImageList {
 
 		//
 		foreach( $names AS $i => $name ){
-			$msg = $this->ChkItem2DB( $name, $path . $subfolder );
+			$msg = $this->ChkItemInDB( $name, $path . $subfolder );
 			\Drupal::messenger ()->addMessage ( $msg , "status");
 		}
 
@@ -637,7 +638,7 @@ class ImageList {
 	 * @param string $path path of source item	 
 	 * @return string;
    */
-	function ChkItem2DB( $name, $path ){				
+	function ChkItemInDB( $name, $path ){				
 		$msg = "";
 		// Thumbnails
 		$source = $this->slash( $this->root . $path . $name);
@@ -704,6 +705,13 @@ class ImageList {
 		return $msg;
 	}
 
+	/**
+	 * Is there thumbnail of item
+ 	 * @param string $name - name of item
+	 * @param string $source - source path
+	 * @param string $thumbnail - thumbnail
+	 * @return string;
+	 */
 	function CheckThumbnail( $name, $source, $thumbnail ){
 		
 		$msg ="";
@@ -725,6 +733,7 @@ class ImageList {
 		}
 		return $msg;
 	}
+
 	/**
 	 * Update thumbnail if the original image is changed
 	 * @param string $name - name of item
@@ -1624,7 +1633,7 @@ class ImageList {
 	 * @return string
 	 */
 	public function testImageInDB(string $entry, string $type, string $path){
-		$id = $this->ChkItem2DB ( $entry, $path );
+		$id = $this->ChkItemInDB ( $entry, $path );
 		return ($id > 0 ? 'ok, id: '.$id : 'false');
 	}
 
