@@ -87,6 +87,9 @@ class Image {
 			case 'videohtml5' : $str = ($this->html5)? $this->RenderHTML5Video() : $this->RenderOther(); break;
 			case 'audio'     	: $str = $this->RenderOther(); break;
 			case 'audiohtml5' : $str = ( $this->html5 )? $this->RenderHTML5Audio(): $this->RenderOther();	break;
+			case 'folder'     : 
+				$str = $this->RenderFolder();	
+				break;
 			default : $str = $this->RenderOther();
 		}
 	
@@ -282,6 +285,35 @@ class Image {
 				$this->Importance()
 		];
 		
+		$str = $this->tpl;
+		return str_replace( $s, $r, $str );
+	}
+	
+	function RenderFolder() {
+		// href to file
+		$href = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . "&n=" . $this->name;
+		$linktn = $href .".png". "&tn=1";
+		
+		// max width
+		$style = ($this->width == "" ? "" : "max-width:" . $this->width . "px;");
+		$s = [
+				"{{ id }}",
+				"{{ title }}",
+				"{{ href }}",
+				"{{ linktn }}",
+				"{{ subtitle }}",
+				"{{ style }}",
+				"{{ importance }}"
+		];
+		$r = [
+				$this->id,
+				$this->name,
+				$href,
+				$linktn,
+				$this->subtitle ,
+				$style,
+				$this->Importance()
+		];
 		$str = $this->tpl;
 		return str_replace( $s, $r, $str );
 	}

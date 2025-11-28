@@ -114,10 +114,8 @@ class FilterSmplphotoalbum extends FilterBase {
 
       if( $this->params["graphicdrv"]== "imagick" && extension_loaded ( "imagick" )) {
         $this->params["graphicdrv"] = "imagick";
-
       }else{
         $this->params["graphicdrv"] = "gd";
-
       }
       //
       $this->sess->set('graphicdrv', $this->params["graphicdrv"]);      
@@ -236,7 +234,8 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['slidestyle'] = 'none';
     $this->params['translate']  = false;
     $this->params['lang']       = 'en';
-    $this->params['methods']    = 'POST';   
+    $this->params['methods']    = 'POST';
+    $this->params['folders']    = ($this->params['folders'] === 1 ? true: false);
     
     if (! isset ( $this->params['icon'] )) {
       $this->params['icon'] = '_col';

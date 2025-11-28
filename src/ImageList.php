@@ -127,8 +127,8 @@ class ImageList {
 		}
 
 		//List of folder: get folder from Request or session. Check the subfolder
-		if( $this->folders ){
-			$this->NewFolder();
+		if( $this->folders && $this->access  && ( $fname = $this->Request("smpl_fname", "", "POST") ) ){
+			if( !empty( $fname ) ) $this->NewFolder( $fname );
 		}
 
 		// Make an Image object
@@ -138,7 +138,7 @@ class ImageList {
 			);
 		}
 		
-		$tempfolder = $this->slash( $root . $path  . self::TN);
+		$tempfolder = $this->slash( $this->root . $this->path  . self::TN);
 
 		$ok = \Drupal::service ( "file_system" )->prepareDirectory ( $tempfolder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS );
 
@@ -147,13 +147,13 @@ class ImageList {
 		}
 
 		// Make thumbnail folders if not exists
-		if (! is_dir ( $this->root . $path . $this->subfolder . self::TN )) {
-			mkdir ( $this->root . $path . $this->subfolder . self::TN );
+		if (! is_dir ( $this->root . $this->path . $this->subfolder . self::TN )) {
+			mkdir ( $this->root . $this->path . $this->subfolder . self::TN );
 		}
 
 		//Thumbnails refresh
 		if( $this->Request('SmplThumbnails')  && $this->access ) {
-			$this->RefreshFolder($path . $this->subfolder );
+			$this->RefreshFolder( $this->path , $this->subfolder );
 		}
 		
 		//Upload file enabled		
@@ -171,7 +171,7 @@ class ImageList {
 		$query -> fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified', 'importance' ]);				
 
 		//WHERE  path = 
-		$pathCond = $query->condition( 'path', $path, "=" );		
+		$pathCond = $query->condition( 'path', $path . $this->subfolder , "=" );		
 
 		// where type in[]
 		if( $this->slide ){
@@ -190,6 +190,7 @@ class ImageList {
 			if( $this->cmp ) $wherein[] = 'cmp';
 			if( $this->app ) $wherein[] = 'app';
 			if( $this->dis ) $wherein[] = 'dis';
+			if( $this->folders ) $wherein[] = "folder";
 			$wherein[] = '--';
 		};
 
@@ -216,6 +217,10 @@ class ImageList {
 		if($this->page <0 ) $this->page = 0;
 		
 		// ORDER BY
+    if($this->folders){
+			$query->addExpression("STRCMP( typ , 'folder' )", 'folder');
+			$query->orderBy( "folder", $this->ascdesc );
+		}
 
 		if($this->params['important'] ){
 			$query->orderBy( 'importance', 'DESC');		
@@ -231,11 +236,10 @@ class ImageList {
 				case 'vi' : $order = "viewnumber"; break;
 				case 'ty' : $order = "typ"; break;
 				case 'si' : $order = "size"; break;
-				case 'da' : $order = "modified"; break;
+				case 'da' : $order = "modified"; break;				
 			}			
 			$query->orderBy( $order, $this->ascdesc );			
 		}
-
 		//LIMIT
 		if( $this->page < 0 ) {
 			$this->page = 0;
@@ -260,6 +264,7 @@ class ImageList {
 			elseif ( $type == "videohtml5" || $type == "video" ) $tpl = $this->tpl ["videohtml5"];
 			elseif ( $type == "audio" )			$tpl = $this->tpl ["audio"];
 			elseif ( $type == "audiohtml5") $tpl = $this->tpl ["audiohtml5"];
+			elseif ( $type == "folder")     $tpl = $this->tpl ["folder"];
 			else														$tpl = $this->tpl ["other"];
 			
 			$this->Items [$db] = new Image (
@@ -412,6 +417,7 @@ class ImageList {
 			$this->tpl["imgeditform"]= file_get_contents ( $p . "/imgeditform.html.twig" );
 			$this->tpl["uploadform"] = file_get_contents ( $p . "/uploadform.html.twig" );
 			$this->tpl["folderform"] = file_get_contents ( $p . "/folderform.html.twig" );
+			$this->tpl["folder"]     = file_get_contents ( $p . "/folder.html.twig" );
 		}else {
 			$this->tpl["editform"] = "";
 			$this->tpl["imgeditform"] = "";
@@ -447,8 +453,7 @@ class ImageList {
 	}
 
 	// New Folder makes
-	function NewFolder(){		
-		$fname = $this->Request("smpl_fname", "", "POST");
+	function NewFolder( $fname ){				
 		$sub   = $this->Request("smpl_fsub" , "", "POST");
 		$type  = "folder";
 		$link  = $this->Request("smpl_flink", "", "POST");
@@ -482,7 +487,7 @@ class ImageList {
 			return false;
 		}
 		$this->InsertNewfile( $this->path . $this->$subfolder, $fname , $sub , $type , $link, 0, $tim, 0 );
-		$this->RefreshFolder( $this->path . $this->subfolder );
+		$this->RefreshFolder( $this->path , $this->subfolder );
 		return ($ok ? "1" : "-2");
 	}
 
@@ -536,7 +541,7 @@ class ImageList {
 			}
 		}
 		
-		$this->RefreshFolder($this->path . $this->subfolder);
+		$this->RefreshFolder($this->path , $this->subfolder);
 		return $ok;
 	}
 
@@ -565,13 +570,13 @@ class ImageList {
 		try{
 			$last_id = $query = $this->con->Insert('smplphotoalbum')
 				->fields([
-					'path'     => $path,
-					'name'     => $name,
-					'typ'      => $type,
-					'subtitle' => $sub,
-					'link'     => $link,
-					'size'     => $size,
-					'modified' => $timestamp,
+					'path'       => $path,
+					'name'       => $name,
+					'typ'        => $type,
+					'subtitle'   => $sub,
+					'link'       => $link,
+					'size'       => $size,
+					'modified'   => $timestamp,
 					'importance' => $importance
 				])->execute();
 		}	catch( \Throwable $e ){
@@ -586,31 +591,36 @@ class ImageList {
 	 * @param string $path - actual path
 	 * @return void
 	 */
-	function RefreshFolder( $path ) {		
+	function RefreshFolder( $path, $subfolder ) {		
 		
 		//Load every items and delete folders
 		$names = scandir( $this->root . $path );		
 		unset ( $names [array_search ( '.', $names )] );
-		unset ( $names [array_search ( '..', $names )] );
-		$tn = str_replace("/","",self::TN);
+
+		if( empty( $subfolder ) ){
+			unset ( $names [array_search ( '..', $names )] );
+		}
+		
+		$tn = str_replace("/","", self::TN );
 		unset ( $names [array_search ( str_replace( "/", "", self::TN ), $names )] );		
 
 		//
 		foreach( $names AS $i => $name ){
-			$msg = $this->ChkItem2DB( $name, $path);
+			$msg = $this->ChkItem2DB( $name, $path . $subfolder );
 			\Drupal::messenger ()->addMessage ( $msg , "status");
 		}
 
 		// database names into array
 		$sql = "SELECT `id`, `name` FROM {smplphotoalbum} WHERE `path`= :path; ";
-		$rs = $this->con->query( $sql, [':path' => $path] );
+		$rs = $this->con->query( $sql, [':path' => $path . $subfolder] );
 		$dbnames = $rs->fetchAllAssoc('id');
 
 		// Delete orphan row from database
 		$sql = "DELETE FROM {smplphotoalbum} WHERE path= :path AND id = :id";		
-		foreach($dbnames AS $id => $dbname){			
+
+		foreach( $dbnames AS $id => $dbname ){			
 			if( !array_search( $dbname->name, $names ) ){
-				$this->con->query($sql, [":path" => $path, ":id" => $id ]);
+				$this->con->query($sql, [":path" => $path . $subfolder , ":id" => $id ]);
 				\Drupal::messenger ()->addMessage ( "Delete from database: '$dbname->name'", "status");
 			}
 		}
@@ -630,8 +640,8 @@ class ImageList {
 	function ChkItem2DB( $name, $path ){				
 		$msg = "";
 		// Thumbnails
-		$source = $this->slash( $this->root . $this->path . $name);
-		$thumbnail = $this->slash( $this->root . $this->path . self::TN . $name );
+		$source = $this->slash( $this->root . $path . $name);
+		$thumbnail = $this->slash( $this->root . $path . self::TN . $name );
 		
 		$msg .= $this->CheckThumbnail($name, $source, $thumbnail);
 		
@@ -922,13 +932,8 @@ class ImageList {
 			$strjs 
 		);
 
-		$strjs = str_replace([""],[],$strjs);
-
-		$strjs = str_replace(
-			[],
-			[],
-			$strjs
-		);
+		$strjs = str_replace([""],[],$strjs );
+		$strjs = str_replace( [], [], $strjs );
 
 		$str = $this->tpl["smplphotoalbum"];
 		
@@ -1008,6 +1013,7 @@ class ImageList {
 		$this->Recognition( $str );
 
 		$str = str_replace("{{ Constrain_aspect_ratio }}", $this->words['Constrain aspect ratio'], $str);
+
 		$s = [ ];
 		$r = [ ];
 
@@ -1546,6 +1552,10 @@ class ImageList {
 		return stripos( $this->params ["dis_extensions"], pathinfo ( $entry, PATHINFO_EXTENSION ) ) > 0;
 	}
 
+	public function isfolder($entry){
+		$p = realpath($this->root . $this->path . $this->subfolder . $entry );
+		return is_dir( $p );
+	}
 	/**
 	 * Extensions string
 	 * @param string $p  - Wich type check
@@ -1584,6 +1594,7 @@ class ImageList {
  	 */
 	function Type($entry) {
 		if ($this->isimage ( $entry )) $type = "image";
+		elseif ($this->isfolder ( $entry )) $type = "folder";
 		elseif ($this->isaudiohtml5 ( $entry ))	$type = "audiohtml5";
 		elseif ($this->isaudio ( $entry )) $type = "audio";
 		elseif ($this->isvideohtml5 ( $entry ))	$type = "videohtml5";
@@ -1591,8 +1602,8 @@ class ImageList {
 		elseif ($this->isdoc ( $entry )) $type = "doc";
 		elseif ($this->iscmp ( $entry )) $type = "cmp";
 		elseif ($this->isapp ( $entry )) $type = "app";
-		elseif ($this->isoth ( $entry )) $type = "oth";
-		elseif ($this->isdis ( $entry )) $type = "dis";
+		elseif ($this->isoth ( $entry )) $type = "oth";		
+		elseif ($this->isdis ( $entry )) $type = "dis";		
 		else $type = "dis";
 		return $type;
 	}

@@ -95,6 +95,9 @@ GD
 
 History:
 ~~~~~~~
+2025.11.26 - 1.9.7-alfa1
+- Új mappa létrehozása interface-ből
+
 2025.11.18 - 1.9.6-beta2
 - sweetalert.min.js: smpl.AlertC, smpl.ErrorC
 - When the important checked, then the first order is the:important desc
