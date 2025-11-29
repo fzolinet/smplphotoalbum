@@ -575,42 +575,46 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $id
    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
    */
-  public function v($id = -1) {
+  public function v( $id = -1 ) {
     
     // search path
     $name = $this->Request("n","");
-    $path = $this->Request("p","");
+    $path = $this->Request("p","");    
     $tn   = $this->Request("tn","");
     
     if(empty( $path ) || empty( $name )) {
       return new BinaryFileResponse( $this->mp . "/image/404.png" );
     }
 
-    if(!empty( $tn )) {
-      $p = $this->tn( $path, $name );
-    } else {
-      $con = \Drupal::database();
-      $rs = $con->select( "smplphotoalbum", "s" )
-                ->fields( "s", ['path','name'] )
-                ->condition( 'id', $id, '=' )
-                ->execute();
-      $record = $rs->fetchAssoc();
+    if($name != ".."){
+      if(!empty( $tn )) {
+        $p = $this->tn( $path, $name );
+      } else {
+        $con = \Drupal::database();
+        $rs = $con->select( "smplphotoalbum", "s" )
+                  ->fields( "s", ['path','name'] )
+                  ->condition( 'id', $id, '=' )
+                  ->execute();
+        $record = $rs->fetchAssoc();
 
-      if(empty( $record )) {
-        return new BinaryFileResponse( $this->mp . "/image/404.png" );
-      }
-      $p = $this->root . $path . $name;
+        if(empty( $record )) {
+          return new BinaryFileResponse( $this->mp . "/image/404.png" );
+        }
+        $p = $this->root . $path . $name;
       
-      $con->update('smplphotoalbum')
-          ->expression( "viewnumber", "viewnumber + 1" )
-          ->fields( [ "viewnumber" => 0 ] )
-          ->condition( "id", $id, "=" )
-          ->execute();
+        $con->update('smplphotoalbum')
+            ->expression( "viewnumber", "viewnumber + 1" )
+            ->fields( [ "viewnumber" => 0 ] )
+            ->condition( "id", $id, "=" )
+            ->execute();
 
-      // Watermark if you want depends of type of file
-      if($this->isimage( $p ) && $this->sess->get("wm", false)) {
-        $p = $this->watermarkonfly( $id, $p );
+        // Watermark if you want depends of type of file
+        if($this->isimage( $p ) && $this->sess->get("wm", false)) {
+          $p = $this->watermarkonfly( $id, $p );
+        }
       }
+    }else{
+      $p = $this->mp . "/image/folderup.png";
     }
 
     $response = new BinaryFileResponse( $p );

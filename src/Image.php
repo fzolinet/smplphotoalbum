@@ -3,6 +3,7 @@ namespace Drupal\smplphotoalbum;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 class Image {
+	const TN = '_tn_/';
 	protected $ascdesc = 'asc'; // order: asc or desc
 	protected $edit = false;	
 	public 		$entry = '';      // The name of file
@@ -34,11 +35,12 @@ class Image {
 	public    $viewnumber = 0; // View number
 	protected $width;          // Width of items
 	protected $words = [];     // translations
+	protected $subfolder = ''; // Sub folder
 	
 	use StringTranslationTrait;
 	
 	// Constructor
-	Function __construct($id, $subtitle, $viewnumber, $link, &$params, &$words, $entry = '', $importance = 0 , $type = 'image', $tpl = '') {
+	Function __construct($id, $subtitle, $viewnumber, $link, &$params, &$words, $entry = '', $importance = 0 , $type = 'image', $tpl = '', $subfolder = '') {
 		global $base_url;
 
 		$this->ascdesc    = $params ['ascdesc'];
@@ -56,11 +58,13 @@ class Image {
 		$this->modulepath = $params ['modulepath'];
 		$this->name 			= $entry;
 		$this->viewnumber = $viewnumber;
-		$this->path 			= $params ['path'];
-		$this->root 			= $params ['root'];		
-		$this->smplbox 		= $params ['smplbox']; // It helps to vie an image in a lightbox or colorbox layer
-		$this->sortorder 	= $params ['sortorder'];		
+		$this->root 			= $params ['root'];			// root of photoalbums
+		$this->path 			= $params ['path'];		  // folder from the root of photoalbum
+		$this->subfolder  = $subfolder;						// subfolder
+		$this->smplbox 		= $params ['smplbox'];	// It helps to vie an image in a lightbox or colorbox layer
+		$this->sortorder 	= $params ['sortorder' ];		
 		$this->sub 				= $params ['sub'];
+		
 		$this->subtitle   = $subtitle;								
 		$this->test 			= $params ["test"];
 		$this->thdate 		= @filemtime ( $params ['root'] . $params ['path'] . $entry );
@@ -87,9 +91,7 @@ class Image {
 			case 'videohtml5' : $str = ($this->html5)? $this->RenderHTML5Video() : $this->RenderOther(); break;
 			case 'audio'     	: $str = $this->RenderOther(); break;
 			case 'audiohtml5' : $str = ( $this->html5 )? $this->RenderHTML5Audio(): $this->RenderOther();	break;
-			case 'folder'     : 
-				$str = $this->RenderFolder();	
-				break;
+			case 'folder'     : $str = $this->RenderFolder();	break;
 			default : $str = $this->RenderOther();
 		}
 	
@@ -288,12 +290,15 @@ class Image {
 		$str = $this->tpl;
 		return str_replace( $s, $r, $str );
 	}
-	
+	/**
+	 * 
+	 */
 	function RenderFolder() {
 		// href to file
-		$href = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . "&n=" . $this->name;
-		$linktn = $href .".png". "&tn=1";
-		
+		$href = $_SERVER["REQUEST_URI"]."&subfolder=$this->name/";	
+		$p    = $this->slash($this->path.$this->subfolder);
+		$linktn = $this->v . "smplphotoalbum/v/$this->id?p=$p&n=$this->name&tn=1";		
+
 		// max width
 		$style = ($this->width == "" ? "" : "max-width:" . $this->width . "px;");
 		$s = [
@@ -303,7 +308,6 @@ class Image {
 				"{{ linktn }}",
 				"{{ subtitle }}",
 				"{{ style }}",
-				"{{ importance }}"
 		];
 		$r = [
 				$this->id,
@@ -312,7 +316,6 @@ class Image {
 				$linktn,
 				$this->subtitle ,
 				$style,
-				$this->Importance()
 		];
 		$str = $this->tpl;
 		return str_replace( $s, $r, $str );
@@ -431,6 +434,15 @@ class Image {
 			$str = ' style="border: 2px solid rgb('.$red.','.$green.','.$blue.');"';
 		}
 		return $str;
+	}
+
+	/**
+	 * it makes slash from backslash or double slash
+	 * @param mixed $p 
+	 * @return string|string[] 
+	 */
+	public function slash($p){
+		return str_replace(["\\","//"],'/',$p);
 	}
 
 	/**
