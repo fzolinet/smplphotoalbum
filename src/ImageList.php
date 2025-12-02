@@ -126,19 +126,31 @@ class ImageList {
 			}
 		}
 
-		// Step in the subfolder
-		if(( $subfolder = $this->Request("subfolder")) && $this->access ){
-			$this->subfolder = $this->slash( $subfolder . "/" );
-			$this->sess->set("subfolder", $this->subfolder);
-		}else{
-			$this->sess->remove("subfolder");
+		//Works with folders
+		if($this->folders && $this->access ){
+
+			// subfolder - upfolder
+			$this->subfolder = $this->sess->get("subfolder");
+
+			//If one level up
+			if( $upfolder = $this->Request("upfolder") ){
+				$this->subfolder = dirname( $this->subfolder );
+
+				if($this->subfolder == "." ) $this->subfolder = "";
+
+				$this->sess->set("subfolder", $this->subfolder);
+
+			} else if( ( $subfolder = $this->Request("subfolder") ) ){
+					$this->subfolder = $this->slash( $subfolder . "/" );
+					$this->sess->set("subfolder", $this->subfolder);				
+			}
+
+			//List of folder: get folder from Request or session. Check the subfolder
+			if( $this->access  && ( $fname = $this->Request("smpl_fname", "", "POST") ) ){
+				if( !empty( $fname ) ) $this->NewFolder( $fname );
+			}
 		}
 
-		//List of folder: get folder from Request or session. Check the subfolder
-		if( $this->folders && $this->access  && ( $fname = $this->Request("smpl_fname", "", "POST") ) ){
-			if( !empty( $fname ) ) $this->NewFolder( $fname );
-		}
-		
 		// Make an Image object
 		if ( !is_dir ( $root . $path . $this->subfolder) ) {
 			\Drupal::messenger()->addMessage( 
@@ -1689,18 +1701,20 @@ class ImageList {
 	}
 
   /**
-   * Request POST/GET parameters from Browser
+   * Request POST/GET/SERVER parameters from Browser
    *
    * @param mixed $key
    * @return string
    */
-  function Request( string $key, $default = '', $METHOD = "GET" ){
-		if($METHOD == "GET"){
+   public function Request( string $key, $default = '', $mode = "GET" ){
+		$mode = strtoupper($mode);
+		if( $mode == "GET" ){
 			return \Drupal::request()->get($key, $default );
+		} else if( $mode == "SERVER" ){	//SERVER Variable
+			return \Drupal::request()->server->get($key);
 		}
 		return \Drupal::request()->request->get($key, $default);
   }
-
 	public function getSlide(){
 		return $this->slide;
 	}

@@ -144,3 +144,8 @@ function smplphotoalbum_update_19500(): void{
     $schema = Database::getConnection()->schema();
     $schema->addField('smplphotoalbum','importance', $spec);
 }
+
+function smplphotoalbum_update_19700(){
+  $schema = Database::getConnection()->schema();
+  $schema->addUniqueKey("smplphotoalbum","path_name_index", ["path","name"]);
+}

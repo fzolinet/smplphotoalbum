@@ -3,7 +3,7 @@ type: module
 project: 'smplphotoalbum'
 description: Simple Photoalbum makes gallery from a content of folder as a filter && Edit images
 core_version_requirement: ^9 || ^10 || ^11
-version: '1.9.6-beta2'
+version: '1.9.7-dev'
 package: FZ
 configure: smplphotoalbum.settings
 dependencies:

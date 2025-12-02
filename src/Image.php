@@ -295,12 +295,34 @@ class Image {
 	 */
 	function RenderFolder() {
 		// href to file
-		$href = $_SERVER["REQUEST_URI"]."&subfolder=$this->name/";	
-		$p    = $this->slash($this->path.$this->subfolder);
+		$href = $this->Request("REQUEST_URI", '','SERVER');
+		$href = preg_replace("#subfolder=(.*?)(&|$)#imxs","", $href );
+		$href = preg_replace("#upfolder=1#imxs","", $href);	
+		$href = preg_replace("#(&+)#","&", $href);
+
+		$add = str_contains( $href, "?") ? "&":"?";
+		
+		if($this->name == ".."){				
+			$href .= $add . "upfolder=1";
+		}else{				
+			$href .= $add . "subfolder=$this->name";
+		}
+		$href = str_replace( "?&", "?", $href);
+		$href = str_replace( "&&", "&", $href);
+    
+		$p = $this->slash($this->path.$this->subfolder);
 		$linktn = $this->v . "smplphotoalbum/v/$this->id?p=$p&n=$this->name&tn=1";		
 
 		// max width
 		$style = ($this->width == "" ? "" : "max-width:" . $this->width . "px;");
+		
+		$str = $this->tpl;
+
+		if($this->name == ".."){
+			$str = preg_replace ( "#<Edit(.*?)<\/Edit>#imxs","", $str );
+			$this->subtitle = '';
+		}
+
 		$s = [
 				"{{ id }}",
 				"{{ title }}",
@@ -314,10 +336,12 @@ class Image {
 				$this->name,
 				$href,
 				$linktn,
-				$this->subtitle ,
+				$this->subtitle,
 				$style,
-		];
-		$str = $this->tpl;
+		];		
+	
+	
+
 		return str_replace( $s, $r, $str );
 	}
 	
@@ -503,4 +527,27 @@ class Image {
     }
     return $mime;
   }	
+
+  /**
+   * Request POST/GET/SERVER parameters from Browser
+   *
+   * @param mixed $key
+   * @return string
+   */
+/**
+   * Request POST/GET/SERVER parameters from Browser
+   *
+   * @param mixed $key
+   * @return string
+   */
+  public function Request( string $key, $default = '', $mode = "GET" ){
+		$mode = strtoupper($mode);
+		if( $mode == "GET" ){
+			return \Drupal::request()->get($key, $default );
+		} else if( $mode == "SERVER" ){	//SERVER Variable
+			return \Drupal::request()->server->get($key);
+		}
+		return \Drupal::request()->request->get($key, $default);
+  }
+
 }

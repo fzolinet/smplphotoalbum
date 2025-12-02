@@ -1,5 +1,6 @@
 Bugs:
 ~~~~
+
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
@@ -12,6 +13,7 @@ ImageEdit
 
 Todo:
 ~~~~
+- Can not see in the subfolder the icons
 - Change the folders with mouse - more level 
   When first run => The path variable go into SESSION
 	Show every folde icon without "_tn_"
@@ -19,7 +21,8 @@ Todo:
 	If click on folder the path longer with that folder
 	if click ".." the path will be shorter and go into SESSION
 	the _tn_ folder excluded
-	If write the /folder or similar the server side check the folder exists 
+	If write the /folder or similar the server side check the folder exists
+	
 - Automate normalize is default on image 
 - AI generals something on the image
 - Text write on the image
@@ -95,8 +98,13 @@ GD
 
 History:
 ~~~~~~~
-2025.11.26 - 1.9.7-alfa1
-- Új mappa létrehozása interface-ből
+2025.12.02 - 1.9.7-dev
+- Step up and down in the folders there
+- Make thumbnails iconn the lower folder
+- go in the subfolder, view the upfolder icon
+
+2025.11.26 - 1.9.7-dev
+- new folder from interface
 
 2025.11.18 - 1.9.6-beta2
 - sweetalert.min.js: smpl.AlertC, smpl.ErrorC
