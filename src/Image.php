@@ -40,7 +40,19 @@ class Image {
 	use StringTranslationTrait;
 	
 	// Constructor
-	Function __construct($id, $subtitle, $viewnumber, $link, &$params, &$words, $entry = '', $importance = 0 , $type = 'image', $tpl = '', $subfolder = '') {
+	Function __construct(
+		$id, 
+		$subtitle, 
+		$viewnumber, 
+		$link, 
+		&$params, 
+		&$words, 
+		$entry = '', 
+		$importance = 0 , 
+		$type = 'image', 
+		$tpl = '', 
+		$subfolder = ''
+	) {
 		global $base_url;
 
 		$this->ascdesc    = $params ['ascdesc'];
@@ -67,7 +79,8 @@ class Image {
 		
 		$this->subtitle   = $subtitle;								
 		$this->test 			= $params ["test"];
-		$this->thdate 		= @filemtime ( $params ['root'] . $params ['path'] . $entry );
+		$p = $this->slash($this->getRoot($this->root ) . $this->path . $this->subfolder . $entry);
+		$this->thdate 		= @filemtime ( $p );
 		$this->tpl 				= $tpl;
 		$this->translate 	= isset($params["translate"] )? $params['translate']: false;
 		$this->type 			= $type;
@@ -86,12 +99,12 @@ class Image {
 	 */
 	function Render( $editok ) {
 		switch ($this->type) {
-			case 'image'      : $str = $this->RenderImage(); break;
-			case 'video'      : $str = $this->RenderOther();  break;
+			case 'image'      : $str = $this->RenderImage(); break;			
 			case 'videohtml5' : $str = ($this->html5)? $this->RenderHTML5Video() : $this->RenderOther(); break;
-			case 'audio'     	: $str = $this->RenderOther(); break;
 			case 'audiohtml5' : $str = ( $this->html5 )? $this->RenderHTML5Audio(): $this->RenderOther();	break;
 			case 'folder'     : $str = $this->RenderFolder();	break;
+			case 'video'      : 
+			case 'audio'     	:
 			default : $str = $this->RenderOther();
 		}
 	
@@ -207,9 +220,9 @@ class Image {
 		$str = str_replace( 
 			[	'<ImgEdit>',
 				'</ImgEdit>', 
-				'{{ Image Edit }}'], 
-			[
-				'',
+				'{{ Image Edit }}'
+			], 
+			[	'',
 				'', 
 				$this->words['Image Edit']
 			], $str );		
@@ -267,7 +280,7 @@ class Image {
 	 * @return string
 	 */
 	function RenderImage() {
-		$link = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . "&n=" . $this->name;
+		$link = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . $this->subfolder. "&n=" . $this->name;
 		$linktn = $link . "&tn=1";
 		// template
 		$s = [
@@ -311,7 +324,7 @@ class Image {
 		$href = str_replace( "&&", "&", $href);
     
 		$p = $this->slash($this->path.$this->subfolder);
-		$linktn = $this->v . "smplphotoalbum/v/$this->id?p=$p&n=$this->name&tn=1";		
+		$linktn = $this->v . "smplphotoalbum/v/$this->id?p=$p&n=$this->name&tn=folder";		
 
 		// max width
 		$style = ($this->width == "" ? "" : "max-width:" . $this->width . "px;");
@@ -338,10 +351,7 @@ class Image {
 				$linktn,
 				$this->subtitle,
 				$style,
-		];		
-	
-	
-
+		];
 		return str_replace( $s, $r, $str );
 	}
 	
@@ -352,7 +362,7 @@ class Image {
 	 */
 	function RenderOther() {
 		// href to file
-		$href = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . "&n=" . $this->name;
+		$href = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . $this->subfolder . "&n=" . $this->name;
 		$linktn = $href .".png". "&tn=1";
 		
 		// max width
@@ -378,14 +388,15 @@ class Image {
 		$str = $this->tpl;
 		return str_replace( $s, $r, $str );
 	}
+
 	/**
 	 * HTML5 Video render
 	 * 
 	 * @return string
 	 */
 	function RenderHTML5Video() {  
-	  $mime = $this->getMimeType( $this->getRoot($this->root) . $this->path . $this->name );
-		$src  = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . "&n=" . $this->name;
+	  $mime = $this->getMimeType( $this->getRoot($this->root) . $this->path . $this->subfolder . $this->name );
+		$src  = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . $this->subfolder . "&n=" . $this->name;
 		$st   = ($this->width == "" ? "" : "width:" . $this->width . "px;");
 		$w    = ($this->width == "" ? "" : "max-width:" . $this->width . "px;");
 		$sty  = "$w $st";
@@ -416,8 +427,8 @@ class Image {
 	 * @return string
 	 */
 	function RenderHTML5Audio() {
-	  $mime = $this->getMimeType( $this->getRoot($this->root) . $this->path . $this->name );
-		$src  = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . "&n=" . $this->name;
+	  $mime = $this->getMimeType( $this->getRoot($this->root) . $this->path . $this->subfolder . $this->name );
+		$src  = $this->v . "smplphotoalbum/v/" . $this->id . "?p=" . $this->path . $this->subfolder . "&n=" . $this->name;
 		$sty  = ($this->width == "" ? "" : "width:" . $this->width . "px;");
 		$s = [
 				"{{ id }}",

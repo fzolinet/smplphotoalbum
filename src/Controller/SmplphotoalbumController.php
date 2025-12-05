@@ -36,7 +36,7 @@ use Drupal\smplphotoalbum\SlideShow;
 
 require_once realpath(__DIR__."/../../")."/vendor/autoload.php";
 
-class SmplphotoalbumController extends ControllerBase{
+class SmplphotoalbumController extends ControllerBase{  
   private $cfg;
   private $mp;
   private $root;
@@ -179,6 +179,8 @@ class SmplphotoalbumController extends ControllerBase{
         'viewnumber',
         'subtitle',
         'link',
+        'size',
+        'modified',
         'importance'       
     ] )->condition( 's.id', $id, '=' )->execute();
     $a = $record->fetchAssoc();
@@ -575,8 +577,7 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $id
    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
    */
-  public function v( $id = -1 ) {
-    
+  public function v( $id = -1 ) {    
     // search path
     $name = $this->Request("n","");
     $path = $this->Request("p","");    
@@ -586,39 +587,38 @@ class SmplphotoalbumController extends ControllerBase{
       return new BinaryFileResponse( $this->mp . "/image/404.png" );
     }
 
-    if($name != ".."){
-      if(!empty( $tn )) {
-        $p = $this->tn( $path, $name );
-      } else {
-        $con = \Drupal::database();
-        $rs = $con->select( "smplphotoalbum", "s" )
-                  ->fields( "s", ['path','name'] )
-                  ->condition( 'id', $id, '=' )
-                  ->execute();
-        $record = $rs->fetchAssoc();
-
-        if(empty( $record )) {
-          return new BinaryFileResponse( $this->mp . "/image/404.png" );
-        }
-        $p = $this->root . $path . $name;
-      
-        $con->update('smplphotoalbum')
-            ->expression( "viewnumber", "viewnumber + 1" )
-            ->fields( [ "viewnumber" => 0 ] )
-            ->condition( "id", $id, "=" )
-            ->execute();
-
-        // Watermark if you want depends of type of file
-        if($this->isimage( $p ) && $this->sess->get("wm", false)) {
-          $p = $this->watermarkonfly( $id, $p );
-        }
-      }
-    }else{
+    if( $name == ".."){
       $p = $this->mp . "/image/folderup.png";
-    }
+    }else if($tn == "folder"){
+      $p = $this->mp . "/image/folder.png";
+    } else if( !empty( $tn ) ){
+      $p = $this->slash( $this->root . $path . $this->TN . $name);
+    } else{
+      $con = \Drupal::database();
+      $rs = $con->select( "smplphotoalbum", "s" )
+                ->fields( "s", ['path','name'] )
+                ->condition( 'id', $id, '=' )
+                ->condition( 'name', $name, '=')
+                ->execute();
+      $record = $rs->fetchAssoc();
+      if(empty( $record )) {
+        return new BinaryFileResponse( $this->mp . "/image/404.png" );
+      }
+      $p = $this->slash( $this->root . $path . $name) ;
+      $con->update('smplphotoalbum')
+          ->expression( "viewnumber", "viewnumber + 1" )
+          ->fields( [ "viewnumber" => 0 ] )
+          ->condition( "id", $id, "=" )
+          ->execute();
+
+      // Watermark if you want depends of type of file
+      if($this->isimage( $p ) && $this->sess->get("wm", false)) {
+        $p = $this->watermarkonfly( $id, $p );
+      }
+    }    
 
     $response = new BinaryFileResponse( $p );
-    if(! $this->isimage( $p )) {
+    if( !$this->isimage( $p )) {
       header("Content-type: " . mime_content_type($p));
       $response->headers->set( 'Pragma', 'no-cache' );
       $response->headers->set( 'Content-Disposition', 'attachment; filename="' . basename( $p ) . '"' );

@@ -157,6 +157,7 @@ Out=Ki
 Outer=Külső
 Output=Kimenet
 Page=Oldal
+Path=Elérési út
 Perspective=Perspektíva
 pixels=pixelek
 Point=Pont

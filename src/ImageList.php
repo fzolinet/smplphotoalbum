@@ -188,8 +188,8 @@ class ImageList {
 		$query = $this->con->select('{smplphotoalbum}', 's');
 		$query -> fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified', 'importance' ]);				
 
-		//WHERE  path = 
-		$pathCond = $query->condition( 'path', $path . $this->subfolder , "=" );		
+		//WHERE  path = 		
+		$pathCond = $query->condition( 'path', $path . $this->subfolder , "LIKE" );		
 
 		// where type in[]
 		if( $this->slide ){
@@ -288,8 +288,9 @@ class ImageList {
 		}
 
 		$db = 0;
-		foreach( $RSArray AS $id => $RS ){
-			if ( !file_exists( $this->slash( $this->root . $this->path . $RS->name ) ) ){
+		foreach( $RSArray AS $i => $RS ){
+			$id = $RS->id;
+			if ( !file_exists( $this->slash( $this->root . $this->path . $this->subfolder. $RS->name ) ) ){
 				unset( $RSArray[$id] );
 				continue;
 			}
@@ -302,7 +303,7 @@ class ImageList {
 			elseif ( $type == "folder")     $tpl = $this->tpl ["folder"];
 			else														$tpl = $this->tpl ["other"];
 			
-			$this->Items [$db] = new Image (
+			$this->Items [$id] = new Image (
 				$id,
 				$RS->subtitle,
 				$RS->viewnumber,
@@ -935,12 +936,13 @@ class ImageList {
 			$this->CacheClear();
 		}
 
-		// Load smpl template		
+		// Load smpl template	and set the javascript variables	
 		$strjs = "\n<script>".$this->tpl["js"]."</script>\n";
 		
 		$imgeditform = $this->Request("imgeditform","''");
 		$id = $this->Request("id",-1);
 
+		//Imagick using
 		if(extension_loaded("Imagick")){
 			$gv = \Imagick::getVersion();
 			$imagick = $gv["versionString"];
@@ -990,9 +992,6 @@ class ImageList {
 			],  
 			$strjs 
 		);
-
-		$strjs = str_replace([""],[],$strjs );
-		$strjs = str_replace( [], [], $strjs );
 
 		$str = $this->tpl["smplphotoalbum"];
 		
@@ -1050,6 +1049,9 @@ class ImageList {
 				$this->order ? $this->SortOrdered () : ""
 			], $str);
 
+		// Subfolder write out
+		$this->Path( $str );
+		
 		// Statistics
 		$this->Statist( $str );
 
@@ -1117,7 +1119,6 @@ class ImageList {
 			$str = str_replace( "{{ AI_recognition_info }}", $ai_info, $str);
 		} else{
 			$str = preg_replace( "#<ai(.*?)<\/ai>#imxs", "", $str );
-
 		}		
 	}
 	
@@ -1312,6 +1313,20 @@ class ImageList {
 			}
 		}
 	}
+
+	/**
+	 * Write out Subfolder
+	 * @param $string $str
+	 */
+	function Path( &$str ){		
+		if( !($this->folders && !empty( $this->subfolder ))){
+			$str = preg_replace( "#<Path(.*?)<\/Path>#imxs", "", $str );
+			return ;
+		}		
+		$str = str_replace(["<Path>","</Path>"],"", $str);
+		$str = str_replace( '{{ smpl_path }}',"/".$this->subfolder,$str);
+	}
+
 	/**
 	 * SlideShow
 	 *
@@ -1392,7 +1407,7 @@ class ImageList {
 			return $str;
 		}
 
-		foreach($this->Items AS $i => $Item) {
+		foreach($this->Items AS $id => $Item) {
 			$str .= $Item->Render ( $this->access );
 		}
 		return $str;

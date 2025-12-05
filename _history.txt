@@ -98,7 +98,11 @@ GD
 
 History:
 ~~~~~~~
-2025.12.02 - 1.9.7-dev
+2025.12.04 - 1.9.7-beta1
+- Bug: Exif: Last Modified
+- Click on icon - show bog picture or download
+- Shows properties of items in folder/subfolder
+- Shows the icons of items in folder/subfolder
 - Step up and down in the folders there
 - Make thumbnails iconn the lower folder
 - go in the subfolder, view the upfolder icon
