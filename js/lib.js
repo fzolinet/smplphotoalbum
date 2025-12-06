@@ -229,14 +229,11 @@ function setDivInWindow(w, pos) {
       case 'warning': cl = "smpl-message-warning"; title = "Warning message"; break;
       case 'status': cl = "smpl-message-status"; title = "Status message"; break;
     }
-    swal(cmd, {
-      title: title,
-    });
+    swal(cmd, { title: title, });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
     $("div.swal-modal").removeClass("smpl-message-notes");
     $("div.swal-modal").addClass(cl);
-
   }
   /* Warning popup box
   */ smpl.ConfirmC = function (cmd) {

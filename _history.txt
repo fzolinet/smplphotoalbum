@@ -98,8 +98,12 @@ GD
 
 History:
 ~~~~~~~
+
+2025.12.06 - 1.9.7-beta2
+- Bugfix: other type icons thumbnails
+
 2025.12.04 - 1.9.7-beta1
-- Bug: Exif: Last Modified
+- Bugfix: Exif: Last Modified
 - Click on icon - show bog picture or download
 - Shows properties of items in folder/subfolder
 - Shows the icons of items in folder/subfolder
@@ -108,17 +112,17 @@ History:
 - go in the subfolder, view the upfolder icon
 
 2025.11.26 - 1.9.7-dev
-- new folder from interface
+- New folder from interface
 
 2025.11.18 - 1.9.6-beta2
 - sweetalert.min.js: smpl.AlertC, smpl.ErrorC
 - When the important checked, then the first order is the:important desc
 
 2025.11.16 - 1.9.6ß
-- Bug: XML2assoc
-- Bug: Exif - ODT Opend Document exif info
+- Bugfix: XML2assoc
+- Bugfix: Exif - ODT Opend Document exif info
 - smpl.AlertC, smpl.ErrorC
-- bug: Upload file
+- Bugfix: Upload file
 - AI Image Recognition with Gemini too
 
 2025.11.08 - 1.9.5ß
@@ -130,8 +134,8 @@ History:
 - Upload file to photoalbum
 
 2025.10.21 - 1.9.3ß2
-- Bug: pager did not worked, its ok.
-- bug: img_edit.js: SaveSubmit did not worked
+- Bugfix: pager did not worked, its ok.
+- Bugfix: img_edit.js: SaveSubmit did not worked
 - Little improvement for imgedit, edit windows
 - Popup windows (imgedit, edit) positioning
 
@@ -143,7 +147,7 @@ History:
 - Little design change
 
 2025.08.24 - 1.9.2ß
-- bug: There was javascript errors when the user was admin and not photoalbum page - solved
+- Bugfix: There was javascript errors when the user was admin and not photoalbum page - solved
 - Speed optimalization
 
 2025.07.30
@@ -153,17 +157,17 @@ History:
 - Better BreakTime handling
 
 2025.07.13
-- Bug: Sharpen (imagick) - resolved
-- Bug: There was a bug in the main query on Linux => The solution is dynamic query
+- Bugfix: Sharpen (imagick) - resolved
+- Bugfix: There was a bug in the main query on Linux => The solution is dynamic query
 
 2025.07.10
-- Bug: Under Construction bug.
-- Bug: Lighteq - problem
-- Bug: ImgEdit: js bug. smpl_imgeditborder => smpl_imgedit_border
+- Bugfix: Under Construction bug.
+- Bugfix: Lighteq - problem
+- Bugfix: ImgEdit: js bug. smpl_imgeditborder => smpl_imgedit_border
 - Change: change default imgedit folder from smplphotoalbum => public://photoalbum/_edit_
 
 2025.07.08
-- Bug: BreakTime up/lowcase
+- Bugfix: BreakTime up/lowcase
 
 2025.06.10
 - Slide works
@@ -189,7 +193,7 @@ History:
 - Bugfix: Javascript keyboard handling
 
 2025.03.28 - 1.8.9
-- Bug: Slideshow - ok
+- Bugfix: Slideshow - ok
 - Change from normal list to slideshow with button
 - Change from slideshow to normal list with link
 
@@ -213,7 +217,7 @@ History:
 - Delete the old histogram when new image loaded in
 
 2025.03.11
-- Bug: Histogram Imagic / GD - ok
+- Bugfix: Histogram Imagic / GD - ok
 - Properties of the image shows in the image edit window
 
 2025.03.07 - 1.8.5
@@ -231,7 +235,7 @@ History:
 - GD: Histogram - dev
 
 2025.02.24
-- Bug: Effect / White (Imagick & GD)
+- Bugfix: Effect / White (Imagick & GD)
 
 2025.02.23 - 1.8.4
 - Edit mode: Mouse click button: load original image <=> actual image to compare them
@@ -257,7 +261,7 @@ History:
 - IMGEditForm autoload with url 
 
 2025.02.06
-- Bug: Links not shows - ok
+- Bugfix: Links not shows - ok
 
 2025.02.05 - 1.8.0-dev
 - Refresh folder && Database - ok
@@ -295,15 +299,15 @@ History:
 - scss modifies
 
 2025.01.24
-- Bug: Cache Clear - solved
+- Bugfix: Cache Clear - solved
 
 2025.01.22
-- Bug: rename a part of page (editall_cache => editpath_cache ) - solved
+- Bugfix: rename a part of page (editall_cache => editpath_cache ) - solved
 - Rename: EditAll => EditPath, editall.js => editpath.js
 
 2025.01.18
-- Bug: Pager does not works - ok
-- Bug: Sort does not woks - ok
+- Bugfix: Pager does not works - ok
+- Bugfix: Sort does not woks - ok
 
 2025.01.17
 - Bugfix: updatepath - cleantext subscriptions of path
@@ -520,7 +524,7 @@ Effect menu
 - Imgedit interface little changes   
 
 2023.01.16
-- Bug: GD - Noise - ok
+- Bugfix: GD - Noise - ok
 
 2023.01.15
 - U can use cancel button to break long command 
@@ -532,7 +536,7 @@ Effect menu
 	jQuery UI, jQuery UI Draggable, jQuery UI Resizable contrib modules!
 
 2023.01.12
-- bug: imgedit=> GD / save - ok
+- Bugfix: imgedit=> GD / save - ok
 
 2023.01.11
 - Watermark text (copyright, author) write only into jpeg
@@ -546,7 +550,7 @@ Effect menu
 		-RGB - ok
 
 2022.12.31
-- bug: ImgEdit window selection - ok
+- Bugfix: ImgEdit window selection - ok
 
 2022.12.30
 - Translate system and translation file (Hu)
@@ -564,10 +568,10 @@ Effect menu
 2022.12.16
 - Slideshow: click on thumnail load the image
 2022.12.13
-- Bug: Slideshow: There are 'items' type of items are not images
+- Bugfix: Slideshow: There are 'items' type of items are not images
 2022.12.11
-- Bug: Slideshow shows only images
-- Bug: Edit All function
+- Bugfix: Slideshow shows only images
+- Bugfix: Edit All function
 2022.12.02
 - Selenium IDE tests
 2022.11.20
@@ -665,31 +669,31 @@ Effect menu
 - Watermark
 
 2022.03.22
-- Bug: Description id
-- Bug: Search only if enabled
+- Bugfix: Description id
+- Bugfix: Search only if enabled
 
 2022.03.20
 - Refactoring
-- Bug: wrong require_once
+- Bugfix: wrong require_once
 
 2022.03.17
 - Edit All && Cache clear buttons acces only editors
-- Bug: Help Window
-- Bug: Sort
+- Bugfix: Help Window
+- Bugfix: Sort
 
 2022.03.16
-- Bug: "Warning: copy(public://photoalbum/...): failed to open stream:
+- Bugfix: "Warning: copy(public://photoalbum/...): failed to open stream:
 			 "Drupal\Core\StreamWrapper\PublicStream::stream_open" call failed
 				in Drupal\smplphotoalbum\ImageList->MakeThumbnail()
 				(line 397 of modules/smplphotoalbum/src/ImageList.php)
-- Bug: Draggable (ImageEdit & Edit layer)
+- Bugfix: Draggable (ImageEdit & Edit layer)
 - Image Edit Buttons on the top too... align in the middle of the row
 
 2021.12.05
 - Slideshow ready
 
 2021.11.12 - 9.x-1.12
-- Bug: js: Does not close the big picture
+- Bugfix: js: Does not close the big picture
 
 2021.10.13 - 9.x-1.11
 - Slideshow animation
@@ -698,23 +702,23 @@ Effect menu
 - Slideshow ready
 
 2021.08.21 - 9.x-1.06
-- Bug: Delete item did not work
+- Bugfix: Delete item did not work
 - Edit subscription of all of the item in path
 
 2021.08.13
-- Bug: Did not save the modified image
+- Bugfix: Did not save the modified image
 
 2021.08.07
 - Exif information bugs ( xls, etc...)
-- Bug: smpl variable does not exist when edit the view
+- Bugfix: smpl variable does not exist when edit the view
 
 2021.08.07
-- Bug: If there is not title on the page there are warnings
-- Bug: When edit the caption, subtitle of image trim the string of subtitle
+- Bugfix: If there is not title on the page there are warnings
+- Bugfix: When edit the caption, subtitle of image trim the string of subtitle
 
 2021.06.10
-- Bug: solved - When download, the filename only a number, not the original filename
-- Bug: solved - Image Download not works (Binary Response: SmplphotoalbumControlles::v())
+- Bugfix: solved - When download, the filename only a number, not the original filename
+- Bugfix: solved - Image Download not works (Binary Response: SmplphotoalbumControlles::v())
 
 2021.06.09
 - Exif: doc files (under development PHPword not really good)
@@ -734,7 +738,7 @@ Effect menu
 	chm
 
 2021.06.03.
-- bug: UTF-8 problem in Exif - solved
+- Bugfix: UTF-8 problem in Exif - solved
 - exif info bugs.
 
 2021.06.01

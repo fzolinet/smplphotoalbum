@@ -208,6 +208,7 @@ class ImageList {
 			if( $this->cmp ) $wherein[] = 'cmp';
 			if( $this->app ) $wherein[] = 'app';
 			if( $this->dis ) $wherein[] = 'dis';
+			if( $this->oth ) $wherein[] = 'oth';
 			if( $this->folders ) $wherein[] = "folder";
 			$wherein[] = '--';
 		};
@@ -789,10 +790,10 @@ class ImageList {
 		static $db = 0;
 		if (! $this->access ) return true;
 		if( $name == ".." ) 	return true;
-
-		$ext = strtolower ( pathinfo ( $name, PATHINFO_EXTENSION ) );
-		// Make new thumbnails from GIF, PNG or JPG | JPEG | BMP | WBMP | WEBP | XPM | XBM | AVIF
-		if ( $this->isimage ( $name ) ) {			
+		
+		$ext = $this->getExt( $name );
+		
+		if ( $this->isimage ( $name ) ) {
 			$size = GetImageSize ( $this->root . $this->path . $this->subfolder . $name );
 			if($size !== false){
 				$dx = $size [0];
@@ -805,7 +806,8 @@ class ImageList {
 			if ($dx > $this->width) {
 				// Target image
 				$dst_im = @ImageCreateTrueColor ( $this->width, $this->width * $dy / $dx );
-				switch ($ext) {
+
+				switch ( $ext ) {
 					case 'avif':
 						$im = @imagecreatefromavif( $source );
 						$a  = @imagecopyresized ( $dst_im, $im, 0, 0, 0, 0, $this->width, $this->width * $dy / $dx, $dx, $dy );
@@ -844,19 +846,19 @@ class ImageList {
 						break;
 
 					case 'webp':
-						$im = @imagecreatefromwebp($source);
+						$im = @imagecreatefromwebp( $source );
 						$a  = @imagecopyresized($dst_im, $im, 0, 0, 0, 0, $this->width, $this->width * $dy / $dx, $dx, $dy );
 						$ok = @imagewebp( $dst_im, $thumbnail ) && $a;
 						break;
 
 					case 'xbm':
-						$im = imagecreatefromxbm($source);
+						$im = imagecreatefromxbm( $source );
 						$a  = @imagecopyresized ( $dst_im, $im, 0, 0, 0, 0, $this->width, $this->width * $dy / $dx, $dx, $dy );
 						$ok = @imagexbm( $dst_im, $thumbnail ) && $a;
 						break;
 
 					case 'xpm':
-						$im = imagecreatefromxpm($source);
+						$im = imagecreatefromxpm( $source );
 						$a  = @imagecopyresized ( $dst_im, $im, 0, 0, 0, 0, $this->width, $this->width * $dy / $dx, $dx, $dy );
 						$ok = @Imagejpeg ( $dst_im, $thumbnail, 100 ) && $a;
 						break;
@@ -868,26 +870,30 @@ class ImageList {
 			}
 
 		} else {			
-			if ( $this->isaudio ( $name ) || $this->isaudiohtml5( $name ) )
-				$source = $this->modulepath . "/image/audio_" . $ext . ".png";
-			elseif ( $this->isdoc ( $name ) )
-				$source = $this->modulepath . "/image/doc_" . $ext . ".png";
-			elseif ( $this->iscmp ( $name ) )
-				$source = $this->modulepath . "/image/cmp_" . $ext . ".png";
-			elseif ( $this->isapp ( $name ) )
-				$source = $this->modulepath . "/image/app_" . $ext . ".png";
-			elseif ( $this->isvideo ( $name ) || $this->isvideohtml5($name ) )
-				$source = $this->modulepath . "/image/video_" . $ext . ".png";
+			if ( $this->isaudio ( $name ) || $this->isaudiohtml5( $name ) )	
+				$source = $this->modulepath . "/image/audio_$ext.png";
+			elseif ( $this->isdoc ( $name ) )	
+				$source = $this->modulepath . "/image/doc_$ext.png";
+			elseif ( $this->iscmp ( $name ) )	
+				$source = $this->modulepath . "/image/cmp_$ext.png";
+			elseif ( $this->isapp ( $name ) )	
+				$source = $this->modulepath . "/image/app_$ext.png";
+			elseif ( $this->isvideo ( $name ) || $this->isvideohtml5($name ) ) 
+				$source = $this->modulepath . "/image/video_$ext.png";
 			elseif ( $this->isfolder( $name ) ){
 				if($name == ".."){
 					$source = $this->modulepath . "/image/folderup.png";
 				}else{
 					$source = $this->modulepath . "/image/folder.png";	
 				}
-			} 				
-			else
-				$source = $this->modulepath . "/image/other.png";
-			
+			}	if ($this->isoth($name) ){
+
+					if( file_exists( $this->modulepath . "/image/other_$ext.png" )){
+						$source = $this->modulepath . "/image/other_$ext.png";
+					}else{
+						$source = $this->modulepath . "/image/other.png";
+					}				
+			}						
 			$ok = @copy ( $source, $thumbnail );
 		}
 
@@ -1743,6 +1749,12 @@ class ImageList {
 		return str_replace(["\\","//"],'/',$p);
 	}
 
+	/**
+	 * Give back the extension of image
+	 */
+	public function getExt($str){
+		return strtolower(pathinfo($str,PATHINFO_EXTENSION));
+	}
 	/**
 	 * Take slash before the string
 	 * @param string $x 

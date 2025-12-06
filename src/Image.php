@@ -58,8 +58,7 @@ class Image {
 		$this->ascdesc    = $params ['ascdesc'];
 		$this->edit       = $params ['edit'];
 		$this->entry      = $entry;		
-		$this->ext        = strtolower( pathinfo( $entry, PATHINFO_EXTENSION) );		
-		$this->filesize   = @filesize ( $params ['root'] . $params ['path'] . $entry );		
+		$this->ext        = strtolower( pathinfo( $entry, PATHINFO_EXTENSION) );						
 		$this->html5      = $params ['html5_checking'];
 		$this->icon       = $params ['icon'];
 		$this->id         = $id;
@@ -81,6 +80,7 @@ class Image {
 		$this->test 			= $params ["test"];
 		$p = $this->slash($this->getRoot($this->root ) . $this->path . $this->subfolder . $entry);
 		$this->thdate 		= @filemtime ( $p );
+		$this->filesize   = @filesize ( $p );
 		$this->tpl 				= $tpl;
 		$this->translate 	= isset($params["translate"] )? $params['translate']: false;
 		$this->type 			= $type;

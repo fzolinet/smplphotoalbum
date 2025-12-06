@@ -139,7 +139,7 @@ class Exif{
     $this->cfg   = $cfg;//
     $root        = $cfg->get ( "root" );
     $root        = str_replace( "\\", "/", \Drupal::service ( 'file_system' )->realpath ( $root ) ) . "/";
-    $this->p     = str_replace( [ "\\","//" ], ["/","/"], $root . $this->path . $this->entry );
+    $this->p     = $this->slash( $root . $this->path ) . $this->entry ;
     $this->ext   = strtolower( pathinfo ( $this->entry, PATHINFO_EXTENSION ) );
   }
   
@@ -150,23 +150,14 @@ class Exif{
   public function Info() {
     $this->GetID3 = new \getID3();
 
-    if ($this->isaudio() || $this->isaudiohtml5())
-      $exif = $this->audio();
-    elseif ($this->isvideo() || $this->isvideohtml5())
-      $exif = $this->video();
-    elseif ($this->isimage())
-      $exif = $this->image();
-    elseif ($this->isdoc())
-      $exif = $this->doc();
-    elseif ($this->iscmp())
-      $exif = $this->comp();
-    elseif ($this->isapp())
-      $exif = $this->app();
-    elseif ($this->isoth())
-      $exif = $this->oth();
-    else {
-      $exif = $this->t ( 'Unknown filetype' );
-    }
+    if ($this->isaudio() || $this->isaudiohtml5())      $exif = $this->audio();
+    elseif ($this->isvideo() || $this->isvideohtml5())  $exif = $this->video();
+    elseif ($this->isimage()) $exif = $this->image();
+    elseif ($this->isdoc())   $exif = $this->doc();
+    elseif ($this->iscmp())   $exif = $this->comp();
+    elseif ($this->isapp())   $exif = $this->app();
+    elseif ($this->isoth())   $exif = $this->oth();
+    else   $exif = $this->t ( 'Unknown filetype' );
     return $exif;
   }
 
@@ -233,8 +224,7 @@ class Exif{
     unset ( $finfo ['zip'] ['files'] );
     $finfo = $this->arrayflat ( $finfo );
     // Here delete the non used items
-    $out = $this->media ( $finfo, $this->t ( "Android application file" ) );
-    return $out;
+     return $this->media ( $finfo, $this->t ( "Android application file" ) );     
   }
   
   /**
@@ -246,8 +236,7 @@ class Exif{
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );
     // Here delete the non used items
-    $out = $this->media ( $finfo, $this->t ( "Windows application file" ) );
-    return $out;
+    return $this->media ( $finfo, $this->t ( "Windows application file" ) );
   }
   
   /**
@@ -262,8 +251,7 @@ class Exif{
     unset ( $finfo ['zip'] ['entries'] );
     $finfo = $this->arrayflat ( $finfo );
     // Here delete the non used items
-    $out = $this->media ( $finfo, $this->t ( "Android application file" ) );
-    return $out;
+    return $this->media ( $finfo, $this->t ( "Android application file" ) );
   }
   
   /**
@@ -275,9 +263,28 @@ class Exif{
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );
     // Here delete the non used items
-    
-    $out = $this->media ( $finfo, $this->t ( "Audio" ) );
-    return $out;
+    if( $finfo["compression_ratio"] < 1 ){
+      $comp = " ( compressed )";
+    } else{
+      $comp = " ( not compressed )";
+    }
+    return $this->media ( $finfo, $this->t ( "Audio file" ) .$comp );
+  }
+  
+  /**
+   * Video exif
+   * 
+   * @return string
+   */
+  function video() {
+    $finfo = $this->GetID3->analyze ( $this->p );
+    $finfo = $this->arrayflat ( $finfo );
+    if( $finfo["compression_ratio"] < 1 ){
+      $comp = " ( compressed )";
+    } else{
+      $comp = " ( not compressed )";
+    }
+    return $this->media( $finfo, $this->t ( "Video file" ) . $comp );
   }
   
   /**
@@ -285,53 +292,45 @@ class Exif{
    */
   function comp() {
     switch ($this->ext) {
-      case 'chm' :
-        $exif = $this->_chm();
-        break;
-      case 'rar' :
-        $exif = $this->_rar();
-        break;
+      case 'chm' : $exif = $this->_chm(); break;
+      case 'rar' : $exif = $this->_rar(); break;
       case 'zip' :
       case '7zip':
-      case '7z' :
-      case 'gz':
-        $exif = $this->_zip();
-        break;
+      case '7z'  :
+      case 'gz'  : $exif = $this->_zip(); break;
     }
     return $exif;
   }
-  
-  function printTree($tree, $level) {
-    if ($tree !== null) {
-      foreach ( $tree->getItems () as $child ) {
-        echo str_repeat ( "\t", $level ) . print_r ( $child->getName (), 1 ) . "\n";
-        $this->printTree ( $child->getChildren (), $level + 1 );
-      }
-    }
-  }
-  
+
   /**
    * CHM Exif information
+   * @return string
    */
   function _chm() {    
     $chm = \CHMLib\CHM::Fromfile ( $this->p );
-    
-    // $toc = $chm->getTOC();
     $itsf = $chm->getITSF ();
-    $t = $itsf->getTimestamp ();
-    $finfo ['Timestamp'] = date ( "Y.m.d H:i:m ?", $t );
     $oslang = $itsf->getOriginalOSLanguage ();
-    $finfo ["Language"] = $oslang->getLanguageName ();
-    $finfo ["Country"] = $oslang->getCountryName ();    
+    $t = $itsf->getTimestamp ();
+    $finfo [ 'Timestamp' ] = date ( "Y.m.d H:i:m ?", $t );
+    $finfo [ "Language" ] = $oslang->getLanguageName ();
+    $finfo [ "Country" ] = $oslang->getCountryName ();    
     return $this->media ( $finfo, $this->t ( "CHM compressed file" ) );    
   }
 
+  /**
+   * RAR file exif information
+   * @return string
+   */
   function _rar() {
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );      
     return $this->media ( $finfo, $this->t ( "Rar compressed file" ) );     
   }
   
+  /**
+   * ZIP file exif information
+   * @return string
+   */
   function _zip() {
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );    
@@ -339,7 +338,8 @@ class Exif{
   }
   
   /**
-   * doc exif
+   * doc file exif information
+   * @return string
    */
   function doc() {
     $exif = "";
@@ -351,35 +351,23 @@ class Exif{
       case 'xltx' :
       case 'xltm' :
       case 'ods'  :
-      case 'slk'  :
-        $exif = $this->_excel();
-        break;      
+      case 'slk'  : $exif = $this->_excel(); break;      
       case 'pptx' :
-      case 'docx':
-        $exif = $this->_docx();
-        break;
-      case 'odt' :
-      case 'odp' :
-        $exif = $this->_od();
-        break;
-      case 'ppt' :
-        $exif = $this->_ppt();
-        break;
-      case 'doc' :
-        $exif = $this->_doc();
-        break;
-      case 'pdf' : // pfd properties
-        $exif = $this->_pdf();
-        break;
+      case 'docx' : $exif = $this->_docx(); break;
+      case 'odt'  :
+      case 'odp'  : $exif = $this->_od(); break;
+      case 'ppt'  : $exif = $this->_ppt(); break;
+      case 'doc'  : $exif = $this->_doc(); break;
+      case 'pdf'  : $exif = $this->_pdf(); break;
     }
     return $exif;
   }
   
   /**
-   * Docx exif informations
+   * Docx / pptx exif informations
+   * @return string
    */
-  function _docx() {
-    
+  function _docx() {    
     $out = "";
     if (function_exists ( "zip_open" )) {
       $out = file_get_contents ( $this->mp . "/templates/exif_docx.html.twig" );
@@ -410,12 +398,12 @@ class Exif{
       $out = str_replace( "{{last_printed}}"  , str_replace( [ "-","T","Z"], ["."," "], $x['cp:lastPrinted'] [0] ), $out );
       
       if (! isset ( $y )) {
-        $y ['Application'][0] = $this->t ( 'unknown' );
-        $y['AppVersion'][0]   = $this->t ( 'unknown' );
-        $y['Pages'][0]        = $this->t ( 'unknown' );
-        $y['Words'][0]        = $this->t ( 'unknown' );
-        $y['Characters'][0]   = $this->t ( 'unknown' );
-        $y['TotalTime'][0]    = $this->t ( 'unknown' );
+        $y['Application'][0] = $this->t ( 'unknown' );
+        $y['AppVersion'][0]  = $this->t ( 'unknown' );
+        $y['Pages'][0]       = $this->t ( 'unknown' );
+        $y['Words'][0]       = $this->t ( 'unknown' );
+        $y['Characters'][0]  = $this->t ( 'unknown' );
+        $y['TotalTime'][0]   = $this->t ( 'unknown' );
       }
       
       $out = str_replace( "{{application}}", $y['Application'][0], $out );
@@ -425,7 +413,7 @@ class Exif{
       $out = str_replace( "{{characters}}" , $y['Characters'][0], $out );
       $out = str_replace( "{{total_time}}" , $y['TotalTime'][0], $out );
     } else {
-      $out = $this->t ( "Sorry! There is not ZIP library in PHP! I can not open the docx files!" );
+      $out = $this->t ( "Sorry! There is no ZIP library in PHP! I can not open the docx files!" );
     }
     return $out;
   }
@@ -438,6 +426,7 @@ class Exif{
   function _od() {
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );
+    $type = "";
     if (function_exists( "zip_open" )) {      
       $corexml = new \Xml2Assoc ();
       $b = ($corexml->parseFile ( 'zip://' . $this->p . '#meta.xml' ));
@@ -449,9 +438,9 @@ class Exif{
       $a['dc:creator']         = $b['dc:creator'] [0];
       $a['meta:creation-date'] = $b['meta:creation-date'] [0];
       $a['dc:cdate']           = $b['dc:date'] [0];      
+      $type = " ( text )";
     }
-    $out = $this->media ( $finfo, $this->t ( "Open document file" ) );
-    return $out;
+    return $this->media ( $finfo, $this->t ( "Open document file" ) . $type);
   }
 
   /**
@@ -465,29 +454,33 @@ class Exif{
       case "xls":
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
         $sp = $reader->load( $this->p );
-        $props = $sp->getProperties();      
+        $props = $sp->getProperties();
+        $type = " ( original BIFF  )";
         break;
       case "xlsx":
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $sp = $reader->load($this->p);
         $props = $sp->getProperties();
+        $type = " ( Excel '97 )";
         break;
       case "ods":
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
         $sp = $reader->load($this->p);
         $props = $sp->getProperties();
+        $type = " ( Open document spreadsheet )";
         break;
       case "slk":
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Slk();
         $sp = $reader->load($this->p);
         $props = $sp->getProperties();
+        $type = " ( SYLK = SYmbolic LinK )";
         break;
     }
 
     $finfo["creator"]       = $props->getCreator();
     $finfo["created"]       = $props->getCreated();
     $finfo["modified"]      = $props->getModified();
-    $finfo["lastmodifiedby"] = $props->getLastModifiedBy();
+    $finfo["lastmodifiedby"]= $props->getLastModifiedBy();
     $finfo["title"]         = $props->getTitle();
     $finfo["description"]   = $props->getDescription();
     $finfo["subject"]       = $props->getSubject();
@@ -496,8 +489,7 @@ class Exif{
     $finfo["company"]       = $props->getCompany();
     $finfo["manager"]       = $props->getManager();
     $finfo["hyperlinkbase"] = $props->getHyperlinkBase();
-    $out = $this->media( $finfo, $this->t( "Excel (original) file" ) );
-    return $out;
+    return $this->media( $finfo, $this->t( "Excel file". $type ) );
   }
   
   /**
@@ -511,8 +503,7 @@ class Exif{
     $finfo = $pdf->getDetails();    
     $finfo = $this->arrayflat ( $finfo );
     // Here delete the non used items
-    $out = $this->media( $finfo, $this->t( "PDF file" ) );
-    return $out;
+    return $this->media( $finfo, $this->t( "PDF file" ) );
   }
   
   /**
@@ -522,8 +513,7 @@ class Exif{
   function _ppt(){
     //require_once __DIR__ . '/Presentation/loader.php';
     require_once realpath(__DIR__."/../../")."/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Reader/BaseReader.php";
-    $out = $this->media( $finfo, $this->t( 'PowerPoint 2007 Presentation file' ) );
-    return $out;
+    return $this->media( $finfo, $this->t( 'PowerPoint 2007 Presentation file' ) );
   }
   
   /**
@@ -545,8 +535,7 @@ class Exif{
     $finfo["subject"]      = $props->getSubject();
     $finfo["keywords"]     = $props->getKeywords();
     
-    $out = $this->media( $finfo, $this->t( 'Word 97 document - under development' ) );
-    return $out;
+    return $this->media( $finfo, $this->t( 'Word 97 document - under development' ) );
   }
   
   /**
@@ -638,8 +627,7 @@ class Exif{
   function image(){
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );    
-    $out = $this->media( $finfo, $this->t ( "Image" ) );
-    return $out;
+    return $this->media( $finfo, $this->t ( "Image file" ) );
   }
   
   /**
@@ -669,6 +657,7 @@ class Exif{
     foreach( $this->del as $e ) {
       unset( $finfo [$e] );
     }
+
     foreach($finfo AS $i => $e ){
       if(is_numeric($i)){
         unset($finfo[$i]);
@@ -680,21 +669,7 @@ class Exif{
         $exif .= $this->fx( $i, $e );
       }
     }
-    $out = str_replace( '{{ title }}', $title, $out );
-    $out = str_replace( '{{ rows }}', $exif, $out );
-    return $out;
-  }
-  
-  /**
-   * Video exif
-   * 
-   * @return string
-   */
-  function video() {
-    $finfo = $this->GetID3->analyze ( $this->p );
-    $finfo = $this->arrayflat ( $finfo );    
-    $out = $this->media( $finfo, $this->t ( "Video" ) );
-    return $out;
+    return str_replace( ['{{ title }}', '{{ rows }}' ], [$title, $exif], $out );
   }
   
   /* Helper methods */
@@ -732,4 +707,12 @@ class Exif{
   function is_utf8($str ='') {
     return ( bool ) preg_match ( '//u', $str );
   } 
+  	/**
+	 * it makes slash from backslash or double slash
+	 * @param mixed $p 
+	 * @return string|string[] 
+	 */
+	public function slash($p){
+		return str_replace(["\\","//"],'/',$p);
+	}
 }

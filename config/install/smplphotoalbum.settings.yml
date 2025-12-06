@@ -40,7 +40,7 @@ subtitle_change_text: '_SMPLAUDIOEXT SMPLVIDEOEXT SMPLDOCEXT SMPLCMPEXT SMPLAPPE
 
 #Image
 image_checking: true
-image_extensions: 'jpg jpeg png bmp wbmp gif webp avif'
+image_extensions: 'jpg jpeg png bmp wbmp gif webp avif tiff'
 
 # Audio
 audio_checking: true
@@ -66,7 +66,7 @@ app_extensions: 'exe dll apk jar so'
 
 #Other documents
 oth_checking: true
-oth_extensions: 'sfv nfo bak bkp'
+oth_extensions: 'sfv nfo bak bkp torrent xbm'
 
 #disable documents
 dis_checking: 1
@@ -100,7 +100,7 @@ url_target: '_blank'
 
 #Slideshow settings
 slide_checking: TRUE
-slide_extensions: 'jpg jpeg png bmp wbmp gif xbm xpm webp'
+slide_extensions: 'jpg jpeg png bmp wbmp gif xpm webp'
 interval: 10000
 style: 'none'
 slidestyle: 'none'

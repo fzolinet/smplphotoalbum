@@ -587,13 +587,15 @@ class SmplphotoalbumController extends ControllerBase{
       return new BinaryFileResponse( $this->mp . "/image/404.png" );
     }
 
-    if( $name == ".."){
-      $p = $this->mp . "/image/folderup.png";
-    }else if($tn == "folder"){
-      $p = $this->mp . "/image/folder.png";
-    } else if( !empty( $tn ) ){
+    $ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+    if( $name == "..") $p = $this->mp . "/image/folderup.png";
+    else if( $tn == "folder" ) $p = $this->mp . "/image/folder.png";
+    else if( $ext == "xbm" ) $p = $this->mp ."/image/other_xbm.png";
+    else if( $ext == "bak" || $ext == "bkp" ) $p = $this->mp ."/image/other_bak.png";
+    else if( $ext == "torrent" ) $p = $this->mp ."/image/other_torrent.png";    
+    else if( !empty( $tn ) ){
       $p = $this->slash( $this->root . $path . $this->TN . $name);
-    } else{
+    }else{
       $con = \Drupal::database();
       $rs = $con->select( "smplphotoalbum", "s" )
                 ->fields( "s", ['path','name'] )
@@ -749,72 +751,21 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $ext
    * @return \GdImage|resource
    */
-  function ImageCreateFrom($src) {
+  function ImageCreateFrom( $src ) {
     $p = pathinfo( $src );
     switch(strtolower($p["extension"])){
-      case "avif":
-        $img = @imagecreatefromavif( $src );
-        break;
-        
-      case "bmp":
-        $img = @ImageCreateFromBmp( $src );
-        break;
-        
-      case 'gif':
-        $img = @ImageCreateFromGif( $src );
-        break;
-        
-      case 'jpg':
-      case 'jpeg':
-        $img = ImageCreateFromJPEG( $src );
-        break;
-        
-      case 'png':
-        $img = @ImageCreateFromPNG( $src );
-        break;
-        
-      case 'wbmp':
-        $img = @ImageCreateFromwbmp( $src );
-        break;
-        
-      case "webp":
-        $img = @ImageCreateFromWebp( $src );
-        break;
-      
-      case "xbm":
-        $img = @ImageCreateFromXbm( $src );
-        break;
-        
-      case "xpm":
-        $img = @ImageCreateFromXpm( $src );
-        break;
+      case "avif": $img = @imagecreatefromavif( $src ); break;        
+      case "bmp" : $img = @ImageCreateFromBmp( $src );  break;        
+      case 'gif' : $img = @ImageCreateFromGif( $src );  break;
+      case 'jpg' :
+      case 'jpeg': $img = ImageCreateFromJPEG( $src );  break;
+      case 'png' : $img = @ImageCreateFromPNG( $src );  break;
+      case 'wbmp': $img = @ImageCreateFromwbmp( $src ); break;
+      case "webp": $img = @ImageCreateFromWebp( $src ); break;
+      case "xbm" : $img = @ImageCreateFromXbm( $src );  break;
+      case "xpm" : $img = @ImageCreateFromXpm( $src );  break;
     }
     return $img;
-  }
-
-  /**
-   * search the thumbnail image
-   *
-   * @param string $id
-   * @return string
-   */
-  private function tn($path = "", $name = "") {
-    $p = $this->root . $path . $this->TN . $name;
-    $p = $this->slash( $p );
-        
-    if($this->isimage( $name )) {
-      if(! file_exists( $p )) {
-        $p = $this->root . $path . $name;
-      }
-    } else {
-      if(! file_exists( $p )) {
-        $p = $this->root . $path . $this->TN . $name . ".png";
-      }
-    }
-    if(! file_exists( $p )) {
-      return "-1";
-    }
-    return $p;
   }
 
   /**
