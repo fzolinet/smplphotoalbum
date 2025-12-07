@@ -271,7 +271,7 @@
 			$("#smpl_watermark_copyright").val('');
 			$("#smpl_watermark_author").val('');
 		}
-		smpl.imgimgeditsaved = false;
+		smpl.imgeditsaved = false;
 		UndoRedo(data.idx, data.que, data.prev, data.next);
 		SmplImgEditForm.show();
 		smpl.progress(false);
@@ -580,6 +580,8 @@
 				closeOnClickOutside: true,
 				closeOnEsc: true,
 				dangerMode: true,
+				confirmButtonText: smpl.words.Confirm,
+				cancelButtonText: smpl.words.Cancel,
 				icon: "warning",
 			})
 				.then((ok) => {

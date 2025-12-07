@@ -38,13 +38,14 @@ $line-height:  1.2em;
 $narrow: 3.5em;
 $mid: 4.5em;
 $wide: 6em;
+$ItemWidth: 24%;
   /* - end of default parameters -------*/
 .smpl_table_all {
   text-align: center;
 }
 
 .smpl_table {
-  width: 100%;
+  /*width: 100%;*/
   display: flex !important;
   flex-direction: row;
   flex-wrap: wrap;
@@ -81,8 +82,8 @@ $wide: 6em;
   border-block-end:0 !important;
 }
 .smpl_item_container {
-  width: 23.5%;  
-  border-top: $BorderSettings;
+  width: $ItemWidth;  
+  border-bottom: $BorderSettings;
   padding: $BorderRadius; 
   min-width: 150px;
   display: flex;
@@ -92,6 +93,14 @@ $wide: 6em;
   margin-top: 1px;
 }
 
+.smpl_last_item_container{
+  border-bottom: $BorderSettings;
+  width: calc(4 * $ItemWidth)
+}
+
+.smpl_table:last-child{
+  border-bottom: none;
+}
 .smpl_item_div {
   max-height: 75%;	
   margin-left: auto;
@@ -163,7 +172,9 @@ a.smpl_a:hover {
   text-align: right;
 }
 
-
+.smpl_subtitle{
+  margin-bottom: $BorderRadius;
+}
 .smpl_subtitle, .smpl_viewnumber {
   display: block;
 }
@@ -225,6 +236,7 @@ div#sortorder{
 
 .smpl_buttons{
   margin-bottom: $BorderRadius;
+  margin-top: $BorderRadius;
 }
 
 .smpl_actbutton {  
@@ -378,7 +390,7 @@ button#SmplImgEditFormSaveAsCancel {
 /* Exif settings*/
 .smpl_exif_div{ border-top: $BorderSettings; }
 
-table.smpl_exif_table > {
+table.smpl_exif_table {
   border-top: $BorderSettings;
   border-bottom:$BorderSettings;
 }
@@ -1127,4 +1139,7 @@ select#smpl_geom:focus {
 }
 .swal-button{
   height:fit-content !important;
+}
+.swal-overlay{
+  font-size: inherit;
 }

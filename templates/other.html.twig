@@ -1,18 +1,11 @@
-<div id="smpl{{ id }}" class="smpl_item_container {{ test }}" {{ importance }}>
+<div id="smpl{{ id }}" class="smpl_item_container {{ smpl_last_item_container }} {{ test }}" {{ importance }}>
 	<div id="smpldiv{{ id }}" class="smpl_item_div smpl_type_other" style="">
 		<a id="smpla{{ id }}" href="{{ href }}" class="smpl_a" title="{{ title }}" target="_blank"> 
 			<img id="smpltn{{ id }}" class="smpl_item" src="{{ linktn }}" title="{{ title }}" alt="{{ subtitle }}" loading="lazy" />
 		</a>
 	</div>
 	<div class="smploth">
-		<div class="smpl_buttons">
-			<Edit>
-				<button id="SubBtn{{ id }}" class="smpl_button smpl_edit{{ icon }}" onclick="return false;" title="{{ Caption Edit }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-				<button id="DelBtn{{ id }}" class="smpl_button smpl_delete{{ icon }}" onclick="return false;" title="{{ Delete }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-			</Edit>
-		</div>
-		<div id="smpl_sub{{ id }}" class="smpl_subtitle">{{ subtitle }}
-		</div>		
+		<div id="smpl_sub{{ id }}" class="smpl_subtitle">{{ subtitle }}</div>		
 		<Link>
 			<div id="smpl_link{{ id }}" class="smpl_link{{ smpl_url_class }}">
 				<a href="{{ url }}" target="_blank">{{ Link }}</a>
@@ -27,6 +20,12 @@
 				<div id="smpl_view{{ id }}" class="smpl_viewnumber">{{ viewnumber }}</div>
 				<div id="Exif{{ id }}"></div>
 			</div>
+		</div>
+		<div class="smpl_buttons">
+			<Edit>
+				<button id="SubBtn{{ id }}" class="smpl_button smpl_edit{{ icon }}" onclick="return false;" title="{{ Caption Edit }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="DelBtn{{ id }}" class="smpl_button smpl_delete{{ icon }}" onclick="return false;" title="{{ Delete }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</Edit>
 		</div>
 	</div>
 </div>

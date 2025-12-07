@@ -5,7 +5,7 @@
 }
 
 .smpl_table {
-  width: 100%;
+  /*width: 100%;*/
   display: flex !important;
   flex-direction: row;
   flex-wrap: wrap;
@@ -44,8 +44,8 @@
 }
 
 .smpl_item_container {
-  width: 23.5%;
-  border-top: 1px solid #D0D0D0;
+  width: 24%;
+  border-bottom: 1px solid #D0D0D0;
   padding: 0.2em;
   min-width: 150px;
   display: flex;
@@ -53,6 +53,15 @@
   justify-content: flex-end;
   margin-left: 1px;
   margin-top: 1px;
+}
+
+.smpl_last_item_container {
+  border-bottom: 1px solid #D0D0D0;
+  width: 96%;
+}
+
+.smpl_table:last-child {
+  border-bottom: none;
 }
 
 .smpl_item_div {
@@ -126,6 +135,10 @@ a.smpl_a:hover {
   text-align: right;
 }
 
+.smpl_subtitle {
+  margin-bottom: 0.2em;
+}
+
 .smpl_subtitle, .smpl_viewnumber {
   display: block;
 }
@@ -187,6 +200,7 @@ div#sortorder {
 
 .smpl_buttons {
   margin-bottom: 0.2em;
+  margin-top: 0.2em;
 }
 
 .smpl_actbutton {
@@ -831,6 +845,11 @@ button#SmplImgEditFormSaveAsCancel {
 /* Exif settings*/
 .smpl_exif_div {
   border-top: 1px solid #D0D0D0;
+}
+
+table.smpl_exif_table {
+  border-top: 1px solid #D0D0D0;
+  border-bottom: 1px solid #D0D0D0;
 }
 
 .smpl_exif_table {
@@ -1585,4 +1604,8 @@ select#smpl_geom:focus {
 .swal-button {
   height: -moz-fit-content !important;
   height: fit-content !important;
+}
+
+.swal-overlay {
+  font-size: inherit;
 }/*# sourceMappingURL=smplphotoalbum.theme.css.map */

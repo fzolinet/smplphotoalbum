@@ -590,11 +590,14 @@ class SmplphotoalbumController extends ControllerBase{
     $ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
     if( $name == "..") $p = $this->mp . "/image/folderup.png";
     else if( $tn == "folder" ) $p = $this->mp . "/image/folder.png";
-    else if( $ext == "xbm" ) $p = $this->mp ."/image/other_xbm.png";
-    else if( $ext == "bak" || $ext == "bkp" ) $p = $this->mp ."/image/other_bak.png";
-    else if( $ext == "torrent" ) $p = $this->mp ."/image/other_torrent.png";    
-    else if( !empty( $tn ) ){
-      $p = $this->slash( $this->root . $path . $this->TN . $name);
+    else if( $tn != "" ){
+      switch($ext){
+        case "xbm": $p = $this->mp ."/image/other_xbm.png"; break;
+        case "bak": 
+        case "bkp": $p = $this->mp ."/image/other_bak.png"; break;
+        case "xbm": $p = $this->mp ."/image/other_torrent.png"; break;
+        default   : $p = $this->slash( $this->root . $path . $this->TN . $name); break;
+      }
     }else{
       $con = \Drupal::database();
       $rs = $con->select( "smplphotoalbum", "s" )

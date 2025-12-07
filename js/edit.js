@@ -81,6 +81,8 @@
 				closeOnClickOutside: true,
 				closeOnEsc: true,
 				dangerMode: true,
+				confirmButtonText: smpl.words.Confirm,
+				cancelButtonText: smpl.words.Cancel,
 				icon: "warning",
 			})
 				.then((ok) => {

@@ -97,7 +97,7 @@ class Image {
 	 * @param bool $editok
 	 * @return string
 	 */
-	function Render( $editok ) {
+	function Render( $editok, $last ) {
 		switch ($this->type) {
 			case 'image'      : $str = $this->RenderImage(); break;			
 			case 'videohtml5' : $str = ($this->html5)? $this->RenderHTML5Video() : $this->RenderOther(); break;
@@ -107,7 +107,7 @@ class Image {
 			case 'audio'     	:
 			default : $str = $this->RenderOther();
 		}
-	
+	  $str = str_replace("{{ smpl_last_item_container }}", ($last ? "smpl_last_item_container": ""), $str);
 		$str = str_replace( "{{ icon }}", $this->icon, $str );
 		if ( $this->sub ) {
 			$str = str_replace( '{{ subtitle }}', ( empty ( $this->subtitle ) ? $this->name : $this->subtitle ), $str );
@@ -134,14 +134,8 @@ class Image {
 		else													$this->NoEdit( $str );
 		
 		return str_replace( 
-			[ 
-				'{{ test }}', 
-				"{{ div_style }}"	
-			], 
-			[ 
-				( $this->test && strpos(" " . $this->name, "_smpl_testfile") ? 'smpl_test' :"" ) ,
-				"border: 1px black solid;" 
-			], 
+			[ '{{ test }}', "{{ div_style }}"	], 
+			[ ( $this->test && strpos(" " . $this->name, "_smpl_testfile") ? 'smpl_test' :"" ) , "border: 1px black solid;" ], 
 			$str
 		);		
 	}

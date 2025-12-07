@@ -975,7 +975,7 @@ class ImageList {
 				"{{ extdocument }}",
 				"{{ extother }}",				
 				"{{ extensions }}",
-				"{{ maxsize }}"
+				"{{ maxsize }}",
 			],
 			[
 				$base_path,
@@ -994,7 +994,8 @@ class ImageList {
 				"'".$this->extensionstring("doc")."'",
 				"'".$this->extensionstring("oth")."'",				
 				"'".$this->extensionstring("all")."'",
-				ini_parse_quantity( ini_get('post_max_size') )
+				ini_parse_quantity( ini_get('post_max_size') ),
+
 			],  
 			$strjs 
 		);
@@ -1412,9 +1413,10 @@ class ImageList {
 		if ($db == 0) {
 			return $str;
 		}
-
-		foreach($this->Items AS $id => $Item) {
-			$str .= $Item->Render ( $this->access );
+		$i = 1;
+		foreach( $this->Items AS $id => $Item ) {
+			$str .= $Item->Render ( $this->access, ( $i >= $db ) );
+			$i++;
 		}
 		return $str;
 	}
@@ -1755,6 +1757,7 @@ class ImageList {
 	public function getExt($str){
 		return strtolower(pathinfo($str,PATHINFO_EXTENSION));
 	}
+
 	/**
 	 * Take slash before the string
 	 * @param string $x 

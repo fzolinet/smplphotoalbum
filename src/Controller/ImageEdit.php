@@ -57,25 +57,31 @@ class ImageEdit {
     $this->ts ['tempurl'] = \Drupal::service( 'file_url_generator' )->generateAbsoluteString ( $t );
     $this->ts ['tempurl'] .= substr( $this->ts['tempurl'], - 1 ) != '/' ? "/" : '';
 
-    //Graphic driver
+    // Graphic driver
     $this->graphicdrv = $this->cfg->get ( 'graphicdrv' );
     if( isset( $this->ts["graphicdrv"] ) ){
       $this->graphicdrv  = $this->ts["graphicdrv"];
     }
-    if(!empty($this->Request( 'graphicdrv', ''))){
-      $this->graphicdrv = $this->Request( 'graphicdrv', '');
-    }
 
-    // Long process
-    $this->bt = new BreakTime( $this->temppath, $this->sign );
+    $graphicdrv = $this->Request( 'graphicdrv', '');
+    if( $graphicdrv != "" ){
+      $this->graphicdrv = $graphicdrv;
+    }
 
     // Choose graphic driver
     if ( !extension_loaded("imagick")) $this->graphicdrv ="gd";
-    if ($this->graphicdrv == "gd") {    
-      $this->gd = new GDDriver ($this->temppath, $this->bt, [0,0], $this->mp );    
-    } else if ($this->graphicdrv == "imagick") {
-      $this->gd = new ImagickDriver($this->temppath, $this->bt, [0,0], $this->mp );
+
+    switch($this->graphicdrv){
+      case "imagick":
+        $this->gd = new ImagickDriver( $this->temppath, $this->bt, [0,0], $this->mp );
+        break;
+      default:
+        $this->gd = new GDDriver( $this->temppath, $this->bt, [0,0], $this->mp );    
+        break;
     }
+    
+    // Long process
+    $this->bt = new BreakTime( $this->temppath, $this->sign );
   }
 
   /**
@@ -124,7 +130,7 @@ class ImageEdit {
     $this->ts["signurl"] = $this->SignUrl();
 
     // Exif read from jpeg file
-    $ext = pathinfo($record ["name"],PATHINFO_EXTENSION );
+    $ext = $this->getExt( $record ["name"] );
 
     if( in_array($ext, ['avif', 'xbm', 'xpm' ]) ){
       $json['ok'] = "-2";
@@ -218,9 +224,26 @@ class ImageEdit {
     if($w == 0 || $h == 0){
       return "#888888";
     }
-
-    $ext = strtolower(pathinfo($source, PATHINFO_EXTENSION));
+    
+    $r = $g = $b = 0.0;
+    if($this->graphicdrv =="imagick" )
+      $this->getImagickAVGColor( $source, $w, $h, $r, $g, $b );
+    else 
+      $this->getGDAVGColor( $source, $w, $h, $r, $g, $b );
+ 
+    $r = substr("0".dechex((int)$r), -2);
+    $g = substr("0".dechex((int)$g), -2);
+    $b = substr("0".dechex((int)$b), -2);
+    $color = "#".$r.$g.$b;
+    return $color;
+  }
+  /**
+   * get AVG color with GD
+  */
+  function getGDAVGColor( $source, $w, $h, &$r, &$g, &$b){    
+    $szorzat = ($w/$di)*($h/$dj);
     $img = imagecreatetruecolor((int)$w, (int)$h);
+    $ext = $this->getExt( $source );
     switch ($ext) {
       case 'avif' :
         $img = @imagecreatefromavif( $source );
@@ -251,28 +274,28 @@ class ImageEdit {
         $img = @imagecreatefromwebp( $source );
         break;
     }
-    $r = $g = $b = 0.0;
-    $i=$j = 0;
-
-    for($i=0; $i<$w; $i++){
-      for($j=0; $j<$h; $j++ ){
-        $rgb = imagecolorat($img, $i, $j);
-        $c   = imagecolorsforindex($img, $rgb);
-        $r += $c['red'];
-        $g += $c['green'];
-        $b += $c['blue'];
-      }
-    }
-
-    $r /= ($w*$h);
-    $g /= ($w*$h);
-    $b /= ($w*$h);
-    $r = substr("0".dechex((int)$r), -2);
-    $g = substr("0".dechex((int)$g), -2);
-    $b = substr("0".dechex((int)$b), -2);
-    $color = "#".$r.$g.$b;
-    return $color;
+    $scaled = imagescale($img, 1, 1, IMG_BICUBIC); 
+    $index  = imagecolorat($scaled, 0, 0);
+    $rgb    = imagecolorsforindex($scaled, $index); 
+    $r = round(round(($rgb['red'] / 0x33)) * 0x33); 
+    $g = round(round(($rgb['green'] / 0x33)) * 0x33); 
+    $b = round(round(($rgb['blue'] / 0x33)) * 0x33); 
   }
+
+  /**
+   * get AVG color with Imagick
+  */
+  function getImagickAVGColor( $source, $w, $h, &$r, &$g, &$b ){    
+    $img = new \Imagick( $source );
+    $img->scaleImage(1,1, false);
+    $pixel = $img->getImagePixelColor(0,0);
+    $rgb = $pixel->getcolor();
+
+    $r = $rgb['r'];
+    $g = $rgb['g'];
+    $b = $rgb['b'];
+  }
+
   /**
    * Edit the image
    */
@@ -287,7 +310,7 @@ class ImageEdit {
     $tempname  = $this->ts["tempname"];
     $newname   = $this->NewName( $this->ts["name"], $this->ts['idx'] );
 
-    $type      = strtolower( pathinfo ( $this->ts ["name"], PATHINFO_EXTENSION ) );
+    $type      = $this->getExt( $this->ts ["name"] );
     $size      = GetImagesize( $this->temppath . $tempname );
     $this->img = new ImgManipulate(
       $this->graphicdrv,
@@ -768,7 +791,7 @@ class ImageEdit {
     $dst_img = $this->gd->ImageCreateTrueColor( $width, $height );
     //
     $thumbnail = $this->root . $this->ts["path"] . self::TN . $name;
-    $type = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+    $type = $this->getExt( $name );
 
     // driver GD / Imagick
     $p = pathinfo($name);
@@ -964,4 +987,11 @@ class ImageEdit {
     $root = str_replace("\\","/", $root);
     return $root;
   }
+
+  /**
+	 * Give back the extension of image
+	 */
+	public function getExt($str){
+		return strtolower(pathinfo($str,PATHINFO_EXTENSION));
+	}
 }

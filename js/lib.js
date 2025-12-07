@@ -242,6 +242,8 @@ function setDivInWindow(w, pos) {
       title: "warning",
       className: "smpl-message-warning",
       buttons: true,
+      confirmButtonText: smpl.words.Confirm,
+      cancelButtonText: smpl.words.Cancel,
       closeOnClickOutside: true,
       closeOnEsc: true,
       dangerMode: true,
@@ -259,6 +261,7 @@ function setDivInWindow(w, pos) {
   smpl.ErrorC = function (cmd) {
     swal("Error on server side: " + cmd, {
       title: "Error message",
+      confirmButtonText: smpl.words.Confirm,
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");

@@ -98,6 +98,11 @@ GD
 
 History:
 ~~~~~~~
+2025.12.07
+- Last Item on page & little scss
+- Bugfix: swal bugs &  buttons
+- BugFix: ImageEdit - can not close the edit window
+- Bugfix: ImageEdit - AVG color timeout
 
 2025.12.06 - 1.9.7-beta2
 - Bugfix: other type icons thumbnails
