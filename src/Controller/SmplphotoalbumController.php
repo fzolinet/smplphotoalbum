@@ -46,6 +46,7 @@ class SmplphotoalbumController extends ControllerBase{
   private $wm;
   private $aiclarifai;
   private $aigemini;
+  private $words = [];
   
   /**
    * Class constructor.
@@ -184,17 +185,55 @@ class SmplphotoalbumController extends ControllerBase{
         'importance'       
     ] )->condition( 's.id', $id, '=' )->execute();
     $a = $record->fetchAssoc();
+    $str = file_get_contents( $this->mp . "/templates/exif.html.twig" );
 
     //
     $ex = new Exif( $a, $this->cfg );
-    $exif = (string) $ex->Info();
-        //
-    $str = file_get_contents( $this->mp . "/templates/exif.html.twig" );
+    $exif = (string) $ex->Info();        
     $str = str_replace( "{{ exif }}", $exif, $str );
+        //
+    $this->Readwords();
+    $s = [
+      "{{ id }}",
+      "{{ desc }}",
+      "{{ FileSize }}",
+      "{{ filesize }}",
+      "{{ Last modified }}",
+      "{{ lastmodified }}",
+      "{{ Number of views }}",
+      "{{ viewnumber }}",
+    ];
+    $r = [
+      $a["id"],
+      $a["name"]." => ".$a["subtitle"],
+      $this->words["File size"],
+      $this->ShowFileSize($a["size"]),
+      $this->words["Last modified"],
+      date("Y.m.d",$a["modified"]),
+      $this->words["Number of views"],
+      $a["viewnumber"],
+    ];
+    $str =str_replace($s, $r, $str);
     $response->addCommand( new InsertCommand( '', $str, [] ) );
     return $response;
   }
-
+		/**
+	 * Get file size
+	 * @return string
+	 */
+	function ShowFileSize($filesize) {
+		$size = ( int ) $filesize;
+		if ($size > 1073741824) {
+			$s = ( int ) ( $size / 1073741824 ) . '&nbsp;Gb';
+		} else if ( $size > 1048576 ) {
+			$s = ( int ) ( $size / 1048576 ) . '&nbsp;Mb';
+		} else if ( $size > 1024)  {
+			$s = ( int ) ( $size / 1024 ) . '&nbsp;Kb';
+		} else {
+			$s = $size . '&nbsp;b';
+		}
+		return $s;
+	}		
   /**
    * Load data of an item
    *
@@ -1133,4 +1172,28 @@ function ai_recognition( $bytes ){
 		unset ($pics["id"], $pics["path"], $pics["i"]);
 		return $pics;
 	}
+
+  /**
+ 	 * Reads the words of translating
+	 * @return
+ 	 */
+	function ReadWords(){
+		$this->translate  = strtolower( trim( $this->params['translate'] ) );
+		$words = file( $this->mp ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+		$words = str_replace( "_"," ", $words);
+		foreach($words AS $e){
+			$e = trim( $e );
+			if( strpos( ' '.$e, ';' ) > 0 ){
+				continue;
+			}
+			$a = explode( "=", $e );
+
+			if( count( $a ) == 1 ) {
+				$this->words[ $e ] = $e;
+			}else{
+				$this->words[ trim( $a[0] ) ] = trim( $a[1] );
+			}
+		}
+	}
+
 }

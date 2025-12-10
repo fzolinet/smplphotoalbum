@@ -1,6 +1,15 @@
 <table class="smpl_exif_table">
-	<tr>
-		<th colspan="2">{{ title }}</th>
+	<tr class="smpl_exif_tr">
+		<td>{{ FileSize }}:</td><td>{{ filesize }}</th>
+	</tr>	
+	<tr class="smpl_exif_tr">
+		<td >{{ Last modified }}:</td><td>{{ lastmodified }}</td>
+	</tr>	
+	<tr class="smpl_exif_tr">
+		<td>{{ Number of views }}:</td><td>{{ viewnumber }}</td>
+	</tr>	
+	<tr class="smpl_exif_tr">
+		<th>{{ File type }}:</th><td>{{ title }}</td>
 	</tr>
 	{{ rows }}
 </table>

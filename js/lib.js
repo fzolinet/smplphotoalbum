@@ -235,8 +235,10 @@ function setDivInWindow(w, pos) {
     $("div.swal-modal").removeClass("smpl-message-notes");
     $("div.swal-modal").addClass(cl);
   }
-  /* Warning popup box
-  */ smpl.ConfirmC = function (cmd) {
+  /* 
+   * Warning popup box
+   */
+  smpl.ConfirmC = function (cmd) {
     swal({
       text: cmd,
       title: "warning",

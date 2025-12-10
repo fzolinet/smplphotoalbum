@@ -113,7 +113,6 @@ a.smpl_a:hover {
 .smpl_view, .smpl_size, .smpl_exif, .smpl_exif_div,
 .smpl_date, .smpl_desc_a, .smpl_tax, .smpl_list, #smpl_list {
   text-align: center;
-  font-size: 0.8em;
 }
 
 #smpl_sub, #smpl_usub {
@@ -847,23 +846,18 @@ button#SmplImgEditFormSaveAsCancel {
   border-top: 1px solid #D0D0D0;
 }
 
-table.smpl_exif_table {
-  border-top: 1px solid #D0D0D0;
-  border-bottom: 1px solid #D0D0D0;
-}
-
 .smpl_exif_table {
   margin-bottom: 0.1em !important;
   margin-top: 0.1em !important;
+  width: 100%;
 }
 .smpl_exif_table tr th {
   border-top: 1px solid #D0D0D0;
   border-bottom: 1px solid #D0D0D0;
 }
 
-.smpl_exif_td {
+.smpl_exif_tr > td {
   text-align: left;
-  height: 0.8em;
   border-right: 1px solid rgb(187.2, 187.2, 187.2);
   text-wrap: nowrap;
 }
@@ -890,6 +884,7 @@ table.smpl_exif_table {
   text-align: left;
   z-index: 256;
   cursor: pointer;
+  min-width: 30em;
 }
 
 /* statistics table*/

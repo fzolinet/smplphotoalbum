@@ -69,6 +69,7 @@
 			return false;
 		});
 
+		//signed place
 		$("#smpl_redeye_done").click(function () {
 			let cmd = "cmd=redeye";
 			let x1 = parseInt($("#smpl_x1").val());

@@ -149,8 +149,7 @@ a.smpl_a:hover {
 
 .smpl_view, .smpl_size, .smpl_exif, .smpl_exif_div, 
 .smpl_date, .smpl_desc_a, .smpl_tax, .smpl_list, #smpl_list {
-  text-align: center;
-  font-size: $fontSize; 
+  text-align: center;  
 }
 
 #smpl_sub, #smpl_usub {
@@ -390,23 +389,17 @@ button#SmplImgEditFormSaveAsCancel {
 /* Exif settings*/
 .smpl_exif_div{ border-top: $BorderSettings; }
 
-table.smpl_exif_table {
-  border-top: $BorderSettings;
-  border-bottom:$BorderSettings;
-}
-
 .smpl_exif_table {    
   margin-bottom: 0.1em !important;
   margin-top: 0.1em !important;
+  width: 100%;
   tr th{
     border-top:    $BorderSettings;
     border-bottom: $BorderSettings;
   }
 }
-
-.smpl_exif_td {
-  text-align: left;
-  height: 0.8em;
+.smpl_exif_tr > td{
+  text-align: left;  
   border-right: $BorderSettings10;
   text-wrap: nowrap;
 }
@@ -433,6 +426,7 @@ table.smpl_exif_table {
   text-align: left;
   z-index: 256;
   cursor: pointer;
+  min-width:30em;
 }
 
 /* statistics table*/

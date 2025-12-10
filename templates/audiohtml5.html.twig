@@ -6,6 +6,12 @@
 		</audio>
 	</div>
 	<div class="smploth">
+		<div id="DescCont{{ id }}">
+			<a id="Desca{{ id }}" class="smpl_desc_a" href="javascript:void(0)">{{ ShowProperties }}</a>
+			<div id="DescSub{{ id }}" class="smpl_desc_info {{ test }}">
+			  <div id="Exif{{ id }}"></div>
+			</div>	
+		</div>
 		<div class="smpl_buttons">
 			<Edit>
 			<button id="SubBtn{{ id }}" class="smpl_edit{{ icon }} smpl_button"
@@ -21,15 +27,5 @@
 				<a href="{{ url }}" target="_blank">{{ Link }}</a>
 			</div>
 		</Link>
-		<div id="DescCont{{ id }}">
-			<a id="Desca{{ id }}" class="smpl_desc_a" href="javascript:void(0)">{{ ShowProperties }}</a>
-			<div id="DescSub{{ id }}" class="smpl_desc_info">
-				<div class="smpl_desc_title">{{ desc }}</div>
-				<div id="DescFS{{ id }}">{{ FileSize }}: {{ filesize }}</div>
-				<div id="DescTime{{ id }}">{{ Last modified }}: {{ lastmodified }}</div>
-				<div id="smpl_view{{ id }}" class="smpl_viewnumber">{{ viewnumber }}</div>
-				<div id="Exif{{ id }}"></div>
-			</div>
-		</div>
 	</div>
 </div>

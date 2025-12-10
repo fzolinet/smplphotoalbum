@@ -107,7 +107,7 @@ class Image {
 			case 'audio'     	:
 			default : $str = $this->RenderOther();
 		}
-	  $str = str_replace("{{ smpl_last_item_container }}", ($last ? "smpl_last_item_container": ""), $str);
+	  $str = str_replace("{{ smpl_last_item_container }}", ($last ? "smpl_last_item_container":""), $str);
 		$str = str_replace( "{{ icon }}", $this->icon, $str );
 		if ( $this->sub ) {
 			$str = str_replace( '{{ subtitle }}', ( empty ( $this->subtitle ) ? $this->name : $this->subtitle ), $str );
@@ -196,11 +196,7 @@ class Image {
 		];
 		$r = [
 				$this->words['Properties' ],
-				"$this->entry => '$this->subtitle'",
-				$this->words["Last modified" ],
-				date( 'Y.m.d', $this->thdate ),
-				$this->words["File size"],
-				$this->ShowFileSize()
+
 		];
 		$str = str_replace( $s, $r, $str );
 	}

@@ -93,9 +93,10 @@ class ImagickDriver{
     $draw->setStrokeWidth(0);
     $draw->setstrokeColor( new ImagickPixel('black') );
     $draw->setFillColor( new ImagickPixel('black') );
-    //$draw->setFillAlpha(1);
+    
     $draw->ellipse(0.5*($x1+$x2), 0.5*($y1+$y2), 0.5*($x1-$x1), 0.5*($y2-$y1), 0, 360);
     $img3->drawImage($draw);
+    $img->compositeImage( $img3, Imagick::COMPOSITE_OVER, $x1, $y1 );
     return $img;
   }
   /************************ Add menu *************************************/

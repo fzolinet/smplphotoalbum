@@ -388,11 +388,11 @@
 						smpl.progress(false);
 						return false;
 					} else if (data.ok == "-2") {
-						smpl.ErrorC(data.msg);
+						smpl.AlertC(data.msg, "warning");
 						smpl.progress(false);
 						return false;
 					} else if (data.ok == "-3") {
-						smpl.Error(data.msg);
+						smpl.AlertC(data.msg, "warning");
 						smpl.progress(false);
 						return false;
 					}
@@ -596,6 +596,9 @@
 		return false;
 	});
 
+	/**
+	 * ImgeEdit close
+	 */
 	function CloseAjax() {
 		let url = smpl.ajax + "/imgedit/" + smpl.id + "/close";
 		smpl.progress(true);
