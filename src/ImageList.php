@@ -105,6 +105,7 @@ class ImageList {
 	 */
 	function __construct(&$params) {		
 		$this->user 		= \Drupal::currentUser();
+		$this->access	  = $this->RightAccess();
 		$this->request	= \Drupal::request();
 		$this->sess   	= \Drupal::request()->getSession();	
 		$this->con    	= \Drupal::database();
@@ -113,11 +114,9 @@ class ImageList {
 		$this->params     = $params;
 		$this->preSettings( $params );		
 		$root             = $this->root;
-		$path             = $this->path;
-		
+		$path             = $this->path;		
 		$this->slide_path	= $this->path;
-		$this->access     = $this->RightAccess();
-
+		
 		// If method comes from page
 		if( isset( $params["method"] ) ){
 			$method = strtolower( $params["method"] );
@@ -241,7 +240,7 @@ class ImageList {
 			$query->orderBy( "fldorder", $this->ascdesc );
 		}
 
-		if($this->params['important'] ){
+		if( $this->params['important'] ){
 			$query->orderBy( 'importance', 'DESC');		
 		}
 		
@@ -910,7 +909,7 @@ class ImageList {
 	 */
 	function Render() {
 		global $base_path;
-				
+			
 		if( isset( $_SESSION['_symfony_flashes']['status'] ) &&
 				count( $_SESSION['_symfony_flashes']['status'] ) > 5
 		){
@@ -943,20 +942,10 @@ class ImageList {
 		}
 
 		// Load smpl template	and set the javascript variables	
-		$strjs = "\n<script>".$this->tpl["js"]."</script>\n";
+		$strjs = "<script>".$this->tpl["js"]."</script>";
 		
-		$imgeditform = $this->Request("imgeditform","''");
+		$imgeditform = $this->Request("imgeditform","0");
 		$id = $this->Request("id",-1);
-
-		//Imagick using
-		if(extension_loaded("Imagick")){
-			$gv = \Imagick::getVersion();
-			$imagick = $gv["versionString"];
-			$ver = [];
-			preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $imagick, $ver);			
-		} else{
-			$ver[1] = '';
-		}
 
 		$strjs = str_replace(
 			[ 
@@ -964,17 +953,19 @@ class ImageList {
 				"{{ wmpath }}",				
 				"{{ imagickversion }}",
 				"{{ imgeditform }}",
-				"{{ id }}",				
-				"{{ extimages }}",
-				"{{ extaudio }}",
-				"{{ extaudiohtml5 }}",
-				"{{ extvideo }}",
-				"{{ extvideohtml5 }}",
-				"{{ extapplication }}",
-				"{{ extcompressed }}",
-				"{{ extdocument }}",
-				"{{ extother }}",				
-				"{{ extensions }}",
+				"{{ id }}",
+
+				'{{ extimages }}',
+				'{{ extaudio }}',
+				'{{ extaudiohtml5 }}',
+				'{{ extvideo }}',
+				'{{ extvideohtml5 }}',
+				'{{ extapplication }}',
+				'{{ extcompressed }}',
+				'{{ extdocument }}',
+				'{{ extother }}',				
+				'{{ extensions }}',
+
 				"{{ maxsize }}",
 			],
 			[
@@ -984,23 +975,24 @@ class ImageList {
 				$imgeditform, 
 				$id,
 				
-				"'".$this->extensionstring("image")."'",
-				"'".$this->extensionstring("audio")."'",
-				"'".$this->extensionstring("audiohtml5")."'",
-				"'".$this->extensionstring("video")."'",
-				"'".$this->extensionstring("videohtml5")."'",
-				"'".$this->extensionstring("app")."'",
-				"'".$this->extensionstring("cmp")."'",
-				"'".$this->extensionstring("doc")."'",
-				"'".$this->extensionstring("oth")."'",				
-				"'".$this->extensionstring("all")."'",
-				ini_parse_quantity( ini_get('post_max_size') ),
+				$this->extensionstring("image"),
+				$this->extensionstring("audio"),
+				$this->extensionstring("audiohtml5"),
+				$this->extensionstring("video"),
+				$this->extensionstring("videohtml5"),
+				$this->extensionstring("app"),
+				$this->extensionstring("cmp"),
+				$this->extensionstring("doc"),
+				$this->extensionstring("oth"),				
+				$this->extensionstring("all"),
 
+				ini_parse_quantity( ini_get('post_max_size') ),
 			],  
 			$strjs 
 		);
 
 		$str = $this->tpl["smplphotoalbum"];
+		$str .= $strjs;
 		
 		if($this->params["test"] || $this->params["method"] == "GET"){
 			$this->method = "get";
@@ -1011,7 +1003,7 @@ class ImageList {
 		$origin = ($this->method == "POST" ) ? "./?".mt_rand() : "";
 		$str    = str_replace("{{ action }}", $origin, $str);
 
-		if ( $this->access ) {
+		if ( $this->access && $this->folders) {			
 			$str = str_replace( 
 							[ "{{ EditForm }}", 
 								"{{ ImgEditForm }}", 
@@ -1024,7 +1016,7 @@ class ImageList {
 							  $this->tpl["imgeditform"], 
 								$this->upload ? $this->tpl["uploadform"]: '',
 								$base_path . $this->modulepath . "/image/404.png",
-								$this->folders ? $this->tpl["folderform"]: '',
+								$this->folders ? $this->tpl["folderform"] : '',
 								$this->method
 							], $str
 						);										
@@ -1036,9 +1028,15 @@ class ImageList {
 			if( $this->Request("imgedit") ){
 				$id = $this->Request("id",1);
 			}
-
 		} else {
-			$str = str_replace ( ["{{ EditForm }}", "{{ ImgEditForm }}", "{{ UploadForm }}"],"", $str );
+			
+			$str = str_replace ( 
+				[	"{{ EditForm }}", 
+					"{{ ImgEditForm }}", 
+					"{{ UploadForm }}",
+					"{{ NewFolderForm }}"
+				],"", $str );
+
 			$str = preg_replace ( "#<Test(.*?)<\/Test>#imxs","", $str );
 		}
 
@@ -1055,7 +1053,6 @@ class ImageList {
 				$this->notes,
 				$this->order ? $this->SortOrdered () : ""
 			], $str);
-
 		// Subfolder write out
 		$this->Path( $str );
 		
@@ -1064,9 +1061,21 @@ class ImageList {
 
 		// Search / Filter
 		$this->SearchFilter( $str );
+		
+		// EditPath button
+		$this->EditPathButton( $str );
 
-		// UploadButton
+		// CacheClear button
+		$this->CacheClearButton( $str );
+	
+		// Upload button
 		$this->UploadButton( $str );
+		
+		// NewFolder button
+		$this->NewFolderButton($str);
+
+		// Thumbnails button
+		$this->ThumbnailsButton( $str );
 
 		// Graphic driver
 		$this->GraphicDriver( $str );
@@ -1108,8 +1117,7 @@ class ImageList {
 		$Table = $this->Table ();
 
 		$str = str_ireplace ( "{{ pager }}", $Pager, $str );
-		$str = str_ireplace ( "{{ table }}", $Table, $str );
-		$str .= $strjs;
+		$str = str_ireplace ( "{{ table }}", $Table, $str );		
 		return $str;
 	}
 
@@ -1170,18 +1178,65 @@ class ImageList {
 	  }	  
 	}
 
+		/**
+	 * Cache clear button views or not
+	 * @param string &$str
+	 */
+	function EditPathButton(string &$str){
+		if( $this->access ){
+			$str = str_replace(['<EditPathButton>','</EditPathButton>'],'', $str);			
+		}else{
+			$str = preg_replace("#<EditPathButton(.*?)<\/EditPathButton>#imxs", "", $str );
+		}		
+	}
+
+	/**
+	 * Cache clear button views or not
+	 * @param string &$str
+	 */
+	function CacheClearButton(string &$str){
+		if( $this->access ){
+			$str = str_replace(['<CacheClearButton>','</CacheClearButton>'],'', $str);			
+		}else{
+			$str = preg_replace("#<CacheClearButton(.*?)<\/CacheClearButton>#imxs", "", $str );
+		}		
+	}
+
 	/**
 	 * Upload button views or not
 	 * @param string &$str
 	 */
 	function UploadButton(string &$str){
-		if( !$this->upload ){
-			$str = preg_replace("#<UploadButton(.*?)<\/UploadButton>#imxs", "", $str );
+		if( $this->access && $this->upload ){
+			$str = str_replace(['<UploadButton>','</UploadButton>'],'', $str);			
 		}else{
-			$str = str_replace(['<UploadButton>','</UploadButton>'],'', $str);
+			$str = preg_replace("#<UploadButton(.*?)<\/UploadButton>#imxs", "", $str );
 		}		
 	}
 
+	/**
+	 * Upload button views or not
+	 * @param string &$str
+	 */
+	function NewFolderButton(string &$str){
+		if( $this->access && $this->folders ){
+			$str = str_replace(['<FolderButton>','</FolderButton>'],'', $str);			
+		}else{
+			$str = preg_replace("#<FolderButton(.*?)<\/FolderButton>#imxs", "", $str );
+		}		
+	}
+
+	/**
+	 * Refresh button views or not
+	 * @param string &$str
+	 */
+	function ThumbnailsButton(string &$str){
+		if( $this->access ){
+			$str = str_ireplace(['<ThumbnailsButton>','</ThumbnailsButton>'],'', $str);			
+		}else{
+			$str = preg_replace("#<ThumbnailsButton(.*?)<\/ThumbnailsButton>#imxs", "", $str );
+		}		
+	}
 	/**
 	 * Testing code from the main page
 	 * @param string $str
@@ -1203,17 +1258,19 @@ class ImageList {
 		$gv  =  gd_info();
 		$str = str_replace(
 			[
-				"{{ graphicdrv }}",
+				"{{ modulepath }}",
+				"{{ graphicdrv }}",				
+				'{{ GDVersion }}',
 				"{{ glogo }}",
-				'{{ GDVersion }}'
 			],
 			[
-				$this->graphicdrv,
-				$this->modulepath."/image/",
-				"GD Version ".$gv["GD Version"]
+				$this->modulepath,
+				$this->graphicdrv,				
+				"GD Version ".$gv["GD Version"],
+				$this->modulepath."/image/".$this->graphicdrv."logo.png",				
 			], $str);
 
-	  if(extension_loaded("Imagick")){
+	  if( extension_loaded("Imagick") ){
 	    $gv      = \Imagick::getVersion();
 	    $imagick = $gv["versionString"];
 	    $str     = str_replace('{{ ImagickVersion }}', $imagick, $str);
@@ -1325,13 +1382,22 @@ class ImageList {
 	 * Write out Subfolder
 	 * @param $string $str
 	 */
-	function Path( &$str ){		
-		if( !($this->folders && !empty( $this->subfolder ))){
-			$str = preg_replace( "#<Path(.*?)<\/Path>#imxs", "", $str );
-			return ;
-		}		
-		$str = str_replace(["<Path>","</Path>"],"", $str);
-		$str = str_replace( '{{ smpl_path }}',"/".$this->subfolder,$str);
+	function Path( &$str ){				
+		if( !($this->folders && !empty( $this->subfolder ))) {
+			$str = preg_replace( "#<Path(.*?)<\/Path>#imxs", "", $str );			
+		}	else {
+			$str = str_replace(
+				[
+					"{{ smpl_path }}",
+					"<Path>",
+					"</Path>"
+				],[
+					"/".$this->subfolder,
+					"",
+					""], 
+				$str);			
+		}
+		return;	
 	}
 
 	/**
@@ -1414,7 +1480,7 @@ class ImageList {
 			return $str;
 		}
 		$i = 1;
-		foreach( $this->Items AS $id => $Item ) {
+		foreach( $this->Items AS $id => $Item ) {			
 			$str .= $Item->Render ( $this->access, ( $i >= $db ) );
 			$i++;
 		}
@@ -1589,8 +1655,8 @@ class ImageList {
 	 *
 	 * @return boolean
 	 */
-	function RightAccess() {
-		return $this->user->id () == 1 || ($this->user->hasPermission ( "administer smplphotoalbum" ) || $this->user->hasPermission ( "edit smplphotoalbum" ));
+	function RightAccess() {		
+		return $this->user->id () == 1 || ($this->user->hasPermission("administrator")) || ($this->user->hasPermission ( "administer smplphotoalbum" ) || $this->user->hasPermission ( "edit smplphotoalbum" ));
 	}
 
 	/**
@@ -1641,7 +1707,7 @@ class ImageList {
 	/**
 	 * Extensions string
 	 * @param string $p  - Wich type check
-	 * @param boolean $ar - Extensions give baack in array not string
+	 * @param boolean $ar - Extensions give back in array not string
 	 * @return string|array extensions
 	 */
 	function extensionstring( $p = "", $ar = false ){		
@@ -1656,10 +1722,9 @@ class ImageList {
 				$this->extensionstring("cmp").
 				$this->extensionstring("doc").
 				$this->extensionstring("oth");
-
+			$exts = str_replace("  "," ", $exts );				
 			if( $ar ){
-				$exts = trim( $exts );
-				$exts = str_replace("  "," ",$exts);				
+				$exts = trim( $exts );				
 				$earray = [];
 				$earray = explode(" ",$exts);
 				return $earray;
@@ -1798,12 +1863,12 @@ class ImageList {
   	}
   	if ($i < strlen($disabled)) return false;
 
-  // Dont check the extension
-  if ( !$ext) return true;
+  	// Dont check the extension
+  	if ( !$ext) return true;
 
-  //extension checking    
-  $extension = strtolower ( $ar[strlen($ar) - 1] );
-	$ExtString = $this->extensionstring("all", false );
-  return stripos($extension, $ExtString);
+  	//extension checking    
+  	$extension = strtolower ( $ar[strlen($ar) - 1] );
+		$ExtString = $this->extensionstring("all", false );
+  	return stripos($extension, $ExtString);
 	}
 }

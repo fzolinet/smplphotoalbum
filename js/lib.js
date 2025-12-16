@@ -33,7 +33,6 @@ function fz_t(data, show = -1) {
   }
 }
 
-
 /**
   * Filename and extension validation
   * @param {string} fname 
@@ -229,7 +228,11 @@ function setDivInWindow(w, pos) {
       case 'warning': cl = "smpl-message-warning"; title = "Warning message"; break;
       case 'status': cl = "smpl-message-status"; title = "Status message"; break;
     }
-    swal(cmd, { title: title, });
+    swal({
+      title: title,
+      text: cmd,
+      animation: false
+    });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
     $("div.swal-modal").removeClass("smpl-message-notes");
@@ -249,6 +252,7 @@ function setDivInWindow(w, pos) {
       closeOnClickOutside: true,
       closeOnEsc: true,
       dangerMode: true,
+      animation: false
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
@@ -261,9 +265,11 @@ function setDivInWindow(w, pos) {
     * @param {*} cmd
     */
   smpl.ErrorC = function (cmd) {
-    swal("Error on server side: " + cmd, {
+    swal({
+      text: "Error on server side: " + cmd,
       title: "Error message",
       confirmButtonText: smpl.words.Confirm,
+      animation: false
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");

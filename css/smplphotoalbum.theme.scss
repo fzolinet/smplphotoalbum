@@ -144,7 +144,10 @@ a.smpl_a:hover {
 }
 
 #smpl_glogo{
-  height: 1.1em;
+  height: 1.8em;
+  display:inline-block;
+  vertical-align: middle;
+  margin-left: 0.5em;
 }
 
 .smpl_view, .smpl_size, .smpl_exif, .smpl_exif_div, 

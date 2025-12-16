@@ -34,6 +34,7 @@
 					<option value="imagick" {{ imagickselected }}>{{ ImagickVersion }}</option>
 				</select>
 			</span>
+			<img id="smpl_glogo" src="{{ glogo }}" alt="Graphic driver logo" title="Graphic driver logo" class="smpl_graphic_logo"/>
 			<!-- Autoclose: <input id="smpl_autoclose" name="smpl_autoclose" type="checkbox" {{ autoclose }}>  -->
 		</div>
 		<!--  Point layer area -->
@@ -359,7 +360,7 @@
 			</div>
 
 			<div id="smpl_equalize" class="smpl_imgedit_border">
-				<button id="smpl_equalize_done" onclick="return false;" class="smpl_aactbutton smpl_imagick" title="Equalize the histogram">{{ Equalize }} {{ Histogram }}</button>
+				<button id="smpl_equalize_done" onclick="return false;" class="smpl_actbutton smpl_imagick" title="Equalize the histogram">{{ Equalize }} {{ Histogram }}</button>
 			</div>
 
 			<div id="smpl_whitebalance" class="smpl_imgedit_border">

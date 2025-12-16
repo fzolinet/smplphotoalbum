@@ -1,4 +1,4 @@
-(function ($, Drupal, smpl) {
+(function ($, Drupal, smpl, swal) {
 	//"use strict";
 
 	var formw = 0;
@@ -80,9 +80,11 @@
 		if (smpl.graphicdrv == "gd") {
 			$(".smpl_gd").show();
 			$(".smpl_imagick").hide();
+			$("#smpl_glogo").attr("src", smpl.modulepath + "/image/gdlogo.png");
 		} else {
 			$(".smpl_gd").hide();
 			$(".smpl_imagick").show();
+			$("#smpl_glogo").attr("src", smpl.modulepath + "/image/imagicklogo.png");
 		}
 	});
 
@@ -188,8 +190,8 @@
 	function UndoRedo(idx, que, prev, next) {
 		let ud = $("#SmplUndo");
 		let rd = $("#SmplRedo");
-		ud.prop("title", smpl.words["Undo"] + ": " + prev);
-		rd.prop("title", smpl.words["Redo"] + ": " + next);
+		ud.prop("title", smpl.words.Undo + ": " + prev);
+		rd.prop("title", smpl.words.Redo + ": " + next);
 		if (idx > 0) {
 			ud.prop("disabled", false);
 			ud.removeClass("smpl_img_edit_form_darkenbuttons");
@@ -583,6 +585,7 @@
 				confirmButtonText: smpl.words.Confirm,
 				cancelButtonText: smpl.words.Cancel,
 				icon: "warning",
+				animation: false
 			})
 				.then((ok) => {
 					if (ok) {
@@ -723,4 +726,4 @@
 		$("#smpl_wh").val("0 x 0px");
 		$("#smpl_whp").val("0 x 0%");
 	}
-})(jQuery, Drupal, smpl);
+})(jQuery, Drupal, smpl, swal);

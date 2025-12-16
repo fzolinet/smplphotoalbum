@@ -465,8 +465,9 @@ class GDDriver {
   /**
    * Bevel 
    * @param GdImage $img
-   * @param $ob -width of bevel
-   * @param $depth of bevel 
+   * @param $ob    - width of bevel in pixel
+   * @param $depth - depht of bevel 
+   * @param $direction 
    */
   function Bevel($img, $ob, $depht = 1, $direction = 0 ){
     $deltabright = ( (255 - $depht )  / ( (int)($ob) ) );
@@ -490,10 +491,18 @@ class GDDriver {
         return false;
       }
     }
-
     return $img;
   }
 
+  /**
+   * Make Deeper or lighter 2 pixels width / height rectangle 
+   * @param GDImage $img
+   * @param int $x1 , coordinates of two points
+   * @param int $x2
+   * @param int $y1
+   * @param int $y2
+   * @param int $percent - brightness   
+   */
   function DeeperLighter( &$img, $x1, $x2, $y1, $y2, $percent ){
     $w = $x2-$x1;
     $h = $y2-$y1;

@@ -240,7 +240,8 @@ class ImageEdit {
   /**
    * get AVG color with GD
   */
-  function getGDAVGColor( $source, $w, $h, &$r, &$g, &$b){    
+  function getGDAVGColor( $source, $w, $h, &$r, &$g, &$b){
+	 $di = $dj=1;
     $szorzat = ($w/$di)*($h/$dj);
     $img = imagecreatetruecolor((int)$w, (int)$h);
     $ext = $this->getExt( $source );

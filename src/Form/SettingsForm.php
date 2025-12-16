@@ -47,11 +47,6 @@ class SettingsForm extends ConfigFormBase {
     return new static (
         $container->get('config.factory'),
         $container->get('config.typed'),
-        // $container->get( 'config.factory' ),         
-        // $container->get('path_alias.manager'),
-        // $container->get('path.validator'),
-        // $container->get('router.request_context'),
-        // $container->get( 'module_handler' ),
     );
   }
   

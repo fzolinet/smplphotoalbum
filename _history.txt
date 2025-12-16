@@ -1,6 +1,7 @@
 Bugs:
 ~~~~
-
+- {{ smpl_last_item_container }}
+- If only GD is on the server there is problem Settings.php
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
@@ -88,7 +89,10 @@ GD
 
 History:
 ~~~~~~~
-2025.12.11 - 1.9.7-beta2
+2025.12.16 - 1.9.7-beta2
+- Bugfix: Buttons hide if there is no enabled access
+- Bugfix: ImgEditForm
+- Bugfix: Graphic driver logo
 - optimalization: Exif Properties
 - Last Item on page & little scss
 - Bugfix: swal bugs &  buttons
@@ -98,11 +102,11 @@ History:
 
 2025.12.04 - 1.9.7-beta1
 - Bugfix: Exif: Last Modified
-- Click on icon - show bog picture or download
+- Click on icon - show big picture or download
 - Shows properties of items in folder/subfolder
 - Shows the icons of items in folder/subfolder
 - Step up and down in the folders there
-- Make thumbnails iconn the lower folder
+- Make thumbnails icon the lower folder
 - go in the subfolder, view the upfolder icon
 
 2025.11.26 - 1.9.7-dev
@@ -120,7 +124,7 @@ History:
 - AI Image Recognition with Gemini too
 
 2025.11.08 - 1.9.5ß
-- Bevel
+- Added: Bevel
 
 2025.10.31 - 1.9.4a
 - Importance in the orders

@@ -17,14 +17,20 @@
 				<button id="SmplFilterBtn" name="SmplFilterBtn" title="{{ Filter }}" class="smpl_button smpl_filter_btn{{ icon }}" value="{{ Filter }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			</Filter>
 			<UploadButton>
-			  <button id="SmplUpload" name="SmplUpload" class="smpl_button smpl_upload_file{{ icon }}" onclick="return false;" value="{{ File Upload }}" title="{{ File Upload }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="SmplUpload" name="SmplUpload" class="smpl_button smpl_upload_file{{ icon }}" onclick="return false;" value="{{ File Upload }}" title="{{ File Upload }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			</UploadButton>
 			<FolderButton>
-			  <button id="SmplFolder" name="SmplFolder" class="smpl_button smpl_folder{{ icon }}" onclick="return false;" value="{{ New folder }}" title="{{ New folder }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="SmplFolder" name="SmplFolder" class="smpl_button smpl_folder{{ icon }}" onclick="return false;" value="{{ New folder }}" title="{{ New folder }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			</FolderButton>
-			<button id="EditPath" name="EditPath" class="smpl_button smpl_edit_all{{ icon }}" onclick="return false;" value="{{ Edit Path }}" title="{{ Edit Path }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-			<button id="SmplCacheClear" name="SmplCacheClear" class="smpl_cache_clear{{ icon }} smpl_button" value="1" title="{{ Cache Clear }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-			<button id="SmplThumbnails" name="SmplThumbnails" class="smpl_thumb{{ icon }} smpl_button" value="1" title="{{ Refresh }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<EditPathButton>
+				<button id="EditPath" name="EditPath" class="smpl_button smpl_edit_all{{ icon }}" onclick="return false;" value="{{ Edit Path }}" title="{{ Edit Path }}"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</EditPathButton>
+			<CacheClearButton>
+				<button id="SmplCacheClear" name="SmplCacheClear" class="smpl_cache_clear{{ icon }} smpl_button" value="1" title="{{ Cache Clear }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</CacheClearButton>
+			<ThumbnailsButton>
+				<button id="SmplThumbnails" name="SmplThumbnails" class="smpl_thumb{{ icon }} smpl_button" value="1" title="{{ Refresh }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</ThumbnailsButton>
 			<button id="SmplSlide" name="SmplSlide" class="smpl_slide{{ icon }} smpl_button" value="1" title="{{ Slideshow }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<button id="smpl_help_link" class="smpl_help_link{{ icon }} smpl_button" onclick="return false;" title="{{ Help }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
     </div>
@@ -73,18 +79,3 @@
 </div>
 
 <!-- Smpl Form Table -->
-
-<script>
-	class words {
-		Delete   = "{{ Delete }}";
-		Rename   = "{{ Rename }}";
-		ImageEdit= "{{ Image Edit }}";
-		Undo     = "{{ Undo }}";
-		Redo     = "{{ Redo }}";
-		Subtitle = "{{ Subtitle }}";
-		Del_not  = "{{ Can not delete }}";
-		Confirm  = "{{ OK }}";
-		Cancel   = "{{ Cancel }}";
-	}
-	//
-</script>
