@@ -1,6 +1,5 @@
 Bugs:
 ~~~~
-- {{ smpl_last_item_container }}
 - If only GD is on the server there is problem Settings.php
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
@@ -26,7 +25,7 @@ https://fw3.com/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=
 
 Enhance menu (under construction)
 - AI Face Edit
-- Red Eye
+- Red Eye (AI?)
 - Repair
 - Skin Tune
 
@@ -89,6 +88,10 @@ GD
 
 History:
 ~~~~~~~
+2025.12.22 - 1.9.7-beta3
+- Bugfix: javascript - when there is not Imagick, enadbled upload, enabled folder
+- Bugfix: {{ smpl_last_item_container }}
+
 2025.12.16 - 1.9.7-beta2
 - Bugfix: Buttons hide if there is no enabled access
 - Bugfix: ImgEditForm

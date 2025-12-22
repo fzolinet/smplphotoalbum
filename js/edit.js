@@ -27,7 +27,7 @@
 		let id = $(this).attr('id').substring(6);
 		smpl.editsaved = false;
 		smpl.progress(true);
-		let url = smpl.ajax + "/edit/" + id;
+		var url = smpl.ajax + "/edit/" + id;
 		$.ajax({
 			url: url,
 			type: "POST",
@@ -77,13 +77,12 @@
 				html: 'Do you want to close?',
 				title: "The changed properties not saved",
 				className: "smpl-message-warning",
-				buttons: true,
 				closeOnClickOutside: true,
 				closeOnEsc: true,
 				dangerMode: true,
-				confirmButtonText: smpl.words.Confirm,
-				cancelButtonText: smpl.words.Cancel,
+				buttons: [smpl.words.Cancel, smpl.words.Confirm],
 				icon: "warning",
+				animation: false
 			})
 				.then((ok) => {
 					if (ok) {

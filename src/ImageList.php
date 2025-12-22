@@ -52,7 +52,7 @@ class ImageList {
 	protected $path       = '';   // relative path to photoalbum folder
 	protected $folders    = FALSE;// list of folders
 	protected $subfolder  = '';   // subfolder from the path of actual folder from the 
-	protected $sess       = ''; 	// Drupal session handling
+	protected $sess; 							// Drupal session handling
 	protected $smplbox    = "smplbox"; // It helps to shows the image in a lightbox or colorbox
 	protected $sortorder  = 'filename'; // source of compare
 	protected $stat       = '';   // statistics
@@ -81,6 +81,7 @@ class ImageList {
 	protected $doc = 1;
 	protected $oth = 1;
 	protected $video = 1;
+	protected $imgver = ['','Tdo not exists Imagick'];
 	
 	// Slideshow
 	protected $Slide;
@@ -116,6 +117,8 @@ class ImageList {
 		$root             = $this->root;
 		$path             = $this->path;		
 		$this->slide_path	= $this->path;
+		$this->upload 		= $this->access && $this->upload;
+		$this->folders 		= $this->access && $this->folders;
 		
 		// If method comes from page
 		if( isset( $params["method"] ) ){
@@ -126,7 +129,7 @@ class ImageList {
 		}
 
 		//Works with folders
-		if($this->folders && $this->access ){
+		if($this->folders ){
 
 			// subfolder - upfolder
 			$this->subfolder = $this->sess->get("subfolder");
@@ -145,7 +148,7 @@ class ImageList {
 			}
 
 			//List of folder: get folder from Request or session. Check the subfolder
-			if( $this->access  && ( $fname = $this->Request("smpl_fname", "", "POST") ) ){
+			if( $this->folders && ( $fname = $this->Request("smpl_fname", "", "POST") ) ){
 				if( !empty( $fname ) ) $this->NewFolder( $fname );
 			}
 		}
@@ -165,7 +168,7 @@ class ImageList {
 		}
 
 		if (! $ok) {
-			\Drupal::messenger()->addMessage(  "There is no cache folder or not writable: " . $tempfolder );
+			\Drupal::messenger()->addMessage(  "There is no cache folder or not writable: " . $tn , 'error' );
 		}
 
 		//Thumbnails refresh
@@ -521,7 +524,7 @@ class ImageList {
 			\Drupal::messenger()->addMessage( $this->t("Can not make this subfolder. Maybe the permission is the problem')") .": '$fname'", 'error' );
 			return false;
 		}
-		$this->InsertNewFile( $this->path . $this->$subfolder, $fname, $sub, "folder", $link,	0, $ti, 0 );
+		$this->InsertNewFile( $this->path . $this->subfolder, $fname, $sub, "folder", $link,	0, $ti, 0 );
 		$this->RefreshFolder( $this->path , $this->subfolder );
 		return ($ok ? "1" : "-2");
 	}
@@ -542,12 +545,14 @@ class ImageList {
 		$tmpname    = $_FILES[ 'smpl_uname']['tmp_name'];
 		$size       = $_FILES[ 'smpl_uname']['size'];
 		$ok         = $_FILES[ 'smpl_uname']['error'] === 0;
-		 		
+		
+		// Validation of filename
 		if( !($extok = stripos( $this->extensionstring("all") , pathinfo ( $filename , PATHINFO_EXTENSION ) ) > 0) ){
 			\Drupal::messenger()->addMessage( "Can not upload this file '$name' is not enabled file type!", 'warning' );
 			return false;
 		}
-
+		
+		// Validating the maxsize of uploaded file
 		if( $size > ini_parse_quantity( ini_get('post_max_size') ) ){
 			\Drupal::messenger()->addMessage( "Can not upload this file '$name', because the size is too big!", 'warning' );
 			$ok = false;
@@ -567,7 +572,7 @@ class ImageList {
 
 		//Save uploaded data into database
 		if( $ok ){
-			$ok = $this->InsertNewFile( $this->path . $this->$subfolder, $filename, $sub, $type, $link, $size, $ti, (int) ($importance ) );
+			$ok = $this->InsertNewFile( $this->path . $this->subfolder, $filename, $sub, $type, $link, $size, $ti, (int) ($importance ) );
 			if($ok){
 				\Drupal::messenger()->addMessage( " '$filename' added into database", 'notice' );
 			}else{
@@ -595,8 +600,8 @@ class ImageList {
 			$tim .= "#";
 			$tim = str_replace(".#","", $tim);
 			$tim = str_replace( [' ','.'], ['','-'], $tim);
-			$date = date_create($tim);
-			$timestamp = date_timestamp_get($date); 
+			$dt = date_create($tim);
+			$timestamp = date_timestamp_get($dt); 
 		}else{
 			$timestamp = $tim;
 		}
@@ -971,7 +976,7 @@ class ImageList {
 			[
 				$base_path,
 				$this->wmpath, 				
-				$ver[1], 
+				$this->imgver[1], 
 				$imgeditform, 
 				$id,
 				
@@ -1002,20 +1007,22 @@ class ImageList {
 		//Egyedi oldalak
 		$origin = ($this->method == "POST" ) ? "./?".mt_rand() : "";
 		$str    = str_replace("{{ action }}", $origin, $str);
-
-		if ( $this->access && $this->folders) {			
+		
+		if ( $this->access) {			
 			$str = str_replace( 
-							[ "{{ EditForm }}", 
-								"{{ ImgEditForm }}", 
-								"{{ UploadForm }}",
+							[ 
 								"{{ ImgEditDefault }}",
+								"{{ EditForm }}", 
+								"{{ ImgEditForm }}", 																
+								"{{ UploadForm }}",
 								"{{ NewFolderForm }}",
 								"{{ method }}"
 							],
-			        [ $this->tpl["editform"], 
-							  $this->tpl["imgeditform"], 
-								$this->upload ? $this->tpl["uploadform"]: '',
+			        [ 
 								$base_path . $this->modulepath . "/image/404.png",
+								$this->tpl["editform"], 
+							  $this->tpl["imgeditform"], 																
+								$this->upload ? $this->tpl["uploadform"]: '',
 								$this->folders ? $this->tpl["folderform"] : '',
 								$this->method
 							], $str
@@ -1274,11 +1281,12 @@ class ImageList {
 	    $gv      = \Imagick::getVersion();
 	    $imagick = $gv["versionString"];
 	    $str     = str_replace('{{ ImagickVersion }}', $imagick, $str);
-	    $ver     = [];
-	    preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $imagick, $ver);
-	    $str = str_replace( [ '{{ ImgVer }}',	"{{ greadonly }}" ], [ $ver[1],'' ], $str);
+	    $this->imgver = [];
+	    preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $imagick, $this->imgver);
+	    $str = str_replace( [ '{{ ImgVer }}',	"{{ greadonly }}" ], [ $this->imgver[1],'' ], $str);
 	  } else{
 	    $str = str_replace( [ '{{ ImagickVersion }}', '{{ greadonly }}' ], [ '', 'readonly="readonly"' ], $str);
+			$this->imgver = ["",""];
 	  }
 
 	  if($this->graphicdrv == "gd"){
@@ -1338,7 +1346,7 @@ class ImageList {
 	}
 
   /**
-   *
+   * Clear or enable the autoclose button
    * @param string $str
    */
 	function Autoclose(string &$str){
@@ -1349,9 +1357,17 @@ class ImageList {
 	  }	  
 	}
 
-	// Clear the caches of drupal
+	/**
+	 *  Clear the caches of drupal
+	 */
 	function CacheClear(){
 		global $databases;
+		
+		if(function_exists("opcache_reset")){
+			opcache_reset();
+			\Drupal::messenger()->addMessage("Reset OpCache");
+		}
+
 		$cacheclear = [
 				'cache_access_policy',
 				'cache_bootstrap',
@@ -1373,14 +1389,18 @@ class ImageList {
 				$qry = $this->con->truncate($x)->execute();
 				\Drupal::messenger()->addMessage("Clear the '$x' table was successful");
 			} catch( \Exception $e){
-				\Drupal::messenger()->addMessage($e->getMessage());
+				\Drupal::messenger()->addMessage($e->getMessage(),"warning");
 			}
+		}
+
+		if(function_exists('apcu_clear_cache')){
+			apcu_clear_cache();
 		}
 	}
 
 	/**
 	 * Write out Subfolder
-	 * @param $string $str
+	 * @param string $str
 	 */
 	function Path( &$str ){				
 		if( !($this->folders && !empty( $this->subfolder ))) {
@@ -1851,7 +1871,7 @@ class ImageList {
 		if (strlen($fname) < 1) return false;
   	if ($ext) {
     	$ar = str_split($fname);
-      $fname = ar[0];			
+      $fname = $ar[0];			
   	}
 		// Disabled subfolder name
 		if( $fname == Self::TN || $fname == $this->temp ) return false;

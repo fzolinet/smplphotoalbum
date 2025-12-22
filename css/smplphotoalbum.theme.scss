@@ -1133,10 +1133,17 @@ select#smpl_geom:focus {
 .swal-modal{
   width:400px !important;
   border: $BorderSettings30;
+  transition: none !important;
+  animation: none !important;
 }
+.swal-overlay--show-modal .swal-modal{
+  animation: none !important;
+}
+
 .swal-button{
   height:fit-content !important;
 }
+
 .swal-overlay{
   font-size: inherit;
 }

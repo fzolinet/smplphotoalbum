@@ -10,13 +10,17 @@
 		let name = $("div#smpl_sub" + id).html().trim();
 
 		swal({
-			text: smpl.words.Delete + ": '" + name + "'?",
+			text: smpl.words.Delete + ": '" + name + "' ?",
 			title: "Are you sure?",
 			className: "smpl-message-warning",
 			buttons: true,
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			dangerMode: true,
+			animation: false,
+			focusCancel: true,
+			buttons: [smpl.words.Cancel, smpl.words.Delete],
+			icon: "warning",
 		})
 			.then((ok) => {
 				if (ok) {

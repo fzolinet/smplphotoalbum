@@ -107,6 +107,7 @@ class Image {
 			case 'audio'     	:
 			default : $str = $this->RenderOther();
 		}
+
 		if( $last ){
 			$str = str_replace("{{ smpl_last_item_container }}", "smpl_last_item_container", $str);
 		}else{

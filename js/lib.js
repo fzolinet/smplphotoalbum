@@ -231,7 +231,7 @@ function setDivInWindow(w, pos) {
     swal({
       title: title,
       text: cmd,
-      animation: false
+      buttons: [smpl.words.Cancel, smpl.words.Confirm],
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
@@ -246,13 +246,10 @@ function setDivInWindow(w, pos) {
       text: cmd,
       title: "warning",
       className: "smpl-message-warning",
-      buttons: true,
-      confirmButtonText: smpl.words.Confirm,
-      cancelButtonText: smpl.words.Cancel,
+      buttons: [smpl.words.Cancel, smpl.words.Confirm],
       closeOnClickOutside: true,
       closeOnEsc: true,
       dangerMode: true,
-      animation: false
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
@@ -268,8 +265,7 @@ function setDivInWindow(w, pos) {
     swal({
       text: "Error on server side: " + cmd,
       title: "Error message",
-      confirmButtonText: smpl.words.Confirm,
-      animation: false
+      button: smpl.words.Confirm
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");

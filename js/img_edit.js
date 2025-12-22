@@ -578,14 +578,11 @@
 				text: smpl.words.Edit_not_saved,
 				title: "The changed image not saved. Do you want to close?",
 				className: "smpl-message-warning",
-				buttons: true,
 				closeOnClickOutside: true,
 				closeOnEsc: true,
 				dangerMode: true,
-				confirmButtonText: smpl.words.Confirm,
-				cancelButtonText: smpl.words.Cancel,
+				buttons: [smpl.words.Cancel, smpl.words.Confirm],
 				icon: "warning",
-				animation: false
 			})
 				.then((ok) => {
 					if (ok) {
