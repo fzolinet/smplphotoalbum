@@ -471,12 +471,16 @@ class ImageList {
  	 */
 	function ReadWords(){
 		$this->translate  = strtolower( trim( $this->params['translate'] ) );
-		if( $this->translate ){
-			$words = file( $this->modulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
-		}else{
+		if($this->params['lang'] == "" ){
+			$this->params['lang'] = 'en';
+		}
+		if( $this->params['lang'] == 'en' ){
 			$words = file( $this->modulepath ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+		} else {			
+			$words = file( $this->modulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
 		}
 		$words = str_replace( "_"," ", $words);
+		
 		foreach($words AS $e){
 			$e = trim( $e );
 			if( strpos( ' '.$e, ';' ) > 0 ){

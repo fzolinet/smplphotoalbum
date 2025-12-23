@@ -73,7 +73,7 @@ Imagick
 - Imagick::complexImages - Original and black image logical and | or |
 
 - FloodFillPaint
-- IMagick::ChannelFXImage
+- Imagick::ChannelFXImage
 - Password ciphered: - interesting 
 	- imagick::decipherImage(string $passphrase)
 	- Imagick::encipherImage(string $passphrase): bool
@@ -88,7 +88,10 @@ GD
 
 History:
 ~~~~~~~
-2025.12.22 - 1.9.7-beta3
+2025.12.23 - 1.9.7-beta3
+- Bugfix: image view (SmplphotoalbumController::v())
+- Bugfox: Multi language
+- Bugfix: Exif => '{{ File type }}'
 - Bugfix: javascript - when there is not Imagick, enadbled upload, enabled folder
 - Bugfix: {{ smpl_last_item_container }}
 

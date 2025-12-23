@@ -198,11 +198,17 @@ class Image {
 				"{{ Last modified }}",
 				"{{ lastmodified }}",
 				"{{ FileSize }}",
-				"{{ filesize }}"
+				"{{ filesize }}",
+				"{{ File type }}"
 		];
 		$r = [
 				$this->words['Properties' ],
-
+				$this->words['desc'],
+				$this->words['Last modified'],
+				"",
+				$this->words['FileSize'],
+				$this->ShowFileSize(),
+				$this->words['File type']	
 		];
 		$str = str_replace( $s, $r, $str );
 	}

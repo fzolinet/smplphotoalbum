@@ -175,6 +175,26 @@ class SettingsForm extends ConfigFormBase {
         '#collapsed' => TRUE 
     ];
     
+    $form ['view'] ['langswitch'] = [ 
+        '#type' => 'checkbox',
+        '#title' => $this->t ( 'Show the language switcher' ),
+        '#default_value' => $cfg->get( 'langswitch' ),
+        '#description' => $this->t ( "If it is true show the language switcher" ) 
+    ];
+
+    $form ['view'] ['lang'] = [ 
+        '#type' => 'select',
+        '#title' => $this->t ( 'Choose language' ),
+        '#options' => [
+            'en' => $this->t ( 'English' ),
+            'hu' => $this->t ( 'Hungarian' ),
+            'de' => $this->t ( 'German' ),
+            'fr' => $this->t ( 'French' ),
+            'es' => $this->t ( 'Spanish' )
+        ],
+        '#default_value' => $cfg->get( 'lang' ),
+        '#description' => $this->t ( "Choose language from list" ) 
+    ];
     $form ['view'] ['lazy'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Lazy loading of images' ),
@@ -937,12 +957,13 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'slide_extensions', $vals ['slide_extensions'] )
         ->set( 'slstyle', $vals ['slstyle'] )        
         ->set( 'icon', $vals ['icon'] )
-        ->set( 'test', $vals ['test'])
-        ->set( 'aiclarifai', $vals['aiclarifai'])
-        ->set( 'aigemini', $vals['aigemini'])
-        ->set( 'important', $vals['important'])
-        ->set( 'folders', $vals['folders'])
-        
+        ->set( 'test', $vals ['test'] )
+        ->set( 'aiclarifai', $vals['aiclarifai'] )
+        ->set( 'aigemini', $vals['aigemini'] )
+        ->set( 'important', $vals['important'] )
+        ->set( 'folders', $vals['folders'] )
+        ->set( 'langswitch', $vals['langswitch'] )
+        ->set( 'lang', $vals['lang'] )
         ->save ();
   }
   /**

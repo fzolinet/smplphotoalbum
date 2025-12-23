@@ -1093,6 +1093,13 @@ select#smpl_geom:focus {
   font-size: 0.8em;
 }
 
+#smpl_path{
+  border-radius: $BorderRadius;
+  border-style: groove;
+  border-color:$BorderColor;
+  border-width: $BorderWidth;
+}
+
 // ----------- Javascript messages AlertC ----------
 #smpl-message{  
   position: absolute;
@@ -1130,6 +1137,8 @@ select#smpl_geom:focus {
   background-color: $BkgNotes;
   color: $ColorNotes;
 }
+
+/* SWAL settings*/
 .swal-modal{
   width:400px !important;
   border: $BorderSettings30;

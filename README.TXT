@@ -119,6 +119,7 @@ Parameters
   number: number of images on one page (from D8)
   width: width of thumbnails in pixel
   order: asc /desc / rand, default asc
+  lang: en|hu, default: en
   ascdesc: asc /desc, default asc (D8)
   sort: sortable of this album - (True/False)
   sub: is there subtitle (true|false)

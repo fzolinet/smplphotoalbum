@@ -1563,6 +1563,13 @@ select#smpl_geom:focus {
   font-size: 0.8em;
 }
 
+#smpl_path {
+  border-radius: 0.2em;
+  border-style: groove;
+  border-color: #D0D0D0;
+  border-width: 1px;
+}
+
 #smpl-message {
   position: absolute;
   display: none;
@@ -1604,6 +1611,7 @@ select#smpl_geom:focus {
   color: #2a4b17;
 }
 
+/* SWAL settings*/
 .swal-modal {
   width: 400px !important;
   border: 1px solid #929292;

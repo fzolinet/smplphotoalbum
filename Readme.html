@@ -62,7 +62,7 @@
 	<li>The admin can modify the list of extensions of files types</li>
 </ul>
 
-<h3>Events</h3>
+<h3>Events in gallery mode</h3>
 
 <p>If you click on a thumbnail:</p>
 <ul>
@@ -72,6 +72,14 @@
 	<li>audio: downloads or plays</li>
 	<li>HTML5 &lt;Audio&gt;: plays the media,</li>
 	<li>documents, compressed, executable, other types downloaded</li>
+</ul>
+<h3>Events in slideshow mode</h3>
+<ul>
+	<li>Shows an image, then after a few seconds it disappears
+		and the next image in the directory appears.
+		The image can be navigated forward/backward with buttons on the sides.</li>
+	<li>If you click on the image, it shows in full screen.</li>
+	<li>When the mouse hovers over the image, the slideshow stops</li>
 </ul>
 
 <h3>Administration settings</h3>
@@ -147,25 +155,30 @@
 	1. Make a simple photoalbum from a folder - <u>old syntax:</u>
 </h4>
 <p>
-	<code class="language-plaintext">
-	[smpl|/path-to-folder]
-</code>
+<pre>
+		<code class="language-plaintext">
+			[smpl|/path-to-folder]
+		</code>
+	</pre>
 </p>
 <h4>
 	2. Make a simple photoalbum from a folder - <u>new syntax:</u>
 </h4>
 <p>
-<pre><code class="language-plaintext">[smplphotoalbum]
+<pre><code class="language-plaintext">
+	[smplphotoalbum]
     {name_of_parameter: value}
-[/smplphotoalbum]
+	[/smplphotoalbum]
 </code></pre>
 
-<pre><code class="language-plaintext">{smplphotoalbum}
+<pre><code class="language-plaintext">
+	{smplphotoalbum}
     {name_of_parameter: value}
+		...
 {/smplphotoalbum}
 </code></pre>
-
 </p>
+
 <p>Example:</p>
 <p>
 <pre><code>[smplphotoalbum]
@@ -183,29 +196,33 @@
 </p>
 <h3>Parameters:</h3>
 <ul>
+	<li>{name-of-parameter: value-of-parameter}</li>
+	<li>path: relative path to photoalbum folder (required)</li>
 	<li>notes: some-text</li>
 	<li>number: number of images on one page (from D8)</li>
 	<li>width: width of thumbnails in pixel</li>
-	<li>order: asc /desc / rand, default asc</li>
+	<li>lang: (en | hu, default en ) </li>
+	<li>order: asc / desc / rand, default asc</li>
 	<li>ascdesc: asc /desc, default asc (D8)</li>
-	<li>sort: sortable of this album - (True/False)</li>
-	<li>sub: is there subtitle (true|false)</li>
-	<li>viewed: shows the number of views</li>
-	<li>edit: Editable images (true|false)</li>
-	<li>exif: shows the exif information of images</li>
-	<li>audio: shows this type of files (true|false)</li>
-	<li>video: shows this type of files (true|false)</li>
-	<li>doc: shows this type of files (true|false)</li>
-	<li>cmp: shows this type of files (true|false)</li>
-	<li>app: shows this type of files (true|false)</li>
-	<li>url: shows the URL of image website</li>
+	<li>sort: sortable of this album - (true|false, default: true)</li>
+	<li>sub: is there subtitle? (true|false, default: true)</li>
+	<li>viewed: shows the number of views, (true|false, default: true)</li>
+	<li>graphic: gd / imagick</li>
+	<li>edit: Editable images (true|false), default: true, when user is admin of Drupal</li>
+	<li>exif: shows the exif information of images (true|false), default: true</li>
+	<li>audio: shows this type of files (true|false, default: true)</li>
+	<li>video: shows this type of files (true|false, default: true)</li>
+	<li>doc: shows this type of files (true|false, default: true)</li>
+	<li>cmp: shows this type of files (true|false, default: true)</li>
+	<li>app: shows this type of files (true|false, default: true)</li>
+	<li>url: shows the URL of item website</li>
 	<li>target: what is the target (default: _blank)</li>
 	<li>html5: the video and audio file shows with HTML5 audio and video tags</li>
-	<li>autoclose: After save the edited image the edit windows auto close (true|false)</li>
-	<li>ai: name of image from image recognition of AI</li>
+	<li>autoclose: After save the edited image the edit windows auto close (true|false, default: false)</li>
+	<li>ai: name of image from image recognition of AI (Gemini)</li>
 	<li>method: GET / POST</li>
-	<li>upload: Upload enabled filetypes (true|false)</li>
-	<li>folder: makes subfolder (true|false)</li>
+	<li>upload: Upload enabled filetypes (true|false, default: true), when admin access folder</li>
+	<li>folder: makes subfolder (true|false, default: true), when admin access folder</li>
 	<li>Watermark</li>
 	<ul>
 		<li>wm: Watermark when show|edit the image (true|false)</li>
@@ -217,9 +234,9 @@
 		<li>wmcopyright: any text into copyright IPTC/Exif field</li>
 		<li>wmauthor: any text into author / Owner IPTC/Exif field</li>
 	</ul>
-	<li>test: test mode, only the true|false</li>
+	<li>test: test mode, only the (true|false, default false)</li>
 	<li>method: GET | POST (GET better the testing). Only admin mode!</li>
-	<li>graphicdrv: which graphic driver, gd or imagick (if it installed)</li>
+	<li>graphicdrv: which graphic driver, <strong>gd</strong> or <strong>imagick</strong> (if it is installed)</li>
 	<li>lang: hu | en</li>
 	<li>translate: true|false
 	<li>icon: Set the color of icons on the page (_col / _bw)</li>
@@ -249,10 +266,10 @@
 <h3>Edit An image (This is under construction)</h3>
 If you are administrator you can edit the images online
 <ul>
-	<li>You can edit the name of file, subtitle (caption)</li>
+	<li>You can edit the name of file, subtitle</li>
 	<li>Move the image with: mouse drag or keyboard cursor keys</li>
 	<li>Zoom in / out: mouse wheel or keyboard "+" & "-" key</li>
-	<li>You can edit a lot of properties of imagewith buttons and parameters, for example</li>
+	<li>You can edit a lot of properties of image with buttons and parameters, for example</li>
 	<ul>
 		<li>Rotate, flip vertically, horizontally</li>
 		<li>Crop the image</li>
@@ -263,18 +280,20 @@ If you are administrator you can edit the images online
 		<li>Add Noise, Denoise</li>
 		<li>Sharpen, Emboss, Edge, Blur and Convolution (with convolution matrix)</li>
 	</ul>
-</ul>
 
-<p>It is uses the GD driver or Imagick driver if it is installed on server</p>
-<p>If the change takes too long you can break it with press the Escape key or
-	push the Cancel button.</p>
-<p>As admin the parameters change the web oage img edit mode::</p>
-<p>http://www.foo.com/node?imgedit=1&id=[image id]</p>
-<p>The using similar than ACDSee or any other image editor application</p>
-<p>The status of editink can use undo / redo function</p>
-<p>The Save and the Save As saves the edited image into the same folder</p>
+
+	<li>It is uses the GD driver or Imagick driver if it is installed on server</li>
+	<li>If the change takes too long you can break it with press the Escape key or push the Cancel button.</li>
+	<li>As admin the parameters change the web page img edit mode::</li>
+	<li>http://www.foo.com/node?imgedit=1&id=[image id]</li>
+	<li>The using similar than ACDSee or any other image editor application</li>
+	<li>The status of editing can use <strong>Undo</strong> / <strong>Redo</strong> button/function and original
+		version with <strong>Initial Image</strong> button
+	</li>
+	<li>The <strong>Save</strong> and the <strong>Save As</strong> saves the edited image into the same folder</li>
+</ul>
 <p>
-	2025.12.22.<br /> Zoltan Fabian
+	2025.12.23.<br /> Zoltan Fabian
 </p>
 
 <p>

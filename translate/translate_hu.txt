@@ -87,6 +87,7 @@ Face edit=Arc szerkesztés
 Factor=Mérték
 Filename=File neve
 File size=File mérete
+File type=File típus
 File Upload=Fájl feltöltés
 Filter=Szűrő
 FilterValue=Szűrő érték

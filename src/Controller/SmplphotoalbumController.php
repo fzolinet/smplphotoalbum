@@ -46,25 +46,27 @@ class SmplphotoalbumController extends ControllerBase{
   private $wm;
   private $aiclarifai;
   private $aigemini;
+  private $lang;
   private $words = [];
   
   /**
    * Class constructor.
    */
-  public function __construct() {
+  public function __construct() {    
     $this->cfg    = \Drupal::config( 'smplphotoalbum.settings' );
+    $this->lang   = $this->cfg->get( 'lang' );
     $this->mp     = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
     $this->public = \Drupal::service( 'file_system' )->realpath( "public://" );
     $this->sess   = \Drupal::request()->getSession();
     $this->wm     = $this->sess->get("wm", false);    
-    $root = $this->cfg->get( 'root' );
+    $root = $this->cfg->get( 'root' );    
     $root = str_replace( "public://", $this->public . "/", $root );
     $root .= substr( $root, - 1 ) != '/' ? "/" : '';
 
     $this->root = $this->slash( $root );
     $this->TN = $this->cfg->get( 'TN' );
     $this->aiclarifai = $this->cfg->get("aiclarifai");
-    $this->aigemini = $this->cfg->get("aigemini");
+    $this->aigemini = $this->cfg->get("aigemini");    
   }
   
   // ...
@@ -198,6 +200,7 @@ class SmplphotoalbumController extends ControllerBase{
       "{{ desc }}",
       "{{ FileSize }}",
       "{{ filesize }}",
+      "{{ File type }}",
       "{{ Last modified }}",
       "{{ lastmodified }}",
       "{{ Number of views }}",
@@ -208,6 +211,7 @@ class SmplphotoalbumController extends ControllerBase{
       $a["name"]." => ".$a["subtitle"],
       $this->words["File size"],
       $this->ShowFileSize($a["size"]),
+      $this->words["File type"],
       $this->words["Last modified"],
       date("Y.m.d",$a["modified"]),
       $this->words["Number of views"],
@@ -361,8 +365,6 @@ class SmplphotoalbumController extends ControllerBase{
     }else{
       \Drupal::messenger()->addStatus( $this->t("There was nothing changed in the database") ); 
     }  
-
-    \Drupal::messenger()->addStatus($msg);
 
     $f['db'] = $db;
     $content = json_encode( $f );      
@@ -629,14 +631,14 @@ class SmplphotoalbumController extends ControllerBase{
     $ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
     if( $name == "..") $p = $this->mp . "/image/folderup.png";
     else if( $tn == "folder" ) $p = $this->mp . "/image/folder.png";
-    else if( $tn != "" ){
+    else if( $tn != "" ){      
       switch($ext){
         case "xbm": $p = $this->mp ."/image/other_xbm.png"; break;
         case "bak": 
         case "bkp": $p = $this->mp ."/image/other_bak.png"; break;
         case "xbm": $p = $this->mp ."/image/other_torrent.png"; break;
         default   : $p = $this->slash( $this->root . $path . $this->TN . $name); break;
-      }
+      }      
     }else{
       $con = \Drupal::database();
       $rs = $con->select( "smplphotoalbum", "s" )
@@ -659,10 +661,14 @@ class SmplphotoalbumController extends ControllerBase{
       if($this->isimage( $p ) && $this->sess->get("wm", false)) {
         $p = $this->watermarkonfly( $id, $p );
       }
-    }    
-
+    }
+    
+    if( !file_exists( $p ) ) {
+      return new BinaryFileResponse( $this->mp . "/image/404.png" );
+    }
     $response = new BinaryFileResponse( $p );
-    if( !$this->isimage( $p )) {
+    
+    if( !$this->isimage( $p )) {    
       header("Content-type: " . mime_content_type($p));
       $response->headers->set( 'Pragma', 'no-cache' );
       $response->headers->set( 'Content-Disposition', 'attachment; filename="' . basename( $p ) . '"' );
@@ -1177,10 +1183,17 @@ function ai_recognition( $bytes ){
  	 * Reads the words of translating
 	 * @return
  	 */
-	function ReadWords(){
-		$this->translate  = strtolower( trim( $this->params['translate'] ) );
-		$words = file( $this->mp ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+	function ReadWords(){		
+		if($this->lang == ""){
+			$this->lang = 'en';
+		}
+		if( $this->lang == 'en' ){
+			$words = file( $this->mp ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+		} else {			
+			$words = file( $this->mp ."/translate/translate_" . $this->lang . ".txt", FILE_IGNORE_NEW_LINES );
+		}
 		$words = str_replace( "_"," ", $words);
+		
 		foreach($words AS $e){
 			$e = trim( $e );
 			if( strpos( ' '.$e, ';' ) > 0 ){
@@ -1194,6 +1207,6 @@ function ai_recognition( $bytes ){
 				$this->words[ trim( $a[0] ) ] = trim( $a[1] );
 			}
 		}
-	}
+	}	
 
 }

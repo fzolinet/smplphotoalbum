@@ -82,6 +82,7 @@ Face edit
 Factor
 Filename
 File size
+File type
 File Upload
 Filter
 FilterValue

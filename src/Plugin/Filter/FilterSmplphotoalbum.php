@@ -232,8 +232,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['interval'] = 10;  //sec
     $this->params['style']      = 'none';
     $this->params['slidestyle'] = 'none';
-    $this->params['translate']  = false;
-    $this->params['lang']       = 'en';
+    $this->params['translate']  = false;     
     $this->params['methods']    = 'POST';
     $this->params['folders']    = ($this->params['folders'] === 1 ? true: false);
     
@@ -283,6 +282,8 @@ class FilterSmplphotoalbum extends FilterBase {
         'important',       
         'interval',
         'lang',
+        'langswitch',
+        'lazy',
         'method',
         'newfolder',
         'notes',
@@ -356,15 +357,16 @@ class FilterSmplphotoalbum extends FilterBase {
               $this->params ['icon'] ='_col';
             }
             break;
-          case 'important': $this->params ['important']= $this->truefalse($v); break;
-          case 'interval' : $this->params ['interval'] = $v; break;
-          case 'keywords' : $this->params ['keywords'] = $v; break;
-          case 'lang'     : $this->params ['lang']     = $v; break;
-          case 'lazy'     : $this->params ['lazy']     = $this->truefalse($v); break;
-          case "method"   : $this->params ['method']   = ( strtolower($v) == "get")? "GET" : "POST"; break;
-          case 'notes'    : $this->params ['notes']    = $v; break;
-          case 'number'   : $this->params ['number']   = (int)($v); break;
-          case 'order'    : $this->params ['order']    = $v; break;
+          case 'important' : $this->params ['important']= $this->truefalse($v); break;
+          case 'interval'  : $this->params ['interval'] = $v; break;
+          case 'keywords'  : $this->params ['keywords'] = $v; break;
+          case 'lang'      : $this->params ['lang']     = $v; break;
+          case 'langswitch': $this->params ['langswitch'] = $this->truefalse($v); break;
+          case 'lazy'      : $this->params ['lazy']     = $this->truefalse($v); break;
+          case "method"    : $this->params ['method']   = ( strtolower($v) == "get")? "GET" : "POST"; break;
+          case 'notes'     : $this->params ['notes']    = $v; break;
+          case 'number'    : $this->params ['number']   = (int)($v); break;
+          case 'order'     : $this->params ['order']    = $v; break;
           // path of folder from photoalbum folder
           case 'path' :
             $v = str_replace ( "\\", "/", $v );
@@ -530,6 +532,7 @@ class FilterSmplphotoalbum extends FilterBase {
       //translation
       'translate',
       'lang',
+      'langswitch'
     ];
     $config = \Drupal::config ( 'smplphotoalbum.settings' );
     $cfg = [];
