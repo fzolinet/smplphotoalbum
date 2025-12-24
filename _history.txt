@@ -89,7 +89,7 @@ History:
 ~~~~~~~
 2025.12.27 -1.9.8-beta1
 - New: Ask Gemini to AI made image is?
-- Clarifai client Delete
+- Delete Clarifai client
 
 2025.12.23 - 1.9.7-beta3
 - Bugfix: image view (SmplphotoalbumController::v())

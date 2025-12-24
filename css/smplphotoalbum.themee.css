@@ -17,7 +17,8 @@
   line-height: var(--sp1);
 }
 
-.smpl_table, .smpl_pager {
+.smpl_table,
+.smpl_pager {
   display: inline-block;
 }
 
@@ -38,7 +39,8 @@
   align-items: center;
 }
 
-:is(.smpl_table) td, :is(.smpl_table) th {
+:is(.smpl_table) td,
+:is(.smpl_table) th {
   padding-block: 0 !important;
   -webkit-padding-end: 0 !important;
           padding-inline-end: 0 !important;
@@ -107,7 +109,8 @@ a.smpl_a:hover {
   margin-top: 0.2em;
 }
 
-.smpl_view_last, .smpl_view_number {
+.smpl_view_last,
+.smpl_view_number {
   display: block;
 }
 
@@ -118,17 +121,28 @@ a.smpl_a:hover {
   margin-left: 0.5em;
 }
 
-.smpl_view, .smpl_size, .smpl_exif, .smpl_exif_div,
-.smpl_date, .smpl_desc_a, .smpl_tax, .smpl_list, #smpl_list {
+.smpl_view,
+.smpl_size,
+.smpl_exif,
+.smpl_exif_div,
+.smpl_date,
+.smpl_desc_a,
+.smpl_tax,
+.smpl_list,
+#smpl_list {
   text-align: center;
 }
 
-#smpl_sub, #smpl_usub {
+#smpl_sub,
+#smpl_usub,
+textarea#smpl_ai_check {
   width: 80%;
 }
 
-.smpl_sub_text, .smpl_view_text,
-.smpl_size_text, .smpl_date_text {
+.smpl_sub_text,
+.smpl_view_text,
+.smpl_size_text,
+.smpl_date_text {
   display: inline;
   border-width: 0;
   display: inline;
@@ -136,7 +150,8 @@ a.smpl_a:hover {
   clear: both;
 }
 
-#smpl_usize, #smpl_utime {
+#smpl_usize,
+#smpl_utime {
   width: 10em !important;
   max-width: 10em !important;
   text-align: right;
@@ -146,7 +161,8 @@ a.smpl_a:hover {
   margin-bottom: 0.2em;
 }
 
-.smpl_subtitle, .smpl_viewnumber {
+.smpl_subtitle,
+.smpl_viewnumber {
   display: block;
 }
 
@@ -197,8 +213,12 @@ div#sortorder {
 }
 
 /* buttons */
-.smpl_pager_button > button, .smpl_url_plus,
-.smpl_sel, #smpl_list, #smpl_sortorder, #smpl_ascdesc {
+.smpl_pager_button > button,
+.smpl_url_plus,
+.smpl_sel,
+#smpl_list,
+#smpl_sortorder,
+#smpl_ascdesc {
   font-size: 0.8em;
   border-radius: 0.2em;
   margin: 2px;
@@ -244,7 +264,8 @@ button {
   height: var(--sp1-5) !important;
 }
 
-select, input {
+select,
+input {
   height: var(--sp1-5) !important;
   min-height: var(--sp1-5) !important;
 }
@@ -1001,7 +1022,8 @@ div#SmplFolderFormData {
   max-width: 100%;
 }
 
-.smpl_audiohtml5, .smpl_videohtml5 {
+.smpl_audiohtml5,
+.smpl_videohtml5 {
   max-width: 100%;
   border-radius: 0.2em;
 }
@@ -1096,11 +1118,13 @@ div.smpl_menu {
   display: none;
 }
 
-label.smpl, button.smpl {
+label.smpl,
+button.smpl {
   font-weight: 700;
 }
 
-span.smpl, td.smpl {
+span.smpl,
+td.smpl {
   font-weight: 500;
 }
 
@@ -1192,10 +1216,21 @@ input[type=number] {
   width: 8em;
 }
 
-[type=color], [type=date], [type=datetime-local],
-[type=email], [type=file], [type=month], [type=number],
-[type=password], [type=search], [type=tel], [type=text],
-[type=time], [type=url], [type=week], textarea {
+[type=color],
+[type=date],
+[type=datetime-local],
+[type=email],
+[type=file],
+[type=month],
+[type=number],
+[type=password],
+[type=search],
+[type=tel],
+[type=text],
+[type=time],
+[type=url],
+[type=week],
+textarea {
   font-size: initial;
 }
 
@@ -1285,7 +1320,8 @@ input[readonly] {
   max-width: 5em;
 }
 
-select#smpl_sortorder, select#smpl_ascdesc {
+select#smpl_sortorder,
+select#smpl_ascdesc {
   padding: 2px;
   border-width: 1px;
   border-style: solid;
@@ -1318,7 +1354,8 @@ div.smpl_label {
   background-repeat: no-repeat;
 }
 
-#smpl_div_new, #smpl_img_close {
+#smpl_div_new,
+#smpl_img_close {
   position: absolute;
   top: 1px;
   height: 20px;
@@ -1326,7 +1363,8 @@ div.smpl_label {
   background-color: white;
   border: 2px outset #D0D0D0;
 }
-#smpl_div_new :hover, #smpl_img_close :hover {
+#smpl_div_new :hover,
+#smpl_img_close :hover {
   cursor: pointer;
 }
 
@@ -1372,7 +1410,8 @@ label.smpl_label:hover {
   text-align: center;
 }
 
-.smplslide_picture, .smplslide_pager {
+.smplslide_picture,
+.smplslide_pager {
   width: 100%;
   display: block;
 }
@@ -1402,7 +1441,10 @@ label.smpl_label:hover {
   cursor: pointer;
 }
 
-#smplup, #smplprev, #smplnext, #smpldown {
+#smplup,
+#smplprev,
+#smplnext,
+#smpldown {
   background-color: rgba(8, 8, 8, 0.5);
   color: white;
   font-weight: 500;
@@ -1416,7 +1458,10 @@ label.smpl_label:hover {
   z-index: 2;
   cursor: default;
 }
-#smplup:hover, #smplprev:hover, #smplnext:hover, #smpldown:hover {
+#smplup:hover,
+#smplprev:hover,
+#smplnext:hover,
+#smpldown:hover {
   cursor: pointer;
 }
 
@@ -1464,9 +1509,15 @@ input#smpl_filter {
   font-size: small;
 }
 
-select#smpl_sortorder, select#smpl_ascdesc, select#smpl_rotate_deg,
-select#smpl_mode, select#smpl_kind, select#smpl_filters, select#smpl_geom,
-.smpl_dropdown, #smpl_utype {
+select#smpl_sortorder,
+select#smpl_ascdesc,
+select#smpl_rotate_deg,
+select#smpl_mode,
+select#smpl_kind,
+select#smpl_filters,
+select#smpl_geom,
+.smpl_dropdown,
+#smpl_utype {
   background-image: linear-gradient(45deg, transparent 50%, grey 50%), linear-gradient(135deg, grey 50%, transparent 50%), linear-gradient(to right, #EDF5FA, #EDF5FA);
   background-position: calc(100% - 10px) 0.7em, calc(100% - 5px) 0.7em, 100% 0;
   background-size: 0.4em 0.4em, 0.4em 0.4em, 1.5em 1.7em;
@@ -1474,8 +1525,12 @@ select#smpl_mode, select#smpl_kind, select#smpl_filters, select#smpl_geom,
   max-width: 20em;
 }
 
-select#smpl_sortorder:focus, select#smpl_ascdesc:focus, select#smpl_rotate_deg:focus,
-select#smpl_kind:focus, select#smpl_mode:focus, select#smpl_filters:focus,
+select#smpl_sortorder:focus,
+select#smpl_ascdesc:focus,
+select#smpl_rotate_deg:focus,
+select#smpl_kind:focus,
+select#smpl_mode:focus,
+select#smpl_filters:focus,
 select#smpl_geom:focus {
   background-image: linear-gradient(45deg, grey 50%, transparent 50%), linear-gradient(135deg, transparent 50%, grey 50%), linear-gradient(to right, lightgray, lightgray);
   background-position: calc(100% - 5px) 0.7em, calc(100% - 10px) 0.7em, 100% 0;
@@ -1484,7 +1539,8 @@ select#smpl_geom:focus {
   outline: 0;
 }
 
-.smpl_step, .smpl_que {
+.smpl_step,
+.smpl_que {
   text-align: left;
   background-image: none;
   max-width: 2em;
@@ -1496,7 +1552,9 @@ select#smpl_geom:focus {
   text-align: left;
 }
 
-#smpl_kind, #smpl_geom, #smpl_mode {
+#smpl_kind,
+#smpl_geom,
+#smpl_mode {
   width: 5em;
 }
 

@@ -34,7 +34,10 @@
 						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_AI_gen">{{ AI generated image }}</label></td>
 						<td align="left" valign="top">
 							<textarea id="smpl_ai_check" type="text" class="smpl_ai_check" name="smpl_ai_gen" readonly="readonly">&nbsp;</textarea><br />
-							<button id="smpl_ai_check" onclick="return false;" class="smpl_ai_check{{ icon }} smpl_ai_gen{{ icon }} smpl_button" title="{{ AI check }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>							
+							<ai>
+								<button id="smpl_ai_check" onclick="return false;" class="smpl_ai_check{{ icon }} smpl_ai_gen{{ icon }} smpl_button" title="{{ AI check }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>
+								&nbsp;<span id="smpl_ai_check-info">{{ Is there this image AI generated? }}</span>
+							</ai>
 						</td>
 					</tr>
 					<tr>

@@ -81,7 +81,7 @@ class ImageList {
 	protected $doc = 1;
 	protected $oth = 1;
 	protected $video = 1;
-	protected $imgver = ['','Tdo not exists Imagick'];
+	protected $imgver = ['','Do not exists Imagick'];
 	
 	// Slideshow
 	protected $Slide;
@@ -1141,8 +1141,17 @@ class ImageList {
 		if( $ai ){
 			$str = str_replace( [ "<ai>","</ai>" ], "", $str );
 			$str = str_replace( "{{ AI_recognition }}", $this->words["AI recognition"], $str);
-			$ai_info = $this->params['aigemini'] ? $this->words["AI image recognition Gemini client"] : $this->words["AI image recognition Clarifai client"];
-			$str = str_replace( "{{ AI_recognition_info }}", $ai_info, $str);
+			$ai_info = $this->words["AI image recognition Gemini client"];
+			$ai_check_info = $this->words["Is there this image AI generated?"];
+			$str = str_replace( 
+				[
+					"{{ AI_recognition_info }}",
+					"{{ Is there this image AI generated? }}"
+				], 
+				[
+					$ai_info, 
+					$ai_check_info
+				], $str);
 		} else{
 			$str = preg_replace( "#<ai(.*?)<\/ai>#imxs", "", $str );
 		}		

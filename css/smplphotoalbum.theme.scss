@@ -1,16 +1,16 @@
 @use 'sass:color';
 /* Default parameters*/
 $BkgError: #f88f8f;
-$ColorError: color.scale( $BkgError, $lightness:-80%);
+$ColorError: color.scale($BkgError, $lightness: -80%);
 $BkgWarning: #fde3cc;
 $ColorWarning: color.scale($BkgWarning, $lightness: -80%);
 $BkgNotes: #f3faef;
 $ColorNotes: color.scale($BkgNotes, $lightness: -80%);
 
 $BorderColor: #D0D0D0;
-$BorderDarker10: color.scale( $BorderColor, $lightness:-10%);
-$BorderDarker20: color.scale( $BorderColor, $lightness:-20%);
-$BorderDarker30: color.scale( $BorderColor, $lightness:-30%);
+$BorderDarker10: color.scale($BorderColor, $lightness: -10%);
+$BorderDarker20: color.scale($BorderColor, $lightness: -20%);
+$BorderDarker30: color.scale($BorderColor, $lightness: -30%);
 
 $BorderWidth: 1px;
 $BorderStyle: solid;
@@ -30,16 +30,17 @@ $BkgEditColor: #DFEDF7;
 $BkgViewColor: #EDF5FA;
 $BkgDivColor: #202020;
 $BkgViewButtonColor: $BkgViewColor;
-$BkgActButtonColor: color.scale( $BkgViewColor, $lightness:-20% );
+$BkgActButtonColor: color.scale($BkgViewColor, $lightness: -20%);
 $BkgProgressColor: #383838;
 $BkgGrey: #CCC;
- 
-$line-height:  1.2em;
+
+$line-height: 1.2em;
 $narrow: 3.5em;
 $mid: 4.5em;
 $wide: 6em;
 $ItemWidth: 24%;
-  /* - end of default parameters -------*/
+
+/* - end of default parameters -------*/
 .smpl_table_all {
   text-align: center;
 }
@@ -55,36 +56,40 @@ $ItemWidth: 24%;
   line-height: var(--sp1);
 }
 
-.smpl_table, .smpl_pager {
-  display: inline-block;  
+.smpl_table,
+.smpl_pager {
+  display: inline-block;
 }
 
 #smpl_point_area,
 #smpl_zoom_area,
 #smpl_histogram_area {
-  display:block;
+  display: block;
 }
+
 .smpl_hist_img {
-  width:100px;
-  height:5em;
+  width: 100px;
+  height: 5em;
   border: $BorderSettings;
 }
 
-#smpl_histogram_area{
+#smpl_histogram_area {
   display: flex;
   align-items: center;
 }
 
-:is(.smpl_table) td, :is(.smpl_table) th {
+:is(.smpl_table) td,
+:is(.smpl_table) th {
   padding-block: 0 !important;
-  padding-inline-end:0 !important;
-  padding-inline-start:0 !important;
-  border-block-end:0 !important;
+  padding-inline-end: 0 !important;
+  padding-inline-start: 0 !important;
+  border-block-end: 0 !important;
 }
+
 .smpl_item_container {
-  width: $ItemWidth;  
+  width: $ItemWidth;
   border-bottom: $BorderSettings;
-  padding: $BorderRadius; 
+  padding: $BorderRadius;
   min-width: 150px;
   display: flex;
   flex-flow: column;
@@ -93,19 +98,20 @@ $ItemWidth: 24%;
   margin-top: 1px;
 }
 
-.smpl_last_item_container{
+.smpl_last_item_container {
   border-bottom: $BorderSettings;
   width: calc(4 * $ItemWidth)
 }
 
-.smpl_table:last-child{
+.smpl_table:last-child {
   border-bottom: none;
 }
+
 .smpl_item_div {
-  max-height: 75%;	
+  max-height: 75%;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom:auto;	
+  margin-bottom: auto;
 }
 
 a.smpl_a {
@@ -118,49 +124,61 @@ a.smpl_a:hover {
   border: 0;
 }
 
-.smpl_item {	
+.smpl_item {
   max-height: 200px;
-	display:block;
-  margin-left:auto;
-	margin-right:auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.smpl_img {  
+.smpl_img {
   max-height: 120px;
   max-width: 100%;
-  height: auto;  	
+  height: auto;
   display: block;
   margin-left: auto;
   margin-right: auto !important;
   cursor: pointer;
 }
 
-.smploth{
-	margin-top:0.2em;
+.smploth {
+  margin-top: 0.2em;
 }
 
-.smpl_view_last, .smpl_view_number {
+.smpl_view_last,
+.smpl_view_number {
   display: block;
 }
 
-#smpl_glogo{
+#smpl_glogo {
   height: 1.8em;
-  display:inline-block;
+  display: inline-block;
   vertical-align: middle;
   margin-left: 0.5em;
 }
 
-.smpl_view, .smpl_size, .smpl_exif, .smpl_exif_div, 
-.smpl_date, .smpl_desc_a, .smpl_tax, .smpl_list, #smpl_list {
-  text-align: center;  
+.smpl_view,
+.smpl_size,
+.smpl_exif,
+.smpl_exif_div,
+.smpl_date,
+.smpl_desc_a,
+.smpl_tax,
+.smpl_list,
+#smpl_list {
+  text-align: center;
 }
 
-#smpl_sub, #smpl_usub {
+#smpl_sub,
+#smpl_usub,
+textarea#smpl_ai_check {
   width: 80%;
 }
 
-.smpl_sub_text, .smpl_view_text, 
-.smpl_size_text, .smpl_date_text {
+.smpl_sub_text,
+.smpl_view_text,
+.smpl_size_text,
+.smpl_date_text {
   display: inline;
   border-width: 0;
   display: inline;
@@ -168,16 +186,19 @@ a.smpl_a:hover {
   clear: both;
 }
 
-#smpl_usize, #smpl_utime {
+#smpl_usize,
+#smpl_utime {
   width: 10em !important;
   max-width: 10em !important;
   text-align: right;
 }
 
-.smpl_subtitle{
+.smpl_subtitle {
   margin-bottom: $BorderRadius;
 }
-.smpl_subtitle, .smpl_viewnumber {
+
+.smpl_subtitle,
+.smpl_viewnumber {
   display: block;
 }
 
@@ -215,19 +236,23 @@ a.smpl_a:hover {
   padding: 8px;
 }
 
-#SmplFormTable{
-  margin-block-start:0;
-  margin-block-end:0;
+#SmplFormTable {
+  margin-block-start: 0;
+  margin-block-end: 0;
 }
 
-div#sortorder{
-  display:inline;
-  line-height: var(--sp2);  
+div#sortorder {
+  display: inline;
+  line-height: var(--sp2);
 }
 
 /* buttons */
-.smpl_pager_button > button, .smpl_url_plus, 
-.smpl_sel, #smpl_list, #smpl_sortorder, #smpl_ascdesc {
+.smpl_pager_button>button,
+.smpl_url_plus,
+.smpl_sel,
+#smpl_list,
+#smpl_sortorder,
+#smpl_ascdesc {
   font-size: 0.8em;
   border-radius: $BorderRadius;
   margin: 2px;
@@ -236,18 +261,18 @@ div#sortorder{
   background-repeat: no-repeat;
 }
 
-.smpl_buttons{
+.smpl_buttons {
   margin-bottom: $BorderRadius;
   margin-top: $BorderRadius;
 }
 
-.smpl_actbutton {  
+.smpl_actbutton {
   background-repeat: no-repeat;
-  background-position-y:center;
-  background-position-x:98%;
+  background-position-y: center;
+  background-position-x: 98%;
   cursor: pointer !important;
   font-weight: 500;
-  font-size:small;
+  font-size: small;
   border-radius: $BorderRadius;
 }
 
@@ -261,108 +286,333 @@ div#sortorder{
   border-radius: $BorderRadius;
 }
 
-.smpl_help_link:hover {  cursor: help; }
-
-.smpl_hist_img{ display: inline; }
-
-button{ height: var(--sp1-5) !important; }
-
-select, input{
-  height: var(--sp1-5) !important;    
-  min-height: var(--sp1-5) !important;  
+.smpl_help_link:hover {
+  cursor: help;
 }
 
-select{ padding-inline-start: 0 !important; }
+.smpl_hist_img {
+  display: inline;
+}
 
-.right_corner{ float: right }
+button {
+  height: var(--sp1-5) !important;
+}
 
-$icons: ( _col, _bw ); @each $icon in $icons {
-.smpl_ai#{$icon}          {background-image: url("../image/b_ai#{$icon}.png");}
-.smpl_ai_check#{$icon}    {background-image: url("../image/b_ai_check#{$icon}.png");}
-.smpl_add#{$icon}         {background-image: url("../image/b_add#{$icon}.png");}
-.smpl_addnoise#{$icon}    {background-image: url("../image/b_addnoise#{$icon}.png");}
-.smpl_blur#{$icon }       {background-image: url("../image/b_blur#{ $icon}.png");}
-.smpl_border#{$icon}      {background-image: url("../image/b_border#{$icon}.png");}
-.smpl_brightness#{$icon}  {background-image: url("../image/b_brightness#{$icon}.png");}
-.smpl_cancel#{$icon}      {background-image: url("../image/b_cancel#{$icon}.png"); }
-.smpl_close#{$icon}       {background-image: url("../image/b_close#{$icon}.png");}
-.smpl_color#{$icon}       {background-image: url("../image/b_color#{$icon}.png");}
-.smpl_convolution#{$icon} {background-image: url("../image/b_convolution#{$icon}.png");}
-.smpl_correction#{$icon}  {background-image: url("../image/b_correction#{$icon}.png");}
-.smpl_upload_file#{$icon} {background-image: url("../image/b_upload#{$icon}.png");}
-.smpl_cache_clear#{$icon} {background-image: url("../image/b_cache#{$icon}.png");}
-.smpl_contrast#{$icon}    {background-image: url("../image/b_contrast#{$icon}.png");}
-.smpl_crop#{$icon}        {background-image: url("../image/b_crop#{$icon}.png");}
-.smpl_delete#{$icon}      {background-image: url("../image/b_delete#{$icon}.png");}
-.smpl_denoise#{$icon}     {background-image: url("../image/b_denoise#{$icon}.png");}
-.smpl_spec#{$icon}        {background-image: url("../image/b_spec#{$icon}.png");}
-.smpl_distortion#{$icon}  {background-image: url("../image/b_distortion#{$icon}.png");}
-.smpl_div_close#{$icon}   {background-image: url("../image/b_close#{$icon}.png");}
-.smpl_div_new#{$icon}     {background-image: url("../image/b_newtab#{$icon}.png");}
-.smpl_edge#{$icon}        {background-image: url("../image/b_edge#{$icon}.png");}
-.smpl_edit#{$icon}        {background-image: url("../image/b_edit#{$icon}.png");}
-.smpl_edit_all#{$icon}    {background-image: url("../image/b_edit#{$icon}.png");}
-.smpl_effect#{$icon}      {background-image: url("../image/b_effect#{$icon}.png");}
-.smpl_emboss#{$icon}      {background-image: url("../image/b_emboss#{$icon}.png");}
-.smpl_enhance#{$icon}     {background-image: url("../image/b_enhance#{$icon}.png");}
-.smpl_exposure#{$icon}    {background-image: url("../image/b_exposure#{$icon}.png");}
-.smpl_faceedit#{$icon}    {background-image: url("../image/b_faceedit#{$icon}.png");}
-.smpl_flip_horiz#{$icon}  {background-image: url("../image/b_flip_horiz#{$icon}.png");}
-.smpl_flip_vert#{$icon}   {background-image: url("../image/b_flip_vert#{$icon}.png");}
-.smpl_gamma#{$icon}       {background-image: url("../image/b_gamma#{$icon}.png");}
-.smpl_geometry#{$icon}    {background-image: url("../image/b_geometry#{$icon}.png");}
-.smpl_grain#{$icon}       {background-image: url("../image/b_grain#{$icon}.png");}
-.smpl_grayscale#{$icon}   {background-image: url("../image/b_grayscale#{$icon }.png");}
-.smpl_help_link#{$icon}   {background-image: url("../image/b_help#{$icon}.png"); }
-.smpl_help_close#{$icon}  {background-image: url("../image/b_close#{$icon}.png");}
-.smpl_hue#{$icon}         {background-image: url("../image/b_hue#{$icon}.png");}
-.smpl_init#{$icon}        {background-image: url("../image/b_init#{$icon}.png");}
-.smpl_imgedit#{$icon}     {background-image: url("../image/b_imgedit#{$icon}.png");}
-.smpl_imgedit_form_done#{$icon}{background-image: url("../image/b_done#{$icon}.png");}
-.smpl_lens#{$icon}        {background-image: url("../image/b_lens#{$icon}.png");}
-.smpl_lighting#{$icon}    {background-image: url("../image/b_lighting#{$icon}.png");}
-.smpl_liquify#{$icon}     {background-image: url("../image/b_liquify#{$icon}.png");}
-.smpl_noise#{$icon}       {background-image: url("../image/b_noise#{$icon}.png");}
-.smpl_folder#{$icon}      {background-image: url("../image/b_folder#{$icon}.png");}
-.smpl_perspective#{$icon} {background-image: url("../image/b_perspective#{$icon}.png");}
-.smpl_redeye#{$icon}      {background-image: url("../image/b_redeye#{$icon}.png");}
-.smpl_redo#{$icon}        {background-image: url("../image/b_redo#{$icon}.png");}
-.smpl_rename#{$icon}      {background-image: url("../image/b_rename#{$icon}.png");}
-.smpl_repair#{$icon}      {background-image: url("../image/b_repair#{$icon}.png");}
-.smpl_reset#{$icon}       {background-image: url("../image/b_reset#{$icon}.png"); }
-.smpl_resize#{$icon}      {background-image: url("../image/b_resize#{$icon}.png");}
-.smpl_rgb#{$icon}         {background-image: url("../image/b_rgb#{$icon}.png");}
-.smpl_rotate#{$icon}      {background-image: url("../image/b_rotate#{$icon}.png");}
-.smpl_rotate_flip#{$icon} {background-image: url("../image/b_rotate_flip#{ $icon}.png");}
-.smpl_saturation#{$icon}  {background-image: url("../image/b_saturation#{$icon}.png");}
-.smpl_save#{$icon}        {background-image: url("../image/b_save#{$icon}.png");}
-.smpl_saveas#{$icon}      {background-image: url("../image/b_saveas#{$icon}.png");}
-.smpl_slide#{$icon}       {background-image: url("../image/b_slide#{$icon}.png");}
-.smpl_filter_btn#{$icon}  {background-image: url("../image/b_filter#{$icon}.png");}
-.smpl_sel#{$icon}         {background-image: url("../image/b_browse#{$icon}.png");}
-.smpl_sharp#{$icon}       {background-image: url("../image/b_sharpen#{$icon}.png");}
-.smpl_skintune#{$icon}    {background-image: url("../image/b_skintune#{$icon}.png");}
-.smpl_thumb#{$icon}       {background-image: url("../image/b_thumb#{$icon}.png");}
-.smpl_url_plus#{$icon}    {background-image: url("../image/b_link#{$icon}.png");}
-.smpl_undo#{$icon}        {background-image: url("../image/b_undo#{$icon}.png");}
-.smpl_vignette#{$icon}    {background-image: url("../image/b_vignette#{$icon}.png");}
-.smpl_watermark#{$icon}   {background-image: url("../image/b_watermark#{$icon}.png");}
+select,
+input {
+  height: var(--sp1-5) !important;
+  min-height: var(--sp1-5) !important;
+}
+
+select {
+  padding-inline-start: 0 !important;
+}
+
+.right_corner {
+  float: right
+}
+
+$icons: (
+  _col,
+  _bw
+);
+
+@each $icon in $icons {
+  .smpl_ai#{$icon} {
+    background-image: url("../image/b_ai#{$icon}.png");
+  }
+
+  .smpl_ai_check#{$icon} {
+    background-image: url("../image/b_ai_check#{$icon}.png");
+  }
+
+  .smpl_add#{$icon} {
+    background-image: url("../image/b_add#{$icon}.png");
+  }
+
+  .smpl_addnoise#{$icon} {
+    background-image: url("../image/b_addnoise#{$icon}.png");
+  }
+
+  .smpl_blur#{$icon } {
+    background-image: url("../image/b_blur#{ $icon}.png");
+  }
+
+  .smpl_border#{$icon} {
+    background-image: url("../image/b_border#{$icon}.png");
+  }
+
+  .smpl_brightness#{$icon} {
+    background-image: url("../image/b_brightness#{$icon}.png");
+  }
+
+  .smpl_cancel#{$icon} {
+    background-image: url("../image/b_cancel#{$icon}.png");
+  }
+
+  .smpl_close#{$icon} {
+    background-image: url("../image/b_close#{$icon}.png");
+  }
+
+  .smpl_color#{$icon} {
+    background-image: url("../image/b_color#{$icon}.png");
+  }
+
+  .smpl_convolution#{$icon} {
+    background-image: url("../image/b_convolution#{$icon}.png");
+  }
+
+  .smpl_correction#{$icon} {
+    background-image: url("../image/b_correction#{$icon}.png");
+  }
+
+  .smpl_upload_file#{$icon} {
+    background-image: url("../image/b_upload#{$icon}.png");
+  }
+
+  .smpl_cache_clear#{$icon} {
+    background-image: url("../image/b_cache#{$icon}.png");
+  }
+
+  .smpl_contrast#{$icon} {
+    background-image: url("../image/b_contrast#{$icon}.png");
+  }
+
+  .smpl_crop#{$icon} {
+    background-image: url("../image/b_crop#{$icon}.png");
+  }
+
+  .smpl_delete#{$icon} {
+    background-image: url("../image/b_delete#{$icon}.png");
+  }
+
+  .smpl_denoise#{$icon} {
+    background-image: url("../image/b_denoise#{$icon}.png");
+  }
+
+  .smpl_spec#{$icon} {
+    background-image: url("../image/b_spec#{$icon}.png");
+  }
+
+  .smpl_distortion#{$icon} {
+    background-image: url("../image/b_distortion#{$icon}.png");
+  }
+
+  .smpl_div_close#{$icon} {
+    background-image: url("../image/b_close#{$icon}.png");
+  }
+
+  .smpl_div_new#{$icon} {
+    background-image: url("../image/b_newtab#{$icon}.png");
+  }
+
+  .smpl_edge#{$icon} {
+    background-image: url("../image/b_edge#{$icon}.png");
+  }
+
+  .smpl_edit#{$icon} {
+    background-image: url("../image/b_edit#{$icon}.png");
+  }
+
+  .smpl_edit_all#{$icon} {
+    background-image: url("../image/b_edit#{$icon}.png");
+  }
+
+  .smpl_effect#{$icon} {
+    background-image: url("../image/b_effect#{$icon}.png");
+  }
+
+  .smpl_emboss#{$icon} {
+    background-image: url("../image/b_emboss#{$icon}.png");
+  }
+
+  .smpl_enhance#{$icon} {
+    background-image: url("../image/b_enhance#{$icon}.png");
+  }
+
+  .smpl_exposure#{$icon} {
+    background-image: url("../image/b_exposure#{$icon}.png");
+  }
+
+  .smpl_faceedit#{$icon} {
+    background-image: url("../image/b_faceedit#{$icon}.png");
+  }
+
+  .smpl_flip_horiz#{$icon} {
+    background-image: url("../image/b_flip_horiz#{$icon}.png");
+  }
+
+  .smpl_flip_vert#{$icon} {
+    background-image: url("../image/b_flip_vert#{$icon}.png");
+  }
+
+  .smpl_gamma#{$icon} {
+    background-image: url("../image/b_gamma#{$icon}.png");
+  }
+
+  .smpl_geometry#{$icon} {
+    background-image: url("../image/b_geometry#{$icon}.png");
+  }
+
+  .smpl_grain#{$icon} {
+    background-image: url("../image/b_grain#{$icon}.png");
+  }
+
+  .smpl_grayscale#{$icon} {
+    background-image: url("../image/b_grayscale#{$icon }.png");
+  }
+
+  .smpl_help_link#{$icon} {
+    background-image: url("../image/b_help#{$icon}.png");
+  }
+
+  .smpl_help_close#{$icon} {
+    background-image: url("../image/b_close#{$icon}.png");
+  }
+
+  .smpl_hue#{$icon} {
+    background-image: url("../image/b_hue#{$icon}.png");
+  }
+
+  .smpl_init#{$icon} {
+    background-image: url("../image/b_init#{$icon}.png");
+  }
+
+  .smpl_imgedit#{$icon} {
+    background-image: url("../image/b_imgedit#{$icon}.png");
+  }
+
+  .smpl_imgedit_form_done#{$icon} {
+    background-image: url("../image/b_done#{$icon}.png");
+  }
+
+  .smpl_lens#{$icon} {
+    background-image: url("../image/b_lens#{$icon}.png");
+  }
+
+  .smpl_lighting#{$icon} {
+    background-image: url("../image/b_lighting#{$icon}.png");
+  }
+
+  .smpl_liquify#{$icon} {
+    background-image: url("../image/b_liquify#{$icon}.png");
+  }
+
+  .smpl_noise#{$icon} {
+    background-image: url("../image/b_noise#{$icon}.png");
+  }
+
+  .smpl_folder#{$icon} {
+    background-image: url("../image/b_folder#{$icon}.png");
+  }
+
+  .smpl_perspective#{$icon} {
+    background-image: url("../image/b_perspective#{$icon}.png");
+  }
+
+  .smpl_redeye#{$icon} {
+    background-image: url("../image/b_redeye#{$icon}.png");
+  }
+
+  .smpl_redo#{$icon} {
+    background-image: url("../image/b_redo#{$icon}.png");
+  }
+
+  .smpl_rename#{$icon} {
+    background-image: url("../image/b_rename#{$icon}.png");
+  }
+
+  .smpl_repair#{$icon} {
+    background-image: url("../image/b_repair#{$icon}.png");
+  }
+
+  .smpl_reset#{$icon} {
+    background-image: url("../image/b_reset#{$icon}.png");
+  }
+
+  .smpl_resize#{$icon} {
+    background-image: url("../image/b_resize#{$icon}.png");
+  }
+
+  .smpl_rgb#{$icon} {
+    background-image: url("../image/b_rgb#{$icon}.png");
+  }
+
+  .smpl_rotate#{$icon} {
+    background-image: url("../image/b_rotate#{$icon}.png");
+  }
+
+  .smpl_rotate_flip#{$icon} {
+    background-image: url("../image/b_rotate_flip#{ $icon}.png");
+  }
+
+  .smpl_saturation#{$icon} {
+    background-image: url("../image/b_saturation#{$icon}.png");
+  }
+
+  .smpl_save#{$icon} {
+    background-image: url("../image/b_save#{$icon}.png");
+  }
+
+  .smpl_saveas#{$icon} {
+    background-image: url("../image/b_saveas#{$icon}.png");
+  }
+
+  .smpl_slide#{$icon} {
+    background-image: url("../image/b_slide#{$icon}.png");
+  }
+
+  .smpl_filter_btn#{$icon} {
+    background-image: url("../image/b_filter#{$icon}.png");
+  }
+
+  .smpl_sel#{$icon} {
+    background-image: url("../image/b_browse#{$icon}.png");
+  }
+
+  .smpl_sharp#{$icon} {
+    background-image: url("../image/b_sharpen#{$icon}.png");
+  }
+
+  .smpl_skintune#{$icon} {
+    background-image: url("../image/b_skintune#{$icon}.png");
+  }
+
+  .smpl_thumb#{$icon} {
+    background-image: url("../image/b_thumb#{$icon}.png");
+  }
+
+  .smpl_url_plus#{$icon} {
+    background-image: url("../image/b_link#{$icon}.png");
+  }
+
+  .smpl_undo#{$icon} {
+    background-image: url("../image/b_undo#{$icon}.png");
+  }
+
+  .smpl_vignette#{$icon} {
+    background-image: url("../image/b_vignette#{$icon}.png");
+  }
+
+  .smpl_watermark#{$icon} {
+    background-image: url("../image/b_watermark#{$icon}.png");
+  }
 }
 
 /* Save AS div*/
-div#smpl_saveas{
-  display:none;
-  z-index:10;
+div#smpl_saveas {
+  display: none;
+  z-index: 10;
   position: absolute;
   border: $BorderSettings30;
   border-radius: $BorderRadius;
   padding: 0.5em;
-  left:38%;
+  left: 38%;
   background-color: $BkgEditColor;
 }
 
-input#smpl_saveas_input, 
-button#SmplImgEditFormSaveAsOK, 
+input#smpl_saveas_input,
+button#SmplImgEditFormSaveAsOK,
 button#SmplImgEditFormSaveAsCancel {
   vertical-align: middle;
 }
@@ -372,6 +622,7 @@ button#SmplImgEditFormSaveAsCancel {
   margin-top: 4px;
   margin-bottom: 4px;
 }
+
 /* pager buttons */
 .smpl_pager_button {
   background-color: $BkgViewButtonColor;
@@ -391,19 +642,23 @@ button#SmplImgEditFormSaveAsCancel {
 }
 
 /* Exif settings*/
-.smpl_exif_div{ border-top: $BorderSettings; }
+.smpl_exif_div {
+  border-top: $BorderSettings;
+}
 
-.smpl_exif_table {    
+.smpl_exif_table {
   margin-bottom: 0.1em !important;
   margin-top: 0.1em !important;
   width: 100%;
-  tr th{
-    border-top:    $BorderSettings;
+
+  tr th {
+    border-top: $BorderSettings;
     border-bottom: $BorderSettings;
   }
 }
-.smpl_exif_tr > td{
-  text-align: left;  
+
+.smpl_exif_tr>td {
+  text-align: left;
   border-right: $BorderSettings10;
   text-wrap: nowrap;
 }
@@ -430,12 +685,12 @@ button#SmplImgEditFormSaveAsCancel {
   text-align: left;
   z-index: 256;
   cursor: pointer;
-  min-width:30em;
+  min-width: 30em;
 }
 
 /* statistics table*/
-.smpl_stat{
-  display:flex;
+.smpl_stat {
+  display: flex;
   justify-content: center;
   position: relative;
   top: 0em;
@@ -445,19 +700,19 @@ button#SmplImgEditFormSaveAsCancel {
 }
 
 #smpl_stat_table {
-border-collapse: inherit;
+  border-collapse: inherit;
 }
 
-#smpl_stat_table >tbody>tr>th,
-#smpl_stat_table >tbody>tr>td
-{
+#smpl_stat_table>tbody>tr>th,
+#smpl_stat_table>tbody>tr>td {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
 
-.smpl_stat_row{
+.smpl_stat_row {
   border: $BorderSettings;
 }
+
 .smpl_stat_tdleft {
   text-align: left;
   border-right: $BorderSettings20;
@@ -468,56 +723,54 @@ border-collapse: inherit;
 }
 
 /* visibility, position, etc*/
-div#SmplEditForm, 
-div#SmplUploadForm, 
+div#SmplEditForm,
+div#SmplUploadForm,
 div#SmplFolderForm {
   display: none;
   z-index: 2;
   justify-content: center;
-  position: absolute;  
+  position: absolute;
   top: 3em;
   background-color: $BkgGrey;
   font-size: small !important;
 }
+
 /*--------- EditForm --------------*/
-div#SmplEditForm > table > tr > td,
-div#SmplUploadForm > table > tr > td
-div#Smplfolderform > table > tr > td
- {
+div#SmplEditForm>table>tr>td,
+div#SmplUploadForm>table>tr>td div#Smplfolderform>table>tr>td {
   text-align: left;
 }
 
-div#SmplEditFormData, 
+div#SmplEditFormData,
 div#SmplUploadFormData,
-div#SmplFolderFormData
- {
+div#SmplFolderFormData {
   border: 0;
   padding: 0;
   margin: 0;
 }
+
 /* ---------- UploadForm, FolderForm ------------------- */
 #smpl_uname {
-  padding: 0!important;
+  padding: 0 !important;
   border: 0 !important;
   background-color: transparent !important;
 }
 
 #SmplUploadTable,
 #SmplFolderTable {
-  margin-block-start:0;
-  margin-block-end:0;
+  margin-block-start: 0;
+  margin-block-end: 0;
 }
 
 /* only the parameters of view*/
 /* Img Edit css settings */
-.smpl_edit_form, 
+.smpl_edit_form,
 .smpl_imgedit_form,
 .smpl_upload_form,
 .smpl_folder_form,
 .smpl_desc_info,
 #smpl_stat_table,
-.smpl_help 
- {  
+.smpl_help {
   border: $BorderRidge;
   border-radius: $BorderRadius;
   padding: $PaddingHalf;
@@ -525,11 +778,12 @@ div#SmplFolderFormData
 }
 
 .smpl_imgedit_img {
-  max-width: 100%;  
+  max-width: 100%;
 }
 
-.smpl_audiohtml5, .smpl_videohtml5 {
-  max-width: 100%;  
+.smpl_audiohtml5,
+.smpl_videohtml5 {
+  max-width: 100%;
   border-radius: $BorderRadius;
 }
 
@@ -538,16 +792,16 @@ div#SmplImgEditForm {
   display: none;
   z-index: 2;
   justify-content: center;
-  position: absolute;  
-  top: 3em;  
+  position: absolute;
+  top: 3em;
   background-color: $BkgGrey;
   font-size: small !important;
 }
 
-div#SmplCanvasContainer{
-  position:relative;
-  left:0;
-  top:0;
+div#SmplCanvasContainer {
+  position: relative;
+  left: 0;
+  top: 0;
   max-width: 100%;
   max-height: 74%;
   min-height: 300px;
@@ -555,34 +809,33 @@ div#SmplCanvasContainer{
   padding: 0.1em;
 }
 
-canvas#SmplCanvas{
-  position:relative;
-  top:0;
-  left:0;
-  max-width: 100%;  
+canvas#SmplCanvas {
+  position: relative;
+  top: 0;
+  left: 0;
+  max-width: 100%;
   border: $BorderSettings;
 }
 
-.smpl_pop_title
-{
+.smpl_pop_title {
   max-width: 100%;
-  text-align: left;  
+  text-align: left;
   font-weight: bold;
-  font-size:1.2em;
+  font-size: 1.2em;
 }
-.smpl_pop_title > h3{
+
+.smpl_pop_title>h3 {
   display: inline;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 .smpl_pop_title,
-.smpl_edit_props
-{
+.smpl_edit_props {
   border-bottom: 1px solid $BorderDarker20;
-  margin-bottom: 0.1em; 
+  margin-bottom: 0.1em;
 }
- 
+
 .smpl_imgedit_filename {
   display: inline;
 }
@@ -596,37 +849,42 @@ canvas#SmplCanvas{
   border-bottom: 1px solid $BorderColor;
 }
 
-#smpl_imgedit_menu{
+#smpl_imgedit_menu {
   list-style-type: none;
 }
 
-div.smpl_menu{
-  display:none;
+div.smpl_menu {
+  display: none;
   border: 1px black dotted;
 }
 
-#smpl_imgedit_menu > li {
-  float:left;
+#smpl_imgedit_menu>li {
+  float: left;
   display: block;
-	label{
-	  display: block;
-	}
+
+  label {
+    display: block;
+  }
 }
 
 #smpl_zoom_area,
 .smpl_imgedit_border {
   border-top: solid 1px $BorderDarker20;
   vertical-align: middle;
-  margin-bottom: 0.1em;   
-}
-.smpl_imgedit_border{
-  display: none; 
-}
-label.smpl, button.smpl{
-  font-weight:700;
+  margin-bottom: 0.1em;
 }
 
-span.smpl, td.smpl {
+.smpl_imgedit_border {
+  display: none;
+}
+
+label.smpl,
+button.smpl {
+  font-weight: 700;
+}
+
+span.smpl,
+td.smpl {
   font-weight: 500;
 }
 
@@ -648,79 +906,93 @@ label.smpl_label:hover {
   cursor: pointer;
 }
 
-button.smpl_label{
+button.smpl_label {
   background-position-y: center;
 }
 
-.smpl_imgedit_border > input, 
-.smpl_imgedit_border > select {
+.smpl_imgedit_border>input,
+.smpl_imgedit_border>select {
   vertical-align: middle;
   height: 1.6em;
 }
 
-.smpl_imgedit_border > input[type="checkbox"], 
-.smpl_imgedit_border > label > input[type="checkbox"] {
+.smpl_imgedit_border>input[type="checkbox"],
+.smpl_imgedit_border>label>input[type="checkbox"] {
   height: var(--sp2);
 }
 
-.smpl_imgedit_border > input[type="color"], 
-.smpl_imgedit_border > label > input[type="color"] {
+.smpl_imgedit_border>input[type="color"],
+.smpl_imgedit_border>label>input[type="color"] {
   max-width: 2em;
   border: none;
   height: var(--sp2) !important;
 }
 
-input[type="color"]{
+input[type="color"] {
   width: var(--sp2) !important;
-  vertical-align:middle;
+  vertical-align: middle;
 }
 
-input[type="number"]{
+input[type="number"] {
   width: 5em;
-  padding:0 !important;  
+  padding: 0 !important;
 }
 
-.smpl_input_narrow{
+.smpl_input_narrow {
   max-width: $narrow;
-  padding:0 !important;  
+  padding: 0 !important;
   width: $narrow !important;
 }
 
-.smpl_input_mid{
+.smpl_input_mid {
   max-width: $mid;
-  padding:0 !important;  
+  padding: 0 !important;
   width: $mid;
 }
-.smpl_input_wide{
+
+.smpl_input_wide {
   max-width: $wide;
-  padding:0 !important;
+  padding: 0 !important;
   width: $wide;
 }
-.smpl_input_range_wide{
-	max-width: 10em;
-  padding:0 !important;
+
+.smpl_input_range_wide {
+  max-width: 10em;
+  padding: 0 !important;
 }
 
-.smpl_text_output{
+.smpl_text_output {
   max-width: 50%;
-  min-width:6em !important;
+  min-width: 6em !important;
   font-size: small !important;
 }
 
-.smpl_imgedit_border > input, 
-.smpl_imgedit_border > label > input {
+.smpl_imgedit_border>input,
+.smpl_imgedit_border>label>input {
   display: inline;
 }
 
-.smpl_input_text{
+.smpl_input_text {
   width: 8em;
 }
-[type="color"], [type="date"], [type="datetime-local"], 
-[type="email"], [type="file"], [type="month"], [type="number"],
-[type="password"], [type="search"], [type="tel"], [type="text"], 
-[type="time"], [type="url"], [type="week"], textarea{
-  font-size:initial
- }
+
+[type="color"],
+[type="date"],
+[type="datetime-local"],
+[type="email"],
+[type="file"],
+[type="month"],
+[type="number"],
+[type="password"],
+[type="search"],
+[type="tel"],
+[type="text"],
+[type="time"],
+[type="url"],
+[type="week"],
+textarea {
+  font-size: initial
+}
 
 .smpl_readonly {
   border: none;
@@ -738,10 +1010,11 @@ input[type="number"]{
   display: inline;
   width: 6em;
 }
-.smpl_slider_wide{
+
+.smpl_slider_wide {
   vertical-align: middle;
   display: inline;
-  width: 10em;	
+  width: 10em;
 }
 
 #smpl_imgedit_buttons {
@@ -752,17 +1025,17 @@ input[type="number"]{
 }
 
 #smpl_imgedit_buttons,
-div#SmplCanvasContainer{
+div#SmplCanvasContainer {
   margin-left: auto;
-  margin-right: auto;  
+  margin-right: auto;
   width: 100%;
 }
 
-#smpl_graphicversion{
+#smpl_graphicversion {
   font-size: 0.9em;
 }
 
-.smpl_img_edit_form_darkenbuttons{
+.smpl_img_edit_form_darkenbuttons {
   opacity: 0.4;
   cursor: auto !important;
 }
@@ -774,10 +1047,10 @@ div#SmplCanvasContainer{
   height: 99%;
   position: absolute;
   top: 11em;
-  left: 100px;  
+  left: 100px;
   z-index: 1023;
-  text-align: left;  
-  resize: both;    
+  text-align: left;
+  resize: both;
   cursor: grab;
 }
 
@@ -788,8 +1061,9 @@ div#SmplCanvasContainer{
 }
 
 #smpl_help_close {
-  background-repeat: no-repeat;  
-  :hover{
+  background-repeat: no-repeat;
+
+  :hover {
     cursor: pointer;
   }
 }
@@ -804,15 +1078,16 @@ body.smpl_waiting {
 
 input[readonly] {
   background: rgba(255, 255, 255, 0);
-  max-width:5em;
+  max-width: 5em;
 }
 
-select#smpl_sortorder, select#smpl_ascdesc {
+select#smpl_sortorder,
+select#smpl_ascdesc {
   padding: 2px;
   border-width: 1px;
   border-style: solid;
   border-right: 1px solid $BkgGrey;
-  border-color: $BorderColor;  
+  border-color: $BorderColor;
   border-radius: 3px;
   color: #333;
   width: 8em;
@@ -829,7 +1104,7 @@ select#smpl_sortorder, select#smpl_ascdesc {
   /*display: flex;
   justify-content: center;*/
   border: 1px ridge $BorderColor;
-  padding:0;
+  padding: 0;
 }
 
 div.smpl_label {
@@ -840,13 +1115,15 @@ div.smpl_label {
   background-repeat: no-repeat;
 }
 
-#smpl_div_new, #smpl_img_close {
+#smpl_div_new,
+#smpl_img_close {
   position: absolute;
   top: 1px;
   height: 20px;
   width: 20px;
   background-color: white;
   border: 2px outset $BorderColor;
+
   :hover {
     cursor: pointer;
   }
@@ -856,7 +1133,7 @@ div.smpl_label {
   left: 1px;
 }
 
-#smpl_img_close{
+#smpl_img_close {
   right: 1px;
 }
 
@@ -882,7 +1159,7 @@ label.smpl_label:hover {
   width: 100%;
 }
 
-#smpl_img_box{
+#smpl_img_box {
   width: 100%;
 }
 
@@ -894,67 +1171,75 @@ label.smpl_label:hover {
   text-align: center;
 }
 
-.smplslide_picture, .smplslide_pager {
+.smplslide_picture,
+.smplslide_pager {
   width: 100%;
   display: block;
 }
 
 .smplslide_item_container {
-  width: 100%;      
+  width: 100%;
   position: relative;
   overflow: hidden;
 }
 
 .smplslideimg {
-  cursor: pointer;  
+  cursor: pointer;
   display: flex;
   margin: auto auto !important;
-  max-height:100%;
+  max-height: 100%;
   max-width: 100%;
   height: 600px;
   width: auto;
   object-fit: contain;
 }
 
-.smplslidetnimg{
+.smplslidetnimg {
   max-width: 90%;
 
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
 }
 
-#smplup, #smplprev, #smplnext, #smpldown{
+#smplup,
+#smplprev,
+#smplnext,
+#smpldown {
   background-color: rgba(8, 8, 8, 0.5);
   color: white;
   font-weight: 500;
   padding: calc(2*$BorderRadius);
   border: $BorderSettings;
-  border-radius: $BorderRadius;  
+  border-radius: $BorderRadius;
   margin: $BorderRadius;
-  width:fit-content;
+  width: fit-content;
   position: absolute;
   z-index: 2;
   cursor: default;
-    &:hover{
-      cursor: pointer;
-    }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 $middle: 48%;
-#smplup{
+
+#smplup {
   top: 0%;
-  left: $middle;  
-}
-#smplprev {
-  top: 50%;
-  left: 1%;  
+  left: $middle;
 }
 
-#smpldown{
+#smplprev {
+  top: 50%;
+  left: 1%;
+}
+
+#smpldown {
   top: 90%;
   left: $middle;
 }
+
 #smplnext {
   top: 50%;
   left: 92%;
@@ -968,12 +1253,12 @@ $middle: 48%;
 
 .smplslidetn_container {
   width: 15%;
-  display:flex;
-  align-items:center;  
+  display: flex;
+  align-items: center;
   padding: 1px;
 }
 
-.smplslidetn_middle{
+.smplslidetn_middle {
   border: 1px solid $BorderColor
 }
 
@@ -984,31 +1269,42 @@ input#smpl_filter {
   font-size: small;
 }
 
-select#smpl_sortorder, select#smpl_ascdesc, select#smpl_rotate_deg,
-select#smpl_mode, select#smpl_kind, select#smpl_filters, select#smpl_geom,
-.smpl_dropdown, #smpl_utype {
+select#smpl_sortorder,
+select#smpl_ascdesc,
+select#smpl_rotate_deg,
+select#smpl_mode,
+select#smpl_kind,
+select#smpl_filters,
+select#smpl_geom,
+.smpl_dropdown,
+#smpl_utype {
   background-image: linear-gradient(45deg, transparent 50%, grey 50%),
     linear-gradient(135deg, grey 50%, transparent 50%),
     linear-gradient(to right, $BkgViewColor, $BkgViewColor);
   background-position: calc(100% - 10px) 0.7em, calc(100% - 5px) 0.7em, 100% 0;
   background-size: 0.4em 0.4em, 0.4em 0.4em, 1.5em 1.7em;
-  background-repeat: no-repeat;  
+  background-repeat: no-repeat;
   max-width: 20em;
 }
 
-select#smpl_sortorder:focus, select#smpl_ascdesc:focus, select#smpl_rotate_deg:focus,
-select#smpl_kind:focus, select#smpl_mode:focus, select#smpl_filters:focus,
+select#smpl_sortorder:focus,
+select#smpl_ascdesc:focus,
+select#smpl_rotate_deg:focus,
+select#smpl_kind:focus,
+select#smpl_mode:focus,
+select#smpl_filters:focus,
 select#smpl_geom:focus {
   background-image: linear-gradient(45deg, grey 50%, transparent 50%),
     linear-gradient(135deg, transparent 50%, grey 50%),
     linear-gradient(to right, lightgray, lightgray);
   background-position: calc(100% - 5px) 0.7em, calc(100% - 10px) 0.7em, 100% 0;
   background-size: 0.4em 0.4em, 0.4em 0.4em, 1.5em 1.7em;
-  background-repeat: no-repeat;  
-  outline: 0;  
+  background-repeat: no-repeat;
+  outline: 0;
 }
 
-.smpl_step, .smpl_que{
+.smpl_step,
+.smpl_que {
   text-align: left;
   background-image: none;
   max-width: 2em;
@@ -1016,15 +1312,17 @@ select#smpl_geom:focus {
   width: 2em;
 }
 
-.smpl_left{
+.smpl_left {
   text-align: left;
 }
 
-#smpl_kind, #smpl_geom, #smpl_mode {
+#smpl_kind,
+#smpl_geom,
+#smpl_mode {
   width: 5em;
 }
 
-#smpl_error{
+#smpl_error {
   display: none;
   width: 75%;
   position: absolute;
@@ -1043,15 +1341,15 @@ select#smpl_geom:focus {
   border-radius: $BorderRadius;
 }
 
-#smpl_error_content{
-  font-size:0.8em;
+#smpl_error_content {
+  font-size: 0.8em;
   float: left;
   width: 100%;
   height: 100%;
-  overflow:auto;
+  overflow: auto;
 }
 
-#smpl_error_close{
+#smpl_error_close {
   background-repeat: no-repeat;
   float: right;
 }
@@ -1062,24 +1360,25 @@ select#smpl_geom:focus {
   cursor: pointer;
 }
 
-#smpl_wmparams{
+#smpl_wmparams {
   border-right: solid 1px $BorderColor;
   padding-right: 0.5em;
 }
-#smpl_wmbutton{
+
+#smpl_wmbutton {
   padding-left: 0.5em;
 }
 
 /* test area */
-.smpl_test{
+.smpl_test {
   border-color: red !important;
 }
 
-.smpl_notes{
-	border-bottom: $BorderSettings;
+.smpl_notes {
+  border-bottom: $BorderSettings;
 }
 
-#smpl_progress{
+#smpl_progress {
   position: fixed;
   padding: $Padding;
   top: 47.5%;
@@ -1088,37 +1387,39 @@ select#smpl_geom:focus {
   border: $BorderWidth $BorderStyle $BorderDarker10;
   border-radius: $BorderRadius;
   background-color: $BkgProgressColor;
-  color: #d7dadd; 
+  color: #d7dadd;
   display: none;
   line-height: 0.8em;
   font-size: 0.8em;
 }
 
-#smpl_path{
+#smpl_path {
   border-radius: $BorderRadius;
   border-style: groove;
-  border-color:$BorderColor;
+  border-color: $BorderColor;
   border-width: $BorderWidth;
 }
 
 // ----------- Javascript messages AlertC ----------
-#smpl-message{  
+#smpl-message {
   position: absolute;
   display: none;
-  width: 50%;  
+  width: 50%;
   top: 11em;
-  left: 100px; 
+  left: 100px;
   border: $BorderWidth $BorderStyle $BorderDarker10;
-  border-radius: $BorderRadius; 
+  border-radius: $BorderRadius;
   text-align: center;
-  z-index:256;
-  padding: $PaddingHalf;  
+  z-index: 256;
+  padding: $PaddingHalf;
 }
+
 #smpl-message-title {
-  font-weight: 700; 
+  font-weight: 700;
 }
+
 #smpl-message-content {
-  text-align:center;
+  text-align: center;
   padding: $PaddingHalf;
   font-size: small;
   font-weight: 600;
@@ -1126,34 +1427,37 @@ select#smpl_geom:focus {
   line-height: 2em;
 }
 
-.smpl-message-error {    
+.smpl-message-error {
   background-color: $BkgError;
   color: $ColorError;
 }
+
 .smpl-message-warning {
   background-color: $BkgWarning;
   color: $ColorWarning;
 }
+
 .smpl-message-notes {
   background-color: $BkgNotes;
   color: $ColorNotes;
 }
 
 /* SWAL settings*/
-.swal-modal{
-  width:400px !important;
+.swal-modal {
+  width: 400px !important;
   border: $BorderSettings30;
   transition: none !important;
   animation: none !important;
 }
-.swal-overlay--show-modal .swal-modal{
+
+.swal-overlay--show-modal .swal-modal {
   animation: none !important;
 }
 
-.swal-button{
-  height:fit-content !important;
+.swal-button {
+  height: fit-content !important;
 }
 
-.swal-overlay{
+.swal-overlay {
   font-size: inherit;
 }
