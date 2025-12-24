@@ -278,6 +278,7 @@ select{ padding-inline-start: 0 !important; }
 
 $icons: ( _col, _bw ); @each $icon in $icons {
 .smpl_ai#{$icon}          {background-image: url("../image/b_ai#{$icon}.png");}
+.smpl_ai_check#{$icon}    {background-image: url("../image/b_ai_check#{$icon}.png");}
 .smpl_add#{$icon}         {background-image: url("../image/b_add#{$icon}.png");}
 .smpl_addnoise#{$icon}    {background-image: url("../image/b_addnoise#{$icon}.png");}
 .smpl_blur#{$icon }       {background-image: url("../image/b_blur#{ $icon}.png");}

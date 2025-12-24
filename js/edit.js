@@ -40,12 +40,16 @@
 				$("select#smpl_type option").attr("selected", false).change();
 				$("select#smpl_type option[value='" + data.typ + "']").attr("selected", "selected").change();
 				$("input#smpl_link").val(data.link);
+
 				if (data.typ == "image") {
 					$("#smplairecognition").show();
 					$("#smplairecognition-info").show();
+					$("#smpl_ai_check").val(data.ai);
+					$(".smpl_ai_check").show();
 				} else {
 					$("#smplairecognition").hide();
 					$("#smplairecognition-info").hide();
+					$(".smpl_ai_check").hide();
 				}
 				let pos = $("#SubBtn" + id).offset();
 				let dy = parseFloat($("html").css("font-size")) * 5;
@@ -104,6 +108,18 @@
 		return false;
 	});
 
+	$("#smpl_type").on("change", function () {
+		if ($(this).val() == "image") {
+			$("#smplairecognition").show();
+			$("#smplairecognition-info").show();
+			$(".smpl_ai_check").show();
+		} else {
+			$("#smplairecognition").hide();
+			$("#smplairecognition-info").hide();
+			$(".smpl_ai_check").hide();
+		}
+	});
+
 	/**
 	 * Edit form send to server
 	 * @return false
@@ -151,7 +167,7 @@
 	 **/
 	$("#smplairecognition").click(function () {
 		let id = $("input#smpl_edit_id").val();
-		let url = smpl.ajax + "/ai/" + id;
+		let url = smpl.ajax + "/ai/" + id + '/recognition';
 		smpl.progress(true);
 		$.ajax({
 			url: url,
@@ -164,6 +180,29 @@
 				} else {
 					var t = $("textarea#smpl_sub").val() + " \n!!! " + data.msg;
 					$("textarea#smpl_sub").val(t);
+				}
+			},
+			error: function (response) {
+				smpl.ErrorC(response.responseText);
+				smpl.progress(false);
+			}
+		});
+	});
+
+	$("button#smpl_ai_check").click(function () {
+		let id = $("input#smpl_edit_id").val();
+		let url = smpl.ajax + "/ai/" + id + '/check';
+		smpl.progress(true);
+		$.ajax({
+			url: url,
+			type: "POST",
+			success: function (response) {
+				let data = JSON.parse(response[0].data);
+				smpl.progress(false);
+				if (data.id == '-1' || data.id == '-2') {
+					smpl.ErrorC(data.msg);
+				} else {
+					$("textarea#smpl_ai_check").val(data.msg);
 				}
 			},
 			error: function (response) {

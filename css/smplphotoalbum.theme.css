@@ -254,6 +254,10 @@ select {
   background-image: url("../image/b_ai_col.png");
 }
 
+.smpl_ai_check_col {
+  background-image: url("../image/b_ai_check_col.png");
+}
+
 .smpl_add_col {
   background-image: url("../image/b_add_col.png");
 }
@@ -528,6 +532,10 @@ select {
 
 .smpl_ai_bw {
   background-image: url("../image/b_ai_bw.png");
+}
+
+.smpl_ai_check_bw {
+  background-image: url("../image/b_ai_check_bw.png");
 }
 
 .smpl_add_bw {

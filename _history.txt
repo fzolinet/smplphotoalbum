@@ -1,6 +1,5 @@
 Bugs:
 ~~~~
-- If only GD is on the server there is problem Settings.php
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
@@ -11,10 +10,10 @@ ImageEdit
 - the ellipse / rectangle / grid / point eyedrop change 
   for the scaled and dragged image 
 
-Todo:
+// Todo:
 ~~~~		
 - Automate normalize is default on image 
-- Check with Google ai generated image!
+- Check with Google AI generated image!
 - Text write on the image
 
 https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
@@ -88,6 +87,10 @@ GD
 
 History:
 ~~~~~~~
+2025.12.27 -1.9.8-beta1
+- New: Ask Gemini to AI made image is?
+- Clarifai client Delete
+
 2025.12.23 - 1.9.7-beta3
 - Bugfix: image view (SmplphotoalbumController::v())
 - Bugfox: Multi language

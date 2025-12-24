@@ -64,13 +64,7 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         ),
         'G' => 
         array (
-            'Grpc\\' => 5,
-            'Google\\Protobuf\\' => 16,
-            'Google\\' => 7,
             'Gemini\\' => 7,
-            'GPBMetadata\\Google\\Protobuf\\' => 28,
-            'GPBMetadata\\Google\\' => 19,
-            'GPBMetadata\\' => 12,
         ),
         'F' => 
         array (
@@ -83,7 +77,6 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'C' => 
         array (
             'Complex\\' => 8,
-            'Clarifai\\' => 9,
             'CHMLib\\' => 7,
         ),
         'A' => 
@@ -203,33 +196,9 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         array (
             0 => __DIR__ . '/..' . '/diderich/metadata/src',
         ),
-        'Grpc\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/grpc/grpc/src/lib',
-        ),
-        'Google\\Protobuf\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/google/protobuf/src/Google/Protobuf',
-        ),
-        'Google\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/google/common-protos/src',
-        ),
         'Gemini\\' => 
         array (
             0 => __DIR__ . '/..' . '/google-gemini-php/client/src',
-        ),
-        'GPBMetadata\\Google\\Protobuf\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/google/protobuf/src/GPBMetadata/Google/Protobuf',
-        ),
-        'GPBMetadata\\Google\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/google/common-protos/metadata',
-        ),
-        'GPBMetadata\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/clarifai/clarifai-php-grpc/src/GPBMetadata',
         ),
         'FFMpeg\\' => 
         array (
@@ -242,10 +211,6 @@ class ComposerStaticInit25a81758aa961d1b7e1236b6fec8d210
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
-        ),
-        'Clarifai\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/clarifai/clarifai-php-grpc/src/Clarifai',
         ),
         'CHMLib\\' => 
         array (

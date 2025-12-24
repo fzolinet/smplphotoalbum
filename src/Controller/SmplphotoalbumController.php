@@ -4,6 +4,7 @@
  * Contains \Drupal\mymodule\Controller\MyModuleController.
  */
 namespace Drupal\smplphotoalbum\Controller;
+require_once realpath(__DIR__."/../../")."/vendor/autoload.php";
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InsertCommand;
@@ -17,24 +18,13 @@ use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceExce
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 
-// Ai clients
-
-// Clarifai
-use Clarifai\ClarifaiClient;
-use Clarifai\Api\Data;
-use Clarifai\Api\Image;
-use Clarifai\Api\Input;
-use Clarifai\Api\PostModelOutputsRequest;
-use Clarifai\Api\Status\StatusCode;
-
 //Gemini
 use Gemini;
 use Gemini\Data\Blob;
 use Gemini\Enums\MimeType;
 
+use Drupal\smplphotoalbum\AI;
 use Drupal\smplphotoalbum\SlideShow;
-
-require_once realpath(__DIR__."/../../")."/vendor/autoload.php";
 
 class SmplphotoalbumController extends ControllerBase{  
   private $cfg;
@@ -825,17 +815,13 @@ class SmplphotoalbumController extends ControllerBase{
    * @throws ServiceNotFoundException 
    * @throws InvalidQueryException 
    */
-  function ai( $id ){
+  public function ai( $id, $cmd =''){
     global $base_url;
     $response = new AjaxResponse();
     
-    // Error handling
-    $curl = extension_loaded("curl");
-    $grpc = extension_loaded("grpc");
-
-    if( $this->aiclarifai && !( $curl && $grpc ) ){
-      $str = json_encode( ["id" => "-1", "msg" => "Clarifai client does not works, because cUrl or GRPC PHP extension is not installed!" ] );
-      $response->addCommand( new InsertCommand( '', $str, [] ) );
+    // Check the access
+    if(! $this->access()) {
+      $response->addCommand( new InsertCommand( '', "-1", [] ) );
       return $response;
     }
 
@@ -862,140 +848,17 @@ class SmplphotoalbumController extends ControllerBase{
 
     $p = $this->slash( $this->root. $a["path"]."/".$a["name"] );
     
-    // AI recognition
-    $content = file_get_contents($p);      
-    if( $this->aiclarifai ){      
-      $str = $this->ai_recognition( $content ); 
-    }else if( $this->aigemini ){      
-      $str = $this->ai_recognition_google( $content, $p );      
-    }    
-    
-    if(!isset( $str ) || $str === null ){
-      $res = ["id" => "-1", "msg" => "There is no answer from AI!" ];
-    } else if( strpos( " " . $str, "error" ) > 0 ){
-      $res = ["id" => "-2", "msg" => "The Gemini server is too busy! Come back later!!!"];
+    if( $this->aigemini ){
+      $this->ReadWords();
+      $AI = new AIGemini( $p, $cmd, $this->words );     
+      $answer = $AI->process();
+    } else{     
+      $answer =["id" => "-1", "msg" => "There is no AI Gemini enabled!" ];     
     }
-    else{
-      $res = ["id" => "1", "msg" => $str ];
-    }    
     
-    $content = json_encode( $res );     
-    $response->addCommand( new InsertCommand( '', $content, [] ) );
+    $str = json_encode( $answer);     
+    $response->addCommand( new InsertCommand( '', $str, [] ) );    
     return $response;
-  }
-/**
- * With google Gemini client
- * API key details
- * API Key: AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck
- * Name: Default Gemini API Key
- * Project name: projects/818815699870
- * Project number:818815699870
- * @param mixed $bytes - content of file
- * @param mixed $p - file path 
- * @return string
- */
-function ai_recognition_google( $bytes, $p ){
-  $msg = "";
-  if(strtoupper( $_SERVER['REQUEST_METHOD']) !="POST"){
-    return $msg;
-  }
-
-  //
-  $ext = strtolower( pathinfo( $p, PATHINFO_EXTENSION) );
-  switch($ext){
-    case 'jpg':
-    case 'jpeg':
-      $mimeType = MimeType::IMAGE_JPEG;
-      break;
-    case 'png':
-      $mimeType = MimeType::IMAGE_PNG;
-      break;
-    case 'webp':
-      $mimeType = MimeType::IMAGE_WEBP;
-      break;
-    case 'heic':
-      $mimeType = MimeType::IMAGE_HEIC;
-      break;
-    case 'heif':
-      $mimeType = MimeType::IMAGE_HEIF;
-      break;
-    default:
-      $mimeType = 'unknown';
-      break;
-  }
-
-  if( $mimeType == 'unknown' ){
-    return "Unknown image type for AI recognition!";
-  }
-
-  $yourAPIKey = "AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck";
-  $client = Gemini::client( $yourAPIKey );  
-  $result = $client
-    ->generativeModel(model: 'gemini-2.5-flash')
-    ->generateContent([
-        'What is on the picture?',
-        new Blob( mimeType: $mimeType, data: base64_encode( $bytes ) )
-      ]);
-  return $result->text();
-}
-
-/**
- * With Clarifai client
- * @param mixed $bytes 
- * @return string 
- */
-function ai_recognition( $bytes ){
-
-  $curl = extension_loaded("curl");
-  $grpc = extension_loaded("grpc");
-  $msg = "";
-  $msg .=  !$curl ? "Curl PHP extension not installed!" : "";
-  $msg .=  !$grpc ? "GRPC PHP extension not installed! (https://pecl.php.net/package/gRPC )" : "";
-  if(!empty($msg)){
-    return $msg;
-  }
-
-    //$MODEL_ID = 'aaa03c23b3724a16a56b629203edc62c';
-    $MODEL_ID = 'general-image-recognition';
-    $MODEL_VERSION_ID = 'aa7f35c01e0642fda5cf400f543e7c40';
-    $client = ClarifaiClient::grpc();
-    
-    $metadata = ['Authorization' => ['Key f80633969cc54ae9890398ea09901496']];
-
-    [$response, $status] = $client->PostModelOutputs(
-        new PostModelOutputsRequest([
-            'model_id' => $MODEL_ID,  // This is the ID of the publicly available General model.
-            'version_id' => $MODEL_VERSION_ID,
-            'inputs' => [
-                new Input([
-                    'data' => new Data([
-                        'image' => new Image( [ 'base64' => $bytes ] )
-
-                        /*'image' => new Image([
-                            //'https://www.fzolee.hu/fw2/smplphotoalbum/v/3168?p=/szamitogepek/&n=junosty.jpg'
-                            'url' => $url
-                        ])*/
-                    ])
-                ])
-            ]
-        ]),
-        $metadata
-    )->wait(); 
-    
-    $status      = $response->getStatus();
-    $code        = $status->getCode();
-    $description = $status->getDescription();
-    $details     = $status->getDetails();
-  
-    if ($code != StatusCode::SUCCESS) {
-        throw new \Exception("Failure response: " . $description . " " . $details);
-    }
-
-    $msg = " ";
-    foreach ($response->getOutputs()[0]->getData()->getConcepts() as $concept) {
-        $msg .= $concept->getName() . ": (" . number_format($concept->getValue(), 2) . "), ";
-    }
-    return $msg; 
   }
 
   /**
@@ -1208,5 +1071,6 @@ function ai_recognition( $bytes ){
 			}
 		}
 	}	
+
 
 }

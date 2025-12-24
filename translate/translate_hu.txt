@@ -3,7 +3,9 @@
 ;by Fzolee https://www.fzolee.hu
 Add=Hozzáadás
 Add noise=Zaj hozzáadás
+AI check=MI ellenőrzés
 AI_recognition=MI képfelismerés
+AI generated image=MI által létrehozott kép
 AI image recognition Gemini client=MI képfelismerés Gemini klienssel
 AI image recognition Clarifai client=MI képfelismerés Clarifai klienssel
 Alpha=Alfa
@@ -230,3 +232,5 @@ Wave=Hullám
 White=Fehér
 Whitebalance=Fehéregyensúly
 Width=Szélesség
+What is on the picture?=Mi van a képen?
+Is there this image AI generated?=MI által generált kép ez?

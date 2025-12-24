@@ -71,14 +71,14 @@ class BreakTime{
 		if( $ti > $this->lastTime ) {
 			$e = "Reach the max execution time";
 			$this->write_sign( $v, $e );
-			$this->logEvent($e);
-	    return true;
+			$this->logEvent($e, $ti);
+			return true;
 	  }
 
 		if( $v > $this->max ){
 			$e = "Reach the max execution count";
 			$this->write_sign( $v, $e );
-			$this->logEvent( $e );
+			$this->logEvent( $e, $ti );
 			return true;
 		}
 
@@ -117,7 +117,7 @@ class BreakTime{
 	 * @param string $event
 	 * @return void
 	 */
-	function LogEvent( $event ){
+	function LogEvent( $event, $ti ){		
 		if($this->log){
 			error_log("Reason: '$event': Time: ". ( ($ti - $this->startTime) ) ." sec, " . round(( $this->freq/( $ti - $this->last ) ),2 ) . " round/sec, ". $this->perc );			
 		}			

@@ -1,6 +1,8 @@
 Add
 Add noise
+AI check
 AI_recognition
+AI generated image
 AI image recognition Gemini client
 AI image recognition Clarifai client
 Alpha
@@ -226,3 +228,5 @@ Wave
 White
 Whitebalance
 Width
+What is on the picture?
+Is there this image AI generated?
