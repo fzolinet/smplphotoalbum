@@ -135,7 +135,7 @@ function setDivInWindow(w, pos) {
 /**
  * Innen a jQuery lib-ek
  */
-(function ($, Drupal, smpl, swal) {
+(function ($, Drupal, smpl, Swal) {
   /**
    * Progress indicator on/off
    * @param Boolean on 
@@ -228,10 +228,16 @@ function setDivInWindow(w, pos) {
       case 'warning': cl = "smpl-message-warning"; title = "Warning message"; break;
       case 'status': cl = "smpl-message-status"; title = "Status message"; break;
     }
-    swal({
+
+    // Sweetalert2 lib
+    Swal.fire({
       title: title,
       text: cmd,
-      buttons: [smpl.words.Cancel, smpl.words.Confirm],
+      showConfirmButton: true,
+      confirmButtonText: smpl.words.Confirm,
+      closeOnClickOutside: true,
+      closeOnEsc: true,
+      dangerMode: true,
     });
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
@@ -242,19 +248,7 @@ function setDivInWindow(w, pos) {
    * Warning popup box
    */
   smpl.ConfirmC = function (cmd) {
-    swal({
-      text: cmd,
-      title: "warning",
-      className: "smpl-message-warning",
-      buttons: [smpl.words.Cancel, smpl.words.Confirm],
-      closeOnClickOutside: true,
-      closeOnEsc: true,
-      dangerMode: true,
-    });
-    $("div.swal-modal").removeClass("smpl-message-error");
-    $("div.swal-modal").removeClass("smpl-message-warning");
-    $("div.swal-modal").removeClass("smpl-message-notes");
-    $("div.swal-modal").addClass("smpl-message-warning");
+    smpl.AlertC("Warning: " + cmd, 'warning');
   }
 
   /**
@@ -262,18 +256,29 @@ function setDivInWindow(w, pos) {
     * @param {*} cmd
     */
   smpl.ErrorC = function (cmd) {
-    swal({
-      text: "Error on server side: " + cmd,
-      title: "Error message",
-      button: smpl.words.Confirm
-    });
-    $("div.swal-modal").removeClass("smpl-message-error");
-    $("div.swal-modal").removeClass("smpl-message-warning");
-    $("div.swal-modal").removeClass("smpl-message-notes");
-    $("div.swal-modal").addClass("smpl-message-error");
+    smpl.AlertC("Error on server side: " + cmd, 'error');
   }
 
   // Draggable window
   $('#smpl-message').draggable();
 
-})(jQuery, Drupal, smpl, swal);
+  // ImageBox
+  smpl.ImageBox = function (link, alias) {
+    Swal.fire({
+      imageUrl: link,
+      imageAlt: alias,
+      showConfirmButton: true,
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: smpl.words.OpenInNewTab,
+      cancelButtonText: smpl.words.Close,
+      draggable: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.open(link, "_blank");
+      } else {
+
+      }
+    });
+  }
+})(jQuery, Drupal, smpl, Swal);

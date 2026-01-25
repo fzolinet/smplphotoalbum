@@ -1,0 +1,6 @@
+[2025-12-11 05:49:41] Settings (C:\Totalcmd\gitview.json):
+  git.path: c:/Totalcmd/Plugins/WFX/gitview/git.exe
+  git.timeout: 700
+  git.showCurBranch: false
+[2025-12-11 05:49:45] outBuf: PeekNamedPipe.Error: 109
+[2025-12-11 05:49:45] error launching git: A rendszer nem tal

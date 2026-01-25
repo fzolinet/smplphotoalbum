@@ -38,6 +38,8 @@ class ImageList {
 	protected $keywords   = ''; 	// SEO captions into the keywords meta tag
 	protected $lang       = "en"; // Actual language
 	protected $modulepath = ''; 	// path of module in filesystem
+	protected $realmodulepath = '';
+
 	protected $number;         	  // Length of a page
 	protected $numitems   = 0;
 	protected $order      = false;// sorting the items	
@@ -104,59 +106,59 @@ class ImageList {
 	 *
 	 * @param array $params
 	 */
-	function __construct(&$params) {		
+	function __construct(&$params) {
+
 		$this->user 		= \Drupal::currentUser();
 		$this->access	  = $this->RightAccess();
 		$this->request	= \Drupal::request();
 		$this->sess   	= \Drupal::request()->getSession();	
-		$this->con    	= \Drupal::database();
+		$this->con    	= \Drupal::database();		
+		$this->params     = &$params;			
+		$this->preSettings();
 		
-		//$Items          = [];
-		$this->params     = $params;
-		$this->preSettings( $params );		
-		$root             = $this->root;
-		$path             = $this->path;		
-		$this->slide_path	= $this->path;
-		$this->upload 		= $this->access && $this->upload;
-		$this->folders 		= $this->access && $this->folders;
-		
+		$this->slide_path	= $this->params["path"];
+		$this->upload 		= $this->access && $this->upload;		
+			
 		// If method comes from page
-		if( isset( $params["method"] ) ){
-			$method = strtolower( $params["method"] );
+		if( isset( $this->params["method"] ) ){
+			$method = strtolower( $this->params["method"] );
 			if ( $method == "post" || $method == "get" ) {
 				$this->method = $method;
 			}
 		}
 
 		//Works with folders
-		if($this->folders ){
-
+		if( $this->folders ){			
 			// subfolder - upfolder
 			$this->subfolder = $this->sess->get("subfolder");
 
 			//If one level up
-			if( $upfolder = $this->Request("upfolder") ){
+			$upfolder = $this->Request("upfolder", false );		
+			$subfolder = $this->Request("subfolder", false);
+					
+			if( $upfolder ){
 				$this->subfolder = dirname( $this->subfolder );
 
 				if($this->subfolder == "." ) $this->subfolder = "";
 
 				$this->sess->set("subfolder", $this->subfolder);
 
-			} else if( ( $subfolder = $this->Request("subfolder") ) ){
+			} else if( ( $subfolder) ){
 					$this->subfolder = $this->slash( $subfolder . "/" );
-					$this->sess->set("subfolder", $this->subfolder);				
-			}
+					$this->sess->set("subfolder", $this->subfolder);								
+			} 
 
 			//List of folder: get folder from Request or session. Check the subfolder
-			if( $this->folders && ( $fname = $this->Request("smpl_fname", "", "POST") ) ){
+			if( $fname = $this->Request("smpl_fname", "", "POST") ){
 				if( !empty( $fname ) ) $this->NewFolder( $fname );
 			}
 		}
 
 		// Make an Image object
-		if ( !is_dir ( $root . $path . $this->subfolder) ) {
+		if ( !is_dir ( $this->root . $this->path . $this->subfolder) ) {
 			\Drupal::messenger()->addMessage( 
-				$this->t( "Set the right folder in settings of Smplphotoalbum. This is not a folder: " ) ."'".$root.$path.$this->subfolder."'"
+				$this->t( "Set the right folder in settings of Smplphotoalbum. This is not a folder: " ) ."'".
+				$this->root . $this->path . $this->subfolder . "'"
 			);
 		}
 
@@ -173,7 +175,7 @@ class ImageList {
 
 		//Thumbnails refresh
 		if( $this->Request('SmplThumbnails')  && $this->access ) {
-			$this->RefreshFolder( $this->path , $this->subfolder );
+			$this->RefreshFolder();
 		}
 		
 		// Upload file enabled		
@@ -191,21 +193,24 @@ class ImageList {
 		$query -> fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified', 'importance' ]);				
 
 		//WHERE  path = 		
-		$pathCond = $query->condition( 'path', $path . $this->subfolder , "LIKE" );		
+		$pathCond = $query->condition( 'path', $this->path . $this->subfolder , "LIKE" );		
 
 		// where type in[]
 		if( $this->slide ){
 			$wherein[] ='image';
+
 		}else{		
 			$wherein[] = 'image';			
 			if( $this->video ) {
 				$wherein[] = 'video';
 				$wherein[] = 'videohtml5';			
-			}			
+			}	
+
 			if( $this->audio ){
 				$wherein[] = 'audio';
 				$wherein[] = 'audiohtml5';			
-			} 
+			}
+
 			if( $this->doc ) $wherein[] = 'doc';
 			if( $this->cmp ) $wherein[] = 'cmp';
 			if( $this->app ) $wherein[] = 'app';
@@ -213,8 +218,7 @@ class ImageList {
 			if( $this->oth ) $wherein[] = 'oth';
 			if( $this->folders ) $wherein[] = "folder";
 			$wherein[] = '--';
-		};
-
+		};				
 		$typeCond = $query->condition( 'typ', $wherein, "IN" );
 		
 		// Filter
@@ -236,7 +240,7 @@ class ImageList {
 			$this->page = $this->pagenumber-1;
 		}
 		if($this->page <0 ) $this->page = 0;
-		
+	
 		// ORDER BY
     if( $this->folders ){
 			$query->addExpression("IF( STRCMP( typ, 'folder' ),1,0) ", 'fldorder');
@@ -261,6 +265,7 @@ class ImageList {
 			}			
 			$query->orderBy( $order, $this->ascdesc );			
 		}
+
 		//LIMIT
 		if( $this->page < 0 ) {
 			$this->page = 0;
@@ -272,11 +277,12 @@ class ImageList {
 	
 //---------------------------------------
 		$RSArray = $rs->fetchAllAssoc('id');
+				
 		// number of records
 		if( $this->folders && !empty( $this->subfolder ) ){
 			$upfolder = [
 				'id' => 0,
-				'path' => $path . $this->subfolder,
+				'path' => $this->path . $this->subfolder,
 				'name' => '..',
 				'subtitle' => "..",
 				'typ' => 'folder',
@@ -292,33 +298,35 @@ class ImageList {
 
 		$db = 0;
 		foreach( $RSArray AS $i => $RS ){
-			$id = $RS->id;
-			if ( !file_exists( $this->slash( $this->root . $this->path . $this->subfolder. $RS->name ) ) ){
+			$id = $RS->id;			
+			if ( !file_exists( $this->slash( $this->root . $this->path . $this->subfolder . $RS->name ) ) ){
 				unset( $RSArray[$id] );
 				continue;
 			}
 			$type = $RS->typ;
-			if ( $type == "image" )					$tpl = $this->tpl ["image"];
-			elseif ( $type == "video" )			$tpl = $this->tpl ["video"];
-			elseif ( $type == "videohtml5" || $type == "video" ) $tpl = $this->tpl ["videohtml5"];
-			elseif ( $type == "audio" )			$tpl = $this->tpl ["audio"];
-			elseif ( $type == "audiohtml5") $tpl = $this->tpl ["audiohtml5"];
-			elseif ( $type == "folder")     $tpl = $this->tpl ["folder"];
-			else														$tpl = $this->tpl ["other"];
+			switch($type){
+				case "image":      $tpl = $this->tpl ["image"]; break;
+				case "video":      $tpl = $this->tpl ["video"]; break;
+				case "videohtml5": $tpl = $this->tpl ["videohtml5"]; break;
+				case "audio":      $tpl = $this->tpl ["audio"]; break;
+				case "audiohtml5": $tpl = $this->tpl ["audiohtml5"]; break;
+				case "folder":     $tpl = $this->tpl ["folder"]; break;
+				case "other":      $tpl = $this->tpl ["other"]; break;										
+			}
 			
 			$this->Items [$id] = new Image (
 				$id,
 				$RS->subtitle,
 				$RS->viewnumber,
 				$RS->link,
-				$params,
+				$this->params,
 				$this->words,
 				$RS->name,
 				$RS->importance,
 				$type,
 				$tpl,
 				$this->subfolder
-			);
+			);			
 			$db++;
 		}
 		
@@ -333,7 +341,7 @@ class ImageList {
 
 		// Save in the session the serial number of image 
 		if ($this->slide) {
-			$this->Slide = new SlideShow( $path );
+			$this->Slide = new SlideShow( $this->path );
 			$this->Slide->NewSlideShow( $this->words, $this->Items );
 			//-----------------------------------------		
 		}					
@@ -344,53 +352,54 @@ class ImageList {
 	 *
 	 * @param array $params
 	 */
-	function preSettings(&$params) {
-		$this->modulepath= $params['modulepath'];
-		$this->root      = $this->getRoot( $params['root'] );
-		$this->path      = $params['path'];
-		$this->width     = ( int ) $params['width'];
-		$this->number    = ( int ) ($params['number']);
-		$this->order     = $params["order"];
-		$this->sortorder = $params["sortorder"];
-		$this->ascdesc   = $params["ascdesc"];
-		$this->sub       = $params['sub'];
-		$this->smplbox   = $params['smplbox'];
-		$this->viewed    = $params['viewed'];
-		$this->edit      = $params['edit'];
-		$this->stat      = $params['stat'];
-		$this->private   = $params['private'];
+	function preSettings() {		
+		$this->modulepath= $this->params['modulepath'];
+		$this->realmodulepath = $this->params['realmodulepath'];
+		$this->root      = $this->getRoot( $this->params['root'] );
+		$this->path      = $this->params['path'];
+		$this->width     = ( int ) $this->params['width'];
+		$this->number    = ( int ) ($this->params['number']);
+		$this->order     = $this->params["order"];
+		$this->sortorder = $this->params["sortorder"];
+		$this->ascdesc   = $this->params["ascdesc"];
+		$this->sub       = $this->params['sub'];
+		$this->smplbox   = $this->params['smplbox'];
+		$this->viewed    = $this->params['viewed'];
+		$this->edit      = $this->params['edit'];
+		$this->stat      = $this->params['stat'];
+		$this->private   = $this->params['private'];
 		
-		$this->edit      = $params["edit"];		// Edit 
-		$this->imgedit   = $params["imgedit"];	// Image Edit
-		$this->wmpath    = $params["wmpath"];	// Watermark		
-		$this->upload    = $params['upload'];	// Upload enabled | disabled
-		$this->folders   = $params['folders']; //List of folders enabled | disabled
+		$this->edit      = $this->params["edit"];		  // Edit 
+		$this->imgedit   = $this->params["imgedit"];	// Image Edit
+		$this->wmpath    = $this->params["wmpath"];	  // Watermark		
+		$this->upload    = $this->params['upload'];	  // Upload enabled | disabled
+		$this->folders   = $this->params['folders']; //List of folders enabled | disabled
 		//checking types of items
-		$this->audio = $params['audio_checking'];
-		$this->video = $params['video_checking'];
-		$this->doc   = $params['doc_checking'];
-		$this->cmp   = $params['cmp_checking'];
-		$this->app   = $params['app_checking'];
-		$this->oth   = $params['oth_checking'];
-		$this->dis   = $params['dis_checking'];
-		$this->html5 = $params['html5_checking']; // Use the html5 widgets
-		$this->url   = $params['url_checking'];
+		$this->audio = $this->params['audio_checking'];
+		$this->video = $this->params['video_checking'];
+		$this->doc   = $this->params['doc_checking'];
+		$this->cmp   = $this->params['cmp_checking'];
+		$this->app   = $this->params['app_checking'];
+		$this->oth   = $this->params['oth_checking'];
+		$this->dis   = $this->params['dis_checking'];
+		$this->html5 = $this->params['html5_checking']; // Use the html5 widgets
+		$this->url   = $this->params['url_checking'];		
 		
-		$this->title = isset ( $params['title'] ) && !empty( $params[ 'title' ] ) ? '<h2 class="smpl_title">' . $params['title'] . '</h2>' : '';
-		$this->notes = isset ( $params['notes'] ) && !empty( $params[ 'notes' ] ) ? '<div class="smpl_notes">' . $params['notes'] . '</div>' : '';
+		$this->title = isset ( $this->params['title'] ) && !empty( $this->params[ 'title' ] ) ? '<h2 class="smpl_title">' . $this->params['title'] . '</h2>' : '';
+		$this->notes = isset ( $this->params['notes'] ) && !empty( $this->params[ 'notes' ] ) ? '<div class="smpl_notes">' . $this->params['notes'] . '</div>' : '';
 		
 		// Slideshow
 		if( $this->Request("SmplSlide", false) ){
-			$params['slide'] = true;
+			$this->params['slide'] = true;
 		}
-	  $this->slide_checking = $params['slide_checking'];		
-		$this->slide          = $params['slide'] && $params['slide_checking'];
-		$this->slidestyle     = $params['slidestyle'];
-		$this->interval       = $params['interval'];
+	  $this->slide_checking = $this->params['slide_checking'];		
+		$this->slide          = $this->params['slide'] && $this->params['slide_checking'];
+		$this->slidestyle     = $this->params['slidestyle'];
+		$this->interval       = $this->params['interval'];
 
 		// icon color or black & white
-		$this->graphicdrv = strtolower(trim( $params['graphicdrv'] ));
-		$this->icon       = strtolower(trim( $params['icon'] ));
+		$this->graphicdrv = strtolower(trim( $this->params['graphicdrv'] ));
+		$this->icon       = strtolower(trim( $this->params['icon'] ));
 
 		// Paging
 		$smpl_page = $this->Request("smpl_page", "" );
@@ -407,7 +416,6 @@ class ImageList {
 
 	  // read the text
 		$this->ReadWords();
-
 		// Load templates
 		$this->LoadTpls();
 
@@ -434,8 +442,8 @@ class ImageList {
 	 * Load templates
 	 * @return
 	 */
-	function LoadTpls(){
-		$p = realpath ( $this->modulepath . "/templates" );
+	function LoadTpls(){		
+		$p = $this->params["realmodulepath"] . "/templates";				
 		$this->tpl['smplphotoalbum'] = file_get_contents ( $p . "/smplphotoalbum.html.twig" );
 		$this->tpl['image']        = file_get_contents ( $p . "/image.html.twig" );
 		$this->tpl['videohtml5']   = file_get_contents ( $p . "/videohtml5.html.twig" );
@@ -447,6 +455,10 @@ class ImageList {
 	  $this->tpl['sortorder']    = file_get_contents ( $p . "/sortorder.html.twig" );
 	  $this->tpl['stat']         = file_get_contents ( $p . "/stat.html.twig" );
 		$this->tpl["js"]           = file_get_contents ($p  . "/smpl_js.html.twig");
+		if($this->folders){
+			$this->tpl["folder"]     = file_get_contents ( $p . "/folder.html.twig" );
+		}
+
 	  if ($this->slide) {
 	   	$this->tpl['slide']      = file_get_contents ( $p . "/slide.html.twig" );
 	   	$this->tpl['slideimage'] = file_get_contents ( $p . "/slideimage.html.twig" );			
@@ -456,13 +468,13 @@ class ImageList {
 			$this->tpl["editform"]   = file_get_contents ( $p . "/editform.html.twig" );
 			$this->tpl["imgeditform"]= file_get_contents ( $p . "/imgeditform.html.twig" );
 			$this->tpl["uploadform"] = file_get_contents ( $p . "/uploadform.html.twig" );
-			$this->tpl["folderform"] = file_get_contents ( $p . "/folderform.html.twig" );
-			$this->tpl["folder"]     = file_get_contents ( $p . "/folder.html.twig" );
+			$this->tpl["folderform"] = file_get_contents ( $p . "/folderform.html.twig" );			
 		}else {
 			$this->tpl["editform"] = "";
 			$this->tpl["imgeditform"] = "";
 			$this->tpl["uploadform"] = "";
-		}
+			
+		}		
 	}
 
 	/**
@@ -474,10 +486,11 @@ class ImageList {
 		if($this->params['lang'] == "" ){
 			$this->params['lang'] = 'en';
 		}
+	
 		if( $this->params['lang'] == 'en' ){
-			$words = file( $this->modulepath ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+			$words = file( $this->realmodulepath  ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
 		} else {			
-			$words = file( $this->modulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
+			$words = file( $this->realmodulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
 		}
 		$words = str_replace( "_"," ", $words);
 		
@@ -529,7 +542,7 @@ class ImageList {
 			return false;
 		}
 		$this->InsertNewFile( $this->path . $this->subfolder, $fname, $sub, "folder", $link,	0, $ti, 0 );
-		$this->RefreshFolder( $this->path , $this->subfolder );
+		$this->RefreshFolder();
 		return ($ok ? "1" : "-2");
 	}
 
@@ -584,7 +597,7 @@ class ImageList {
 			}
 		}
 		
-		$this->RefreshFolder($this->path , $this->subfolder);
+		$this->RefreshFolder();
 		return $ok;
 	}
 
@@ -634,10 +647,10 @@ class ImageList {
 	 * @param string $path - actual path
 	 * @return void
 	 */
-	function RefreshFolder( $path, $subfolder ) {		
+	function RefreshFolder( ) {		
 		
 		//Load every items and delete folders
-		$names = scandir( $this->root . $path. $subfolder );		
+		$names = scandir( $this->root . $this->path. $this->subfolder );		
 		unset ( $names [array_search ( '.', $names )] );
 		unset ( $names [array_search( self::TN, $names )] );
 		unset ( $names [array_search( '_tn_', $names ) ] );
@@ -648,13 +661,13 @@ class ImageList {
 
 		//
 		foreach( $names AS $i => $name ){
-			$msg = $this->ChkItemInDB( $name, $path . $subfolder );
+			$msg = $this->ChkItemInDB( $name, $this->path . $this->subfolder );
 			\Drupal::messenger ()->addMessage ( $msg , "status");
 		}
 
 		// database names into array
 		$sql = "SELECT `id`, `name` FROM {smplphotoalbum} WHERE `path`= :path; ";
-		$rs = $this->con->query( $sql, [':path' => $path . $subfolder] );
+		$rs = $this->con->query( $sql, [':path' => $this->path . $this->subfolder] );
 		$dbnames = $rs->fetchAllAssoc('id');
 
 		// Delete orphan row from database
@@ -662,7 +675,7 @@ class ImageList {
 
 		foreach( $dbnames AS $id => $dbname ){			
 			if( !array_search( $dbname->name, $names ) ){
-				$this->con->query($sql, [":path" => $path . $subfolder , ":id" => $id ]);
+				$this->con->query($sql, [":path" => $this->path . $this->subfolder , ":id" => $id ]);
 				\Drupal::messenger ()->addMessage ( "Delete from database: '$dbname->name'", "status");
 			}
 		}
@@ -879,27 +892,27 @@ class ImageList {
 
 		} else {			
 			if ( $this->isaudio ( $name ) || $this->isaudiohtml5( $name ) )	
-				$source = $this->modulepath . "/image/audio_$ext.png";
+				$source = $this->params["realmodulepath"] . "/image/audio_$ext.png";
 			elseif ( $this->isdoc ( $name ) )	
-				$source = $this->modulepath . "/image/doc_$ext.png";
+				$source = $this->params["realmodulepath"] . "/image/doc_$ext.png";
 			elseif ( $this->iscmp ( $name ) )	
-				$source = $this->modulepath . "/image/cmp_$ext.png";
+				$source = $this->params["realmodulepath"] . "/image/cmp_$ext.png";
 			elseif ( $this->isapp ( $name ) )	
-				$source = $this->modulepath . "/image/app_$ext.png";
+				$source = $this->params["realmodulepath"] . "/image/app_$ext.png";
 			elseif ( $this->isvideo ( $name ) || $this->isvideohtml5($name ) ) 
-				$source = $this->modulepath . "/image/video_$ext.png";
+				$source = $this->params["realmodulepath"] . "/image/video_$ext.png";
 			elseif ( $this->isfolder( $name ) ){
 				if($name == ".."){
-					$source = $this->modulepath . "/image/folderup.png";
+					$source = $this->params["realmodulepath"] . "/image/folderup.png";
 				}else{
-					$source = $this->modulepath . "/image/folder.png";	
+					$source = $this->params["realmodulepath"] . "/image/folder.png";	
 				}
 			}	if ($this->isoth($name) ){
 
-					if( file_exists( $this->modulepath . "/image/other_$ext.png" )){
-						$source = $this->modulepath . "/image/other_$ext.png";
+					if( file_exists( $this->params["realmodulepath"] . "/image/other_$ext.png" )){
+						$source = $this->params["realmodulepath"] . "/image/other_$ext.png";
 					}else{
-						$source = $this->modulepath . "/image/other.png";
+						$source = $this->params["realmodulepath"] . "/image/other.png";
 					}				
 			}						
 			$ok = @copy ( $source, $thumbnail );
@@ -917,8 +930,7 @@ class ImageList {
 	 * Render the table of images
 	 */
 	function Render() {
-		global $base_path;
-			
+		global $base_path;			
 		if( isset( $_SESSION['_symfony_flashes']['status'] ) &&
 				count( $_SESSION['_symfony_flashes']['status'] ) > 5
 		){
@@ -952,7 +964,7 @@ class ImageList {
 
 		// Load smpl template	and set the javascript variables	
 		$strjs = "<script>".$this->tpl["js"]."</script>";
-		
+
 		$imgeditform = $this->Request("imgeditform","0");
 		$id = $this->Request("id",-1);
 
@@ -1064,6 +1076,7 @@ class ImageList {
 				$this->notes,
 				$this->order ? $this->SortOrdered () : ""
 			], $str);
+
 		// Subfolder write out
 		$this->Path( $str );
 		
@@ -1137,7 +1150,7 @@ class ImageList {
 	 * @param mixed $str 	 
 	 */
 	function Recognition( string &$str ){
-		$ai = ( $this->params['aiclarifai'] || $this->params['aigemini'] );		
+		$ai = $this->params['aigemini'];		
 		if( $ai ){
 			$str = str_replace( [ "<ai>","</ai>" ], "", $str );
 			$str = str_replace( "{{ AI_recognition }}", $this->words["AI recognition"], $str);

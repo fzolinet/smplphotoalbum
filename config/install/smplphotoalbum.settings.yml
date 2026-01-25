@@ -111,7 +111,6 @@ icon: "_col"
 test: FALSE
 
 #Image recognition
-aiclarifai: TRUE
 aigemini: FALSE
 
 # important the first in list
@@ -119,3 +118,7 @@ important: TRUE
 
 #more level folders
 folders: TRUE
+
+#ffmpeg
+ffmpeg: TRUE
+ffmpeg_path: /usr/bin/ffmpeg

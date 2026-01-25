@@ -187,6 +187,17 @@ smplphotoalbum.ai:
       id:
       cmd:
 
+smplphotoalbum.video2mp4:
+  path: "/smplphotoalbum/video2mp4/{id}"
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::video2mp4'
+    _title: "Convert video to MP4"
+  requirements:
+    _permission: "access content"
+  options:
+    parameters:
+      id:      
+        
 smplphotoalbum.test:
   path: "/smplphotoalbum/test"
   defaults:

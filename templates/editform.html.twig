@@ -11,17 +11,17 @@
 
 				<table id="SmplFormTable">
 					<tr>
-						<th colspan='2'>{{ Name }}</th>
+						<th >{{ Propertie }}</th>
 						<th>{{ Value }}</th>
 					</tr>
 					<tr>
-						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_name">{{ Filename }}</label></td>
+						<td align="left" valign="top"><label class="smpl" for="smpl_name">{{ Filename }}</label></td>
 						<td align="left" valign="top">
-							<input type='text' id="smpl_name" name="smpl_name" value="" size="50" maxlength="255" />
+							<input type='text' id="smpl_name" name="smpl_name" value="" size="40" maxlength="255" />
 						</td>
 					</tr>
 					<tr>
-						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_sub">{{ Subtitle }}</label></td>
+						<td align="left" valign="top"><label class="smpl" for="smpl_sub">{{ Subtitle }}</label></td>
 						<td align="left" valign="top">
 							<textarea id="smpl_sub" name="smpl_sub" value="">&nbsp;</textarea><br />
 							<ai>
@@ -31,7 +31,7 @@
 						</td>
 					</tr>
 					<tr class="smpl_ai_check">
-						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_AI_gen">{{ AI generated image }}</label></td>
+						<td align="left" valign="top"><label class="smpl" for="smpl_AI_gen">{{ AI generated image }}</label></td>
 						<td align="left" valign="top">
 							<textarea id="smpl_ai_check" type="text" class="smpl_ai_check" name="smpl_ai_gen" readonly="readonly">&nbsp;</textarea><br />
 							<ai>
@@ -41,7 +41,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_type">{{ Type }}</label></td>
+						<td align="left" valign="top"><label class="smpl" for="smpl_type">{{ Type }}</label></td>
 						<td align="left" valign="top">
 							<select id="smpl_type" name="smpl_type" class="smpl_dropdown">
 								<option value="image" selected="selected">{{ Image }}</option>
@@ -56,15 +56,21 @@
 							</select>
 						</td>
 					</tr>
+					<video2mp4>
+						<tr>
+							<td align="left" valign="top"><label class="smpl" for="smpl_video2mp4">{{ Video convert to MP4 }}</label></td>
+							<td align="left" valign="top"><button id="smpl_video2mp4" name="smpl_video2mp4" onclick="return false;" class="smpl_convert{{ icon }} smpl_button" title="{{ Video convert to MP4 }}">&nbsp;&nbsp;&nbsp;&nbsp;</button></td>
+						</tr>
+					</video2mp4>
 					<tr>
-						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_importance">{{ Importance }}</label></td>
+						<td align="left" valign="top"><label class="smpl" for="smpl_importance">{{ Importance }}</label></td>
 						<td align="left" valign="top">
 							<input id="smpl_importance" name="smpl_importance" type="number" value="0" min="0" max="255">
 						</td>
 					</tr>
 					<tr>
-						<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_link">{{ Url }}</label></td>
-						<td align="left" valign="top"><input id="smpl_link" type='text' name="smpl_link" value="" size="50" maxlength="255"/></td>
+						<td align="left" valign="top"><label class="smpl" for="smpl_link">{{ Url }}</label></td>
+						<td align="left" valign="top"><input id="smpl_link" type='text' name="smpl_link" value="" size="40" maxlength="255"/></td>
 					</tr>
 				</table>
 			</div>

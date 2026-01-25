@@ -4,7 +4,6 @@ AI check
 AI_recognition
 AI generated image
 AI image recognition Gemini client
-AI image recognition Clarifai client
 Alpha
 Amount
 Application
@@ -61,6 +60,7 @@ Degree of rotate
 Dehaze
 Delete
 Denoise
+desc
 Descending
 Detail
 Direction
@@ -79,6 +79,7 @@ Edit
 Equalize
 Exposure
 exif
+Exit
 Eyedropper
 Face edit
 Factor
@@ -86,6 +87,7 @@ Filename
 File size
 File type
 File Upload
+FileSize
 Filter
 FilterValue
 Find edges
@@ -149,6 +151,7 @@ Number of views
 Average of views
 Oil
 Ok
+Open in new tab
 Original
 Original size
 Other
@@ -162,6 +165,7 @@ Pinchusion
 pixels
 Point
 Previous
+Propertie
 Properties
 Radius
 Recip
@@ -219,6 +223,7 @@ Value
 Vertical
 Vertical Center
 Video
+Video convert to MP4
 view last
 viewnumber
 Views

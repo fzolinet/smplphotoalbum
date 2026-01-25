@@ -27,6 +27,8 @@ final class Tool implements Arrayable
         public ?CodeExecution $codeExecution = null,
         public ?GoogleSearch $googleSearch = null,
         public ?UrlContext $urlContext = null,
+        public ?GoogleMaps $googleMaps = null,
+        public ?FileSearch $fileSearch = null,
     ) {}
 
     public function toArray(): array
@@ -45,7 +47,7 @@ final class Tool implements Arrayable
         }
 
         if ($this->codeExecution !== null) {
-            $data['codeExecution'] = $this->codeExecution->toArray();
+            $data['codeExecution'] = $this->codeExecution->toObject();
         }
 
         if ($this->googleSearch !== null) {
@@ -54,6 +56,14 @@ final class Tool implements Arrayable
 
         if ($this->urlContext !== null) {
             $data['url_context'] = $this->urlContext->toArray();
+        }
+
+        if ($this->googleMaps !== null) {
+            $data['googleMaps'] = $this->googleMaps->toArray();
+        }
+
+        if ($this->fileSearch !== null) {
+            $data['fileSearch'] = $this->fileSearch->toArray();
         }
 
         return $data;

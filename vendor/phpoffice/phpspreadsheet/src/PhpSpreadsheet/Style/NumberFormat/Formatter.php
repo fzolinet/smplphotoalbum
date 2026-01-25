@@ -55,8 +55,8 @@ class Formatter extends BaseFormatter
         //   4 sections:  [POSITIVE] [NEGATIVE] [ZERO] [TEXT]
         $sectionCount = count($sections);
         // Colour could be a named colour, or a numeric index entry in the colour-palette
-        $color_regex = '/\\[(' . implode('|', Color::NAMED_COLORS) . '|color\\s*(\\d+))\\]/mui';
-        $cond_regex = '/\\[(>|>=|<|<=|=|<>)([+-]?\\d+([.]\\d+)?)\\]/';
+        $color_regex = '/\[(' . implode('|', Color::NAMED_COLORS) . '|color\s*(\d+))\]/mui';
+        $cond_regex = '/\[(>|>=|<|<=|=|<>)([+-]?\d+([.]\d+)?)\]/';
         $colors = ['', '', '', '', ''];
         $conditionOperations = ['', '', '', '', ''];
         $conditionComparisonValues = [0, 0, 0, 0, 0];
@@ -112,11 +112,11 @@ class Formatter extends BaseFormatter
      * @param null|array|bool|float|int|RichText|string $value Value to format
      * @param string $format Format code: see = self::FORMAT_* for predefined values;
      *                          or can be any valid MS Excel custom format string
-     * @param ?array $callBack Callback function for additional formatting of string
+     * @param null|array|callable $callBack Callback function for additional formatting of string
      *
      * @return string Formatted string
      */
-    public static function toFormattedString($value, string $format, ?array $callBack = null): string
+    public static function toFormattedString($value, string $format, null|array|callable $callBack = null): string
     {
         while (is_array($value)) {
             $value = array_shift($value);
@@ -126,7 +126,7 @@ class Formatter extends BaseFormatter
         }
         // For now we do not treat strings in sections, although section 4 of a format code affects strings
         // Process a single block format code containing @ for text substitution
-        $formatx = str_replace('\\"', self::QUOTE_REPLACEMENT, $format);
+        $formatx = str_replace('\"', self::QUOTE_REPLACEMENT, $format);
         if (preg_match(self::SECTION_SPLIT, $format) === 0 && preg_match(self::SYMBOL_AT, $formatx) === 1) {
             if (!str_contains($format, '"')) {
                 return str_replace('@', $value, $format);
@@ -134,7 +134,7 @@ class Formatter extends BaseFormatter
             //escape any dollar signs on the string, so they are not replaced with an empty value
             $value = str_replace(
                 ['$', '"'],
-                ['\\$', self::QUOTE_REPLACEMENT],
+                ['\$', self::QUOTE_REPLACEMENT],
                 (string) $value
             );
 
@@ -160,7 +160,7 @@ class Formatter extends BaseFormatter
         $format = (string) preg_replace('/^\[\$-[^\]]*\]/', '', $format);
 
         $format = (string) preg_replace_callback(
-            '/(["])(?:(?=(\\\\?))\\2.)*?\\1/u',
+            '/(["])(?:(?=(\\\?))\2.)*?\1/u',
             fn (array $matches): string => str_replace('.', chr(0x00), $matches[0]),
             $format
         );
@@ -200,9 +200,8 @@ class Formatter extends BaseFormatter
         }
 
         // Additional formatting provided by callback function
-        if ($callBack !== null) {
-            [$writerInstance, $function] = $callBack;
-            $value = $writerInstance->$function($value, $colors);
+        if (is_callable($callBack)) {
+            $value = $callBack($value, $colors);
         }
 
         return str_replace(chr(0x00), '.', $value);

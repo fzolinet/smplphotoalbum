@@ -27,7 +27,7 @@
 			},
 			error: function (response) {
 				smpl.progress(false);
-				smpl.ErrorC("Error in server side. Please come back later");
+				smpl.ErrorC("Please come back later");
 			}
 		});
 	});

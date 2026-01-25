@@ -15,9 +15,11 @@
 	 * Edit the properties of this path
 	 */
 	$('#EditPath').click(function (e) {
-		let id = $('div.smpl_item_container:first').attr('id').substring(4);
+		let id = $('div.smpl_item_container:last').attr('id').substring(4);
+		
 		smpl.progress(true);
 		let url = smpl.ajax + "/updatepath/" + id;
+	
 		$.ajax({
 			url: url,
 			type: "GET",

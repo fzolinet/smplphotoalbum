@@ -53,7 +53,7 @@ class SmplphotoalbumTest {
     $msg .= "<br>-->Test: Image in database: ".$ImgList->testImageInDB($this->filename, "image", $params['path'] );
 
     //Make new Thumbnail
-    $source = $this->root . $this->path .$params['path'] . $this->filename;
+    $source = $this->root . $this->path . $params['path'] . $this->filename;
     $thumbnail = $this->root . $this->path . $params['path'] . $this->cfg->get("TN") . $this->filename;
     //   
     $msg .= "<br>-->Test: Make new Thumbnail: ".($ImgList->testMakeNewThumbnail( $this->filename, $source, $thumbnail, 150 )?"ok":"false");

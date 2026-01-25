@@ -3,16 +3,15 @@ smplphotoalbum:
   css:
     state:
       css/smplphotoalbum.theme.css: {}
-      #css/smplphotoalbum.theme.css: {preprocess: false}
+      js/sweetalert2/sweetalert2.min.css: {}
   js:
-    js/sweetalert/sweetalert.min.js: {}
-    js/lib.js: {preprocess: false}
-    js/smpl.js: {preprocess: false}
+    js/sweetalert2/sweetalert2.all.min.js: {}
+    js/lib.js: { preprocess: false }
+    js/smpl.js: { preprocess: false }
     js/exif.js: {}
     js/filter.js: {}
     js/test.js: {}
-    js/settings.js: {}
-    
+
   dependencies:
     - core/jquery
     - jquery_ui/core
@@ -26,24 +25,24 @@ smplphotoalbum-edit:
   version: 1.x
   js:
     js/mousewheel/jquery.mousewheel.min.js: {}
-    js/jcanvas/dist/min/jcanvas.min.js: {}    
-    js/jcanvas/dist/min/jcanvas-handles.min.js: {}    
+    js/jcanvas/dist/min/jcanvas.min.js: {}
+    js/jcanvas/dist/min/jcanvas-handles.min.js: {}
     js/delete.js: {}
     js/edit.js: {}
-    js/upload.js: {}    
-    js/folder.js: {}  
+    js/upload.js: {}
+    js/folder.js: {}
     js/editpath.js: {}
-    js/img_eyedrop.js: {preprocess: false}
-    js/img_distortion.js: {preprocess: false}
-    js/img_rect.js: {preprocess: false}
-    js/img_ellipse.js: {preprocess: false}
-    js/img_circ.js: {preprocess: false}
-    js/img_grid.js: {preprocess: false}
-    js/img_point.js: {preprocess: false}
-    js/img_init.js: {preprocess: false}
-    js/img_edit.js: {preprocess: false}
-    js/img_effects.js: {preprocess: false}
-    js/img_zoomdrag.js: {preprocess: false}
+    js/img_eyedrop.js: { preprocess: false }
+    js/img_distortion.js: { preprocess: false }
+    js/img_rect.js: { preprocess: false }
+    js/img_ellipse.js: { preprocess: false }
+    js/img_circ.js: { preprocess: false }
+    js/img_grid.js: { preprocess: false }
+    js/img_point.js: { preprocess: false }
+    js/img_init.js: { preprocess: false }
+    js/img_edit.js: { preprocess: false }
+    js/img_effects.js: { preprocess: false }
+    js/img_zoomdrag.js: { preprocess: false }
 
   dependencies:
     - core/jquery
@@ -58,7 +57,7 @@ smplphotoalbum-edit:
 smplphotoalbum-slide:
   version: 1.x
   js:
-    js/slide.js: {preprocess: false}
+    js/slide.js: { preprocess: false }
     #js/slide.js: {}
 
   dependencies:
@@ -77,12 +76,3 @@ smplphotoalbum-stat:
   dependencies:
     - core/jquery
     - core/drupal.ajax
-
-smplphotoalbum-settings:
-  version: 1.x
-  js:
-    #js/settings.js: {preprocess: false}
-    js/settings.js: {}
-    
-  dependencies:
-    - core/jquery

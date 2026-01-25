@@ -22,7 +22,7 @@
 
   //View image in box
   let SmplImgDiv = $("#smpl_img_div");
-  SmplImgDiv.draggable({ cursor: "move" }).resizable({ aspectRatio: true });
+  SmplImgDiv.draggable({ cursor: "move" });//.resizable({ aspectRatio: true, maxHeight: 50vh, maxWidth: 50vw });
   let SmplImgBack = $('#smpl_img_back');
   let SmplImgClose = $("#smpl_img_close");
   let SmplImgBoxLink = "";
@@ -39,42 +39,14 @@
 
   // click an image from the list
   $("img.smpl_img").click(function (e) {
-    smpl.progress();
     SmplImgBoxLink = $(this).attr("data-link");
-    SmplImgBox.attr("src", SmplImgBoxLink);
+    smpl.ImageBox(SmplImgBoxLink, "");
   });
 
-  /**
-   * Load an image
-   */
-  SmplImgBox.on("load", function () {
-    smpl.progress();
-    SmplImgBack.show();
-    SmplImgDiv.show();
-    SmplImgBox.show();
-    SmplImgClose.show();
-    smpl.progress(false);
-  });
 
   //Error window resizable draggable
   $("#smpl_error").resizable().draggable();
 
-  //Close the image
-  $("#smpl_div_close, #smpl_img_back").click(function () {
-    SmplImgBox
-      .hide()
-      .attr("src", "")
-      .css("z-index", 0);
-    SmplImgBack.hide();
-    SmplImgDiv.hide();
-    SmplImgBox.hide();
-    SmplImgClose.hide();
-  });
-
-  //click image open in new tab
-  $("div#smpl_div_new").click(function () {
-    window.open(SmplImgBoxLink, "_blank");
-  });
 
   $("#smpl_stat_link").click(function () {
     smplstat = !smplstat;

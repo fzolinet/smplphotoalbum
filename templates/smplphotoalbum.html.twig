@@ -35,7 +35,7 @@
 			<button id="smpl_help_link" class="smpl_help_link{{ icon }} smpl_button" onclick="return false;" title="{{ Help }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
     </div>
 		<Path>
-			<div id="smpl_path">{{ Path }}: {{ smpl_path }}</div>
+			<div id="smpl_path">{{ Path }}: <span id="smpl_subpath">{{ smpl_path }}</span></div>
 		</Path>
 		{{ pager }}
 		<div class="smpl_table">
@@ -69,13 +69,4 @@
 {{ UploadForm }}
 
 {{ NewFolderForm }}
-
-<div id="smpl_img_back">
-	<div id="smpl_img_div">	
-		<img id="smpl_img_box" src="" />	
-		<div id="smpl_div_new" class="smpl_div_new{{ icon }} smpl_label" alt="{{ Image open in new tab }}" title="{{ Image open in new tab }}">&nbsp;&nbsp;</div>
-		<div id="smpl_img_close" class="smpl_div_close{{ icon }} smpl_button right_corner" alt="{{ Close }}" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-	</div>
-</div>
-
 <!-- Smpl Form Table -->

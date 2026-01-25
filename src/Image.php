@@ -88,7 +88,7 @@ class Image {
 		$this->v 					= $base_url . "/";
 		$this->viewed 		= $params ['viewed'];		
 		$this->width 			= $params ['width'];		
-		$this->words 			= $words;		
+		$this->words 			= $words;
 	}
 	
 	/**
@@ -125,7 +125,7 @@ class Image {
 		// Show link of item
 		$this->ShowLink( $str );
 
-		// The file description
+		// The file description		
 		$this->ShowProperties( $str );
 
 		// ImgEdit button
@@ -202,7 +202,7 @@ class Image {
 				"{{ File type }}"
 		];
 		$r = [
-				$this->words['Properties' ],
+				$this->words['Properties'],
 				$this->words['desc'],
 				$this->words['Last modified'],
 				"",
@@ -316,7 +316,7 @@ class Image {
 		$href = preg_replace("#(&+)#","&", $href);
 
 		$add = str_contains( $href, "?") ? "&":"?";
-		
+
 		if($this->name == ".."){				
 			$href .= $add . "upfolder=1";
 		}else{				
@@ -325,7 +325,7 @@ class Image {
 		$href = str_replace( "?&", "?", $href);
 		$href = str_replace( "&&", "&", $href);
     
-		$p = $this->slash($this->path.$this->subfolder);
+		$p = $this->slash($this->path . $this->subfolder);
 		$linktn = $this->v . "smplphotoalbum/v/$this->id?p=$p&n=$this->name&tn=folder";		
 
 		// max width
@@ -354,7 +354,8 @@ class Image {
 				$this->subtitle,
 				$style,
 		];
-		return str_replace( $s, $r, $str );
+		$str = str_replace( $s, $r, $str );		
+		return $str;
 	}
 	
 	/**

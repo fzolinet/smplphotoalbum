@@ -598,7 +598,7 @@ class SettingsForm extends ConfigFormBase {
     
     $form ['types_settings'] = [ 
         '#type' => 'fieldset',
-        '#title' => $this->t ( 'File types Settings' ),
+        '#title' => $this->t ( 'File types settings' ),
         '#collapsible' => TRUE,
         '#collapsed' => TRUE 
     ];
@@ -616,11 +616,13 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "checked: using HTML5 widgets for audio and video files, unchecked: use traditional links for use them. Default: checked" ),
         '#default_value' => $cfg->get( 'html5_checking' ) 
     ];
+
     $form ['types_settings'] ['image_checking'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Lists the image files' ),
         '#default_value' => $cfg->get( 'image_checking' ) 
     ];
+
     $form ['types_settings'] ['image_extensions'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'List of extensions of image files' ),
@@ -637,6 +639,7 @@ class SettingsForm extends ConfigFormBase {
         '#title' => $this->t ( 'Lists the audio files' ),
         '#default_value' => $cfg->get( 'audio_checking' ) 
     ];
+
     $form ['types_settings'] ['audio_extensions'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'List of extensions of audio files' ),
@@ -686,6 +689,7 @@ class SettingsForm extends ConfigFormBase {
             'style' => 'background-color:#DDD;' 
         ]
     ];
+
     
     $form ['types_settings'] ['doc_checking'] = [ 
         '#type' => 'checkbox',
@@ -844,41 +848,70 @@ class SettingsForm extends ConfigFormBase {
         '#collapsible' => TRUE,
         '#collapsed' => TRUE 
     ];
-
     // Is there installed the right services
-    $curl = extension_loaded("curl");
-    $grpc = extension_loaded("grpc");
-    $AI   = $curl && $grpc;
-
-    $form ['AI_settings'] ['curlgrpc'] = [ 
-        '#type' => 'checkbox',
-        '#title' => $this->t ( 'Curl and GRPC is installed' ),
-        '#default_value' => $AI,
-        '#description'   => "If cURL and GRPC extensions is installed you can use Image Recognition with AI",
-        '#attributes'    => [ 'readonly' => 'readonly', 'disabled' => 'disabled', 'style' => 'background-color:#DDD;' ]       
-    ];
-   
-    $aiclarifai = $cfg->get("aiclarifai");
-    $aigemini   = $cfg->get('aigemini');
-
-    $form["AI_settings"] ["aiclarifai"] = [
-        "#type" => 'checkbox',
-        '#title' => $this->t("You can use image recognition with Clarifai client"),
-        '#default_value' =>  ($AI && $aiclarifai) && !$aigemini,
-        '#description'   => "AI is installed and you can use image recognition Clarifai client", 
-    ];
-    
+    $curl = extension_loaded("curl");    
+    $AI   = $curl;    
+    $aigemini   = $cfg->get('aigemini');    
     $form["AI_settings"] ["aigemini"] = [
         "#type" => 'checkbox',
         '#title' => $this->t("You can use image recognition with GEMINI client"),
-        '#default_value' => $aigemini && !$aiclarifai,
+        '#default_value' => $aigemini,
         '#description'   => "Image recognition with GEMINI client",         
     ];
-    
-    if(!($AI && $aiclarifai) && !$aigemini ) {
-        $form["AI_settings"] ["aiclarifai"] ['#attributes'] = [ "readonly" => "readonly", "disabled" => "disabled", "style" => "background-color:#DDD;" ];
+
+    $form['ffmpeg_settings'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t ( 'FFMPEG settings for video conversion from any vido type to mp4' ),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#description' => $this->t ( "FFMPEG is a free open-source software project that produces libraries and programs for handling multimedia data. " .
+            "FFMPEG can decode, encode, transcode, mux, demux, stream, filter and play pretty much anything that humans and machines have created. ")
+    ];
+
+    $ffmpeg_path = $cfg->get("ffmpeg_path");
+    if(empty($ffmpeg_path)){
+        // default path
+        if(PHP_OS == "WINNT"){
+            $ffmpeg_path = "C:\\ffmpeg\\bin\\ffmpeg.exe";
+        }else{
+            $ffmpeg_path = "/usr/bin/ffmpeg";
+        }
     }
 
+    $form['ffmpeg_settings']['ffmpeg_path'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t ( 'FFMPEG path with exec progam' ),
+        '#default_value' => $ffmpeg_path,
+        '#description' => t("YWrite the full path of ffmpeg executable. Example: /usr/bin/ffmpeg or c:\Users\[username]\AppData\Local\Microsoft\WinGet\Links\\ffmpeg.exe" ),
+    ];
+
+    if(PHP_OS == "WINNT"){
+        // Windows operation system        
+        $out = " ".shell_exec( $ffmpeg_path);
+        fz_t($out);
+        $ffmpeg_installed = (stripos($out, "ffmpeg") > 0 ) ? true : false;
+        $out = "Windows System & FFMPEG " . ($ffmpeg_installed ? "is installed!" : "is not installed");
+
+    }else if(PHP_OS == "Linux" ){
+        // Linux operational system                       
+        $ffmpeg_installed = file_exists($ffmpeg_path) ? true : false;
+        $os = "Linux system. FFMEPG ". ($ffmpeg_installed ? "is installed" : "is not installed");        
+    }
+
+    $ffmpeg = $cfg->get("ffmpeg");
+
+    $form['ffmpeg_settings']['ffmpeg']=[
+        '#type' => 'checkbox',
+        '#title' => $this->t ( $os),
+        '#default_value' => $ffmpeg,
+        '#description' => $this->t ( "If it is checked the FFMPEG is installed on the server." ),        
+        '#attributes' => $ffmpeg_installed ? [] :
+            [
+                'readonly' => 'readonly',
+                'style' => 'background-color:#DDD;' 
+            ]
+    ];
+    
     return parent::buildForm ( $form, $form_state );
   }
 
@@ -958,12 +991,14 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'slstyle', $vals ['slstyle'] )        
         ->set( 'icon', $vals ['icon'] )
         ->set( 'test', $vals ['test'] )
-        ->set( 'aiclarifai', $vals['aiclarifai'] )
+         // AI settings        
         ->set( 'aigemini', $vals['aigemini'] )
         ->set( 'important', $vals['important'] )
         ->set( 'folders', $vals['folders'] )
         ->set( 'langswitch', $vals['langswitch'] )
         ->set( 'lang', $vals['lang'] )
+        ->set( 'ffmpeg', $vals['ffmpeg'] )
+        ->set( 'ffmpeg_path', $vals['ffmpeg_path'] )
         ->save ();
   }
   /**

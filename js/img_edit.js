@@ -1,4 +1,4 @@
-(function ($, Drupal, smpl, swal) {
+(function ($, Drupal, smpl, Swal) {
 	//"use strict";
 
 	var formw = 0;
@@ -574,18 +574,21 @@
 	 */
 	$("#SmplClose").click(function () {
 		if (!smpl.imgeditsaved) {
-			swal({
-				text: smpl.words.Edit_not_saved,
+			Swal.fire({
+				html: smpl.words.Edit_not_saved,
 				title: "The changed image not saved. Do you want to close?",
 				className: "smpl-message-warning",
 				closeOnClickOutside: true,
 				closeOnEsc: true,
 				dangerMode: true,
-				buttons: [smpl.words.Cancel, smpl.words.Confirm],
+				showCloseButton: true,
+				showCancelButton: true,
+				cancelButtonText: smpl.words.Cancel,
+				confirmButtonText: smpl.words.Confirm,
 				icon: "warning",
 			})
 				.then((ok) => {
-					if (ok) {
+					if (ok.isConfirmed) {
 						CloseAjax();
 						SaveButtons($, false);
 						SmplImgEditForm.hide();
@@ -723,4 +726,4 @@
 		$("#smpl_wh").val("0 x 0px");
 		$("#smpl_whp").val("0 x 0%");
 	}
-})(jQuery, Drupal, smpl, swal);
+})(jQuery, Drupal, smpl, Swal);

@@ -2,7 +2,7 @@
  * Edit properties of image
  */
 
-(function ($, Drupal, smpl, swal) {
+(function ($, Drupal, smpl, Swal) {
 	//Edit button
 	$('.smpl_edit').mouseover(function () {
 		$(this).css('cursor', 'pointer');
@@ -77,19 +77,22 @@
 		 */
 	$("#SmplEClose").click(function (e) {
 		if (smpl.editsaved === false) {
-			swal({
-				html: 'Do you want to close?',
-				title: "The changed properties not saved",
+			Swal.fire({
+				title: "The changed properties not saved. Do you want to close?",
+				html: smpl.words.Edit_not_saved,
 				className: "smpl-message-warning",
 				closeOnClickOutside: true,
 				closeOnEsc: true,
 				dangerMode: true,
-				buttons: [smpl.words.Cancel, smpl.words.Confirm],
+				showCloseButton: true,
+				showCancelButton: true,
+				cancelButtonText: smpl.words.Cancel,
+				confirmButtonText: smpl.words.Confirm,
 				icon: "warning",
 				animation: false
 			})
 				.then((ok) => {
-					if (ok) {
+					if (ok.isConfirmed) {
 						smpl.editsaved = true;
 						SmplEditForm.hide();
 						$("input#smpl_edit_id").val('');
@@ -163,7 +166,7 @@
 	});
 
 	/**
-	 * AI image recognition with Clarifai grpc client
+	 * AI image recognition with gemini client
 	 **/
 	$("#smplairecognition").click(function () {
 		let id = $("input#smpl_edit_id").val();
@@ -171,7 +174,7 @@
 		smpl.progress(true);
 		$.ajax({
 			url: url,
-			type: "POST",
+			type: "GET",
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
@@ -195,7 +198,7 @@
 		smpl.progress(true);
 		$.ajax({
 			url: url,
-			type: "POST",
+			type: "GET",
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
 				smpl.progress(false);
@@ -211,4 +214,29 @@
 			}
 		});
 	});
-})(jQuery, Drupal, smpl, swal);
+
+	/** video conversion */
+	$("button#smpl_video2mp4").click(function () {
+		let id = $("input#smpl_edit_id").val();
+		let url = smpl.ajax + "/video2mp4/" + id;
+		smpl.progress(true);
+		$.ajax({
+			url: url,
+			type: "GET",
+			success: function (response) {
+				let data = JSON.parse(response[0].data);
+				smpl.progress(false);
+				if(data.id =='-1' || data.id == '-2') {
+					smpl.ErrorC(data.msg);
+				} else {					
+					smpl.AlertC(data.msg);					
+				}	
+			},
+			error: function (response) {
+				smpl.ErrorC(response.responseText);
+				smpl.progress(false);
+			}
+		});
+	});
+
+})(jQuery, Drupal, smpl, Swal);

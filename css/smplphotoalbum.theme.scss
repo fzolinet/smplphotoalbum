@@ -39,6 +39,8 @@ $narrow: 3.5em;
 $mid: 4.5em;
 $wide: 6em;
 $ItemWidth: 24%;
+$ButtonWidth: var(--sp2);
+$ButtonHeight: var(--sp2);
 
 /* - end of default parameters -------*/
 .smpl_table_all {
@@ -264,6 +266,7 @@ div#sortorder {
 .smpl_buttons {
   margin-bottom: $BorderRadius;
   margin-top: $BorderRadius;
+
 }
 
 .smpl_actbutton {
@@ -280,10 +283,10 @@ div#sortorder {
   background-position: center 66%;
   background-repeat: no-repeat;
   cursor: pointer !important;
-  height: var(--sp1-5);
   background-position-y: center;
   border: $BorderSettings20;
   border-radius: $BorderRadius;
+  width: $ButtonWidth;
 }
 
 .smpl_help_link:hover {
@@ -294,14 +297,12 @@ div#sortorder {
   display: inline;
 }
 
-button {
-  height: var(--sp1-5) !important;
-}
-
 select,
-input {
-  height: var(--sp1-5) !important;
-  min-height: var(--sp1-5) !important;
+input,
+button,
+.smpl_button {
+  height: $ButtonHeight !important;
+  min-height: $ButtonHeight !important;
 }
 
 select {
@@ -356,6 +357,10 @@ $icons: (
 
   .smpl_color#{$icon} {
     background-image: url("../image/b_color#{$icon}.png");
+  }
+  
+  .smpl_convert#{$icon} {
+      background-image: url("../image/b_convert#{$icon}.png");
   }
 
   .smpl_convolution#{$icon} {
@@ -1094,19 +1099,6 @@ select#smpl_ascdesc {
   text-align: left;
 }
 
-#smpl_img_div {
-  z-index: 1;
-  position: relative;
-  top: 50%;
-  left: 50%;
-  max-width: 80%;
-  transform: translate(-50%, -45%);
-  /*display: flex;
-  justify-content: center;*/
-  border: 1px ridge $BorderColor;
-  padding: 0;
-}
-
 div.smpl_label {
   display: inline-block;
   margin: 2px;
@@ -1155,12 +1147,22 @@ label.smpl_label:hover {
   position: fixed;
   top: 0;
   left: 0;
-  /*height: 100%;*/
+  height: 100%;
   width: 100%;
 }
 
+#smpl_img_div {
+  z-index: 1;
+  border: 1px ridge $BorderColor;
+  padding: 0;
+  max-height: 50vh;
+  max-width: 50vw;
+  margin: 0 auto;
+  top: 25vh;
+}
+
 #smpl_img_box {
-  width: 100%;
+  display: block;
 }
 
 .smplslide_all {
@@ -1443,21 +1445,15 @@ select#smpl_geom:focus {
 }
 
 /* SWAL settings*/
-.swal-modal {
-  width: 400px !important;
+
+.swal2-modal {
   border: $BorderSettings30;
+  border-radius: $BorderBigRadius;
   transition: none !important;
   animation: none !important;
+  padding: $BorderBigRadius;
 }
 
-.swal-overlay--show-modal .swal-modal {
-  animation: none !important;
-}
-
-.swal-button {
-  height: fit-content !important;
-}
-
-.swal-overlay {
-  font-size: inherit;
+div:where(.swal2-container) button:where(.swal2-styled) {
+  padding: 1em 1.1em 1em 1.1em !important;
 }

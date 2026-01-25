@@ -14,6 +14,7 @@ use Drupal\Core\Database\InvalidQueryException;
 use Drupal\Core\Extension\InfoParser;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Drupal\smplphotoalbum\Controller\ImageEdit;
+use Drupal\smplphotoalbum\Controller\VideoConvert;
 use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +27,7 @@ use Gemini\Enums\MimeType;
 use Drupal\smplphotoalbum\AI;
 use Drupal\smplphotoalbum\SlideShow;
 
+
 class SmplphotoalbumController extends ControllerBase{  
   private $cfg;
   private $mp;
@@ -33,11 +35,11 @@ class SmplphotoalbumController extends ControllerBase{
   private $public;
   private $TN;
   private $sess;
-  private $wm;
-  private $aiclarifai;
+  private $wm;  
   private $aigemini;
   private $lang;
   private $words = [];
+  private $ffmpeg = false; //    /usr/bin/ffmpeg on Linux servers
   
   /**
    * Class constructor.
@@ -54,9 +56,9 @@ class SmplphotoalbumController extends ControllerBase{
     $root .= substr( $root, - 1 ) != '/' ? "/" : '';
 
     $this->root = $this->slash( $root );
-    $this->TN = $this->cfg->get( 'TN' );
-    $this->aiclarifai = $this->cfg->get("aiclarifai");
+    $this->TN = $this->cfg->get( 'TN' );    
     $this->aigemini = $this->cfg->get("aigemini");    
+    $this->ffmpeg = $this->cfg->get("ffmpeg");
   }
   
   // ...
@@ -382,7 +384,7 @@ class SmplphotoalbumController extends ControllerBase{
                   -> condition( 's.id', $id, '=' )
                   -> execute();                  
     $path = $record->FetchAssoc()["path"];
-    
+
     if(empty( $path )) {
       $response->addCommand( new InsertCommand( '', "There is not path to Invalid ID: " . $id, [] ) );
       return $response;
@@ -723,7 +725,6 @@ class SmplphotoalbumController extends ControllerBase{
     $wmalpha = $_SESSION["wmalpha"];
     imagefilter( $wmimg, IMG_FILTER_BRIGHTNESS, ( int ) $wmalpha );
     imagecopymerge( $img, $wmimg, $x1, $y1, 0, 0, $wmdx, $wmdy, $wmalpha );
-    imagedestroy( $wmimg );
     $this->OutputImage( $img, $p );
     return $p;
   }
@@ -817,8 +818,7 @@ class SmplphotoalbumController extends ControllerBase{
    */
   public function ai( $id, $cmd =''){
     global $base_url;
-    $response = new AjaxResponse();
-    
+    $response = new AjaxResponse();    
     // Check the access
     if(! $this->access()) {
       $response->addCommand( new InsertCommand( '', "-1", [] ) );
@@ -862,6 +862,76 @@ class SmplphotoalbumController extends ControllerBase{
   }
 
   /**
+   * Convert any type of video to mp4
+   * @param int $id 
+   * @return AjaxResponse 
+   */
+  function video2mp4($id = -1 ) {
+    
+    $response = new AjaxResponse();
+    if(! $this->access()) {
+      $response->addCommand( new InsertCommand( '', "-1", [] ) );
+      return $response;
+    }
+
+        
+    // Is there ffmpeg installed on the server 
+    if( $this->ffmpeg || !file_exists( $this->ffmpeg ) ) {  
+      $response->addCommand( new InsertCommand( '', ["id"=>"-1","msg"=>"There is no installed ffmpeg on the server"], [] ) );
+      return $response;
+    }
+    $con = \Drupal::database();
+    $record = $con->select( 'smplphotoalbum', 's' )->fields( 's', [
+        'id',
+        'path',
+        'name',
+        'typ',        
+        'link',
+        'importance',
+    ] )->condition( 's.id', $id, '=' )->execute();
+    
+    // there is no record
+    $a = $record->fetchAssoc();   
+    
+    if(!isset( $a['id']) && $a['id'] != $id  ){      
+      $response->addCommand( new InsertCommand( '', [ "id"=>"-1", "msg"=>"There is no record"] , [] ) );
+      return $response;
+    }
+    
+    // not video
+    if( $a['typ'] != "video" ) {
+      $response->addCommand( new InsertCommand( '', ["id"=>"-1", "msg"=>"The item is no video"], [] ) );
+      return $response;
+    }
+
+    
+    // there is no ffmpeg installed on the server 
+    //if( !file_exists( $this->ffmpeg ) ) {  
+    //  $response->addCommand( new InsertCommand( '', ["id"=>"-1","msg"=>"There is no installed ffmpeg on the server"], [] ) );
+    //  return $response;
+    //}
+
+    $p = $this->slash( $this->root. $a["path"]."/".$a["name"] );        
+    $ext = strtolower(pathinfo( $p, PATHINFO_EXTENSION ));
+    
+    if ($ext == "mp4" ) {
+      $response->addCommand( new InsertCommand( '', ["id"=>"-1", "msg"=>"The video is already in mp4 format"], [] ) );
+      return $response;
+    }
+
+    $width = $this->Request('width', 0 );
+    $height = $this->Request('height', 0 );
+    $framerate = $this->Request('framerate', 30 );
+    
+    $vmp4 = new VideoConvert($p, $a["typ"], $width, $height, $framerate);
+    $resp[] = $vmp4->convert();
+    $content = json_encode( $resp );    
+    $response->addCommand( new InsertCommand( '', $content, [] ) );
+    return $response;
+
+  }
+
+  /**
    * Load data of an item
    *
    * @param string $id
@@ -893,6 +963,7 @@ class SmplphotoalbumController extends ControllerBase{
     $response->addCommand( new InsertCommand( '', $content, [] ) );
     return $response;
   }
+
   /**
    *
    * @param string $id
@@ -930,6 +1001,7 @@ class SmplphotoalbumController extends ControllerBase{
     $response->addCommand( new InsertCommand( '', $content, [] ) );
     return $response;
   }
+
   /**
    * Entry is an image?
    * @param string $entry
@@ -943,6 +1015,7 @@ class SmplphotoalbumController extends ControllerBase{
     $exts = str_ireplace("avif","",$exts);
     return stripos( " " . $exts, pathinfo ( $entry, PATHINFO_EXTENSION ) ) > 0;
   }
+
   /*
    * Access of current user 
    */

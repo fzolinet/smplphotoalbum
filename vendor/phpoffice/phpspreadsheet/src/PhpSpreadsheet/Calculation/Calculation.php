@@ -52,7 +52,7 @@ class Calculation
     //    Defined Names: Named Range of cells, or Named Formulae
     const CALCULATION_REGEXP_DEFINEDNAME = '((([^\s,!&%^\/\*\+<>=-]*)|(\'(?:[^\']|\'[^!])+?\')|(\"(?:[^\"]|\"[^!])+?\"))!)?([_\p{L}][_\p{L}\p{N}\.]*)';
     // Structured Reference (Fully Qualified and Unqualified)
-    const CALCULATION_REGEXP_STRUCTURED_REFERENCE = '([\p{L}_\\\\][\p{L}\p{N}\._]+)?(\[(?:[^\d\]+-])?)';
+    const CALCULATION_REGEXP_STRUCTURED_REFERENCE = '([\p{L}_\\\][\p{L}\p{N}\._]+)?(\[(?:[^\d\]+-])?)';
     //    Error
     const CALCULATION_REGEXP_ERROR = '\#[A-Z][A-Z0_\/]*[!\?]?';
 
@@ -132,11 +132,6 @@ class Calculation
      * Error message for any error that was raised/thrown by the calculation engine.
      */
     public ?string $formulaError = null;
-
-    /**
-     * Reference Helper.
-     */
-    private static ReferenceHelper $referenceHelper;
 
     /**
      * An array of the nested cell references accessed by the calculation engine, used for the debug log.
@@ -553,13 +548,13 @@ class Calculation
             'argumentCount' => '2+',
         ],
         'CHOOSECOLS' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'chooseCols'],
             'argumentCount' => '2+',
         ],
         'CHOOSEROWS' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'chooseRows'],
             'argumentCount' => '2+',
         ],
         'CLEAN' => [
@@ -925,8 +920,8 @@ class Calculation
             'argumentCount' => '3',
         ],
         'DROP' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'drop'],
             'argumentCount' => '2-3',
         ],
         'DSTDEV' => [
@@ -1025,8 +1020,8 @@ class Calculation
             'argumentCount' => '1',
         ],
         'EXPAND' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'expand'],
             'argumentCount' => '2-4',
         ],
         'EXPONDIST' => [
@@ -1255,6 +1250,11 @@ class Calculation
             'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
             'functionCall' => [Functions::class, 'DUMMY'],
             'argumentCount' => '2+',
+        ],
+        'GROUPBY' => [
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [Functions::class, 'DUMMY'],
+            'argumentCount' => '3-7',
         ],
         'GROWTH' => [
             'category' => Category::CATEGORY_STATISTICAL,
@@ -2485,8 +2485,8 @@ class Calculation
             'argumentCount' => '1',
         ],
         'TAKE' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'take'],
             'argumentCount' => '2-3',
         ],
         'TAN' => [
@@ -2763,6 +2763,7 @@ class Calculation
             'category' => Category::CATEGORY_WEB,
             'functionCall' => [Web\Service::class, 'webService'],
             'argumentCount' => '1',
+            'passCellReference' => true,
         ],
         'WEEKDAY' => [
             'category' => Category::CATEGORY_DATE_AND_TIME,
@@ -2890,7 +2891,6 @@ class Calculation
         $this->cyclicReferenceStack = new CyclicReferenceStack();
         $this->debugLog = new Logger($this->cyclicReferenceStack);
         $this->branchPruner = new BranchPruner($this->branchPruningEnabled);
-        self::$referenceHelper = ReferenceHelper::getInstance();
     }
 
     private static function loadLocales(): void
@@ -4601,7 +4601,7 @@ class Calculation
     private static int $matchIndex10 = 10;
 
     /**
-     * @return array<int, mixed>|false
+     * @return array<int, mixed>|false|string
      */
     private function processTokenStack(mixed $tokens, ?string $cellID = null, ?Cell $cell = null)
     {
@@ -4719,7 +4719,7 @@ class Calculation
                         return $this->raiseFormulaError($e->getMessage(), $e->getCode(), $e);
                     }
                 }
-            } elseif (!is_numeric($token) && !is_object($token) && isset(self::BINARY_OPERATORS[$token])) {
+            } elseif (!is_numeric($token) && !is_object($token) && isset($token, self::BINARY_OPERATORS[$token])) {
                 // if the token is a binary operator, pop the top two values off the stack, do the operation, and push the result back on the stack
                 //    We must have two operands, error if we don't
                 $operand2Data = $stack->pop();
@@ -5182,6 +5182,9 @@ class Calculation
                 } elseif (preg_match('/^' . self::CALCULATION_REGEXP_DEFINEDNAME . '$/miu', $token, $matches)) {
                     // if the token is a named range or formula, evaluate it and push the result onto the stack
                     $definedName = $matches[6];
+                    if (str_starts_with($definedName, '_xleta')) {
+                        return Functions::NOT_YET_IMPLEMENTED;
+                    }
                     if ($cell === null || $pCellWorksheet === null) {
                         return $this->raiseFormulaError("undefined name '$token'");
                     }
@@ -5214,6 +5217,7 @@ class Calculation
                     }
 
                     $result = $this->evaluateDefinedName($cell, $namedRange, $pCellWorksheet, $stack, $specifiedWorksheet !== '');
+
                     if (isset($storeKey)) {
                         $branchStore[$storeKey] = $result;
                     }
@@ -5732,11 +5736,14 @@ class Calculation
         $recursiveCalculationCellAddress = $recursiveCalculationCell->getCoordinate();
 
         // Adjust relative references in ranges and formulae so that we execute the calculation for the correct rows and columns
-        $definedNameValue = self::$referenceHelper->updateFormulaReferencesAnyWorksheet(
-            $definedNameValue,
-            Coordinate::columnIndexFromString($cell->getColumn()) - 1,
-            $cell->getRow() - 1
-        );
+        $definedNameValue = ReferenceHelper::getInstance()
+            ->updateFormulaReferencesAnyWorksheet(
+                $definedNameValue,
+                Coordinate::columnIndexFromString(
+                    $cell->getColumn()
+                ) - 1,
+                $cell->getRow() - 1
+            );
 
         $this->debugLog->writeDebugLog('Value adjusted for relative references is %s', $definedNameValue);
 

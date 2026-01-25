@@ -1,7 +1,7 @@
 /**
  * Delete an image from server
  */
-(function ($, Drupal, smpl) {
+(function ($, Drupal, smpl, Swal) {
 	/**
 	 * Send kill command to server
 	 */
@@ -9,21 +9,22 @@
 		let id = $(this).attr('id').substring(6);
 		let name = $("div#smpl_sub" + id).html().trim();
 
-		swal({
-			text: smpl.words.Delete + ": '" + name + "' ?",
+		Swal.fire({
+			html: smpl.words.Delete + ": '" + name + "' ?",
 			title: "Are you sure?",
 			className: "smpl-message-warning",
-			buttons: true,
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			dangerMode: true,
-			animation: false,
 			focusCancel: true,
-			buttons: [smpl.words.Cancel, smpl.words.Delete],
+			showCancelButton: true,
+			showConfirmButton: true,
+			cancelButtonText: smpl.words.Cancel,
+			confirmButtonText: smpl.words.Delete,
 			icon: "warning",
 		})
 			.then((ok) => {
-				if (ok) {
+				if (ok.isConfirmed) {
 					smpl.progress(true);
 					let url = smpl.ajax + "/delete/" + id;
 					$.ajax({
@@ -42,4 +43,4 @@
 				}
 			});
 	});
-})(jQuery, Drupal, smpl);
+})(jQuery, Drupal, smpl, Swal);

@@ -147,7 +147,7 @@ class FilterSmplphotoalbum extends FilterBase {
     
     if ( $ImgList->getSlide()) {
       $out = $ImgList->SlideShow();
-    } else {
+    } else {      
       $out = $ImgList->Render();
     }
 
@@ -178,7 +178,7 @@ class FilterSmplphotoalbum extends FilterBase {
     }
 
     // AI using
-    if( $this->params["aiclarifai"] || $this->params["aigemini"] ){
+    if( $this->params["aigemini"] ){
       $lib[] = "smplphotoalbum/smplphotoalbum-ai";
     }
 
@@ -192,8 +192,8 @@ class FilterSmplphotoalbum extends FilterBase {
    *
    * @return string $msg
    */
-  function RootCheck() { 
-    $p = \Drupal::service( 'file_system' )->realpath( "public://" );
+  function RootCheck() {     
+    $p = \Drupal::service( 'file_system' )->realpath( "public://" );    
     $root = str_replace( "public://", $p."/", $this->params["root"] );
     $root = $this->slash( $root );
     
@@ -223,9 +223,11 @@ class FilterSmplphotoalbum extends FilterBase {
    *   
    * @return 
    */
-  function ParamsInit() {    
+  function ParamsInit() {  
+    global $base_url;  
     $this->params = $this->getConfig();
-    $this->params['modulepath'] = \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath ();
+    $this->params['modulepath'] = $base_url . "/" . \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath (); 
+    $this->params['realmodulepath'] =  realpath(__DIR__ ."/../../..");    
     $this->params['title']    = '';
     $this->params['notes']    = '';
     $this->params['slide']    = false;
@@ -248,8 +250,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['image_extensions']      = " " . $this->params ['image_extensions']." ";
     $this->params['oth_extensions']        = " " . $this->params ['oth_extensions'] ." ";
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
-    $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";
-    $this->params["aiclarifai"]            = $this->params["aiclarifai"] && extension_loaded("curl") && extension_loaded("grpc");    
+    $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";    
     $this->params["aigemini"]              = $this->params["aigemini"];    
   }
 
@@ -259,8 +260,7 @@ class FilterSmplphotoalbum extends FilterBase {
    * @return void 
    */
   function ParamsChange($t) {
-    $a = [        
-        'aiclarifai',
+    $a = [                
         'aigemini',
         'app',
         'ascdesc',
@@ -432,8 +432,7 @@ class FilterSmplphotoalbum extends FilterBase {
    */
   private function getConfig() {
     $index = [
-      // ai - this is in the config
-      'aiclarifai',
+      // ai - this is in the configuration form      
       'aigemini',
       'number', // How many item are in a page
       'width',  // default width of images in px
