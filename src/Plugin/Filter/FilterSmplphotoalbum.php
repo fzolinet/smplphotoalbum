@@ -251,7 +251,8 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['oth_extensions']        = " " . $this->params ['oth_extensions'] ." ";
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
     $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";    
-    $this->params["aigemini"]              = $this->params["aigemini"];    
+    $this->params["aigemini"]              = $this->params["aigemini"];
+
   }
 
   /**
@@ -531,7 +532,12 @@ class FilterSmplphotoalbum extends FilterBase {
       //translation
       'translate',
       'lang',
-      'langswitch'
+      'langswitch',
+      
+      //Videoedit
+      'ffmpeg',
+      'ffmpeg_path'
+
     ];
     $config = \Drupal::config ( 'smplphotoalbum.settings' );
     $cfg = [];

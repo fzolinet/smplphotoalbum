@@ -1,5 +1,4 @@
 (function ($, Drupal, smpl, Swal) {
-	//"use strict";
 
 	var formw = 0;
 	var formh = 0;
@@ -42,10 +41,11 @@
 	//Editform draggable on display
 
 	if (SmplImgEditForm.length > 0) {
-		SmplImgEditForm.resizable({
-			minWidth: 400,
-			minHeight: 400,
-		})
+		SmplImgEditForm
+			.resizable({
+				minWidth: 400,
+				minHeight: 400,
+			})
 			.draggable({
 				cancel: "canvas,input,textarea,button,select,option",
 				//containment: "window",

@@ -3,7 +3,7 @@ type: module
 project: "smplphotoalbum"
 description: Simple Photoalbum makes gallery from a content of folder as a filter && Edit images
 core_version_requirement: ^9 || ^10 || ^11
-version: "1.9.8-beta4"
+version: "1.10.0-dev"
 package: FZ
 configure: smplphotoalbum.settings
 dependencies:
@@ -11,4 +11,4 @@ dependencies:
   - jquery_ui_draggable
   - jquery_ui_resizable
 
-datestamp: 1768074781
+datestamp: 1769986847

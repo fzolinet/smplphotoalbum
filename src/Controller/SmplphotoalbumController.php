@@ -39,7 +39,8 @@ class SmplphotoalbumController extends ControllerBase{
   private $aigemini;
   private $lang;
   private $words = [];
-  private $ffmpeg = false; //    /usr/bin/ffmpeg on Linux servers
+  private $ffmpeg = false;   // true/false
+  private $ffmpeg_path = ''; // on Linux: /usr/bin/ffmpeg and on Windows for example C:\\ffmpeg\\bin\\ffmpeg.exe
   
   /**
    * Class constructor.
@@ -56,9 +57,10 @@ class SmplphotoalbumController extends ControllerBase{
     $root .= substr( $root, - 1 ) != '/' ? "/" : '';
 
     $this->root = $this->slash( $root );
-    $this->TN = $this->cfg->get( 'TN' );    
+    $this->TN = $this->cfg->get( 'TN' );       
     $this->aigemini = $this->cfg->get("aigemini");    
     $this->ffmpeg = $this->cfg->get("ffmpeg");
+    $this->ffmpeg_path = $this->cfg->get("ffmpeg_path");
   }
   
   // ...
@@ -162,7 +164,7 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $id
    * @return \Drupal\Core\Ajax\AjaxResponse
    */
-  public function exif($id = 1) {
+  public function exif($id = 1, $type ='' ) {
     $response = new AjaxResponse();
 
     $con = \Drupal::database();
@@ -179,11 +181,18 @@ class SmplphotoalbumController extends ControllerBase{
         'importance'       
     ] )->condition( 's.id', $id, '=' )->execute();
     $a = $record->fetchAssoc();
-    $str = file_get_contents( $this->mp . "/templates/exif.html.twig" );
-
+    
     //
     $ex = new Exif( $a, $this->cfg );
+    
+    //Video convert
+    if ( $a['typ'] == "video" ){
+      $ex->Videoinfo( $a );
+      return $a;
+    }
+    
     $exif = (string) $ex->Info();        
+    $str = file_get_contents( $this->mp . "/templates/exif.html.twig" );
     $str = str_replace( "{{ exif }}", $exif, $str );
         //
     $this->Readwords();
@@ -213,6 +222,7 @@ class SmplphotoalbumController extends ControllerBase{
     $response->addCommand( new InsertCommand( '', $str, [] ) );
     return $response;
   }
+
 		/**
 	 * Get file size
 	 * @return string
@@ -256,6 +266,15 @@ class SmplphotoalbumController extends ControllerBase{
     ] )->condition( 's.id', $id, '=' )->execute();
 
     $a = $record->fetchAssoc();
+    if($a['typ'] == "video") {
+      $x = $this->exif($id, 'video');  
+      $a["width"]     = $x['width'];
+      $a["height"]    = $x['height'];
+      $a["framerate"] = $x['framerate']; 
+      $a['filesize']  = $x['filesize'];
+      $a['clipend']   = $x['clipend'];      
+    }
+
     $content = json_encode( $a );
     $response->addCommand( new InsertCommand( '', $content, [] ) );
     return $response;
@@ -444,7 +463,7 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $cmd - Command
    * @return \Drupal\Core\Ajax\AjaxResponse
    */
-  public function imgedit($id = -1, $cmd = 'load', $oldname="", $newname="") {
+  public function imgedit($id = -1, $cmd = 'load', $oldname = "", $newname = "" ) {
     $response = new AjaxResponse();
 
     if(! $this->access()) {
@@ -862,24 +881,127 @@ class SmplphotoalbumController extends ControllerBase{
   }
 
   /**
-   * Convert any type of video to mp4
+   * Video edit window open
    * @param int $id 
+   * @param string $cmd 
    * @return AjaxResponse 
    */
-  function video2mp4($id = -1 ) {
+  public function videoedit( $id = -1, $cmd = 'load', $oldname = '', $newname = '') {
     
     $response = new AjaxResponse();
+
     if(! $this->access()) {
       $response->addCommand( new InsertCommand( '', "-1", [] ) );
       return $response;
     }
 
-        
-    // Is there ffmpeg installed on the server 
-    if( $this->ffmpeg || !file_exists( $this->ffmpeg ) ) {  
-      $response->addCommand( new InsertCommand( '', ["id"=>"-1","msg"=>"There is no installed ffmpeg on the server"], [] ) );
+    // Is there enabled the ffmpeg conversion 
+    if( !$this->ffmpeg ){
+      $response->addCommand( new InsertCommand( '', "FFMpeg conversion is disabled", [] ) );
       return $response;
     }
+
+    // Is there ffmpeg installed on the server 
+    if( ! file_exists( $this->ffmpeg_path ) ) {  
+      $response->addCommand( new InsertCommand( '', "FFMpeg path is invalid", [] ) );
+      return $response;
+    }
+
+    $con = \Drupal::database();
+    $record = $con->select( 'smplphotoalbum', 's' )->fields( 's', [
+        'id',
+        'path',
+        'name',
+        'typ',                
+    ] )->condition( 's.id', $id, '=' )->execute();
+    
+    // there is no record
+    $a = $record->fetchAssoc();
+
+    if(!isset( $a['id']) && $a['id'] != $id  ){      
+      $response->addCommand( new InsertCommand( '', "There is no record" , [] ) );
+      return $response;
+    }
+
+    // not video
+    if( $a['typ'] != "video" ) {
+      $response->addCommand( new InsertCommand( '',  "The item is no video", [] ) );
+      return $response;
+    } 
+  
+    $p = $this->slash( $this->root. $a["path"]."/".$a["name"] );        
+    $ext = strtolower(pathinfo( $p, PATHINFO_EXTENSION ));
+    
+    if($id != 0) {
+      
+      $oldname = $this->Request('oldname', 0 );
+      $newname = $this->Request('newname', 0 );
+      $width = $this->Request('width', 0 );
+      $height = $this->Request('height', 0 );
+      $framerate = $this->Request('framerate', 30 );
+      $clipstart = $this->Request('clipstart', 0 ); // clip start time >=0      
+      $clipend = $this->Request('clipend', 0 );   // clip last time <= duration
+      $duration = $this->Request('duration', 0 ); // Length of video
+      
+      $video = new VideoEdit( 
+        $id, 
+        $a['path'],
+        $a['name'],
+        $a['typ'],
+        $ext, 
+        $width,
+        $height,
+        $framerate,
+        $clipstart,
+        $clipend,
+        $duration,
+        $oldname,
+        $newname 
+      );
+
+      switch($cmd){
+        case 'load'  :    $json = $video->load(); break;
+        case 'copy2edit': $json = $video->copy2edit(); break;
+        case 'save'  : $json = $video->save(); break;
+        case 'saveas': $json = $video->saveas( $oldname, $newname); break;
+        case 'edit'  : $json = $video->convert(); break;
+        case 'undo'  : $json = $video->undo(); break;
+        case 'redo'  : $json = $video->redo(); break;
+        case 'cancel': $json = $video->cancel(); break;
+        case 'close' :
+        default      : $json = $video->close();
+      }
+    } else {
+      $json = ["cmd", $cmd ];
+    }     
+    $response->addCommand( new InsertCommand( '', json_encode( $json ), [] ) );
+    return $response;
+  }
+
+  /**
+   * Convert any type of video to mp4
+   * @param int $id 
+   * @return AjaxResponse 
+   */
+  function video2mp4($id = -1 ) {
+    $response = new AjaxResponse();
+    if(!$this->access()) {      
+      $response->addCommand( new InsertCommand( '', "-1", [] ) );
+      return $response;
+    }
+     
+    // Is there enabled the ffmpeg conversion 
+    if( !$this->ffmpeg ){
+      $response->addCommand( new InsertCommand( '', "FFMpeg conversion is disabled", [] ) );
+      return $response;
+    }
+
+     // Is there ffmpeg installed on the server 
+    if( ! file_exists( $this->ffmpeg_path ) ) {  
+      $response->addCommand( new InsertCommand( '', "FFMpeg path is invalid", [] ) );
+      return $response;
+    }
+    
     $con = \Drupal::database();
     $record = $con->select( 'smplphotoalbum', 's' )->fields( 's', [
         'id',
@@ -894,37 +1016,44 @@ class SmplphotoalbumController extends ControllerBase{
     $a = $record->fetchAssoc();   
     
     if(!isset( $a['id']) && $a['id'] != $id  ){      
-      $response->addCommand( new InsertCommand( '', [ "id"=>"-1", "msg"=>"There is no record"] , [] ) );
+      $response->addCommand( new InsertCommand( '',  "There is no record" , [] ) );
       return $response;
     }
     
     // not video
     if( $a['typ'] != "video" ) {
-      $response->addCommand( new InsertCommand( '', ["id"=>"-1", "msg"=>"The item is no video"], [] ) );
+      $response->addCommand( new InsertCommand( '',  "The item is no video", [] ) );
       return $response;
-    }
-
-    
-    // there is no ffmpeg installed on the server 
-    //if( !file_exists( $this->ffmpeg ) ) {  
-    //  $response->addCommand( new InsertCommand( '', ["id"=>"-1","msg"=>"There is no installed ffmpeg on the server"], [] ) );
-    //  return $response;
-    //}
-
+    } 
+        
     $p = $this->slash( $this->root. $a["path"]."/".$a["name"] );        
     $ext = strtolower(pathinfo( $p, PATHINFO_EXTENSION ));
     
     if ($ext == "mp4" ) {
-      $response->addCommand( new InsertCommand( '', ["id"=>"-1", "msg"=>"The video is already in mp4 format"], [] ) );
+      $response->addCommand( new InsertCommand( '',  "The video is already in mp4 format", [] ) );
       return $response;
     }
 
     $width = $this->Request('width', 0 );
     $height = $this->Request('height', 0 );
     $framerate = $this->Request('framerate', 30 );
+    $clipstart = $this->Request('clipstart', 0 );
+    $clipend = $this->Request('clipend', 0 );
+
+    $vmp4 = new VideoEdit(
+      $id, 
+      $a['typ'],
+      $p, 
+      $a["typ"], 
+      $width, 
+      $height, 
+      $framerate, 
+      $clipstart, 
+      $clipend
+    );
     
-    $vmp4 = new VideoConvert($p, $a["typ"], $width, $height, $framerate);
     $resp[] = $vmp4->convert();
+    fz_t($resp);
     $content = json_encode( $resp );    
     $response->addCommand( new InsertCommand( '', $content, [] ) );
     return $response;

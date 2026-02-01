@@ -2,7 +2,6 @@ Bugs:
 ~~~~
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
-- Video convert with ffmpeg if it is installed
 
 ImageEdit
 - Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
@@ -89,13 +88,19 @@ GD
 
 History:
 ~~~~~~~
+2026.02.01 - 1.10.0-dev
+- Start Video edit / cut / convert to mp4 development
+
+2026.01.25 - 1.9.8-beta5
+- ffmpeg installed test on linux
+
 2026.01.24 - 1.9.8-beta4
 - BugFix: Not used buttons delete
 - Video convert start
 
 2026.01.10 - 1.9.8-beta3
 - Bugfix: if not logged in the folder does not shows
-- Sweetaler => SweetAlert2 (AlertC, ErrorC, WarningC, etc.)
+- Sweetalert => SweetAlert2 (AlertC, ErrorC, WarningC, etc.)
 - Bugfix: php: file( url ) 
 - Bugfix: folder view
 

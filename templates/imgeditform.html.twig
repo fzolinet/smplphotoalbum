@@ -1,7 +1,7 @@
 <ImgEditForm>
-<form id="SmplImgEditForm" name="SmplImgEditForm" METHOD="{{ method }}">
-	<input id="smpl_imgedit_id" type="hidden" value="0" name="smpl_img_edit_id" />
-	<div id="SmplImgEditForm" class="smpl_imgedit_form">
+<div id="SmplImgEditForm" class="smpl_window_form ui-draggable ui-draggable-handle">
+	<form id="SmplImgEditForm" name="SmplImgEditForm" METHOD="{{ method }}">
+		<input id="smpl_imgedit_id" type="hidden" value="0" name="smpl_img_edit_id" />	
 		<div class="smpl_pop_title">
 			<h3>{{ Edit }}:	<div id="smpl_imgedit_filename" class="smpl_imgedit_filename">Filename</div></h3>
 			<button name="SmplClose" id="SmplClose" onclick="return false;" class="smpl_close{{ icon }} smpl_button right_corner" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
@@ -620,14 +620,14 @@
 			&nbsp;<img id="smpl_hist_g" class="smpl_hist_img" name="smpl_hist_g" src="">
 			&nbsp;<img id="smpl_hist_b" class="smpl_hist_img" name="smpl_hist_b" src="">
 		</div>
+		
+	</form>
+
+	<div id="smpl_error" class="smpl_error ui-draggable ui-draggable-handle">
+		<div id="smpl_error_close" class="smpl_help_close{{ icon }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<div id="smpl_error_content">Error</div>
 	</div>
-
-	<!-- ImgEditForm div -->
-</form>
-
-<div id="smpl_error" class="smpl_error ui-draggable ui-draggable-handle">
-	<div id="smpl_error_close" class="smpl_help_close{{ icon }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-	<div id="smpl_error_content">Error</div>
+	<div id="smpl_progress">0%</div>
 </div>
-<div id="smpl_progress">0%</div>
+<!-- ImgEditForm div -->
 </ImgEditForm>

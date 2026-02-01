@@ -11,6 +11,8 @@ class Words {
 	Cancel   = "{{ Cancel }}";
 	OpenInNewTab = "{{ Open in new tab }}";
   Close    = "{{ Close }}";
+  converting_long = "{{ Converting video to mp4 format is a long process }}";
+  Video_conversion_confirm_msg ="{{ Are you sure you want to convert this video to MP4 format? }}";  
 }
 
 class SmplPhotoalbum {
@@ -52,7 +54,12 @@ class SmplPhotoalbum {
   width = 0;
   wm = true;
   wmpath = "{{ wmpath }}";
+  confirm = false;
   words = new Words();
+  
+  //Video Edit variables
+  videoeditform = false;  // visible video edit form
+  vidsaved  = false;      // Saved the edted video file
 
   application= "{{ extapplication }}";
   audio      = "{{ extaudio }}";

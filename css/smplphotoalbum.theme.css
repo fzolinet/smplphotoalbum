@@ -243,6 +243,7 @@ div#sortorder {
   border: 1px solid rgb(166.4, 166.4, 166.4);
   border-radius: 0.2em;
   width: var(--sp2);
+  background-size: 24px;
 }
 
 .smpl_help_link:hover {
@@ -545,6 +546,10 @@ select {
   background-image: url("../image/b_undo_col.png");
 }
 
+.smpl_videdit_col {
+  background-image: url("../image/b_videdit_col.png");
+}
+
 .smpl_vignette_col {
   background-image: url("../image/b_vignette_col.png");
 }
@@ -829,6 +834,10 @@ select {
   background-image: url("../image/b_undo_bw.png");
 }
 
+.smpl_videdit_bw {
+  background-image: url("../image/b_videdit_bw.png");
+}
+
 .smpl_vignette_bw {
   background-image: url("../image/b_vignette_bw.png");
 }
@@ -962,7 +971,9 @@ button#SmplImgEditFormSaveAsCancel {
 /* visibility, position, etc*/
 div#SmplEditForm,
 div#SmplUploadForm,
-div#SmplFolderForm {
+div#SmplFolderForm,
+div#SmplImgEditForm,
+div#SmplVidEditForm {
   display: none;
   z-index: 2;
   justify-content: center;
@@ -1001,10 +1012,7 @@ div#SmplFolderFormData {
 
 /* only the parameters of view*/
 /* Img Edit css settings */
-.smpl_edit_form,
-.smpl_imgedit_form,
-.smpl_upload_form,
-.smpl_folder_form,
+.smpl_window_form,
 .smpl_desc_info,
 #smpl_stat_table,
 .smpl_help {
@@ -1025,16 +1033,6 @@ div#SmplFolderFormData {
 }
 
 /*------- ImgEdit Form --------*/
-div#SmplImgEditForm {
-  display: none;
-  z-index: 2;
-  justify-content: center;
-  position: absolute;
-  top: 3em;
-  background-color: #CCC;
-  font-size: small !important;
-}
-
 div#SmplCanvasContainer {
   position: relative;
   left: 0;
@@ -1175,25 +1173,25 @@ input[type=number] {
 }
 
 .smpl_input_narrow {
-  max-width: 3.5em;
+  width: 3.5em !important;
   padding: 0 !important;
   width: 3.5em !important;
 }
 
 .smpl_input_mid {
-  max-width: 4.5em;
+  width: 4.5em !important;
   padding: 0 !important;
   width: 4.5em;
 }
 
 .smpl_input_wide {
-  max-width: 6em;
+  width: 6em !important;
   padding: 0 !important;
   width: 6em;
 }
 
 .smpl_input_range_wide {
-  max-width: 10em;
+  width: 10em !important;
   padding: 0 !important;
 }
 
@@ -1313,7 +1311,7 @@ body.smpl_waiting {
 
 input[readonly] {
   background: rgba(255, 255, 255, 0);
-  max-width: 5em;
+  max-width: 10em;
 }
 
 select#smpl_sortorder,

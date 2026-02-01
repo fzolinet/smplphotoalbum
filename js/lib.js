@@ -216,6 +216,7 @@ function setDivInWindow(w, pos) {
     return "rgb(" + r + "," + g + "," + b + ")";
   };
 
+  
   /**
    * AlerC - Javascript messages
    * @param {*} cmd - message
@@ -238,16 +239,24 @@ function setDivInWindow(w, pos) {
       closeOnClickOutside: true,
       closeOnEsc: true,
       dangerMode: true,
-    });
+    })
+      .then((ok) => function(e){
+        smpl.confirm = ok.isConfirmed;
+       // e.preventDefault();
+        return false;
+     });
+    
     $("div.swal-modal").removeClass("smpl-message-error");
     $("div.swal-modal").removeClass("smpl-message-warning");
     $("div.swal-modal").removeClass("smpl-message-notes");
     $("div.swal-modal").addClass(cl);
   }
+
   /* 
    * Warning popup box
    */
   smpl.ConfirmC = function (cmd) {
+    smpl.confirm = false;
     smpl.AlertC("Warning: " + cmd, 'warning');
   }
 

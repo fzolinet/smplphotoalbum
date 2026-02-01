@@ -1,0 +1,59 @@
+<VideoEditForm>
+<div id="SmplVideoEditForm" class="smpl_window_form ui-draggable ui-draggable-handle">
+	<form id="SmplVideoEditForm" name="SmplVideoEditForm" method="{{ method }}">
+		<input id="smpl_vidid" type="hidden" value="0" name="smpl_video_edit_id" />	
+		<div class="smpl_pop_title">
+			<h3>{{ Edit }}: <div id="smpl_vidfilename" class="smpl_imgedit_filename">Filename</div></h3>
+				<button name="SmplVidClose" id="SmplVidClose" onclick="return false;" class="smpl_close{{ icon }} smpl_button right_corner" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+		</div>
+		<div id="smpl_imgedit_props" class="smpl_edit_props">
+		  <span id="smpl_imgedit_filesize"></span> | 
+		  <span id="smpl_imgedit_size"></span> | 
+		  {{ Last modified }}: <span id="smpl_imgedit_modified"></span> 
+		</div>		
+		<div id="smpl_imgedit_buttons">
+			Stack:
+			<input id="smpl_step" class="smpl_readonly smpl_step smpl_input_narrow smpl_left" readonly="readonly" type="text" value="0"> /
+			<input id="smpl_que" class="smpl_readonly smpl_que smpl_input_narrow smpl_left" readonly="readonly" type="text" value="0">
+			<button name="SmplVidInit" id="SmplVidInit" onclick="return false" class="smpl_init{{ icon }} smpl_button" title="{{ Initial }} image" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button name="SmplVidUndo" id="SmplVidUndo" onclick="return false;" class="smpl_undo{{ icon }} smpl_button" title="{{ Undo }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button name="SmplVidRedo" id="SmplVidRedo" onclick="return false;" class="smpl_redo{{ icon }} smpl_button" title="{{ Redo }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button name="SmplVidSubmit" id="SmplVidSubmit" onclick="return false;" class="smpl_save{{ icon }} smpl_button" title="{{ Save }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button name="SmplVidSaveAs" id="SmplVidSaveAs" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<div id="smpl_saveas">
+				<input id="smpl_vidsaveas_input" name="smpl_vidsaveas_input" type="text" class="smpl_input_wide" val="">
+				<button id="SmplVidSaveAsOK" name="SmplVidSaveAsOK" onclick="return false;" class="smpl_button" title="{{ Save As }}">{{ Save As }}</button>
+				<button id="SmplVidSaveAsCancel" onclick="return false;" class="smpl_button" title="{{ Cancel }}">{{ Cancel }}</button>
+			</div>
+			<button name="SmplVidCancel" id="SmplVidCancel" onclick="return false;" class="smpl_cancel{{ icon }} smpl_button" title="{{ Cancel }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<span>Time:&nbsp;<input id="smpl_vidtime" type="text" class="smpl_input_wide smpl_readonly smpl_text_output" readonly="readonly" value=""> sec</span><br />
+			<span id="smpl_ffmpegversion" class="smpl">
+				FFMpeg Version: {{ FFMpegVersion }}
+			</span>			
+		</div>
+		<div id="smpl_video2mp4">
+			<div>
+				{{ size }}: <span id="smpl_vidsize" name="smpl_video_size"  class="smpl_input_range_wide"  readonly="readonly">{{ Bytes }}</span>
+				<input id="smpl_vidframerate"  name="smpl_video_framerate" class="smpl_input_narrow" type="number" value="15" min="1" max="120">&nbsp;&nbsp; {{ Framerate }}
+			</div>
+			<div>
+				{{ width }}: <input id="smpl_vidwidth" name="smpl_video_width" type="number" class="smpl_input_mid" value="640" min="160" >&nbsp;
+				{{ height }}: <input id="smpl_vidheight" name="smpl_video_height" type="number" class="smpl_input_mid" value="480" min="120">&nbsp;								
+				{{ Constrain_aspect_ratio }}: <input type="checkbox" id="smpl_vidaspect"><br />
+			</div>
+			<div>
+				{{ Clip start }}: <input id="smpl_clipstart" name="smpl_clip_start" type="number" class="smpl_input_mid" value="0" min="0" step="0.01">&nbsp;sec&nbsp;
+				{{ Clip end }}: <input id="smpl_clipend" name="smpl_clip_end" type="number" class="smpl_input_mid" value="0" min="0" max="" step="0.01">&nbsp;sec&nbsp;
+				{{ Clip duration }}: <input id="smpl_clipduration" name="smpl_clip_duration" type="text" class="smpl_input_mid" value="0" readonly="readonly">&nbsp;sec&nbsp;
+			</div>
+			<div>
+				<label class="smpl" for="smpl_video2mp4">{{ Video convert to MP4 }}</label>
+				<button id="smpl_video2mp4" name="smpl_video2mp4" onclick="return false;" class="smpl_convert{{ icon }} smpl_button" title="{{ Video convert to MP4 }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</div>
+	</form>
+	<div id="smpl_error" class="smpl_error ui-draggable ui-draggable-handle">
+		<div id="smpl_error_close" class="smpl_help_close{{ icon }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<div id="smpl_error_content">Error</div>
+	</div>
+</div>
+</VideoEditForm>

@@ -7,6 +7,7 @@ AI image recognition Gemini client
 Alpha
 Amount
 Application
+Are you sure you want to convert this video to MP4 format?
 Ascending
 Audio
 Author
@@ -26,6 +27,7 @@ Box blur
 Brightness
 Burn
 B/W
+bytes
 Denoise
 Caption Edit
 Cancel
@@ -36,11 +38,15 @@ Channel
 Charchoal
 Circle
 CLAHE
+Clip start
+Clip duration
+Clip end
 Close
 Color
 Compressed
 Constrain_aspect_ratio
 Contrast
+Converting video to mp4 format is a long process
 Convolution
 Copyright
 Correction
@@ -70,12 +76,12 @@ Dodge
 Done
 Down
 Edge
+Edit
 Edit Path
 Effect
 Emboss
 Enhance
 Ellipse
-Edit
 Equalize
 Exposure
 exif
@@ -97,6 +103,7 @@ Flip vertically
 Flip horizontally
 Foldername
 Frame
+Framerate
 Frame color
 fsize
 Gamma
@@ -224,6 +231,7 @@ Vertical
 Vertical Center
 Video
 Video convert to MP4
+Video Edit
 view last
 viewnumber
 Views

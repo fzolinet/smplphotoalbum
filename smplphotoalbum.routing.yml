@@ -119,6 +119,19 @@ smplphotoalbum.saveas:
       idx:
       oldname:
       newname:
+        
+smplphotoalbum.videoedit:
+  path: "/smplphotoalbum/videoedit/{id}/{cmd}"
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::videoedit'
+    _title: "edit a video"
+    id: "-1"
+  requirements:
+    _permission: "access content"
+  options:
+    parameters:
+      id:
+      cmd:
 
 smplphotoalbum.v:
   path: "/smplphotoalbum/v/{id}"

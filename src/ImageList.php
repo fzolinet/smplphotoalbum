@@ -1,9 +1,11 @@
 <?php
 namespace Drupal\smplphotoalbum;
+
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\smplphotoalbum\vendor;
 use Drupal\smplphotoalbum\Image;
 use Drupal\smplphotoalbum\SlideShow;
 
@@ -75,6 +77,7 @@ class ImageList {
 	protected $wmpath  = ""; 	// watermark
 	protected $wmalpha = 10;	// watermark alpha
 	protected $words = [];
+
 	// Types
 	protected $app = 1;			//view the types
 	protected $audio = 1;
@@ -84,6 +87,7 @@ class ImageList {
 	protected $oth = 1;
 	protected $video = 1;
 	protected $imgver = ['','Do not exists Imagick'];
+	protected $ffmpeg = 1;
 	
 	// Slideshow
 	protected $Slide;
@@ -371,6 +375,7 @@ class ImageList {
 		
 		$this->edit      = $this->params["edit"];		  // Edit 
 		$this->imgedit   = $this->params["imgedit"];	// Image Edit
+		$this->ffmpeg    = $this->params["ffmpeg"];		// Video edit with ffmpeg
 		$this->wmpath    = $this->params["wmpath"];	  // Watermark		
 		$this->upload    = $this->params['upload'];	  // Upload enabled | disabled
 		$this->folders   = $this->params['folders']; //List of folders enabled | disabled
@@ -465,14 +470,17 @@ class ImageList {
 	  }
 
 		if( $this->access ){
-			$this->tpl["editform"]   = file_get_contents ( $p . "/editform.html.twig" );
-			$this->tpl["imgeditform"]= file_get_contents ( $p . "/imgeditform.html.twig" );
-			$this->tpl["uploadform"] = file_get_contents ( $p . "/uploadform.html.twig" );
-			$this->tpl["folderform"] = file_get_contents ( $p . "/folderform.html.twig" );			
+			$this->tpl["editform"]      = file_get_contents ( $p . "/editform.html.twig" );
+			$this->tpl["imgeditform"]   = file_get_contents ( $p . "/imgeditform.html.twig" );			
+			$this->tpl["videoeditform"] = $this->ffmpeg ? (file_get_contents ( $p . "/videoeditform.html.twig" )):"" ;
+		
+			$this->tpl["uploadform"]    = file_get_contents ( $p . "/uploadform.html.twig" );
+			$this->tpl["folderform"]    = file_get_contents ( $p . "/folderform.html.twig" );			
 		}else {
-			$this->tpl["editform"] = "";
+			$this->tpl["editform"]    = "";
 			$this->tpl["imgeditform"] = "";
-			$this->tpl["uploadform"] = "";
+			$this->tpl["videditform"] = "";
+			$this->tpl["uploadform"]  = "";
 			
 		}		
 	}
@@ -1024,12 +1032,13 @@ class ImageList {
 		$origin = ($this->method == "POST" ) ? "./?".mt_rand() : "";
 		$str    = str_replace("{{ action }}", $origin, $str);
 		
-		if ( $this->access) {			
+		if ( $this->access ) {			
 			$str = str_replace( 
 							[ 
 								"{{ ImgEditDefault }}",
 								"{{ EditForm }}", 
-								"{{ ImgEditForm }}", 																
+								"{{ ImgEditForm }}",
+								"{{ VideoEditForm }}",
 								"{{ UploadForm }}",
 								"{{ NewFolderForm }}",
 								"{{ method }}"
@@ -1037,9 +1046,10 @@ class ImageList {
 			        [ 
 								$base_path . $this->modulepath . "/image/404.png",
 								$this->tpl["editform"], 
-							  $this->tpl["imgeditform"], 																
-								$this->upload ? $this->tpl["uploadform"]: '',
-								$this->folders ? $this->tpl["folderform"] : '',
+							  $this->tpl["imgeditform"], 
+								($this->ffmpeg ? $this->tpl["videoeditform"] :""), 																								
+								($this->upload ? $this->tpl["uploadform"]: ''),
+								($this->folders ? $this->tpl["folderform"] : ''),
 								$this->method
 							], $str
 						);										
@@ -1054,8 +1064,10 @@ class ImageList {
 		} else {
 			
 			$str = str_replace ( 
-				[	"{{ EditForm }}", 
+				[	
+					"{{ EditForm }}", 
 					"{{ ImgEditForm }}", 
+					"{{ VideoEditForm }}",
 					"{{ UploadForm }}",
 					"{{ NewFolderForm }}"
 				],"", $str );
@@ -1103,6 +1115,11 @@ class ImageList {
 
 		// Graphic driver
 		$this->GraphicDriver( $str );
+		
+		//FFMpeg information
+		if($this->ffmpeg){
+			$this->FFMpegInfo( $str );
+		}
 
 		//Autoclose
 		$this->AutoClose( $str );
@@ -1321,6 +1338,16 @@ class ImageList {
 	    $str = str_replace( [ '{{ gdselected }}', '{{ imagickselected }}' ], [ "", "selected" ], $str);
 	  }
 	}
+
+/**
+ * FFMPeg information
+ */
+function FFMpeginfo( &$str ){	
+	require __DIR__."/../vendor/autoload.php";
+	$ffmpeg = \FFMpeg\FFMpeg::create();	
+	$version = $ffmpeg->getFFMpegDriver()->getVersion();
+	$str = str_replace("{{ FFMpegVersion }}", $version, $str);
+}
 
 	/**
 	 * Add watermark to image

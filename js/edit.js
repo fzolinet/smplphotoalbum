@@ -23,6 +23,9 @@
 		SmplEditForm.draggable();
 	}
 
+	var video_aspect_ratio = 1.0;
+	var video_size_changed = false;
+
 	$("button[id*='SubBtn']").click(function (e) {
 		let id = $(this).attr('id').substring(6);
 		smpl.editsaved = false;
@@ -51,6 +54,21 @@
 					$("#smplairecognition-info").hide();
 					$(".smpl_ai_check").hide();
 				}
+
+				if (data.typ == "video") {
+					$("tr#smpl_video2mp4").show();
+					$("input#smpl_video_size").val( (data.filesize).toLocaleString());
+					$("input#smpl_video_width").val(data.width);
+					$("input#smpl_video_height").val(data.height);
+					$("input#smpl_video_framerate").val(data.framerate);
+					$("input#smpl_video_clip_start").val(0);
+					$("input#smpl_video_clip_duration").val(data.length);
+					$("input#smpl_video_clip_end").val(data.length);
+					video_aspect_ratio = parseFloat( data.height / data.width);
+				} else {
+					$("tr#smpl_video2mp4").hide();
+				}
+
 				let pos = $("#SubBtn" + id).offset();
 				let dy = parseFloat($("html").css("font-size")) * 5;
 				SmplEditForm.show();
@@ -71,6 +89,21 @@
 		});
 	});
 
+	$("#smpl_video_width").on("change", function () {		
+		if ($("#smpl_video_aspect").is(":checked")) {			
+			var h = Math.round(parseFloat($(this).val()) * video_aspect_ratio);
+			$("input#smpl_video_height").val( h );
+		}
+		video_size_changed = true;
+	})
+
+	$("#smpl_video_height").on("change", function () {		
+		if ($("#smpl_video_aspect").is(":checked")) {			
+			var w = Math.round(parseFloat( $(this).val()) / video_aspect_ratio);
+			$("input#smpl_video_width").val( w );
+		}
+		video_size_changed = true;
+	})
 	/**
 	 * click on cancel button of windows of properties
 	 * @return false
@@ -216,27 +249,65 @@
 	});
 
 	/** video conversion */
-	$("button#smpl_video2mp4").click(function () {
-		let id = $("input#smpl_edit_id").val();
-		let url = smpl.ajax + "/video2mp4/" + id;
-		smpl.progress(true);
-		$.ajax({
-			url: url,
-			type: "GET",
-			success: function (response) {
-				let data = JSON.parse(response[0].data);
-				smpl.progress(false);
-				if(data.id =='-1' || data.id == '-2') {
-					smpl.ErrorC(data.msg);
-				} else {					
-					smpl.AlertC(data.msg);					
-				}	
-			},
-			error: function (response) {
-				smpl.ErrorC(response.responseText);
-				smpl.progress(false);
-			}
-		});
+	$("button#smpl_video2mp4").click(function (e) {
+		Swal.fire({
+			title: smpl.words.converting_long + ".", 
+			html: smpl.words.Video_conversion_confirm_msg, 
+			className: "smpl-message-warning",
+			closeOnClickOutside: true,
+			closeOnEsc: true,
+			dangerMode: true,
+			showCloseButton: true,
+			showCancelButton: true,
+			cancelButtonText: smpl.words.Cancel,
+			confirmButtonText: smpl.words.Confirm,
+			icon: "warning",
+			animation: false
+		})
+			.then((ok) => {
+				if (ok.isConfirmed) {
+					var id = $("input#smpl_edit_id").val();
+					var url = smpl.ajax + "/video2mp4/" + id;
+					var width = $("input#smpl_video_width").val();
+					var height = $("input#smpl_video_height").val();
+					var framerate = $("input#smpl_video_framerate").val();
+
+					if( video_size_changed ) {					
+						url += '?width=' + $("input#smpl_video_width").val();
+						url += '&height=' + $("input#smpl_video_height").val();
+						url += '&framerate=' + $("input#smpl_video_framerate").val();
+					}
+
+					var clipstart = $("#smpl_video_clip_start").val();
+					var clipend = $("#smpl_video_clip_end").val();
+
+					if (clipstart > 0 && clipend < video_length ) {
+						url += '&clipstart=' + $("#smpl_video_clip_start").val();
+						url += '&clipend='   + $("#smpl_video_clip_end").val();
+					}
+						
+					smpl.progress(true);	
+					$.ajax({
+						url: url,
+						type: "GET",
+						success: function (response) {
+							let data = JSON.parse(response[0].data);
+							smpl.progress(false);
+							if (data.id == '-1' || data.id == '-2') {
+								smpl.ErrorC(data.msg);
+							} else {
+								smpl.AlertC(data.msg);
+							}
+						},
+						error: function (response) {
+							smpl.ErrorC(response.responseText);
+							smpl.progress(false);
+						}
+					});
+				}
+				e.preventDefault();
+				return false;
+			});		
 	});
 
 })(jQuery, Drupal, smpl, Swal);

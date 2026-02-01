@@ -133,8 +133,8 @@ class Exif{
     $this->path       = $a ['path'];
     $this->entry      = $a ['name'];
     $this->type       = $a ['typ'];
-    $this->viewnumber = $a ['viewnumber'];
-    $this->subtitle   = $a ['subtitle'];
+    //$this->viewnumber = $a ['viewnumber'];
+    //$this->subtitle   = $a ['subtitle'];
 
     $this->cfg   = $cfg;//
     $root        = $cfg->get ( "root" );
@@ -161,6 +161,32 @@ class Exif{
     return $exif;
   }
 
+  /**
+   * Video information
+   * @patrameter &a - reference array
+   */
+  public function Videoinfo( &$a){
+    $this->GetID3 = new \getID3();
+    $finfo = $this->GetID3->analyze ( $this->p );
+    $finfo = $this->arrayflat ( $finfo );
+    $a["width"]     = $finfo["resolution_x"];
+    $a["height"]    = $finfo["resolution_y"];
+    $a["filesize"]  = $finfo["filesize"];
+    $a["framerate"] = $finfo["frame_rate"];
+    $a["clipstart"] = 0;
+    if(isset ($finfo["duration"])){
+      $a["clipend"]  = $finfo["duration"];  
+      $a["duration"] = $finfo["duration"];      
+
+    } else if( isset($finfo["playtime_seconds"]) ){      
+      $a["clipend"]  = $finfo["playtime_seconds"];
+      $a["duration"] = $finfo["playtime_seconds"];
+
+    }else{
+      $a["clipend"]  = 0;  
+      $a["duration"] = 0;            
+    }
+  }
   /**
    * Is_type
    */
@@ -663,6 +689,7 @@ class Exif{
         unset($finfo[$i]);
       }
     }
+
     // Numeric format
     foreach( $finfo as $i => $e ) {
       if (! is_numeric( $i ) && ! empty( trim( $e ) ) && $this->is_utf8( $e )) {
