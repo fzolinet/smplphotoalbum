@@ -18,10 +18,10 @@ class GDDriver {
 
   function __construct($path, &$bt, $size, $mp) {
     $this->path   = $path;
-    $this->bt     = $bt;
-    $this->mp     = $mp;
+    $this->bt     = $bt;    
     $this->width  = @$size[0];
     $this->height = @$size[1];
+    $this->mp     = $mp;    
   }
 
   /**

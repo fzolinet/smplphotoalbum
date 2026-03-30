@@ -47,6 +47,7 @@ Compressed
 Constrain_aspect_ratio
 Contrast
 Converting video to mp4 format is a long process
+Conversion_running
 Convolution
 Copyright
 Correction
@@ -86,6 +87,7 @@ Equalize
 Exposure
 exif
 Exit
+Extension
 Eyedropper
 Face edit
 Factor
@@ -109,6 +111,7 @@ fsize
 Gamma
 Gaussian blur
 Geometry
+Group of Pictures
 Grayscale
 Height
 Help
@@ -151,6 +154,7 @@ Name
 Name of data of this node
 New folder
 Noise
+None
 Normalize
 Nothing
 Number of items
@@ -215,6 +219,8 @@ Swirl
 Target
 Thumbnail
 text
+to mp4
+to original
 Top
 Transparent
 Trash
@@ -224,13 +230,12 @@ Undo
 Unsharp
 Up
 Upload
-Thumbnail
 Url
 Value
 Vertical
 Vertical Center
 Video
-Video convert to MP4
+Video convert
 Video Edit
 view last
 viewnumber

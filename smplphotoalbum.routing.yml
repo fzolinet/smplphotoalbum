@@ -119,7 +119,18 @@ smplphotoalbum.saveas:
       idx:
       oldname:
       newname:
-        
+
+smplphotoalbum.v:
+  path: '/smplphotoalbum/v/{id}'
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::v'
+    _title: 'shows an image'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+
 smplphotoalbum.videoedit:
   path: "/smplphotoalbum/videoedit/{id}/{cmd}"
   defaults:
@@ -132,17 +143,6 @@ smplphotoalbum.videoedit:
     parameters:
       id:
       cmd:
-
-smplphotoalbum.v:
-  path: "/smplphotoalbum/v/{id}"
-  defaults:
-    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::v'
-    _title: "shows an image"
-  requirements:
-    _permission: "access content"
-  options:
-    parameters:
-      id:
 
 smplphotoalbum.slide:
   path: "/smplphotoalbum/slide/{id}"
@@ -198,18 +198,7 @@ smplphotoalbum.ai:
   options:
     parameters:
       id:
-      cmd:
-
-smplphotoalbum.video2mp4:
-  path: "/smplphotoalbum/video2mp4/{id}"
-  defaults:
-    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::video2mp4'
-    _title: "Convert video to MP4"
-  requirements:
-    _permission: "access content"
-  options:
-    parameters:
-      id:      
+      cmd:  
         
 smplphotoalbum.test:
   path: "/smplphotoalbum/test"

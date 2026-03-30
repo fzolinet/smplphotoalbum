@@ -77,7 +77,7 @@
     $.ajax({
       url: url,
       type: "get",
-      success: function (response) {
+      success: function(response) {
         $("div#smpl_help_content").html(response[0].data);
         smpl.progress(false);
         SmplHelp.show();

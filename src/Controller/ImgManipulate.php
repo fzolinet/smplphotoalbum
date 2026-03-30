@@ -660,11 +660,6 @@ class ImgManipulate{
    */
   public function Save() {
     $ok = $this->gd->Save( $this->dst_img, $this->cfg, $this->newname, $this->type);
-
-    if($this->graphicdrv != 'imagick') {
-      imagedestroy( $this->dst_img );
-      imagedestroy( $this->src_img );
-    }
     return $ok;
   }
 

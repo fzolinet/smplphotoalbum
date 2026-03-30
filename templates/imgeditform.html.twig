@@ -14,8 +14,8 @@
 
 		<div id="smpl_imgedit_buttons">
 			Stack:
-			<input id="smpl_step" class="smpl_readonly smpl_step smpl_input_narrow smpl_left" readonly="readonly" type="text" value="0"> /
-			<input id="smpl_que" class="smpl_readonly smpl_que smpl_left" readonly="readonly" type="text" value="0">
+			<input id="smpl_step" class="smpl_readonly smpl_step smpl_input_narrow" readonly="readonly" type="text" value="0"> /
+			<input id="smpl_que" class="smpl_readonly smpl_que" readonly="readonly" type="text" value="0">
 			<button name="SmplInit" id="SmplInit" onclick="return false" class="smpl_init{{ icon }} smpl_button" title="{{ Initial }} image" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<button name="SmplUndo" id="SmplUndo" onclick="return false;" class="smpl_undo{{ icon }} smpl_button" title="{{ Undo }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<button name="SmplRedo" id="SmplRedo" onclick="return false;" class="smpl_redo{{ icon }} smpl_button" title="{{ Redo }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
@@ -23,8 +23,8 @@
 			<button name="SmplSaveAs" id="SmplSaveAs" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<div id="smpl_saveas">
 				<input id="smpl_saveas_input" name="smpl_saveas_input" type="text" class="smpl_input_wide" val="">
-				<button id="SmplSaveAsOK" name="SmplSaveAsOK" onclick="return false;" class="smpl_button" title="{{ Save As }}">{{ Save As }}</button>
-				<button id="SmplSaveAsCancel" onclick="return false;" class="smpl_button" title="{{ Cancel }}">{{ Cancel }}</button>
+				<button id="SmplSaveAsOK" name="SmplSaveAsOK" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="SmplSaveAsCancel" onclick="return false;" class="smpl_cancel{{ icon }} smpl_button" title="{{ Cancel }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			</div>
 			<button name="SmplCancel" id="SmplCancel" onclick="return false;" class="smpl_cancel{{ icon }} smpl_button" title="{{ Cancel }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<span>Time:&nbsp;<input id="smpl_time" type="text" class="smpl_input_wide smpl_readonly smpl_text_output" readonly="readonly" value=""> sec</span>
@@ -627,7 +627,7 @@
 		<div id="smpl_error_close" class="smpl_help_close{{ icon }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 		<div id="smpl_error_content">Error</div>
 	</div>
-	<div id="smpl_progress">0%</div>
+	
 </div>
 <!-- ImgEditForm div -->
 </ImgEditForm>

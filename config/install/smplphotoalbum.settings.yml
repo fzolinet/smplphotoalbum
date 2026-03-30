@@ -49,8 +49,8 @@ audiohtml5_extensions: "mp3 ogg wav"
 
 # Video
 video_checking: true
-video_extensions: "avi mpeg mpg divx rm flv 3gp mov m4v asf wmv swf m4v mov qt ogg mp4 webm mkv"
-videohtml5_extensions: "mp4 webm"
+video_extensions: "avi mpeg mpg divx rm flv 3gp m4v asf wmv swf m4v qt ogg mp4 webm mkv"
+videohtml5_extensions: "mp4 webm mov"
 html5_checking: true
 
 #Documents

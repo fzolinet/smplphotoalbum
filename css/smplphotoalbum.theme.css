@@ -847,7 +847,7 @@ select {
 }
 
 /* Save AS div*/
-div#smpl_saveas {
+div#smpl_saveas, div#smpl_vidsaveas {
   display: none;
   z-index: 10;
   position: absolute;
@@ -855,6 +855,7 @@ div#smpl_saveas {
   border-radius: 0.2em;
   padding: 0.5em;
   left: 38%;
+  top: -2em;
   background-color: #DFEDF7;
 }
 
@@ -973,7 +974,7 @@ div#SmplEditForm,
 div#SmplUploadForm,
 div#SmplFolderForm,
 div#SmplImgEditForm,
-div#SmplVidEditForm {
+div#SmplVideoEditForm {
   display: none;
   z-index: 2;
   justify-content: center;
@@ -1269,7 +1270,7 @@ div#SmplCanvasContainer {
   font-size: 0.9em;
 }
 
-.smpl_img_edit_form_darkenbuttons {
+.smpl_darkenbuttons {
   opacity: 0.4;
   cursor: auto !important;
 }
@@ -1532,7 +1533,7 @@ select#smpl_geom:focus {
 
 .smpl_step,
 .smpl_que {
-  text-align: left;
+  text-align: center;
   background-image: none;
   max-width: 2em;
   display: inline;
@@ -1677,6 +1678,14 @@ select#smpl_geom:focus {
   padding: 0.5em;
 }
 
-div:where(.swal2-container) button:where(.swal2-styled) {
-  padding: 1em 1.1em 1em 1.1em !important;
+#SmplPlayer {
+  max-width: 100%;
+  max-height: 80vh;
+  border: 1px solid #D0D0D0;
+  border-radius: 0.5em;
+  min-width: 400px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5em;
 }/*# sourceMappingURL=smplphotoalbum.theme.css.map */

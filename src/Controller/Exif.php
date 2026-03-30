@@ -28,6 +28,7 @@ class Exif{
     'title',
     'artist'
   ];
+
   private $del = [ 
     'about',
     "apple-fi",  
@@ -128,18 +129,21 @@ class Exif{
     'xing flags row',  
   ];
 
-  public function __construct($a, &$cfg) {  
+  public function __construct($a, &$cfg, $temppath = false) {  
     $this->mp    = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
-    $this->path       = $a ['path'];
-    $this->entry      = $a ['name'];
-    $this->type       = $a ['typ'];
-    //$this->viewnumber = $a ['viewnumber'];
-    //$this->subtitle   = $a ['subtitle'];
+    $this->path       = $a['path'];
+    $this->entry      = $a['name'];
+    $this->type       = $a['typ'];
 
     $this->cfg   = $cfg;//
     $root        = $cfg->get ( "root" );
     $root        = str_replace( "\\", "/", \Drupal::service ( 'file_system' )->realpath ( $root ) ) . "/";
-    $this->p     = $this->slash( $root . $this->path ) . $this->entry ;
+    if( $temppath ){
+      $this->p     = $this->slash( $this->path ) . $this->entry ;
+    }else{
+      $this->p     = $this->slash( $root . $this->path ) . $this->entry ;
+    }
+    
     $this->ext   = strtolower( pathinfo ( $this->entry, PATHINFO_EXTENSION ) );
   }
   
@@ -163,16 +167,24 @@ class Exif{
 
   /**
    * Video information
-   * @patrameter &a - reference array
+   * @parameter &a - reference array
    */
-  public function Videoinfo( &$a){
+  public function Videoinfo( &$a ){
     $this->GetID3 = new \getID3();
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );
     $a["width"]     = $finfo["resolution_x"];
     $a["height"]    = $finfo["resolution_y"];
     $a["filesize"]  = $finfo["filesize"];
-    $a["framerate"] = $finfo["frame_rate"];
+    $a["framerate"] = ( isset( $finfo["frame_rate"] ) ? 
+      $finfo["frame_rate"] : 
+      (isset( $finfo["Frame rate"]) ? 
+        $finfo["Frame rate"] : 
+        0)
+    );
+    $a["framerate"] = str_ireplace( "FPS", "", $a["framerate"] );
+    $a["gop"]       = isset( $finfo["gop"] ) ? $finfo["gop"] : 2;
+    
     $a["clipstart"] = 0;
     if(isset ($finfo["duration"])){
       $a["clipend"]  = $finfo["duration"];  
@@ -187,36 +199,19 @@ class Exif{
       $a["duration"] = 0;            
     }
   }
+
   /**
    * Is_type
    */
-  public function isapp() {
-    return stripos( " " . $this->cfg->get ( "app_extensions" ), $this->ext ) > 0;
-  }
-  public function isaudio() {
-    return stripos( " " . $this->cfg->get ( "audio_extensions" ), $this->ext ) > 0;
-  }
-  public function isaudiohtml5() {
-    return stripos( " " . $this->cfg->get ( "audiohtml5_extensions" ), $this->ext ) > 0;
-  }
-  public function iscmp() {
-    return stripos( " " . $this->cfg->get ( "cmp_extensions" ), $this->ext ) > 0;
-  }
-  public function isdoc() {
-    return stripos( " " . $this->cfg->get ( "doc_extensions" ), $this->ext ) > 0;
-  }
-  public function isimage() {
-    return stripos( " " . $this->cfg->get ( "image_extensions" ), $this->ext ) > 0;
-  }
-  public function isoth() {
-    return stripos( " " . $this->cfg->get ( "oth_extensions" ), $this->ext ) > 0;
-  }
-  public function isvideo() {
-    return stripos( " " . $this->cfg->get ( "video_extensions" ), $this->ext ) > 0;
-  }
-  public function isvideohtml5() {
-    return stripos( " " . $this->cfg->get ( "videohtml5_extensions" ), $this->ext ) > 0;
-  }
+  public function isapp() { return stripos( " " . $this->cfg->get ( "app_extensions" ), $this->ext ) > 0; }
+  public function isaudio() { return stripos( " " . $this->cfg->get ( "audio_extensions" ), $this->ext ) > 0; }
+  public function isaudiohtml5() { return stripos( " " . $this->cfg->get ( "audiohtml5_extensions" ), $this->ext ) > 0; }
+  public function iscmp() { return stripos( " " . $this->cfg->get ( "cmp_extensions" ), $this->ext ) > 0; }
+  public function isdoc() { return stripos( " " . $this->cfg->get ( "doc_extensions" ), $this->ext ) > 0; }
+  public function isimage() { return stripos( " " . $this->cfg->get ( "image_extensions" ), $this->ext ) > 0; }
+  public function isoth() { return stripos( " " . $this->cfg->get ( "oth_extensions" ), $this->ext ) > 0; }
+  public function isvideo() { return stripos( " " . $this->cfg->get ( "video_extensions" ), $this->ext ) > 0; }
+  public function isvideohtml5() { return stripos( " " . $this->cfg->get ( "videohtml5_extensions" ), $this->ext ) > 0; }
   
   /**
    * Application "exif"
@@ -242,7 +237,6 @@ class Exif{
   
   /**
    * Exif information of APk file
-   * 
    * @return array
    */
   function _apk() {
@@ -255,7 +249,6 @@ class Exif{
   
   /**
    * Windows application
-   * 
    * @return array
    */
   function _exedll() {
@@ -267,7 +260,6 @@ class Exif{
   
   /**
    * Exif information of JAR file
-   * 
    * @return array
    */
   function _jar() {
@@ -282,7 +274,6 @@ class Exif{
   
   /**
    * Audio exif
-   * 
    * @return array
    */
   function audio() {
@@ -299,7 +290,6 @@ class Exif{
   
   /**
    * Video exif
-   * 
    * @return string
    */
   function video() {
@@ -710,6 +700,7 @@ class Exif{
    */
   function arrayflat( $in ) {
     $a = [ ];
+    $add = [ ];
     foreach( $in as $i => $e ) {
       if ( is_array( $e ) ) { 
         if( array_search( $i, $this->spec)){

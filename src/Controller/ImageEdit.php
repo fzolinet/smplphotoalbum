@@ -8,6 +8,7 @@ use Drupal\smplphotoalbum\Controller\ImagickDriver;
 use Drupal\smplphotoalbum\Controller\BreakTime;
 use Holiday\Metadata;
 use PNGMetadata\PNGMetadata;
+use Drupal\smplphotoalbum\Controller\Lib;
 
 /**
  * Img Edit class functions
@@ -32,38 +33,33 @@ class ImageEdit {
   
   public $bt; //BreakTime
   private $Metadata; // object for jpeg or png exif information
-  //private $Metaarray;
 
   public function __construct( $id ) {
     $this->id   = $id;
-    $this->rq   = \Drupal::request();
-    $this->sess = $this->rq->getSession ();
-    $this->ts   = $this->sess->get( "smpl" );
-    $this->sign = $this->Sign();
+    $this->rq   = \Drupal::request();    
+    $this->ts   = LIB::getSession( "smpl" );
+    $this->sign = LIB::Sign($this->ts["tempname"]);
 
     $this->cfg = \Drupal::config( 'smplphotoalbum.settings' );
     $this->mp  = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
     $this->con = \Drupal::database();
 
-    $root       = $this->cfg->get( 'root' );
-    $this->root = $this->getRoot( $root );
+    $root       = LIB::getConfig( 'root' );
+    $this->root = LIB::getRoot( $root );
 
-    // temppath for copy
-    $t = $this->cfg->get( 'temp' );
-    $this->temppath = str_replace( "\\", "/", \Drupal::service ( 'file_system' )->realpath ( $t ) );
-    $this->temppath .= substr( $this->temppath, - 1 ) != '/' ? "/" : '';
+    // temppath for copy    
+    $this->temppath = LIB::getTemppath();    
 
-    // tempurl to edit
-    $this->ts ['tempurl'] = \Drupal::service( 'file_url_generator' )->generateAbsoluteString ( $t );
-    $this->ts ['tempurl'] .= substr( $this->ts['tempurl'], - 1 ) != '/' ? "/" : '';
+    // tempurl to edit    
+    $this->ts['tempurl'] = LIB::getTempUrl();
 
     // Graphic driver
-    $this->graphicdrv = $this->cfg->get ( 'graphicdrv' );
+    $this->graphicdrv = LIB::getConfig( 'graphicdrv' );
     if( isset( $this->ts["graphicdrv"] ) ){
       $this->graphicdrv  = $this->ts["graphicdrv"];
     }
 
-    $graphicdrv = $this->Request( 'graphicdrv', '');
+    $graphicdrv = LIB::Request( 'graphicdrv', '');
     if( $graphicdrv != "" ){
       $this->graphicdrv = $graphicdrv;
     }
@@ -71,13 +67,9 @@ class ImageEdit {
     // Choose graphic driver
     if ( !extension_loaded("imagick")) $this->graphicdrv ="gd";
 
-    switch($this->graphicdrv){
-      case "imagick":
-        $this->gd = new ImagickDriver( $this->temppath, $this->bt, [0,0], $this->mp );
-        break;
-      default:
-        $this->gd = new GDDriver( $this->temppath, $this->bt, [0,0], $this->mp );    
-        break;
+    switch( $this->graphicdrv ){
+      case "imagick": $this->gd = new ImagickDriver( $this->temppath, $this->bt, [0,0], $this->mp ); break;
+      default: $this->gd = new GDDriver( $this->temppath, $this->bt, [0,0], $this->mp ); break;
     }
     
     // Long process
@@ -109,16 +101,18 @@ class ImageEdit {
    */
   public function load() {
     $json = [];
-    $rs = $this->con->select( "smplphotoalbum", "s" )
-               ->fields("s", array('path','name'))
-               ->condition( 'id', $this->id, '=' )
-               ->execute();
+    $rs = $this->con
+            ->select( "smplphotoalbum", "s" )
+            ->fields("s", array('path','name'))
+            ->condition( 'id', $this->id, '=' )
+            ->execute();
     $record = $rs->fetchAssoc();
     $this->path = $record ["path"];
     $this->path = str_replace( "\\", "/", $this->path );
     //
-    $this->unset();
-    $this->ts['tempname'] = $this->NewName ( $record ["name"], 0 );
+    LIB::ResetEditSession("image", $this->ts);
+
+    $this->ts['tempname'] = LIB::NewName( $record ["name"], 0 );
     $this->ts['id'] = $this->id;
     $this->ts["idx"] = 0;
     $this->ts['bkp'] = 0;
@@ -127,10 +121,10 @@ class ImageEdit {
     $this->ts["cmd"][ $this->ts["idx"] ] = "";
 
     // sign url;
-    $this->ts["signurl"] = $this->SignUrl();
+    $this->ts["signurl"] = LIB::SignUrl($this->ts);
 
     // Exif read from jpeg file
-    $ext = $this->getExt( $record ["name"] );
+    $ext = LIB::getExt( $record ["name"] );
 
     if( in_array($ext, ['avif', 'xbm', 'xpm' ]) ){
       $json['ok'] = "-2";
@@ -147,12 +141,12 @@ class ImageEdit {
     }
 
     //
-    $this->ts ["que"] = 0;
+    $this->ts["que"] = 0;
        
     array_map ( "unlink", glob ( $this->temppath . "*" ) );
     //
     $source   = realpath ( $this->root . $this->path . $this->ts["name"] );
-    $dest     = $this->temppath . $this->ts ["tempname"];
+    $dest     = $this->temppath . $this->ts["tempname"];
     copy ( $source, $dest );
 
     //Read metadata
@@ -190,30 +184,18 @@ class ImageEdit {
     }
 
     // driver GD / Imagick
-    $size = getimagesize ( $this->temppath . $this->ts ["tempname"] );
+    $size = getimagesize ( $this->temppath . $this->ts["newname"] );
     $this->ts["width"]    = $size [0];
     $this->ts["height"]   = $size [1];
-    $this->ts["filesize"] = $this->ShowFileSize( filesize( $this->temppath . $this->ts ["tempname"] ) );
-    $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->temppath . $this->ts ["tempname"] ) );
-    $this->ts["avgcolor"] = $this->AverageColor( $this->temppath . $this->ts ["tempname"] , $size [0], $size [1] );
+    $this->ts["filesize"] = Lib::ShowFileSize( filesize( $this->temppath . $this->ts["newname"] ) );
+    $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->temppath . $this->ts["newname"] ) );
+    $this->ts["avgcolor"] = $this->AverageColor( $this->temppath . $this->ts["newname"] , $size [0], $size [1] );
     //
-    $this->sess->set( "smpl", $this->ts );
+    LIB::setSession( "smpl", $this->ts );
     return $this->MakeJson();
     //return $json;
   }
 
-  function ShowFileSize($size) {
-		if ($size > 1073741824) {
-			$s = ( int ) ( $size / 1073741824 ) . '&nbsp;GB';
-		} else if ( $size > 1048576 ) {
-			$s = ( int ) ( $size / 1048576 ) . '&nbsp;MB';
-		} else if ( $size > 1024)  {
-			$s = ( int ) ( $size / 1024 ) . '&nbsp;KB';
-		} else {
-			$s = $size . '&nbsp;B';
-		}
-		return $s;
-	}
   /**
    * Average Color
    * @param string $source
@@ -244,7 +226,7 @@ class ImageEdit {
 	 $di = $dj=1;
     $szorzat = ($w/$di)*($h/$dj);
     $img = imagecreatetruecolor((int)$w, (int)$h);
-    $ext = $this->getExt( $source );
+    $ext = LIB::getExt( $source );
     switch ($ext) {
       case 'avif' :
         $img = @imagecreatefromavif( $source );
@@ -307,16 +289,15 @@ class ImageEdit {
       $this->ts["que"] = $this->ts["idx"];
     }
 
-    //
-    $tempname  = $this->ts["tempname"];
-    $newname   = $this->NewName( $this->ts["name"], $this->ts['idx'] );
+    //    
+    $newname   = LIB::NewName( $this->ts["name"], $this->ts['idx'] );
 
-    $type      = $this->getExt( $this->ts ["name"] );
-    $size      = GetImagesize( $this->temppath . $tempname );
+    $type      = LIB::getExt( $this->ts["name"] );
+    $size      = GetImagesize( $this->temppath . $this->ts["tempname"] );
     $this->img = new ImgManipulate(
       $this->graphicdrv,
       $this->temppath,
-      $tempname,
+      $this->ts["tempname"],
       $newname,
       $type,
       $size,
@@ -325,36 +306,36 @@ class ImageEdit {
       $this->bt
     );
     //
-    $cmd = $this->rq->query->get( 'cmd' );
+    $cmd = LIB::Request( 'cmd' );
 
     //Itt jön létre a sign file
     file_put_contents( $this->temppath . $this->sign, "0%" );
 
-    $this->ts["cmd"][$this->ts["idx"]] = $cmd;
+    $this->ts["cmd"] [ $this->ts["idx"] ] = $cmd;
 
     switch ( $cmd ) {
       //Enhance Menu
       case "enhance" :
         break;
       case "redeye" :
-        $x1 = $this->Request( 'x1', 0 );
-        $y1 = $this->Request( 'y1', 0 );
-        $x2 = $this->Request( 'x2', 0 );
-        $y2 = $this->Request( 'y2', 0 );
+        $x1 = LIB::Request( 'x1', 0 );
+        $y1 = LIB::Request( 'y1', 0 );
+        $x2 = LIB::Request( 'x2', 0 );
+        $y2 = LIB::Request( 'y2', 0 );
         $this->img->redeye( $x1, $y1, $x2, $y2 );
         break;
 
       //Add menu
       case "watermark" :
-        $x1 = $this->Request( 'x1', 0 );
-        $y1 = $this->Request( 'y1', 0 );
-        $x2 = $this->Request( 'x2', $size [0] );
-        $y2 = $this->Request( 'y2', $size [1] );
-        $wmalpha   = (int) $this->Request( 'wmalpha', 50 );
-        $wmpath    = $this->Request( 'wmpath', '');
-        $copyright = $this->Request( 'copyright', '');
-        $author    = $this->Request( 'author' , '');
-        $color     = $this->Request( 'color' , '');
+        $x1 = Lib::Request( 'x1', 0 );
+        $y1 = Lib::Request( 'y1', 0 );
+        $x2 = Lib::Request( 'x2', $size [0] );
+        $y2 = Lib::Request( 'y2', $size [1] );
+        $wmalpha   = (int) Lib::Request( 'wmalpha', 50 );
+        $wmpath    = Lib::Request( 'wmpath', '');
+        $copyright = Lib::Request( 'copyright', '');
+        $author    = Lib::Request( 'author' , '');
+        $color     = Lib::Request( 'color' , '');
 
         if(empty($wmpath)){
           $wmpath = isset( $this->ts['wmpath'] )? $this->ts['wmpath'] : '';
@@ -363,16 +344,16 @@ class ImageEdit {
           $wmpath = $this->cfg->get( 'wmpath' );
         }
 
-        if(empty($copyright)){
-          $copyright = isset($this->ts['copyright'])? $this->ts['copyright']:'';
+        if( empty( $copyright ) ){
+          $copyright = isset( $this->ts['copyright'] ) ? $this->ts['copyright'] : '';
         }
-        if(empty($copyright)){
+        if( empty( $copyright ) ){
           $copyright = $this->cfg->get('copyright');
         }
         $this->ts['copyright'] = $copyright;
 
         if(empty($author)){
-          $author = isset($this->ts['author'])? $this->ts['author']:'';
+          $author = isset( $this->ts['author'] ) ? $this->ts['author'] : '';
         }
         if(empty($author)){
           $author = $this->cfg->get('author');
@@ -386,33 +367,33 @@ class ImageEdit {
         break;
 
       case "vignette" :
-        $x1       = $this->Request( 'x1', (int) 0 );
-        $y1       = $this->Request( 'y1', (int) 0 );
-        $x2       = $this->Request( 'x2', (int) $size [0] );
-        $y2       = $this->Request( 'y2', (int) $size [1] );
-        $kind     = $this->Request( "kind", 'dark' );
-        $blursize = $this->Request( "blursize", (int) 10 );
+        $x1       = LIB::Request( 'x1', (int) 0 );
+        $y1       = LIB::Request( 'y1', (int) 0 );
+        $x2       = LIB::Request( 'x2', (int) $size [0] );
+        $y2       = LIB::Request( 'y2', (int) $size [1] );
+        $kind     = LIB::Request( "kind", 'dark' );
+        $blursize = LIB::Request( "blursize", (int) 10 );
         if($blursize < 1) $blursize = 2;
-        $deep     = $this->Request( "deep", (int) 10 );
-        $geom     = $this->Request( "geom", 'circle' );
-        $sigma    = $this->Request( "sigma",1 );
-        $radius   = $this->Request( "radius",10 );
+        $deep     = LIB::Request( "deep", (int) 10 );
+        $geom     = LIB::Request( "geom", 'circle' );
+        $sigma    = LIB::Request( "sigma",1 );
+        $radius   = LIB::Request( "radius",10 );
 
         $this->img->Vignette( $this->graphicdrv, $geom, $x1, $y1, $x2, $y2, $kind, (int) $blursize, (int) $deep, $sigma, $radius);
         break;
 
       case "border" :
-        $bordercolor = $this->Request( "bordercolor", 'ff0000' );
-        $top         = $this->Request( "top"        , 3 );
-        $innerbevel  = $this->Request( "innerbevel" , 3 );
-        $outerbevel  = $this->Request( "outerbevel" , 3 );
-        $height      = $this->Request( "height" , 3 );
+        $bordercolor = LIB::Request( "bordercolor", 'ff0000' );
+        $top         = LIB::Request( "top"        , 3 );
+        $innerbevel  = LIB::Request( "innerbevel" , 3 );
+        $outerbevel  = LIB::Request( "outerbevel" , 3 );
+        $height      = LIB::Request( "height" , 3 );
         $this->img->Border( $bordercolor, $top, $innerbevel, $outerbevel, $height);
         break;
       case "bevel" :
-        $bevel     = $this->Request("width",10);
-        $depht     = $this->Request("depht",3);
-        $direction = $this->Request("direction",0);
+        $bevel     = LIB::Request("width",10);
+        $depht     = LIB::Request("depht",3);
+        $direction = LIB::Request("direction",0);
         $this->img->Bevel($bevel, $depht, $direction);
         break;
 
@@ -422,7 +403,7 @@ class ImageEdit {
         break;
 
       case "rotate" :
-        $this->img->Rotate ( $this->Request( 'rotate', 180 ) );
+        $this->img->Rotate ( LIB::Request( 'rotate', 180 ) );
         break;
 
       case "flip_vertical" :
@@ -434,64 +415,64 @@ class ImageEdit {
         break;
 
       case "crop" :
-        $x1 = $this->Request( 'x1', 0 );
-        $y1 = $this->Request( 'y1', 0 );
-        $x2 = $this->Request( 'x2', $size [0] );
-        $y2 = $this->Request( 'y2', $size [1] );
+        $x1 = LIB::Request( 'x1', 0 );
+        $y1 = LIB::Request( 'y1', 0 );
+        $x2 = LIB::Request( 'x2', $size [0] );
+        $y2 = LIB::Request( 'y2', $size [1] );
         if ($x1 >= 0 && $x2 >= 0 && $y1 >= 0 && $y2 >= 0) {
           $this->img->Crop( $x1, $y1, $x2, $y2 );
         }
         break;
 
       case "resize" :
-        $wp = $this->Request( 'wp', - 1 );
-        $hp = $this->Request( 'hp', - 1 );
+        $wp = LIB::Request( 'wp', - 1 );
+        $hp = LIB::Request( 'hp', - 1 );
         if ($wp >= 0 && $hp >= 0) {
           $this->img->Resize ( $wp, $hp );
         }
         break;
 
       case "shave" :
-        $cols = ( int ) $this->Request( "cols", 1 );
-        $rows = ( int ) $this->Request( "rows", 1 );
+        $cols = ( int ) LIB::Request( "cols", 1 );
+        $rows = ( int ) LIB::Request( "rows", 1 );
         $this->img->Shave($cols, $rows);
         break;
 
       case "perspective" :
         $points     = [];
-        $points[0]  = ( int ) $this->Request( "xs1", 0 );  //top left
-        $points[1]  = ( int ) $this->Request( "ys1", 0 );
-        $points[2]  = ( int ) $this->Request( "xt1", 10 );
-        $points[3]  = ( int ) $this->Request( "yt1", 10 );
+        $points[0]  = ( int ) LIB::Request( "xs1", 0 );  //top left
+        $points[1]  = ( int ) LIB::Request( "ys1", 0 );
+        $points[2]  = ( int ) LIB::Request( "xt1", 10 );
+        $points[3]  = ( int ) LIB::Request( "yt1", 10 );
 
-        $points[4]  = ( int ) $this->Request( "xs2", $size[0]-1 );  //top right
-        $points[5]  = ( int ) $this->Request( "ys2", 0 );
-        $points[6]  = ( int ) $this->Request( "xt2", $size[0]-12 );
-        $points[7]  = ( int ) $this->Request( "yt2", 30 );
+        $points[4]  = ( int ) LIB::Request( "xs2", $size[0]-1 );  //top right
+        $points[5]  = ( int ) LIB::Request( "ys2", 0 );
+        $points[6]  = ( int ) LIB::Request( "xt2", $size[0]-12 );
+        $points[7]  = ( int ) LIB::Request( "yt2", 30 );
 
-        $points[8]  = ( int ) $this->Request( "xs3", $size[0]-1 ); //bottom right
-        $points[9]  = ( int ) $this->Request( "ys3", $size[1]-1);
-        $points[10] = ( int ) $this->Request( "xt3", $size[0]-30 );
-        $points[11] = ( int ) $this->Request( "yt3", $size[1]-50 );
+        $points[8]  = ( int ) LIB::Request( "xs3", $size[0]-1 ); //bottom right
+        $points[9]  = ( int ) LIB::Request( "ys3", $size[1]-1);
+        $points[10] = ( int ) LIB::Request( "xt3", $size[0]-30 );
+        $points[11] = ( int ) LIB::Request( "yt3", $size[1]-50 );
 
-        $points[12] = ( int ) $this->Request( "xs4", 0 );   //bottom left
-        $points[13] = ( int ) $this->Request( "ys4", $size[1]-1 );
-        $points[14] = ( int ) $this->Request( "xt4", 10 );
-        $points[15] = ( int ) $this->Request( "yt4", $size[0]-20 );
+        $points[12] = ( int ) LIB::Request( "xs4", 0 );   //bottom left
+        $points[13] = ( int ) LIB::Request( "ys4", $size[1]-1 );
+        $points[14] = ( int ) LIB::Request( "xt4", 10 );
+        $points[15] = ( int ) LIB::Request( "yt4", $size[0]-20 );
 
         $this->img->Perspective ( $points);
         break;
 
       case "distortion"  :
       case "lens" :
-        $a = (float) $this->Request( 'a', 0.2 );
-        $b = (float) $this->Request( 'b', 0.2 );
-        $c = (float) $this->Request( 'c', 0.2 );
-        $d = (float) $this->Request( 'd', 10 );
-        $centerx  = (int) $this->Request( 'centerx', 0 );
-        $centery  = (int) $this->Request( 'centery', 0 );
-        $color    = $this->Request( 'color', "#808080" );
-        $bestfit  = $this->Request( 'bestfit', "true");
+        $a = (float) LIB::Request( 'a', 0.2 );
+        $b = (float) LIB::Request( 'b', 0.2 );
+        $c = (float) LIB::Request( 'c', 0.2 );
+        $d = (float) LIB::Request( 'd', 10 );
+        $centerx  = (int) LIB::Request( 'centerx', 0 );
+        $centery  = (int) LIB::Request( 'centery', 0 );
+        $color    = LIB::Request( 'color', "#808080" );
+        $bestfit  = LIB::Request( 'bestfit', "true");
         $bestfit  = ($bestfit == "true");
         $this->img->lens ( $a, $b, $c, $d, $centerx, $centery, $color, $bestfit);
         break;
@@ -502,99 +483,99 @@ class ImageEdit {
         break;
 
       case "bw":
-        $level  = (int) $this->Request("level", 50);
+        $level  = (int) LIB::Request("level", 50);
         $this->img->BW($level);
         break;
 
       case "white":
-        $r = ( int ) $this->Request( "red"      , 1 );
-        $g = ( int ) $this->Request( "green"    , 1 );
-        $b = ( int ) $this->Request( "blue"     , 1 );
-        $alpha = ( int ) $this->Request( "alpha", 1 );
+        $r = ( int ) LIB::Request( "red"      , 1 );
+        $g = ( int ) LIB::Request( "green"    , 1 );
+        $b = ( int ) LIB::Request( "blue"     , 1 );
+        $alpha = ( int ) LIB::Request( "alpha", 1 );
         $this->img->White($r, $g, $b, $alpha);
         break;
 
       case "charchoal":
-        $radius = (int) $this->Request("radius", 5);
-        $sigma  = (int) $this->Request("sigma", 2);
+        $radius = (int) LIB::Request("radius", 5);
+        $sigma  = (int) LIB::Request("sigma", 2);
         $this->img->Charchoal( $radius, $sigma );
         break;
 
       case "oil":
-        $radius = (int) $this->Request("radius", 1);
-        $level  = (int) $this->Request("intlevel", 240);
+        $radius = (int) LIB::Request("radius", 1);
+        $level  = (int) LIB::Request("intlevel", 240);
         $this->img->Oil( $radius, $level );
         break;
 
       case "sepia":
-        $level = $this->Request("level",80);
+        $level = LIB::Request("level",80);
         $this->img->Sepia($level);
         break;
 
       case "blueshift":
-        $level = $this->Request("level",15);
+        $level = LIB::Request("level",15);
         $this->img->BlueShift($level);
         break;
       
         case "solarize":
-          $treshold = $this->Request("treshold",1);
+          $treshold = LIB::Request("treshold",1);
           $this->img->Solarize($treshold);
           break;
 
       case "clahe":
-        $width  = (int) $this->Request("width",10);
-        $height = (int) $this->Request("height",10);
-        $bins   = (int) $this->Request("bins",29);
-        $clip   = (float) $this->Request("clip",100);
+        $width  = (int) LIB::Request("width",10);
+        $height = (int) LIB::Request("height",10);
+        $bins   = (int) LIB::Request("bins",29);
+        $clip   = (float) LIB::Request("clip",100);
         $this->img->Clahe($width, $height, $bins, $clip);
         break;
 
       // Color menu
       case "whitebalance":        
-        $mode = $this->Request("mode","white");
-        $exclude = (int) $this->Request("exclude", 0);
+        $mode = LIB::Request("mode","white");
+        $exclude = (int) LIB::Request("exclude", 0);
         $this->img->Whitebalance($mode, $exclude);
         break;
 
       case "normalize":
-        $channel = $this->Request( "channel", "all" );
-        $mode = $this->Request("mode", 1);
-        $dynamic = $this->Request("dynamic", 254);
+        $channel = LIB::Request( "channel", "all" );
+        $mode = LIB::Request("mode", 1);
+        $dynamic = LIB::Request("dynamic", 254);
         $this->img->Normalize($this->graphicdrv, $channel, $mode, $dynamic );
         break;
 
       case "gamma" :
-        $gammain   = $this->Request( "gammain",  0 );
-        $gammaout  = $this->Request( "gammaout", 0 );
-        $autogamma = $this->Request( "autogamma", "false" );
+        $gammain   = LIB::Request( "gammain",  0 );
+        $gammaout  = LIB::Request( "gammaout", 0 );
+        $autogamma = LIB::Request( "autogamma", "false" );
         $autogamma = ( $autogamma == "true");
         $this->img->Gamma( $gammain, $gammaout, $autogamma );
         break;
 
       case "contrast" :
-        $contrast = $this->Request( 'contrast', 0 );
+        $contrast = LIB::Request( 'contrast', 0 );
         $this->img->Contrast ( $contrast );
         break;
 
       case "brightness" :
       case "saturation" :
       case "hue" :
-        $brightness = $this->Request( 'brightness', 0 );
-        $saturation = $this->Request( 'saturation', 0 );
-        $hue        = $this->Request( 'hue', 0 );
+        $brightness = LIB::Request( 'brightness', 0 );
+        $saturation = LIB::Request( 'saturation', 0 );
+        $hue        = LIB::Request( 'hue', 0 );
         $this->img->Brightness ( $brightness, $saturation, $hue );
         break;
 
       case "rgb" : // colorize
-        $r = ( int ) $this->Request( "red"      , 1 );
-        $g = ( int ) $this->Request( "green"    , 1 );
-        $b = ( int ) $this->Request( "blue"     , 1 );
-        $alpha = ( int ) $this->Request( "alpha", 1 );
+        $r = ( int ) LIB::Request( "red"      , 1 );
+        $g = ( int ) LIB::Request( "green"    , 1 );
+        $b = ( int ) LIB::Request( "blue"     , 1 );
+        $alpha = ( int ) LIB::Request( "alpha", 1 );
         $this->img->RGB( $r, $g, $b, $alpha );
         break;
 
       case "histogram":
-        $equalize = $this->Request("equalize", "false");
+        $equalize = LIB::Request("equalize", "false");
         $json = $this->img->Histogram($equalize);
         return $json;
 
@@ -604,80 +585,80 @@ class ImageEdit {
         break;
 
       case "noise" : // Add Noise
-        $level   = $this->Request( "level", 1 );
-        $type    = $this->Request( "type", "uniform" );
-        $channel = $this->Request( "channel", "all" );
+        $level   = LIB::Request( "level", 1 );
+        $type    = LIB::Request( "type", "uniform" );
+        $channel = LIB::Request( "channel", "all" );
         $this->img->AddNoise( $level, $type, $channel );
         break;
 
       case "denoise" : // Smooth == Denoise???
-        $type  = $this->Request( "type", "denoise" );
-        $level = $this->Request( "level", 1 );
-        $softness = $this->Request( "softness", 0 );
+        $type  = LIB::Request( "type", "denoise" );
+        $level = LIB::Request( "level", 1 );
+        $softness = LIB::Request( "softness", 0 );
         $this->img->DeNoise( $level, $type, $softness );
         break;
 
       case "sharp" :
-        $radius = $this->Request( "radius", 3 );
-        $sigma  = $this->Request( "sigma", 3 );
-        $level  = $this->Request( "level", 3 );
+        $radius = LIB::Request( "radius", 3 );
+        $sigma  = LIB::Request( "sigma", 3 );
+        $level  = LIB::Request( "level", 3 );
         $this->img->Sharp( (int) $radius, (int) $sigma, (int) $level );
         break;
 
       case "emboss" :
-        $radius = $this->Request( 'radius', 1 );
-        $sigma  = $this->Request( 'sigma', 1 );
-        $level  = $this->Request( 'level', 1 );
+        $radius = LIB::Request( 'radius', 1 );
+        $sigma  = LIB::Request( 'sigma', 1 );
+        $level  = LIB::Request( 'level', 1 );
         $this->img->Emboss ($radius, $sigma, $level);
         break;
 
       case "edge" :
-        $radius = $this->Request( 'radius', 0 );
+        $radius = LIB::Request( 'radius', 0 );
         $this->img->Edge ($radius);
         break;
 
       case "trim" :
-        $fuzz = (float) $this->Request( "fuzz"  , 0.1 );
-        $r = ( int ) $this->Request( "red"  , 1 );
-        $g = ( int ) $this->Request( "green", 1 );
-        $b = ( int ) $this->Request( "blue" , 1 );
-        $a = ( int ) $this->Request( "alpha", 1 );
+        $fuzz = (float) LIB::Request( "fuzz"  , 0.1 );
+        $r = ( int ) LIB::Request( "red"  , 1 );
+        $g = ( int ) LIB::Request( "green", 1 );
+        $b = ( int ) LIB::Request( "blue" , 1 );
+        $a = ( int ) LIB::Request( "alpha", 1 );
         $this->img->Trim ($fuzz, $r, $g, $b, $a);
         break;
 
       case "blur":
-        $radius = $this->Request( 'radius' , 0 );
-        $sigma  = $this->Request( 'sigma'  , 0 );
-        $type   = $this->Request( 'type'   , 'blur' );
-        $channel= $this->Request( 'channel', "default" );
-        $level  = $this->Request( 'level'  , 1 );
-        $angle  = $this->Request( 'angle'  , 0 );
+        $radius = LIB::Request( 'radius' , 0 );
+        $sigma  = LIB::Request( 'sigma'  , 0 );
+        $type   = LIB::Request( 'type'   , 'blur' );
+        $channel= LIB::Request( 'channel', "default" );
+        $level  = LIB::Request( 'level'  , 1 );
+        $angle  = LIB::Request( 'angle'  , 0 );
         $this->img->Blur($radius, $sigma, $type, $channel, $angle, $level);
         break;
 
       case "convolution" :
-        $c00 = ( int ) $this->Request( 'c00', 0 );
-        $c01 = ( int ) $this->Request( 'c01', 0 );
-        $c02 = ( int ) $this->Request( 'c02', 0 );
-        $c10 = ( int ) $this->Request( 'c10', 0 );
-        $c11 = ( int ) $this->Request( 'c11', 0 );
-        $c12 = ( int ) $this->Request( 'c12', 0 );
-        $c20 = ( int ) $this->Request( 'c20', 0 );
-        $c21 = ( int ) $this->Request( 'c21', 0 );
-        $c22 = ( int ) $this->Request( 'c22', 0 );
-        $div = ( int ) $this->Request( 'div', 0 );
-        $off = ( int ) $this->Request( 'offs', 0 );
+        $c00 = ( int ) LIB::Request( 'c00', 0 );
+        $c01 = ( int ) LIB::Request( 'c01', 0 );
+        $c02 = ( int ) LIB::Request( 'c02', 0 );
+        $c10 = ( int ) LIB::Request( 'c10', 0 );
+        $c11 = ( int ) LIB::Request( 'c11', 0 );
+        $c12 = ( int ) LIB::Request( 'c12', 0 );
+        $c20 = ( int ) LIB::Request( 'c20', 0 );
+        $c21 = ( int ) LIB::Request( 'c21', 0 );
+        $c22 = ( int ) LIB::Request( 'c22', 0 );
+        $div = ( int ) LIB::Request( 'div', 0 );
+        $off = ( int ) LIB::Request( 'offs', 0 );
         $this->img->Convolution( $c00, $c01, $c02, $c10, $c11, $c12, $c20, $c21, $c22, $div, $off );
         break;
 
       case "wave":
-        $amplitude  = $this->Request( 'amplitude' , 5 );
-        $wavelength = $this->Request( 'wavelength', 20 );
+        $amplitude  = LIB::Request( 'amplitude' , 5 );
+        $wavelength = LIB::Request( 'wavelength', 20 );
         $this->img->Wave($amplitude, $wavelength);
         break;
       
         case "swirl":
-          $angle = $this->Request( 'angle' , 90 );
+          $angle = LIB::Request( 'angle' , 90 );
           $this->img->Swirl( $angle);
           break;
                 
@@ -711,24 +692,19 @@ class ImageEdit {
           $this->Metadata->set( Metadata::AUTHOR      , $author );
           $this->Metadata->set( Metadata::PHOTOGRAPHER, $author );
           $this->Metadata->write( $this->temppath . $newname );
-          $this->ts['copyright'] = $copyright;
-          $this->ts['author']    = $author;
-        }
-
-        if(strtolower( $this->ts['ext']) == "png" && !empty( $this->Metadata )){
+        } else if( strtolower( $this->ts['ext']) == "png" && !empty( $this->Metadata )){
           $this->Metadata = PNGMetadata::extract($this->temppath . $newname );
-
-          $this->ts['copyright'] = $copyright;
-          $this->ts['author']    = $author;
         }
+        $this->ts['copyright'] = $copyright;
+        $this->ts['author']    = $author;
       }
 
       $this->ts['tempname'] = $newname;
-      $this->sess->set('smpl', $this->ts);
+      LIB::setSession('smpl', $this->ts);
     }
 
     unlink ( $this->temppath . $this->sign );
-    return $this->makejson();
+    return $this->MakeJson();
   }
   /**
    * Save AS edited image
@@ -738,7 +714,7 @@ class ImageEdit {
    */
   public function saveas($src = "", $name = ""){
     global $base_url;
-    $json = $this->makejson();
+    $json = $this->MakeJson();
     $srcp = str_replace(['\\','//'], '/', $this->temppath.$src );
     $dst = $this->root.$this->ts["path"].$name;
     $dstp = str_replace("//", "/", $dst );
@@ -763,10 +739,10 @@ class ImageEdit {
    */
   public function save($cmd = "") {
     global $base_url;
-    $json = $this->makejson();
+    $json = $this->MakeJson();
 
     $src = $this->temppath . $this->ts['tempname'];
-    $dst = str_replace("\\","/",realpath ( $this->root . $this->ts['path'] . $this->ts ['name'] ));
+    $dst = str_replace("\\","/",realpath ( $this->root . $this->ts['path'] . $this->ts['name'] ));
     $ok  = copy( $src, $dst );
     $json["msg"] = ($ok ? "":"Can not save the image\n");
 
@@ -792,7 +768,7 @@ class ImageEdit {
     $dst_img = $this->gd->ImageCreateTrueColor( $width, $height );
     //
     $thumbnail = $this->root . $this->ts["path"] . self::TN . $name;
-    $type = $this->getExt( $name );
+    $type = LIB::getExt( $name );
 
     // driver GD / Imagick
     $p = pathinfo($name);
@@ -810,13 +786,13 @@ class ImageEdit {
   public function undo() {
     if ( $this->ts["idx"] > 0) {
       $this->ts["idx"]--;
-      $this->ts["tempname"] = $this->NewName ( $this->ts["name"], $this->ts["idx"] );      
+      $this->ts["tempname"] = LIB::NewName( $this->ts["name"], $this->ts["idx"] );      
     }
-    $this->ts["signurl"] = $this->SignUrl();
+    $this->ts["signurl"] = LIB::SignUrl($this->ts);
     if(file_exists($this->temppath . $this->sign)){
       @unlink ( $this->temppath . $this->sign );
     }
-    return $this->makejson();
+    return $this->MakeJson();
   }
 
   /**
@@ -825,12 +801,12 @@ class ImageEdit {
    */
   public function redo() {
     if ($this->ts["idx"] < $this->ts["que"]) {
-      $this->ts ["idx"]++;
-      $this->ts ["tempname"] = $this->NewName ( $this->ts ['name'], $this->ts["idx"] );      
+      $this->ts["idx"]++;
+      $this->ts["tempname"] = LIB::NewName( $this->ts['name'], $this->ts["idx"] );      
     }
-    $this->ts ["signurl"] = $this->SignUrl();
+    $this->ts["signurl"] = LIB::SignUrl($this->ts);
     @unlink ( $this->temppath . $this->sign );
-    return $this->makejson ();
+    return $this->MakeJson();
   }
 
   /**
@@ -841,7 +817,7 @@ class ImageEdit {
   public function close() {
     @unlink ( $this->temppath . $this->sign );
     array_map ( 'unlink', glob ( $this->temppath . '*_temp_*' ) );
-    $this->unset ();
+    Lib::ResetEditSession("image", $this->ts );
     return [ "ok" => 'closed' ];
   }
 
@@ -855,10 +831,9 @@ class ImageEdit {
     @unlink ( $this->temppath . $this->sign );
 
     // delete the temporay files
-    $p = pathinfo ( $this->ts ["tempname"] );
-    $filename = $p ["filename"];
+    $filename = LIB::getFilename( $this->ts["tempname"] );     
     array_map ( 'unlink', glob ( $this->temppath . $filename . "_#*" ) );
-    return $this->makejson ();
+    return $this->MakeJson();
   }
 
   /**
@@ -868,131 +843,49 @@ class ImageEdit {
    * @param string $e
    * @return string[]|mixed[]
    */
-  function makejson($i = '', $e = '') {
+  function MakeJson($i = '', $e = '') {
     $json = [];
     if (empty ( $i )) {
       // driver GD / Imagick
-      $size = $this->gd->GetImagesize ( $this->temppath . '/' . $this->ts ["tempname"] );
+      $size = $this->gd->GetImagesize ( $this->temppath . $this->ts["tempname"] );
       //
       $json['id']   = $this->ts['id'];
     
       $json["modified"] = $this->ts["modified"];
       $json["copyright"] = $this->ts['copyright'];
-      $json["author"]    = $this->ts['author'];
-       
-        
+      $json["author"]    = $this->ts['author'];               
       $json['avgcolor']  = $this->ts["avgcolor"];
 
-      $json ['ok']     = $this->ts ['id'];
-      $json ["width"]  = $size [0];
-      $json ["height"] = $size [1];
-      $json ["filesize"] = $this->ts["filesize"];
-      $json ['id']     = $this->ts ['id'];
-      $json ["idx"]    = $this->ts ["idx"];
-      $json ["name"]   = $this->ts ["name"];
-      $json ["que"]    = $this->ts ["que"];
+      $json['ok']     = $this->ts['id'];
+      $json["width"]  = $size [0];
+      $json["height"] = $size [1];
+      $json["filesize"] = $this->ts["filesize"];
+      $json['id']     = $this->ts['id'];
+      $json["idx"]    = $this->ts["idx"];
+      $json["name"]   = $this->ts["name"];
+      $json["que"]    = $this->ts["que"];
 
-      $json ["tempname"] = $this->ts ["tempname"];
-      $json ["url"]      = $this->ts ['tempurl'];      
-      $json ["signurl"]  = $this->SignUrl();
-      $json["bkp"]  = $this->ts["bkp"];      
-      $json['ext']  = $this->ts['ext'];
+      $json["tempname"] = $this->ts["tempname"];
+      $json["url"]      = $this->ts['tempurl'];      
+      $json["signurl"]  = LIB::SignUrl($this->ts);
+      $json["bkp"]    = $this->ts["bkp"];      
+      $json['ext']    = $this->ts['ext'];
 
       if($this->ts["idx"]>0){
-        $json["prev"] = $this->ts["cmd"][ $this->ts ["idx"] - 1 ];
+        $json["prev"] = $this->ts["cmd"][ $this->ts["idx"] - 1 ];
       }else{
         $json["prev"] = '';
       }
-
       
       if($this->ts["idx"] < $this->ts["que"]){
-        $json["next"] = $this->ts["cmd"][ $this->ts ["idx"] + 1 ];
+        $json["next"] = $this->ts["cmd"][ $this->ts["idx"] + 1 ];
       }else{
         $json["next"] = "";
       }
     } else {
       $json [$i] = $e;
     }
-    $this->sess->set( "smpl", $this->ts );
+    LIB::setSession( "smpl", $this->ts );
     return $json;
-  }
-
-  /**
-   * * Unset data of imgedit functions
-   */
-  function unset() {
-    unset (
-      $this->ts ['tempname'],
-      $this->ts ['path'],
-      $this->ts ['name'],
-      $this->ts ['que'],
-      $this->ts ['idx'],
-      $this->ts ['width']
-    );
-  }
-  /**
-   * get the GET request
-   *
-   * @param string $cmd
-   * @return string
-   */
-  private function Request($cmd, $default = '') {
-    $g = $this->rq->query->get ( $cmd );
-    if ($g == "undefined")
-      $g = $default;
-    if (isset ( $g ))
-      return $g;
-
-    $r = $this->rq->request->get ( $cmd );
-    if (isset ( $r ))
-      return $r;
-    return $default;
-  }
-
-  /**
-   * Make a new name of temporary file
-   *
-   * @param string $name
-   * @param number $i
-   * @return string
-   */
-  private function NewName($name = "", $i = 0) {
-    $p = pathinfo ( $name );
-    $name = $p ["filename"] . "_temp_" . $i;
-    $ext  = $p ["extension"];
-    return $name . "." . $ext;
-  }
-
-  /**
-   * Make a sign file into the temporary folder
-   * @return string
-   */
-  function Sign() {
-    $p = pathinfo ( $this->ts ["tempname"], PATHINFO_FILENAME ) ."_sign.txt";
-    return $p;
-  }
-
-  function SignUrl(){    
-    return $this->ts['tempurl'] . $this->sign();
-  }
-
-  /**
-   * Get root
-   * @param string $root
-   *
-   * @return string
-   */
-  function getRoot(string $root){
-    $root = str_replace ( "public://", \Drupal::service( 'file_system' )->realpath( "public://" )."\\", $root);
-    $root .= substr( $root, -1 ) != '/' ? "/" : '';
-    $root = str_replace("\\","/", $root);
-    return $root;
-  }
-
-  /**
-	 * Give back the extension of image
-	 */
-	public function getExt($str){
-		return strtolower(pathinfo($str,PATHINFO_EXTENSION));
-	}
+  }  
 }

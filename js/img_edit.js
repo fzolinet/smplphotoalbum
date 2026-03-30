@@ -133,18 +133,18 @@
 		var divsaveas = $('div#smpl_saveas');
 		if (enable) {
 			sb.prop("disabled", false);
-			sb.removeClass("smpl_img_edit_form_darkenbuttons");
+			sb.removeClass("smpl_darkenbuttons");
 			sa.prop("disabled", false);
-			sa.removeClass("smpl_img_edit_form_darkenbuttons");
+			sa.removeClass("smpl_darkenbuttons");
 			sbkp.prop("disabled", false);
-			sbkp.removeClass("smpl_img_edit_form_darkenbuttons");
+			sbkp.removeClass("smpl_darkenbuttons");
 		} else {
 			sb.prop('disabled', true);
-			sb.addClass("smpl_img_edit_form_darkenbuttons");
+			sb.addClass("smpl_darkenbuttons");
 			sa.prop('disabled', true);
-			sa.addClass("smpl_img_edit_form_darkenbuttons");
+			sa.addClass("smpl_darkenbuttons");
 			sbkp.prop("disabled", true);
-			sbkp.addClass("smpl_img_edit_form_darkenbuttons");
+			sbkp.addClass("smpl_darkenbuttons");
 			divsaveas.hide();
 		}
 		smpl.EyeDropOff();
@@ -161,7 +161,7 @@
 			type: "GET",
 			success: function (response) {
 				let data = JSON.parse(response[0].data);
-				UndoRedo(data.idx, data.que);
+				UndoRedo( data.idx, data.que);
 				smpl.progress(false);
 			},
 			error: function (response) {
@@ -194,18 +194,18 @@
 		rd.prop("title", smpl.words.Redo + ": " + next);
 		if (idx > 0) {
 			ud.prop("disabled", false);
-			ud.removeClass("smpl_img_edit_form_darkenbuttons");
+			ud.removeClass("smpl_darkenbuttons");
 		} else {
 			ud.prop("disabled", true);
-			ud.addClass("smpl_img_edit_form_darkenbuttons");
+			ud.addClass("smpl_darkenbuttons");
 		}
 
 		if (idx < que) {
 			rd.prop("disabled", false);
-			rd.removeClass("smpl_img_edit_form_darkenbuttons");
+			rd.removeClass("smpl_darkenbuttons");
 		} else {
 			rd.prop("disabled", true);
-			rd.addClass("smpl_img_edit_form_darkenbuttons");
+			rd.addClass("smpl_darkenbuttons");
 		}
 
 		$("#smpl_step").val(idx);
@@ -233,6 +233,9 @@
 		smpl.height = data.height;
 		smpl.ratio = parseInt(smpl.height) / parseInt(smpl.width);
 
+		$("#smpl_xp").val(0);
+		$("#smpl_yp").val(0);
+
 		if (!smpl.isUndefined(data.avgcolor)) {
 			smpl.stroke = smpl.EyeDropInvertColor(data.avgcolor);
 		}
@@ -249,9 +252,9 @@
 		$("#smpl_imgedit_size").html(smpl.width + "x" + smpl.height);
 
 		smpl.hideHistogram();
-		load_img(ImgUrl(smpl.idx), smpl.width, smpl.height);
+		load_img( ImgUrl(smpl.idx), smpl.width, smpl.height);
 
-		// size of iriginal image
+		// size of original image
 		imageprop();
 		$("#smpl_rgbcolor").val(data.avgcolor);
 
@@ -264,7 +267,7 @@
 		else smpl.hideHistogram();
 
 		// jpeg or png data of copyright && author
-		if (data.ext == "jpeg" || data.ext == "jpg" || data.ext == "png") {
+		if ( data.ext == "jpeg" || data.ext == "jpg" || data.ext == "png" ) {
 			$(".smpl_wmspan").show();
 			$("#smpl_watermark_copyright").val(data.copyright);
 			$("#smpl_watermark_author").val(data.author);
@@ -273,8 +276,9 @@
 			$("#smpl_watermark_copyright").val('');
 			$("#smpl_watermark_author").val('');
 		}
+
 		smpl.imgeditsaved = false;
-		UndoRedo(data.idx, data.que, data.prev, data.next);
+		UndoRedo(data.idx, data.que, data.prev, data.next);		
 		SmplImgEditForm.show();
 		smpl.progress(false);
 	};
@@ -389,19 +393,22 @@
 						smpl.AlertC("Another process works on this file!", "warning");
 						smpl.progress(false);
 						return false;
-					} else if (data.ok == "-2") {
-						smpl.AlertC(data.msg, "warning");
-						smpl.progress(false);
+
+					} else if ( data.ok == "-2" ) {
+						smpl.AlertC( data.msg, "warning" );
+						smpl.progress( false );
 						return false;
+
 					} else if (data.ok == "-3") {
-						smpl.AlertC(data.msg, "warning");
-						smpl.progress(false);
+						smpl.AlertC( data.msg, "warning" );
+						smpl.progress( false );
 						return false;
+						
 					}
 
-					if (!smpl.isUndefined(data.width) && !smpl.isUndefined(data.height)) {
-						smpl.width = parseInt(data.width);
-						smpl.height = parseInt(data.height);
+					if ( !smpl.isUndefined( data.width ) && !smpl.isUndefined( data.height ) ) {
+						smpl.width = parseInt( data.width );
+						smpl.height = parseInt( data.height );
 					}
 
 					smpl.imgeditsaved = false;
@@ -498,8 +505,8 @@
 		$.ajax({
 			url: url,
 			type: "GET",
-			success: function (response) {
-				let data = JSON.parse(response[0].data);
+			success: function ( response ) {
+				let data = JSON.parse( response[0].data );
 				$("img#smpltn" + smpl.id).attr("src", data.link);
 				smpl.imgeditsaved = true;
 				smpl.progress(false);
@@ -590,7 +597,7 @@
 				.then((ok) => {
 					if (ok.isConfirmed) {
 						CloseAjax();
-						SaveButtons($, false);
+						SaveButtons( false );
 						SmplImgEditForm.hide();
 					}
 					return false;
@@ -608,8 +615,7 @@
 		$.ajax({
 			url: url,
 			type: "GET",
-			success: function (response) {
-				let data = JSON.parse(response[0].data);
+			success: function () {				
 				UndoRedo(0, 0, false);
 				smpl.progress(false);
 				smpl.imgeditsaved = true
@@ -629,7 +635,7 @@
 			smpl.bkp = smpl.idx;
 			smpl.bwidth = smpl.width;
 			smpl.bheight = smpl.height;
-			load_img(ImgUrl(0), smpl.owidth, smpl.oheight);
+			load_img( ImgUrl( 0 ), smpl.owidth, smpl.oheight );
 			imageprop();
 		};
 	});
@@ -638,11 +644,11 @@
 	 * Last changed image
 	 */
 	$("#SmplInit").on("mouseup", function () {
-		if (smpl.bkp > 0) {
+		if ( smpl.bkp > 0 ) {
 			smpl.idx = smpl.bkp;
 			smpl.width = smpl.bwidth;
 			smpl.height = smpl.bheight;
-			load_img(ImgUrl(smpl.idx), smpl.width, smpl.height);
+			load_img( ImgUrl( smpl.idx ), smpl.width, smpl.height );
 			imageprop();
 		}
 	});
@@ -661,9 +667,8 @@
 		$.ajax({
 			url: url,
 			type: "GET",
-			success: function (response) {
-				let data = JSON.parse(response[0].data);
-				load(data);
+			success: function ( response ) {				
+				load( JSON.parse( response[0].data) );
 				return false;
 			},
 			error: function (response) {
@@ -687,15 +692,14 @@
 		$.ajax({
 			url: url,
 			type: "GET",
-			success: function (response) {
-				var data = JSON.parse(response[0].data);
-				load(data);
+			success: function (response) {				
+				load( JSON.parse(response[0].data) );
 				return false;
 			},
 			error: function (response) {
 				var data = JSON.parse(response[0].data);
-				smpl.progress(false);
-				smpl.ErrorC(smpl.id);
+				smpl.progress( false );
+				smpl.ErrorC( smpl.id );
 				return false;
 			},
 		});

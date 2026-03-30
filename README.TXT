@@ -199,10 +199,20 @@ It is uses the GD driver or Imagick driver if it is installed on server
 If the change takes too long you can break it with press the Escape key or 
 push the Cancel button.
 
+Convert an video (under construction)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+with ffmpeg on Linux or Windows
+- crop the video
+- change the length 
+- change the extension of video ( i.e. .mov => mp4 )
+- change the framerate
+- rotate
+- Break the long conversion process with Escape key or Cancel button
+
 The using is similar than ACDSee or any other image editing software.
 You can use the mouse to move, zoom in or zoom out the image.
 
-2025.12.22
+2026.02.19
 
 Zoltan Fabian
 

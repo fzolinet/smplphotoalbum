@@ -13,38 +13,47 @@ class Words {
   Close    = "{{ Close }}";
   converting_long = "{{ Converting video to mp4 format is a long process }}";
   Video_conversion_confirm_msg ="{{ Are you sure you want to convert this video to MP4 format? }}";  
+  Conversion_running ="{{ Conversion is running }}";
 }
 
 class SmplPhotoalbum {
   ajax = "{{ base_path }}smplphotoalbum";        
   autohistogram = false;
   bheight = 0;
-  bkp = 0;
+  bkp = 0;  // backup the id when push the original button at imgedit
   bwidth = 0;
   ctx = "";
   editsaved = false;
   exif = ""; 
   exif_info_show = false;
-  filesize = 0;
+  filesize = 0;    // filesize of edited file
   graphicdrv = "{{ graphicdrv }}";
   height = 0;
   i = 1; 
   id = {{ id }}; // actual id
-  idx = 0;       // actual index of edited file  
+  idx = 0;       // actual index of edited file 
+  que = 0;       // Queue 
+  prev = 0;
+  next = 0;
+  params = "";    // FFMpeg params of edited video
   imagick = "{{ imagickversion }}";
   imgeditform = {{ imgeditform }};
   imgeditsaved = false;  //saved modified file
   maxsize = "{{ maxsize }}";  //max size of uploaded file
   modified = ""; 
   modulepath = "{{ modulepath }}";  
-  name = "";     // Original filename
+  name = "";     // Original filename  
+  tempname = ""; // At the Save As the new name
   oheight = 0;
   owidth = 0;
+  ofilesize = "";
+  oGOP = 0;  
   pars = "";
   rgbcolor = "#808080"; 
   signurl = "";  // sign file url  
   tempurl = "";  // Original temp path
-  timer = "0%";  // Timer variable
+  //timer = "0%";  // Timer text variable
+  coounter = false;
   translateX = 0.0;
   translateY = 0.0;  
   test = false;
@@ -59,7 +68,22 @@ class SmplPhotoalbum {
   
   //Video Edit variables
   videoeditform = false;  // visible video edit form
-  vidsaved  = false;      // Saved the edted video file
+  videoeditsaved = false; // Saved the edted video file
+  duration  = 0;          // Duration of video
+  framerate = 0;          // Framerate of video
+  gop       = 2;          // Group of Pictures (GOP) of video
+  clipstart = 0;          // Start time of clip
+  clipend   = 0;          // End time of clip
+  video_aspect_ratio = 1; // Aspect ratio of video
+  ofilesize = "";
+  oframerate = 0;
+  ogop = 0; 
+  oclippstart = 0;
+  oclipend = 0;
+  oduration = 0;
+  video_size_changed = false;
+  video_framerate_changed = false;
+  gop_changed = false;
 
   application= "{{ extapplication }}";
   audio      = "{{ extaudio }}";

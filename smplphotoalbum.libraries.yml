@@ -29,6 +29,7 @@ smplphotoalbum-edit:
     js/jcanvas/dist/min/jcanvas-handles.min.js: {}
     js/delete.js: {}
     js/edit.js: {}
+    js/video/jquery.video.min.js: {}    
     js/videoedit.js: {}
     js/upload.js: {}
     js/folder.js: {}
@@ -43,8 +44,7 @@ smplphotoalbum-edit:
     js/img_init.js: { preprocess: false }
     js/img_edit.js: { preprocess: false }
     js/img_effects.js: { preprocess: false }
-    js/img_zoomdrag.js: { preprocess: false }
-    
+    js/img_zoomdrag.js: { preprocess: false }    
 
   dependencies:
     - core/jquery

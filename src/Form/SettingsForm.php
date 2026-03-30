@@ -375,7 +375,8 @@ class SettingsForm extends ConfigFormBase {
         '#type' => 'fieldset',
         '#title' => $this->t ( 'Editing images' ),
         '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#collapsed' => FALSe,
+        "#description" => $this->t("You can edit the images on the web if you have GD or Imagick library. You can choose which library do you want to use for editing images on the web. The GD library is more common, but the Imagick library is more powerful and faster than GD."  )
     ];
     // you can edit images
     $form ['imgedit'] ['imgedit'] = [ 
@@ -583,16 +584,20 @@ class SettingsForm extends ConfigFormBase {
     ];
     
     $form ['services'] ['from'] = [ 
-        '#type' => 'textfield',
+        '#type' => 'number',
         '#title' => $this->t ( 'From which item starts the checking.' ),
         '#default_value' => $from,
+        '#min' => 0,
+        '#max' => $db,
         '#description' => $this->t ( "This number is changing in every run." . " " . $this->t ( "The number of records: " . number_format ( $db, 0, '.', ' ' ) ) ) 
     ];
     
     $form ['services'] ['number_of_checking'] = [ 
-        '#type' => 'textfield',
+        '#type' => 'number',
         '#title' => $this->t ( 'Number of items chekcing in one run' ),
         '#default_value' => $number_of_checking,
+        '#min' => 1,
+        '#max' => $db - $from,
         '#description' => $this->t ( "If the number is too high the script stops with timeout" ) 
     ];
     
@@ -645,9 +650,7 @@ class SettingsForm extends ConfigFormBase {
         '#title' => $this->t ( 'List of extensions of audio files' ),
         '#default_value' => $cfg->get( 'audio_extensions' ),
         '#description' => $this->t ( "This is a list of extensions of audio files. Default is mp3" ),
-        '#attributes' => ($cfg->get( 'audio_checking' ) ? array () : array (
-            'readonly' => 'readonly',
-            'style' => 'background-color:#DDD;' 
+        '#attributes' => ($cfg->get( 'audio_checking' ) ? array () : array (                        
         )) 
     ];
     
@@ -656,9 +659,7 @@ class SettingsForm extends ConfigFormBase {
         '#title' => $this->t ( 'List of extensions of audio files for HTML5 player' ),
         '#default_value' => $cfg->get( 'audiohtml5_extensions' ),
         '#description' => $this->t ( "This is a list of extensions of audio files for HTML5 player. Default: wav mp3 ogg" ),
-        '#attributes' => array (
-            'readonly' => 'readonly',
-            'style' => 'background-color:#DDD;' 
+        '#attributes' => array (             
         ) 
     ];
     
@@ -672,22 +673,14 @@ class SettingsForm extends ConfigFormBase {
         '#type' => 'textfield',
         '#title' => $this->t ( 'List of extensions of video files' ),
         '#default_value' => $cfg->get( 'video_extensions' ),
-        '#description' => $this->t ( "This is a list of extensions of video files." ),
-        '#attributes' => $cfg->get( 'video_checking' ) ? []: [
-            'readonly' => 'readonly',
-            'style' => 'background-color:#DDD;' 
-        ]
+        '#description' => $this->t ( "This is a list of extensions of video files." ),        
     ];
     
     $form ['types_settings'] ['videohtml5_extensions'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'List of extensions of video files HTML5 player' ),
         '#default_value' => $cfg->get( 'videohtml5_extensions' ),
-        '#description' => $this->t ( "This is a list of extensions of HTML5 video files." ),
-        '#attributes' => [
-            'readonly' => 'readonly',
-            'style' => 'background-color:#DDD;' 
-        ]
+        '#description' => $this->t ( "This is a list of extensions of HTML5 video files." ),        
     ];
 
     
@@ -861,15 +854,32 @@ class SettingsForm extends ConfigFormBase {
 
     $form['ffmpeg_settings'] = [
         '#type' => 'fieldset',
-        '#title' => $this->t ( 'FFMPEG settings for video conversion from any vido type to mp4' ),
+        '#title' => $this->t ( 'FFMPEG settings for video conversion from (almost) any video to mp4' ),
         '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#description' => $this->t ( "FFMPEG is a free open-source software project that produces libraries and programs for handling multimedia data. " .
-            "FFMPEG can decode, encode, transcode, mux, demux, stream, filter and play pretty much anything that humans and machines have created. ")
+        '#collapsed' => TRUE,        
+    ];
+    $form["ffmpeg_settings"]["description"] = [
+        "#type" => "item",
+        "#title"=> $this->t("Description"),
+        '#description' => $this->t (  "FFMPEG is a free open-source software project that produces libraries and programs for handling multimedia data. " .
+            "FFMPEG can decode, encode, transcode, mux, demux, stream, filter and play pretty much anything that humans and machines have created. "),
+    ];
+    
+    if(version_compare(PHP_VERSION, '8.2.0') >= 0 ){
+        $php_ok = true;    
+    } else{
+        $php_ok = false;
+    }
+    
+    $form["ffmpeg_settings"]["PHP"] = [
+        "#type" => "item",
+        "#title"=> "PHP version condition",
+        '#description' => $this->t ( "PHP version has to be greater than 8.2.0. The ".PHP_VERSION." " . ($php_ok ?">=":"<") . " 8.2.0. The condition is ". ($php_ok ? "ok.":"not ok.") ),
     ];
 
     $ffmpeg_path = $cfg->get("ffmpeg_path");
-    if(empty($ffmpeg_path)){
+
+    if( empty($ffmpeg_path) ){
         // default path
         if(PHP_OS == "WINNT"){
             $ffmpeg_path = "C:\\ffmpeg\\bin\\ffmpeg.exe";
@@ -882,13 +892,12 @@ class SettingsForm extends ConfigFormBase {
         '#type' => 'textfield',
         '#title' => $this->t ( 'FFMPEG path with exec progam' ),
         '#default_value' => $ffmpeg_path,
-        '#description' => t("YWrite the full path of ffmpeg executable. Example: /usr/bin/ffmpeg or c:\Users\[username]\AppData\Local\Microsoft\WinGet\Links\\ffmpeg.exe" ),
+        '#description' => t("Write the full path of ffmpeg executable. Example: /usr/bin/ffmpeg or c:\Users\[username]\AppData\Local\Microsoft\WinGet\Links\\ffmpeg.exe" ),
     ];
 
     if(PHP_OS == "WINNT"){
         // Windows operation system        
-        $out = " ".shell_exec( $ffmpeg_path);
-        fz_t($out);
+        $out = " ".shell_exec( $ffmpeg_path);        
         $ffmpeg_installed = (stripos($out, "ffmpeg") > 0 ) ? true : false;
         $out = "Windows System & FFMPEG " . ($ffmpeg_installed ? "is installed!" : "is not installed");
 
@@ -902,10 +911,10 @@ class SettingsForm extends ConfigFormBase {
 
     $form['ffmpeg_settings']['ffmpeg']=[
         '#type' => 'checkbox',
-        '#title' => $this->t ( $os),
+        '#title' => $this->t ( $os ),
         '#default_value' => $ffmpeg,
-        '#description' => $this->t ( "If it is checked the FFMPEG is installed on the server." ),        
-        '#attributes' => $ffmpeg_installed ? [] :
+        '#description' => $this->t ( "If it is checked the FFMPEG is installed on the server" ),
+        '#attributes' => $ffmpeg_installed && $php_ok ? [] :
             [
                 'readonly' => 'readonly',
                 'style' => 'background-color:#DDD;' 

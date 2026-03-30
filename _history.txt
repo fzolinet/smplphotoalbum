@@ -1,27 +1,48 @@
 Bugs:
 ~~~~
+- The quality of encoded video is bad
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
 ImageEdit
+
 - Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
-- Add / Border => something strange ( javascript layer problem?)
 - Need to check to how layers work
 - the ellipse / rectangle / grid / point eyedrop change 
   for the scaled and dragged image 
 
-// Todo:
-~~~~		
-- If the image is too big then the view lest max of the windows
-- Automate normalize is default on image
-- Check with Google AI generated image!
-- Text write on the image
+Todo:
+~~~~~~~~
+- audio (wav, mp3, flac, ogg ) editing
+- Video Convert Break handling (Error or cancelled) 
+- using $.ajax => fetch api 
+	https://metabox.io/send-get-post-request-with-javascript-fetch-api/
+	https://www.digitalocean.com/community/tutorials/how-to-use-the-javascript-fetch-api-to-get-data 
+	https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
 
-https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
-https://www.geeksforgeeks.org/computer-vision/image-processing-algorithms-in-computer-vision/
+- ffmpeg using
+	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
+
+- ffmpeg - write watermark on the video with ffmpeg
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
+	
+	stop / kill / abort ffmpeg from php => under Linux && under Windows
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues/218
+
+- Use javascript fetch instead of $.ajax
+  https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
+
+- if long process control the smpl.processvisible()
+- If the image is too big then the view lest max of the windows
+
+- Automate normalize is default on image
+
+- Text write on the image
+	https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
+	https://www.geeksforgeeks.org/computer-vision/image-processing-algorithms-in-computer-vision/
 
 - Add / Grain
-https://fw3.com/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
+	https://fw3.com/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
 
 Enhance menu (under construction)
 - AI Face Edit
@@ -86,9 +107,50 @@ GD
 - If the window too big and the screen too small
 - Light EQ
 
+Docs:
+~~~~~
+- FFMpeg using
+	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
+	
+- ffmpeg - write watermark on the video with ffmpeg
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
+	
+	stop / kill / abort ffmpeg from php => under Linux && under Windows
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues/218
+
+- Use javascript fetch instead of $.ajax
+  https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
+
+- Imagick
+	https://phpimagick.com/
+	https://www.rubblewebs.co.uk/imagick/functions/function.php
+
+- jCanvas
+	https://projects.calebevans.me/jcanvas/
+
+- swal
+	https://sweetalert2.github.io/
+
+- jquery.video Controller: 
+  https://github.com/faktorvier/jquery-video
+
 History:
 ~~~~~~~
-2026.02.01 - 1.10.0-dev
+2026.03.29 - 1.10.0-beta1
+- Video events with Jquery Video Controller
+- Video length set
+- Problem with load image
+- Initial State button
+- Prev, Next function
+- More convert
+- Make a static Lib class
+- BugFix: Not only video wants to edit (cmp, doc, etc...)
+- The ffmpeg long process can stop on Linux & Windows from client
+- Conversion simple
+  - Rotate the video- ok
+	- change size of video - ok
+	- change framerate of video 
+- Counter of conversion - ok
 - Start Video edit / cut / convert to mp4 development
 
 2026.01.25 - 1.9.8-beta5

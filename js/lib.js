@@ -117,7 +117,7 @@ smpl.getLocalStorage = function (key) {
   * @param {Undefined} op 
   * @return 
   */
-smpl.isUndefined = function (h) {
+smpl.isUndefined = function(h) {
   return typeof h === "undefined";
 }
 
@@ -142,40 +142,56 @@ function setDivInWindow(w, pos) {
    * @return
    */
   smpl.progress = function (on, timer) {
+    const maxc = 3600;
+    var count = 0; // 1 hour
+    
     $(".ajax-progress-fullscreen").remove();
 
-    if (!smpl.isUndefined(on) && on) {
-      if (!smpl.isUndefined(timer) && timer) {
+    if ( !smpl.isUndefined(on) && on) {
+      if (!smpl.isUndefined(timer) && timer) {        
         smpl.timer = "0%";
-        $("#smpl_progress").text(smpl.timer);
+        $("#smpl_progress").text( smpl.timer);
         $("#smpl_progress").show();
       }
 
       $('body').after(Drupal.theme.ajaxProgressIndicatorFullscreen());
       $('body').css("cursor", "progress");
 
-      if (smpl.timer === "0%" && !smpl.isUndefined(timer) && timer) {
+      if ( smpl.timer == "0%" && !smpl.isUndefined(timer) && timer) {
         //
         // https://stackoverflow.com/questions/29246444/fetch-how-do-you-make-a-non-cached-request
         //
-        smpl.timer = setInterval(function () {
-          fetch(smpl.signurl, { cache: "no-cache" })
-            .then(response => response.text())
-            .then(data => {
-              $("#smpl_progress").text(data);
+        smpl.timer = setInterval(function() {                               
+          fetch( smpl.signurl, { cache: "no-cache" } )
+            .then( response => response.text() )
+            .then(d => {                
+              $("#smpl_progress").text(d);  
+              if (d == "100%") {
+                $('body').css("cursor", "default");                
+                $("#smpl_progress").hide(); 
+                $(".ajax-progress-fullscreen").remove();
+                clearInterval(smpl.timer);
+                smpl.timer = "0%";                
+              }
             })
-            .catch(error => console.error("error:", error));
+            .catch(error => {              
+              smpl.ErrorC(error);
+            });                    
         }, 2000);
       }
       return true;
     } else {
       $('body').css("cursor", "default");
       $("#smpl_progress").hide();
-      clearInterval(smpl.timer);
+      clearInterval(smpl.timer);  
       smpl.timer = "0%";
     }
     return false;
   };
+
+  smpl.progressvisible = function (){
+    return $("#smpl_progress").is(":visible");
+  }
 
   //1977_temp_0_sign.txt
   /**
@@ -215,7 +231,6 @@ function setDivInWindow(w, pos) {
     }
     return "rgb(" + r + "," + g + "," + b + ")";
   };
-
   
   /**
    * AlerC - Javascript messages
@@ -224,10 +239,11 @@ function setDivInWindow(w, pos) {
    */
   smpl.AlertC = function (cmd, status) {
     var cl;
-    switch (status) {
-      case 'error': cl = "smpl-message-error"; title = "Error message"; break;
+    switch (status) {      
       case 'warning': cl = "smpl-message-warning"; title = "Warning message"; break;
       case 'status': cl = "smpl-message-status"; title = "Status message"; break;
+      case 'error': 
+      default: cl = "smpl-message-error"; title = "Error message"; break;
     }
 
     // Sweetalert2 lib

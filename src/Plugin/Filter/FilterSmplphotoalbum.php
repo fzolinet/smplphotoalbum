@@ -5,12 +5,13 @@ namespace Drupal\smplphotoalbum\Plugin\Filter;
 use Drupal\Core\DependencyInjection\ContainerNotInitializedException;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
-use Drupal\smplphotoalbum\ImageList;
+use Drupal\smplphotoalbum\ItemList;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Drupal\smplphotoalbum\Controller\Lib;
 
 /**
  * @Filter(
@@ -43,10 +44,10 @@ class FilterSmplphotoalbum extends FilterBase {
   public function process($text, $langcode) {
     // global $base_root;    
 
-    $this->cfg  = \Drupal::config ( 'smplphotoalbum.settings' );
+    $this->cfg  = Lib::getConfig(); //\Drupal::config ( 'smplphotoalbum.settings' );
     $this->rq   = \Drupal::request();
     $this->sess = $this->rq->getSession ();
-    $this->ts   = $this->sess->get("smpl");
+    $this->ts   = Lib::getSession("smpl");
 
     // Is there on the page photoalbum? I give the other part of the module
     $GLOBALS["smplphotoalbum"] = False;
@@ -97,14 +98,14 @@ class FilterSmplphotoalbum extends FilterBase {
     }
     
     // get order parameters from form
-    $smpl_sortorder = $this->Request('smpl_sortorder');
-    $smpl_ascdesc = $this->Request('smpl_ascdesc');
+    $smpl_sortorder = Lib::Request('smpl_sortorder');
+    $smpl_ascdesc = Lib::Request('smpl_ascdesc');
     if (!empty( $smpl_sortorder )  && !empty( $smpl_ascdesc ) ) {
       $this->params ['sortorder'] = $smpl_sortorder;
       $this->params ['ascdesc']   = $smpl_ascdesc;
     }
 
-    $smplpage = $this->Request('smpl_ascdesc');
+    $smplpage = Lib::Request('smpl_ascdesc');
     if( !empty( $smplpage ) ){
       $this->params['smplpage'] = (int) $smplpage;
     }
@@ -143,7 +144,7 @@ class FilterSmplphotoalbum extends FilterBase {
 
     $this->sess->set('smpl', $this->ts);
 
-    $ImgList = new ImageList( $this->params );
+    $ImgList = new ItemList( $this->params );
     
     if ( $ImgList->getSlide()) {
       $out = $ImgList->SlideShow();
@@ -171,7 +172,7 @@ class FilterSmplphotoalbum extends FilterBase {
       
       $lib[] = "smplphotoalbum/smplphotoalbum-slide";
 
-    }else if( $this->smplphotoalbum_access() ) {
+    }else if( Lib::smplphotoalbum_access() ) {
       
       $lib[] = 'smplphotoalbum/smplphotoalbum-edit';
 
@@ -225,7 +226,7 @@ class FilterSmplphotoalbum extends FilterBase {
    */
   function ParamsInit() {  
     global $base_url;  
-    $this->params = $this->getConfig();
+    $this->params = $this->getSmplConfig();
     $this->params['modulepath'] = $base_url . "/" . \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath (); 
     $this->params['realmodulepath'] =  realpath(__DIR__ ."/../../..");    
     $this->params['title']    = '';
@@ -323,19 +324,19 @@ class FilterSmplphotoalbum extends FilterBase {
 
         $v = trim ( str_ireplace ( ["{" . $e . ":","}" ], ["",""], $m [0] ) );
         switch ($e) {
-          case 'app'      : $this->params ['app']       = $v; break;
-          case 'ascdesc'  : $this->params ['ascdesc']   = $v; break;
-          case 'audio'    : $this->params ['audio']     = $v; break;          
-          case 'author'   : $this->params ['author ']   = trim($v); break;
-          case 'autoclose': $this->params ['autoclose'] = $this->truefalse($v); break;          
-          case 'capt'     : $this->params ['capt']      = $v; break;
-          case 'cmp'      : $this->params ['cmp']       = $v; break;                    
-          case 'copyright': $this->params ['copyright'] = trim($v); break;          
-          case 'doc'      : $this->params ['doc']       = $v; break;
-          case 'edit'     : $this->params ['edit']      = $v; break;          
-          case 'exif'     : $this->params ['exif']      = $v; break;
-          case 'filter'   : $this->params ['filter']    = $this->truefalse($v); break;
-          case 'folders'  : $this->params ['folders']   = $this->truefalse($v); break;
+          case 'app'      : $this->params['app']       = $v; break;
+          case 'ascdesc'  : $this->params['ascdesc']   = $v; break;
+          case 'audio'    : $this->params['audio']     = $v; break;          
+          case 'author'   : $this->params['author ']   = trim($v); break;
+          case 'autoclose': $this->params['autoclose'] = $this->truefalse($v); break;          
+          case 'capt'     : $this->params['capt']      = $v; break;
+          case 'cmp'      : $this->params['cmp']       = $v; break;                    
+          case 'copyright': $this->params['copyright'] = trim($v); break;          
+          case 'doc'      : $this->params['doc']       = $v; break;
+          case 'edit'     : $this->params['edit']      = $v; break;          
+          case 'exif'     : $this->params['exif']      = $v; break;
+          case 'filter'   : $this->params['filter']    = $this->truefalse($v); break;
+          case 'folders'  : $this->params['folders']   = $this->truefalse($v); break;
           case 'graphicdrv': //GD or Imagick
           case "graphic":
           case "grdrv":
@@ -348,7 +349,7 @@ class FilterSmplphotoalbum extends FilterBase {
             }            
             break;
           case 'height'   : $this->params['height'] = $v; break;
-          case 'html5'    : $this->params ['html5'] = $this->truefalse($v); break;
+          case 'html5'    : $this->params['html5'] = $this->truefalse($v); break;
           // icon color or black & white
           case 'icon' :
             $v = strtolower( trim( $v ) );
@@ -358,59 +359,59 @@ class FilterSmplphotoalbum extends FilterBase {
               $this->params ['icon'] ='_col';
             }
             break;
-          case 'important' : $this->params ['important']= $this->truefalse($v); break;
-          case 'interval'  : $this->params ['interval'] = $v; break;
-          case 'keywords'  : $this->params ['keywords'] = $v; break;
-          case 'lang'      : $this->params ['lang']     = $v; break;
-          case 'langswitch': $this->params ['langswitch'] = $this->truefalse($v); break;
-          case 'lazy'      : $this->params ['lazy']     = $this->truefalse($v); break;
-          case "method"    : $this->params ['method']   = ( strtolower($v) == "get")? "GET" : "POST"; break;
-          case 'notes'     : $this->params ['notes']    = $v; break;
-          case 'number'    : $this->params ['number']   = (int)($v); break;
-          case 'order'     : $this->params ['order']    = $v; break;
+          case 'important' : $this->params['important']= $this->truefalse($v); break;
+          case 'interval'  : $this->params['interval'] = $v; break;
+          case 'keywords'  : $this->params['keywords'] = $v; break;
+          case 'lang'      : $this->params['lang']     = $v; break;
+          case 'langswitch': $this->params['langswitch'] = $this->truefalse($v); break;
+          case 'lazy'      : $this->params['lazy']     = $this->truefalse($v); break;
+          case "method"    : $this->params['method']   = ( strtolower($v) == "get")? "GET" : "POST"; break;
+          case 'notes'     : $this->params['notes']    = $v; break;
+          case 'number'    : $this->params['number']   = (int)($v); break;
+          case 'order'     : $this->params['order']    = $v; break;
           // path of folder from photoalbum folder
           case 'path' :
             $v = str_replace ( "\\", "/", $v );
             $v = (substr ( $v, 0, 1 ) != "/" ? "/" : "") . $v . (substr ( $v, 0, - 1 ) != "/" ? "/" : "");
             $this->params ['path'] = $v;
             break;
-          case 'private'   : $this->params ['private'] = $v; break;    // private store          
+          case 'private'   : $this->params['private'] = $v; break;    // private store          
           // is this slideshow
-          case 'slide'     : $this->params ['slide']     = $this->truefalse($v); break;
+          case 'slide'     : $this->params['slide']     = $this->truefalse($v); break;
           // style of slide
-          case 'slidestyle': $this->params ['slidestyle']= $v; break;
+          case 'slidestyle': $this->params['slidestyle']= $v; break;
           // style of smplbox
-          case 'smplbox'   : $this->params ['smplbox']   = $v; break;
+          case 'smplbox'   : $this->params['smplbox']   = $v; break;
           // default sortorder
-          case 'sortorder' : $this->params ['sortorder'] = $v; break;
+          case 'sortorder' : $this->params['sortorder'] = $v; break;
           // is there statistic
-          case 'stat'      : $this->params ['stat']      = $v; break;
+          case 'stat'      : $this->params['stat']      = $v; break;
           // style of album
-          case 'style'     : $this->params ['style']     = $v; break;
+          case 'style'     : $this->params['style']     = $v; break;
           // is there subtitles
-          case 'sub'       : $this->params ['sub']       = $v; break;
+          case 'sub'       : $this->params['sub']       = $v; break;
           // target of url
-          case 'target'    : $this->params ['target']    = $v; break;
-          case 'test'      : $this->params ['test']      = $this->truefalse($v); break;
+          case 'target'    : $this->params['target']    = $v; break;
+          case 'test'      : $this->params['test']      = $this->truefalse($v); break;
           // Title of album
-          case 'title'     : $this->params ['title']     = !empty(trim ($v)) ? trim($v):""; break;
+          case 'title'     : $this->params['title']     = !empty(trim ($v)) ? trim($v):""; break;
           // Is there translation
-          case 'translate' : $this->params ['translate'] = $this->truefalse($v); break; 
+          case 'translate' : $this->params['translate'] = $this->truefalse($v); break; 
           // Is there file upload
-          case 'upload'    : $this->params ['upload']    = $this->params['upload'] && $this->truefalse( $v ); break;
+          case 'upload'    : $this->params['upload']    = $this->params['upload'] && $this->truefalse( $v ); break;
           // Is there url
-          case 'url '      : $this->params ['url']       = $this->truefalse($v); break;
-          case 'video'     : $this->params ['video']     = $v; break;
+          case 'url '      : $this->params['url']       = $this->truefalse($v); break;
+          case 'video'     : $this->params['video']     = $v; break;
           // show the vieved number of items
-          case 'viewed'    : $this->params ['viewed']    = $v; break;
+          case 'viewed'    : $this->params['viewed']    = $v; break;
           // width of container of items
-          case 'width'     : $this->params ['width']     = (int)($v); break;
+          case 'width'     : $this->params['width']     = (int)($v); break;
           // is there watermark
-          case 'wm'        : $this->params ['wm']        = ($this->truefalse($v))? 1:0; break;
+          case 'wm'        : $this->params['wm']        = ($this->truefalse($v))? 1:0; break;
           // path of default watermark image
-          case 'wmpath'    : $this->params ['wmpath']    = $v; break;
+          case 'wmpath'    : $this->params['wmpath']    = $v; break;
           // alpha of watermark image
-          case 'wmalpha'   : $this->params ['wmalpha']   = ($v >0 && $v < 100 ) ? (int) $v : 10; break;    
+          case 'wmalpha'   : $this->params['wmalpha']   = ($v >0 && $v < 100 ) ? (int) $v : 10; break;    
         }
       }
     }
@@ -423,15 +424,14 @@ class FilterSmplphotoalbum extends FilterBase {
    */
   function truefalse($v){
     $v = strtolower( trim( $v ) );
-    $out = in_array ( $v, [ true, 'true', 'TRUE', 'True' , 1, '1', 'on'] ) ? true : false;
-    return $out;
+    return in_array ( $v, [ true, 'true', 'TRUE', 'True' , 1, '1', 'on'] ) ? true : false;    
   }
 
   /** 
-   * Read config variables
+   * Read config variables of Smplphotoalbum and give back in array
    * @return array
    */
-  private function getConfig() {
+  private function getSmplConfig() {
     $index = [
       // ai - this is in the configuration form      
       'aigemini',
@@ -537,7 +537,6 @@ class FilterSmplphotoalbum extends FilterBase {
       //Videoedit
       'ffmpeg',
       'ffmpeg_path'
-
     ];
     $config = \Drupal::config ( 'smplphotoalbum.settings' );
     $cfg = [];
@@ -546,46 +545,5 @@ class FilterSmplphotoalbum extends FilterBase {
       $cfg[$i] = $config->get( $i );
     }
     return $cfg;
-  }
-  
-  //getparameters
-  public function getParams(){
-    return $this->params;
-  }
-
-  // Get config
-  public function getCfg(){
-    return $this->cfg;
-  }
-
-  /**
-   * Drupal Request
-   * @param string $cmd
-   * @param string $default
-   * @return string
-   */
-  private function Request($cmd, $default = '') {
-    $g = $this->rq->query->get( $cmd );
-    if ($g == "undefined")
-      $g = $default;
-    if (isset ( $g ))
-      return $g;
-
-    $r = $this->rq->request->get( $cmd );
-    if (isset ( $r ))
-      return $r;
-    return $default;
-  }
-
-  /**
-   * Can you acces the smplphotoalbum
-   * @return bool 
-   * @throws ContainerNotInitializedException 
-   * @throws ServiceCircularReferenceException 
-   * @throws ServiceNotFoundException 
-   */
-  function smplphotoalbum_access() {
-		$roles = \Drupal::currentUser()->getroles();
-		return in_array( 'administrator', $roles ) ? true : false;
-	}
+  } 
 }
