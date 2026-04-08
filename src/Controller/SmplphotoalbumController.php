@@ -929,7 +929,7 @@ class SmplphotoalbumController extends ControllerBase{
       $clipstart = Lib::Request('clipstart', 0 ); // clip start time >=0      
       $clipend = Lib::Request('clipend', 0 );     // clip last time <= duration
       $rotate = Lib::Request('rotate', 0 );       // rotate video 90,180,270      
-      $duration = Lib::Request('duration', 0 );   // Length of video
+      $duration = Lib::Request('duration', 0 );   // Length of video      
             
       $video = new VideoEdit( 
         $id, 
@@ -947,13 +947,13 @@ class SmplphotoalbumController extends ControllerBase{
         $rotate,
         $duration,
         $oldname,
-        $newname 
+        $newname        
       );
 
       switch($cmd){
         case 'load'  :  $json = $video->Load(); break;       
         case 'save'  :  $json = $video->Save(); break;
-        case 'saveas':  $json = $video->SaveAs( $oldname, $newname); break;
+        case 'saveas':  $json = $video->SaveAs(); break;
         case 'convert': $json = $video->Convert(); break;
         case 'prev'  :  $json = $video->Prev(); break;
         case 'next'  :  $json = $video->Next(); break;

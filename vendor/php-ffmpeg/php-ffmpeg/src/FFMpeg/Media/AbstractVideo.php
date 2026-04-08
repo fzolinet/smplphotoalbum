@@ -26,12 +26,7 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 abstract class AbstractVideo extends Audio
 {
-	/**
-	 * FFMpeg parameters
-	 * Change by FZ
-	 */
-	protected  $ffmpegparams;
-	/**
+    /**
      * FileSystem Manager instance.
      *
      * @var Manager
@@ -55,13 +50,6 @@ abstract class AbstractVideo extends Audio
         return new VideoFilters($this);
     }
 
-	/**
-	 * Get the ffmpeg parameters
-	 *
-	 */
-	public function getFFMpegParams(){
-		return $this->ffmpegparams;
-	}
     /**
      * {@inheritDoc}
      *
@@ -124,7 +112,7 @@ abstract class AbstractVideo extends Audio
 
         $this->fs->delete();
 
-        if (null !== $failure) {            
+        if (null !== $failure) {
             throw new RuntimeException('Encoding failed', $failure->getCode(), $failure);
         }
 
@@ -277,9 +265,6 @@ abstract class AbstractVideo extends Audio
             $commands[] = '-vf';
             $commands[] = $videoFilterCommand;
         }
-        
-		$this->ffmpegparams = implode(' ', $commands);
-        error_log("ffmpeg parameters:" .$this->ffmpegparams);
 
         $this->fsId = uniqid('ffmpeg-passes');
         $this->fs = $this->getTemporaryDirectory()->name($this->fsId)->create();

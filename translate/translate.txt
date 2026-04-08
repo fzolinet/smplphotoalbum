@@ -91,6 +91,7 @@ Extension
 Eyedropper
 Face edit
 Factor
+Ffmpeg parameters
 Filename
 File size
 File type

@@ -1,6 +1,6 @@
 Bugs:
 ~~~~
-- The quality of encoded video is bad
+- The quality of encoded video is bad (initial or additional parameters problem)
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
@@ -136,6 +136,10 @@ Docs:
 
 History:
 ~~~~~~~
+2026.04.08 - 1.10.1-beta2
+- Converted video Save / Save AS
+- FFMpeg Additional parameters - not yet ready
+
 2026.03.29 - 1.10.0-beta1
 - Video events with Jquery Video Controller
 - Video length set

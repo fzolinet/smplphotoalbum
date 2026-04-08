@@ -32,6 +32,10 @@ class VideoEdit {
   private $ts; // Session, as array
   public $bt; // BreakTime class for long process
   public $lib; // Lib class for common functions
+  public $initialParams = [ 
+    "-qscale",
+    0
+  ];
 
   // Video2MP4 class implementation
   function __construct(
@@ -111,7 +115,12 @@ class VideoEdit {
     
     $this->ts["tempname"] = LIB::NewName( $record["name"],0 );    
     $this->ts["id"]       = $this->id;
+    
     $this->ts["idx"]      = 0;
+    $this->ts["que"]      = 0;
+    unset( $this->ts["cmd"] );    
+    $this->ts["cmd"][ 0 ] = $this->ts["tempname"];
+    
     $this->ts['bkp']      = 0;
     $this->ts["name"]     = $record["name"];
     $this->ts["path"]     = $record['path'];
@@ -123,21 +132,17 @@ class VideoEdit {
     $this->ts["height"]   = $record["height"];
     $this->ts["clipstart"]= $record["clipstart"];
     $this->ts["clipend"]  = $record["clipend"];      
-    $this->ts["duration"] = $record["duration"]; 
-    $this->ts["cmd"][ $this->ts["idx"] ] = $this->ts["tempname"];    
-
-    
+    $this->ts["duration"] = $record["duration"];
+    $this->ts['params']   = '';
     // Data of original video file
     $this->ts["filesize"] = Lib::ShowFileSize( filesize( $this->path . $this->ts["name"] ) );
-    $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->path . $this->ts["name"] ) );
-
-   // unset( $this->ts['copyright'], $this->ts['author']);
+    $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->path . $this->ts["name"] ) );   
 
     // sign url;
     $this->ts["signurl"] = LIB::SignUrl($this->ts);
     $this->ts["url"] = LIB::getTempUrl() . $this->ts["tempname"];
-    $this->ts["que"] = 0;
-    $this->ts["ok"] = "1";
+    
+    $this->ts["ok"] = 1;
     array_map ( "unlink", glob ( $this->temppath . "*" ) );
 
     //Copy the videofile
@@ -148,7 +153,8 @@ class VideoEdit {
     copy ( $source, $dest );    
 
     LIB::setSession( "smpl", $this->ts );  // Set the session of movie edit
-    unset($record['path']);
+    unset($record['path']); 
+    
     return $this->MakeJson();    
   }
   
@@ -169,19 +175,17 @@ class VideoEdit {
     $newname  = LIB::NewName( $this->ts["name"], $this->ts['idx'] );
     
     $ffmpeg = FFMpeg::create(['temporary_directory' => $this->temppath]);
-    
+        
     $video = $ffmpeg->open( $this->temppath . $this->ts["tempname"] );
-    
-    $format = new \FFMpeg\Format\Video\X264( 'libmp3lame', 'libx264' );
-    
+ 
     // clip video if needed
-    if( ($this->clipstart > 0 || $this->clipend > 0) && ($this->clipstart <$this->clipend ) ){      
+    if( ($this->clipstart > 0 || $this->clipend > 0) && ($this->clipstart < $this->clipend ) ){      
        $video->filters()
         ->clip(
           \FFMpeg\Coordinate\TimeCode::fromSeconds($this->clipstart),
           \FFMpeg\Coordinate\TimeCode::fromSeconds($this->clipend - $this->clipstart),
         );            
-    }
+    } 
     
     // change width or height if needed
     if($this->width >0 && $this->height >0) {
@@ -221,8 +225,7 @@ class VideoEdit {
 
     switch( $this->newext ){
       case "mp4":
-        $format = new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264');        
-        $format->setAdditionalParameters( [ '-crf', 17 ] );
+        $format = new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264');       
         break;
       case "webm":
         $format = new \FFMpeg\Format\Video\WebM();
@@ -231,9 +234,14 @@ class VideoEdit {
         $format = new \FFMpeg\Format\Video\Ogg();
         break;
       default:
-        $format = new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'); 
-        $format->setAdditionalParameters( [ '-crf', '17' ] );
-    } 
+        $format = new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264');                
+    }
+    $params = LIB::Request("params", "");
+    if(strlen($params ) > 0){
+      $initialParams = $this->changeFFMpegParams($params);
+      $format->setAdditionalParameters($initialParams);
+    }
+       //
         
   /**
    * -async 1 -metadata:s:v:0 
@@ -257,8 +265,9 @@ class VideoEdit {
    * -crf 17'
    */
     
+    //Percentage of conversion   
     $SignFile = LIB::Sign($this->ts["tempname"]);
-    //Percentage of conversion 
+    
     $this->bt  = new BreakVideo( 
       $this->temppath,
       $SignFile, 
@@ -273,31 +282,51 @@ class VideoEdit {
       $this->bt->Break( $percentage );
     });        
 
+    $this->ts["msg"] = "";
     $ok = 1;
     try {
-      $video->save($format, $this->temppath . $newname);
-      $cmd = $video->getFFMpegParams();
-      $msg = "Conversion successful from '$this->path . $newname'.";      
+      $video->save($format, $this->temppath . $newname);                   
       $this->ts["tempname"] = $newname;
       $this->ts["url"] = LIB::getTempUrl() . $newname; 
       $this->FillTs( $this->temppath, $newname );
       LIB::setSession("smpl", $this->ts);
 
       $this->ts["cmd"][$this->ts["idx"] ] = $this->ts["tempname"];
-      $this->ts["params"] = $cmd;
-
+      //
+      $params = $format->getAdditionalParameters();         
+      $this->ts["params"] = $this->changeFFMpegParams($params, "empty");      
+      //
+      $this->ts["msg"] .= "Conversion successful from '<b>$this->path . $newname</b>'.";  
     } catch (\Exception $e) {     
-      $msg = "Conversion cancelled by the user or failed because of FFMpeg problem";      
+      $this->ts["msg"] = "Conversion cancelled by the user or failed because of FFMpeg problem! Error message: " . $e->getMessage(); 
+      $this->ts["ok"] = -1;     
     }
 
     //Sign file delete
     
     if ( file_exists($this->temppath . $SignFile)) {
       @unlink($this->temppath . $SignFile);      
-    }
-      
-    $this->ts["msg"] = $msg;
+    } 
+
     return $this->MakeJson();
+  }
+
+  /**
+   * Empty the first parameters from ffmpeg command  
+   * @param string $params - whole ffmpeg parameter string or array of parameter strings
+   * @param string $cmd - what to do with the parameters
+   * @return string | string[]
+   */ 
+  function changeFFMpegParams($params = ""){    
+    if( is_array($params)){
+      $params = implode(" ",$params);
+    } else{
+      $params = str_replace("%20"," ",$params);
+      $params = str_replace(["%20","  ", ","], " ", $params);
+      $params = trim($params);    
+      $params = explode(" ",$params); 
+    }
+    return $params;
   }
 
   /**
@@ -305,15 +334,76 @@ class VideoEdit {
    * @return array{id: string, msg: string} 
    */
   public function Save(){
-    $ok = "1";
-    $msg = "Video edit parameters saved.";
-    return ["id" => $ok, "msg" => $msg];
-  }
+    $idx = LIB::Request('idx',0);
+    if( $idx < 1 && $idx >= $this->ts["que"]) {
+      $this->ts['msg']  = "Original file can not save or does not exist converted video file (index: $idx >= $this->ts['que']).";
+      $this->ts['ok'] = "-1";
+      return $this->MakeJson(); 
+    }
+    
+    $from = $this->temppath . $this->ts['cmd'] [ $idx ];
+    $to = $this->path . $this->name;
+    
+    // Develop time has to backup the original file
+    $bak = $this->path . $this->BackupFileName( $this->name, $this->path);     
 
+    $ok = rename ( $to, $bak ); // backup the original file before overwriting
+    $ok = $ok && copy ( $from, $to ); // $overwriting the original file with the converted file
+
+    if (!$ok) {
+      $this->ts['msg'] = "Error saving the '<b>$from</b>' video file.";
+      $this->ts['ok'] = -1;
+    } else {
+      $this->ts['msg'] = "'<b>$from</b>' video file saved successfully.";
+      $this->ts['ok'] = 1;
+    }        
+    return $this->MakeJson();    
+  }
+  
+  /**
+   * @param string $idx - the new name of video file
+   * @param string $newname - the new name of video file
+   * @return string[]|mixed[] 
+   */
   public function SaveAs(){
-    $ok = "1";
-    $msg = "Video edit parameters saved as new file.";
-    return ["id" => $ok, "msg" => $msg];
+    $idx = LIB::Request('idx',0);
+    if( $idx < 1 && $idx >= $this->ts["que"]) {
+      $this->ts['msg']  = "Original file can not save or does not exist converted video file (index: $idx >= $this->ts['que']).";
+      $this->ts['ok'] = "-1";
+      return $this->MakeJson(); 
+    }
+    
+    // Get the new name of video file from request
+    $newname= LIB::Request("newname", ""  );
+    if( empty($newname) ){
+      $this->ts["ok"] = -1;
+      $this->ts['msg']  = "The new name of video can not be empty!";
+      return $this->MakeJson();
+    }
+    
+    $from = $this->temppath . $this->ts['cmd'] [ $idx ];
+    $to = $this->path . $newname;
+    if($newname == $this->name ) {      
+      $this->ts["ok"] = -1;
+      $this->ts['msg']  = "The new name of video can not be the same <b>'$newname'</b>!";
+      return $this->MakeJson();
+    }
+
+    if( file_exists($to )){
+       $this->ts["ok"] = -1;
+       $this->ts['msg']  = "The video file (<b>'$to'</b>) exists in the original folder!";
+       return $this->MakeJson();
+    }
+    
+    $ok = copy ($from, $to);
+    if (!$ok) {
+      $this->ts['msg'] = "Error saving the '<b>$from</b>' video file.";
+      $this->ts['ok'] = -1;
+    } else {
+      $this->ts['msg'] = "'<b>$from</b>' video file saved successfully.";
+      $this->ts['ok'] = 1;
+    } 
+    return $this->MakeJson();
   }
 
   /**
@@ -445,6 +535,21 @@ class VideoEdit {
     $p .= substr( $p, - 1 ) != '/' ? "/" : '';    
     return str_replace(['://','\\',"//"],["://","/","/"], $p);
   }  
+
+  /**
+   * Make a backup filename from original file
+   * @param mixed $filename - filename
+   * @param string $path - path
+   * @return string 
+   */
+  public function BackupFileName( $filename, $path = "" ){  
+    $bak = pathinfo($filename, PATHINFO_FILENAME)."_bak".".".pathinfo($filename, PATHINFO_EXTENSION);
+    while (file_exists( $path . $bak ) ) {
+      $bak = pathinfo($filename, PATHINFO_FILENAME)."_bak".rand(1000,9999).".".pathinfo($filename, PATHINFO_EXTENSION);
+    }
+
+    return $bak;
+  }
  
   /**
    * Make and return json file to ajax calling
@@ -477,5 +582,19 @@ class VideoEdit {
     }
     LIB::setSession( "smpl", $this->ts );
     return $json;
+  }
+
+  function paramsToinitialParams($params){
+    $initialParams = [];
+    if( is_array($params) ){
+      foreach($params As $p){
+        if( !empty($p) ){
+          $initialParams[] = $p;
+        }
+      }
+    }else if( is_string($params) ){
+      $initialParams = preg_split("/[\s|,]+/mi", $params);
+    }
+    return $initialParams;
   }
 } 

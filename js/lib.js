@@ -240,16 +240,27 @@ function setDivInWindow(w, pos) {
   smpl.AlertC = function (cmd, status) {
     var cl;
     switch (status) {      
-      case 'warning': cl = "smpl-message-warning"; title = "Warning message"; break;
-      case 'status': cl = "smpl-message-status"; title = "Status message"; break;
+      case 'warning':        
+        cl = "smpl-message-warning";
+        title = "Warning message";
+        break;
+      case 'status':
+        cl = "smpl-message-status";
+        title = "Status message";
+        break;
       case 'error': 
-      default: cl = "smpl-message-error"; title = "Error message"; break;
+      default:
+        cl = "smpl-message-error";
+        title = "Error message";
+        break;
     }
 
     // Sweetalert2 lib
     Swal.fire({
       title: title,
-      text: cmd,
+      html: cmd,
+      classname: cl,
+      background: cl, 
       showConfirmButton: true,
       confirmButtonText: smpl.words.Confirm,
       closeOnClickOutside: true,
@@ -262,10 +273,10 @@ function setDivInWindow(w, pos) {
         return false;
      });
     
-    $("div.swal-modal").removeClass("smpl-message-error");
-    $("div.swal-modal").removeClass("smpl-message-warning");
-    $("div.swal-modal").removeClass("smpl-message-notes");
-    $("div.swal-modal").addClass(cl);
+    $("div.swal2-popup").removeClass("smpl-message-error");
+    $("div.swal2-popup").removeClass("smpl-message-warning");
+    $("div.swal2-popup").removeClass("smpl-message-notes");
+    $("div.swal2-popup").addClass(cl);
   }
 
   /* 

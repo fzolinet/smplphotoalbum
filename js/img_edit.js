@@ -540,7 +540,7 @@
 	$("#SmplSaveAsOK").click(function () {
 		var newname = $("input#smpl_saveas_input").val();
 		if (smpl.name == newname) {
-			smpl.ErrorC('The new name is the same as the original');
+			smpl.ErrorC('The new name is the same as the original name!');
 			return false;
 		}
 		let url = smpl.ajax + "/imgedit/saveas/" + smpl.tempname + "/" + newname;

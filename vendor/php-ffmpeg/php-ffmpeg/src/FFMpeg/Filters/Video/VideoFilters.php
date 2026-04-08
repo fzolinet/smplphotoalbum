@@ -29,7 +29,6 @@ class VideoFilters extends AudioFilters
     /**
      * Resizes a video to a given dimension.
      *
-	 * @param Dimension $dimension
      * @param string $mode
      * @param bool   $forceStandards
      *

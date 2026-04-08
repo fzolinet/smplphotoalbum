@@ -22,7 +22,7 @@
 			<button id="SmplVidSave" onclick="return false;" class="smpl_save{{ icon }} smpl_button" title="{{ Save }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<button id="SmplVidSaveAs" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			<div id="smpl_vidsaveas">
-				<input id="smpl_vidsaveas_input" type="text" class="smpl_input_wide" val="">				
+				<input id="SmplVidSaveAsInput" type="text" class="smpl_text_output" val="">				
 				<button id="SmplVidSaveAsOK" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 				<button id="SmplVidSaveAsCancel" onclick="return false;" class="smpl_cancel{{ icon }} smpl_button" title="{{ Cancel }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
 			</div>
@@ -52,6 +52,10 @@
 				&nbsp;{{ Extension }}:				
 				{{ to original }} <input type="radio" id="SmplVidExtOrig" name="SmplVidExt" checked="checked" value="original">&nbsp;
 				{{ to mp4 }} <input type="radio" id="SmplVidExtMp4" name="SmplVidExt" value="mp4">&nbsp;
+			</div>
+			<div class="smpl_edit_props" style="width: 100%;">
+			{{ FFMpeg parameters }}: <textarea id="SmplVidParams" type="text" class="smpl_input_wide" style="width: 100% !important;" placeholder="-qscale 0" title="Other ffmpeg parameters, split by space or any other separation parameters, split by space or any other separation characters. For example: -qscale 0">
+			</textarea>
 			</div>
 			<div class="smpl_edit_props">
 				<label class="smpl" for="SmplVidConvert">{{ Video convert }}</label>

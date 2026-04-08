@@ -96,6 +96,7 @@ Extension=Kiterjesztés
 Eyedropper=Színválasztó
 Face edit=Arc szerkesztés
 Factor=Mérték
+FFMpeg parameters=FFMpeg paraméterek
 Filename=File neve
 File size=File mérete
 File type=File típus

@@ -84,7 +84,7 @@
    */
   $("button[id*='VidBtn']").on("click", function(e) {
     let id = $(this).attr('id').substring(6);
-    smpl.vidsaved = false;
+    smpl.videosaved = false;
     smpl.progress(true, true);
     var url = smpl.ajax + "/videoedit/" + id + "/load";
     HideButtons();    
@@ -111,7 +111,7 @@
         smpl.video_framerate_changed = false;
         PrevNext(smpl.idx, smpl.que, smpl.prev, smpl.next); 
         
-        //Sho VideoEdit form 
+        //Show VideoEdit form 
         let pos = $("#SubBtn" + id).offset();
         let dy = parseFloat($("html").css("font-size")) * 3;
         let w = SmplVideoEditForm.width();
@@ -204,13 +204,13 @@
    * Cancel the conversion
    */
   $("#SmplVidCancel").click( function (e) {
-    smpl.vidsaved = false;
+    smpl.videosaved = false;
     smpl.progress(false);
     clearInterval(smpl.counter);
     smpl.conversion_started = false;
     $("#SmplVidConvert").prop("disabled", false);
     var url = smpl.ajax + "/videoedit/" + smpl.id + "/cancel/?idx=" + smpl.idx; 
-    
+    smpl.ok = "cancel";
     ShowButtons();    
     
     fetch(url)
@@ -231,7 +231,7 @@
    * @return false
    */
   $("#SmplVidClose").click(function (e) {
-    if ( smpl.vidsaved === false) {
+    if ( smpl.videosaved === false) {
       Swal.fire({
         title: "The Edited Videoclip not saved. Do you want to close?",
         html: smpl.words.Edit_not_saved,
@@ -243,6 +243,7 @@
         showCancelButton: true,
         cancelButtonText: smpl.words.Cancel,
         confirmButtonText: smpl.words.Confirm,
+        background: "#fadb9a", 
         icon: "warning",
         animation: false
       })
@@ -266,7 +267,7 @@
    * Close the video edit form, unset all the session variables and delete the temp files
    */
   function CloseForm() {
-    smpl.vidsaved = true;
+    smpl.videosaved = true;
     SmplVideoEditForm.hide();
     $("#SmplVidId").val('');
     $("#SmplVidFilename").html('');    
@@ -288,7 +289,7 @@
   /** Save the actual video (and close the window ?) */
   $("#SmplVidSave").on("click", function ( e ) {
     Swal.fire({
-      title: "{{ Save }}",
+      title: smpl.words.Save,
       html: '',
       classname: 'smpl-message-warning',
       closeOnClickOutside: true,
@@ -299,9 +300,10 @@
       cancelButtonText: smpl.words.Cancel,
       confirmButtonText: smpl.words.Confirm,
       icon: "warning",
+      background: "#fadb9a",      
       animation: false
     })
-      .then((ok) => {
+      .then( (ok) => {
         if (smpl.progressvisible()) {
           smpl.AlertC(smpl.words.Conversion_running, 'warning');
           return false;
@@ -317,13 +319,16 @@
             .then(data => {
               data = JSON.parse(data[0].data);
               smpl.progress(false);
-              if (data.id == '-1' || data.id == '-2') {
-                smpl.ErrorC(data.msg);
+              if ( data.ok != 1 ) {
+                smpl.ErrorC( data.msg );
+                ShowButtons();
               } else {
-                smpl.Warning("Save is ok");
-              }
-              ShowButtons();
-              HideButton("#SmplVidSave");
+                smpl.AlertC(data.msg, "status");                
+                smpl.videosaved = true;
+                ShowButtons();
+                HideButton("#SmplVidSave");
+              }              
+              
             }).catch(error => function (error) {
               smpl.progress(false);
               ShowButtons();
@@ -336,8 +341,56 @@
       })
   })
 
+  /**
+   * SaveAS
+   */
+  $("#SmplVidSaveAs").on("click", function (e) {    
+      $("#SmplVidSaveAsInput").val(smpl.name);
+      $("#smpl_vidsaveas").show();    
+  });
 
-  /** video conversion */
+  $("#SmplVidSaveAsCancel").on("click", function (e) {    
+    $("#SmplVidSaveAsInput").val("");
+    $("#smpl_vidsaveas").hide();
+  });
+
+  $("#SmplVidSaveAsOK").click(function (e) {
+    var newname = $("#SmplVidSaveAsInput").val();
+    if (smpl.name == newname) {
+      smpl.ErrorC('The new name is the same as the original name!');
+      return false;
+    }
+    
+    let url = smpl.ajax + "/videoedit/" + smpl.id + "/saveas/?idx=" + smpl.idx + "&newname=" + newname;
+    
+    smpl.progress(true);
+    fetch(url)
+      .then( response => response.json())
+      .then(data => {
+        data = JSON.parse(data[0].data);
+        smpl.progress(false);
+        $("#smpl_vidsaveas").hide();
+        if (data.ok == -1) {
+          smpl.ErrorC(data.msg);          
+        } else {
+          smpl.AlertC(data.msg, 'status'); 
+        }
+        smpl.videosaved = true;
+        
+      })
+      .catch(error => function (error) {
+        smpl.progress(false);
+        ShowButtons();
+        smpl.ErrorC(error.responseText);
+      });
+      e.preventDefault();
+    return false;
+  });
+
+  /** 
+   * video conversion 
+   * 
+   */
   $("#SmplVidConvert").click(function(e) {
     Swal.fire({
       title: smpl.words.converting_long + ".",
@@ -351,6 +404,7 @@
       cancelButtonText: smpl.words.Cancel,
       confirmButtonText: smpl.words.Confirm,
       icon: "warning",
+      background: "#fadb9a",
       animation: false
     })
       .then((ok) =>
@@ -394,10 +448,16 @@
           if ($("#SmplVidRotate").val() != '0') {
               url += '&rotate=' + $("#SmplVidRotate").val();
           }
-                               
+           
+          var params = $("#SmplVidParams").val();
+          if (params.length > 0) {            
+            url += '&params=' + params.replaceAll(" ","%20");
+          }
+
           //hosszú folyamat
           smpl.progress(true, true); 
           HideButtons();
+          ShowButton("#SmplVidCancel");
           
           // Ajax hívás
           fetch(url)
@@ -405,9 +465,11 @@
             .then(data => {              
               data = JSON.parse(data[0].data);              
               smpl.progress(false);
-              if (data.id == '-1' || data.id == '-2') {
+              if ( data.ok == -1 ||data.id == '-1' || data.id == '-2') {
                 smpl.ErrorC( data.msg );
-              } else {                
+              } else if(smpl.ok == "cancel"){
+                smpl.AlertC("Conversion cancelled", 'warning');
+              } else{                
                 load(data);
                 smpl.AlertC(data.msg, 'status');                
               }
@@ -435,7 +497,6 @@
     smpl.tempname = data.tempname;
     smpl.name = data.name;    
     $("#SmplVidFilename").html(data.name);
-    console.log(data.params);
     
     for (var prop of Object.keys( data )) {
       if (prop in data ) {
@@ -447,7 +508,7 @@
 
     $("#SmplVidId").val(smpl.id);
     $("#SmplVidQue").val(smpl.que);   
-    $("#smplVidParams").html(smpl.params);
+    $("#SmplVidParams").val(smpl.params);
     $("#SmplVidIdx").val(smpl.idx); 
     $("#SmplVidPrev").val(smpl.prev);
     $("#SmplVidNext").val(smpl.next);

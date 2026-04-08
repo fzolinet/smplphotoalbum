@@ -1655,18 +1655,18 @@ select#smpl_geom:focus {
 }
 
 .smpl-message-error {
-  background-color: #f88f8f;
-  color: rgb(73.6, 4.6, 4.6);
+  background-color: #ffbbaa;
+  color: #551100;
 }
 
 .smpl-message-warning {
-  background-color: #fde3cc;
-  color: rgb(87.9509433962, 43.1132075472, 3.4490566038);
+  background-color: #fadb9a;
+  color: rgb(76.9886792453, 53.358490566, 3.8113207547);
 }
 
 .smpl-message-notes {
-  background-color: #f3faef;
-  color: rgb(41.9142857143, 74.5142857143, 23.2857142857);
+  background-color: #a4fc72;
+  color: rgb(26.9416666667, 71.675, 1.525);
 }
 
 /* SWAL settings*/
