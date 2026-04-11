@@ -1,0 +1,10 @@
+-refs 6			; Referencia frame-ek száma. Minden P-frame használandó 0..16
+-coder 1		; Entrópia encoder (H.264 or FSE).
+-sc_threshold 40	; jelenetváltozás érzékelésének küszöbe
+-flags +loop		;
+-me_range 16 		; Set limit motion vectors range (1023 for DivX player). 
+-subq 7			; Mozgásbecslés minõsége. Egész szám
+-i_qfactor 0.71		; Set QP factor between P and I frames.
+-qcomp 0.3		; Tömörítési skála faktor (VBR) 0.0 ...1.0 nagyobb érték rosszabb minõség
+-qdiff 4                ; maximális különbség a quantizer skála között (VBR)
+-trellis 1

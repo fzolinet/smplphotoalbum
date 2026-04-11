@@ -5,8 +5,12 @@
  */
 namespace Drupal\smplphotoalbum\Controller;
 
+define( "KB", 1024 );
+define( "MB", 1048576 );
+define( "GB", 1073741824 );
+define( "TB", 1099511627776 );
 class Lib{
-
+  
 /**
    * Show file size in B, KB, MB or GB
    * @param mixed $size in bytes
@@ -14,12 +18,14 @@ class Lib{
    */
 
   public static function ShowFileSize($size) {
-		if ($size > 1073741824) {
-			$s = ( int ) ( $size / 1073741824 ) . '&nbsp;GB';
-		} else if ( $size > 1048576 ) {
-			$s = ( int ) ( $size / 1048576 ) . '&nbsp;MB';
-		} else if ( $size > 1024)  {
-			$s = ( int ) ( $size / 1024 ) . '&nbsp;KB';
+		if( $size > TB){
+      $s = ( int ) ( $size / TB ) . '&nbsp;TB';
+    } else if ($size > GB ) {
+			$s = ( int ) ( $size / GB ) . '&nbsp;GB';
+		} else if ( $size > MB ) {
+			$s = ( int ) ( $size / MB ) . '&nbsp;MB';
+		} else if ( $size > KB)  {
+			$s = ( int ) ( $size / KB ) . '&nbsp;KB';
 		} else {
 			$s = $size . '&nbsp;B';
 		}

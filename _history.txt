@@ -1,6 +1,6 @@
 Bugs:
 ~~~~
-- The quality of encoded video is bad (initial or additional parameters problem)
+
 - use POST method the Drupal cache problem => 
   action of form random, but it is not good solution
 
@@ -115,7 +115,11 @@ Docs:
 - ffmpeg - write watermark on the video with ffmpeg
 	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
 	
-	stop / kill / abort ffmpeg from php => under Linux && under Windows
+	https://github.com/asheroto/ffmpeg-examples 
+	
+	https://www.fzolee.hu/fw2/ffmpeg-parameterei
+
+	PHP-FFMpeg - stop / kill / abort ffmpeg from php => under Linux && under Windows
 	https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues/218
 
 - Use javascript fetch instead of $.ajax
@@ -134,8 +138,16 @@ Docs:
 - jquery.video Controller: 
   https://github.com/faktorvier/jquery-video
 
+- PHP-FFMpeg:
+  https://github.com/PHP-FFMpeg/PHP-FFMpeg
+
 History:
 ~~~~~~~
+2026.04.11 - 1.10.2-beta3
+- BugFix: The quality of encoded video is bad (initial or additional parameters problem) 
+  Video && audio bitrate & default init parameters
+- Default coding parameter of ffmpeg
+
 2026.04.08 - 1.10.1-beta2
 - Converted video Save / Save AS
 - FFMpeg Additional parameters - not yet ready

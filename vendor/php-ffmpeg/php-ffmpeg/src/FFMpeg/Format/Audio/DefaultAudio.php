@@ -83,7 +83,7 @@ abstract class DefaultAudio extends EventEmitter implements AudioInterface, Prog
     public function setAudioKiloBitrate($kiloBitrate)
     {
         if ($kiloBitrate < 1) {
-            throw new InvalidArgumentException('Wrong kiloBitrate value');
+            throw new InvalidArgumentException('Wrong kiloBitrate value: ' . $kiloBitrate);
         }
 
         $this->audioKiloBitrate = (int) $kiloBitrate;

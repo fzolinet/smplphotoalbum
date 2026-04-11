@@ -1,8 +1,9 @@
 <?php
 namespace Drupal\smplphotoalbum\Controller;
-require realpath(__DIR__."/../../")."/vendor/autoload.php";
+//require realpath(__DIR__."/../../")."/vendor/autoload.php";
 
 use FFMpeg\FFMpeg;
+;
 use Drupal\smplphotoalbum\Controller\Lib;
 
 class VideoEdit {
@@ -36,6 +37,7 @@ class VideoEdit {
     "-qscale",
     0
   ];
+  public $mp;
 
   // Video2MP4 class implementation
   function __construct(
@@ -57,6 +59,7 @@ class VideoEdit {
     $newname = '', // new file name if rename the video    
   )
   {
+
     $this->id = $id;
     $this->path = $path;
     $this->name = $name;
@@ -75,7 +78,7 @@ class VideoEdit {
     $this->cfg  = LIB::getConfig();
     $root       = LIB::getConfig( 'root' );   
     $this->root = LIB::getRoot( $root );
-
+    $this->mp = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
     // temppath for copy    
     $this->temppath = LIB::getTempPath();
 
@@ -137,12 +140,15 @@ class VideoEdit {
     // Data of original video file
     $this->ts["filesize"] = Lib::ShowFileSize( filesize( $this->path . $this->ts["name"] ) );
     $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->path . $this->ts["name"] ) );   
+    $this->ts["videokilobitrate"] = 0;
+    $this->ts["audiokilobitrate"] = 256;
 
     // sign url;
     $this->ts["signurl"] = LIB::SignUrl($this->ts);
     $this->ts["url"] = LIB::getTempUrl() . $this->ts["tempname"];
     
     $this->ts["ok"] = 1;
+
     array_map ( "unlink", glob ( $this->temppath . "*" ) );
 
     //Copy the videofile
@@ -151,6 +157,11 @@ class VideoEdit {
     $dest   = $this->temppath . $this->ts["tempname"];
     
     copy ( $source, $dest );    
+    
+    //Default parameters of ffmpeg for the original video file
+    $video = FFMpeg::create(['temporary_directory' => $this->temppath])->open( $dest );
+    $this->ts["params"] = $video->defaultSettings($this->mp."/"."ffmpeg_default_params.txt", true);
+    //
 
     LIB::setSession( "smpl", $this->ts );  // Set the session of movie edit
     unset($record['path']); 
@@ -175,8 +186,8 @@ class VideoEdit {
     $newname  = LIB::NewName( $this->ts["name"], $this->ts['idx'] );
     
     $ffmpeg = FFMpeg::create(['temporary_directory' => $this->temppath]);
-        
-    $video = $ffmpeg->open( $this->temppath . $this->ts["tempname"] );
+       
+    $video = $ffmpeg->open( $this->temppath . $this->ts["tempname"] );    
  
     // clip video if needed
     if( ($this->clipstart > 0 || $this->clipend > 0) && ($this->clipstart < $this->clipend ) ){      
@@ -236,34 +247,22 @@ class VideoEdit {
       default:
         $format = new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264');                
     }
-    $params = LIB::Request("params", "");
-    if(strlen($params ) > 0){
-      $initialParams = $this->changeFFMpegParams($params);
-      $format->setAdditionalParameters($initialParams);
-    }
-       //
-        
-  /**
-   * -async 1 -metadata:s:v:0 
-   * start_time=0 
-   * -r 30 -b_strategy 1 
-   * -bf 3 
-   * -g 2 
-   * -vcodec libx264 - Video codec
-   * -acodec libmp3lame - Audio codec
-   * -b:v 1000k - Video bitrate
-   * -refs 6 
-   * -coder 1 
-   * -sc_threshold 40 
-   * -flags +loop 
-   * -me_range 16 -subq 7 
-   * -i_qfactor 0.71 
-   * -qcomp 0.6 
-   * -qdiff 4 
-   * -trellis 1 
-   * -b:a 128k - audio bitrate
-   * -crf 17'
-   */
+    
+    // Video bitrate change if needed
+    $videokilobitrate = LIB::Request("videokilobitrate", 0);
+    $format->setKiloBitrate( $videokilobitrate );
+    $this->ts["videokilobitrate"] = $videokilobitrate;
+    
+    // Audio kilobitrate
+    $audiokilobitrate = LIB::Request("audiokilobitrate", 256);
+    $format->setAudioKiloBitrate( $audiokilobitrate );
+    $this->ts["audiokilobitrate"] = $audiokilobitrate;
+    //
+    $defaultParams = LIB::Request("params", "");
+    if(strlen($defaultParams ) > 0){
+      $defaultParams  = $this->changeFFMpegParams($defaultParams);
+      $video->setDefaultSettings($defaultParams );
+    }       
     
     //Percentage of conversion   
     $SignFile = LIB::Sign($this->ts["tempname"]);
@@ -293,8 +292,10 @@ class VideoEdit {
 
       $this->ts["cmd"][$this->ts["idx"] ] = $this->ts["tempname"];
       //
-      $params = $format->getAdditionalParameters();         
-      $this->ts["params"] = $this->changeFFMpegParams($params, "empty");      
+      if(empty($defaultParams)){
+        $defaultParams = $video->getDefaultSettings();
+      }
+      $this->ts["params"] = $defaultParams;
       //
       $this->ts["msg"] .= "Conversion successful from '<b>$this->path . $newname</b>'.";  
     } catch (\Exception $e) {     
@@ -321,8 +322,8 @@ class VideoEdit {
     if( is_array($params)){
       $params = implode(" ",$params);
     } else{
-      $params = str_replace("%20"," ",$params);
-      $params = str_replace(["%20","  ", ","], " ", $params);
+      $params = str_replace("%20", " ", $params);
+      $params = str_replace( ["%20", "  ", ","], " ", $params);
       $params = trim($params);    
       $params = explode(" ",$params); 
     }
@@ -533,7 +534,7 @@ class VideoEdit {
    */
   public function slash($p){
     $p .= substr( $p, - 1 ) != '/' ? "/" : '';    
-    return str_replace(['://','\\',"//"],["://","/","/"], $p);
+    return str_replace( ['://','\\',"//"], [ "://", "/", "/"], $p);
   }  
 
   /**
@@ -582,19 +583,5 @@ class VideoEdit {
     }
     LIB::setSession( "smpl", $this->ts );
     return $json;
-  }
-
-  function paramsToinitialParams($params){
-    $initialParams = [];
-    if( is_array($params) ){
-      foreach($params As $p){
-        if( !empty($p) ){
-          $initialParams[] = $p;
-        }
-      }
-    }else if( is_string($params) ){
-      $initialParams = preg_split("/[\s|,]+/mi", $params);
-    }
-    return $initialParams;
-  }
+  } 
 } 

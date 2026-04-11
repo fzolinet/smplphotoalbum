@@ -26,7 +26,6 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 abstract class AbstractVideo extends Audio
 {
-    private $defaultSettings = null;
     /**
      * FileSystem Manager instance.
      *
@@ -39,7 +38,7 @@ abstract class AbstractVideo extends Audio
      *
      * @var int
      */
-    protected $fsId;        
+    protected $fsId;
 
     /**
      * {@inheritDoc}
@@ -175,12 +174,27 @@ abstract class AbstractVideo extends Audio
                 $commands[] = $format->getKiloBitrate().'k';
             }
 
-        // changed by FZ to allow custom config file for video encoding, if not set use default settings
-            $def = $this->defaultSettings($this->defaultSettings);
-            $commands = array_merge($commands, $def);
-        // changed by FZ to allow custom config file for video encoding, if not set use default settings
+            $commands[] = '-refs';
+            $commands[] = '6';
+            $commands[] = '-coder';
+            $commands[] = '1';
+            $commands[] = '-sc_threshold';
+            $commands[] = '40';
+            $commands[] = '-flags';
+            $commands[] = '+loop';
+            $commands[] = '-me_range';
+            $commands[] = '16';
+            $commands[] = '-subq';
+            $commands[] = '7';
+            $commands[] = '-i_qfactor';
+            $commands[] = '0.71';
+            $commands[] = '-qcomp';
+            $commands[] = '0.6';
+            $commands[] = '-qdiff';
+            $commands[] = '4';
+            $commands[] = '-trellis';
+            $commands[] = '1';
         }
-        
 
         if ($format instanceof AudioInterface) {
             if (null !== $format->getAudioKiloBitrate()) {
@@ -279,107 +293,6 @@ abstract class AbstractVideo extends Audio
         }
 
         return $passes;
-    }
-
-    /**
-     * Get the default settings from software
-     * @return string 
-     */
-    public function getDefaultSettings(){
-        $cmds = $this->defaultSettings("");
-        $cmdstring = implode(" ", $cmds);
-        return $cmdstring;
-    }
-
-    /**
-     * Modified by FZ to allow custom config file for video encoding, if not set use default settings
-     * Set the default config file:
-     * array => settings
-     * string => path-to-config-file
-     * string => one line config string, separated by space
-     * otherwise the original default parameters are used
-     * @param mixed $defaultSettings 
-     * @return void 
-     */
-    public function setDefaultSettings( $defaultSettings ) 
-    {
-        $this->defaultSettings = $defaultSettings;
-    }
-
-    /**
-     * change by FZ to allow custom config file for video encoding, if not set use default settings
-     * 
-     * Default Settings are the default parameters for video encoding, it can be set by user or use default settings. 
-     * If it is an array then the defalt parameters ar these elements of array
-     * If it is a string and it is a path-to-config-file it read and make commands
-     * If it is a one line config string then it split by space and make commands
-     * otherwise the original default parameters are used
-     * 
-     * @param array | string $defaultSettings 
-     * @return array | string
-     */
-    public function defaultSettings( $defaultSettings = [], $getString = false )
-    {
-        $cmds = [];
-        
-        // I give the default parameters to the video encoding, if not set use default settings
-        if( is_array($defaultSettings) && count($defaultSettings) > 0) {
-            $cmds = &$defaultSettings;
-        
-        // config file: it can be a text file. every row is a parameter. lines starting with # are comments, and ; is used to add comments at the end of a line.
-        } else if( is_string($defaultSettings ) && file_exists($defaultSettings) )  {
-        
-            $defcommands = file( $defaultSettings);
-
-            foreach($defcommands as $defcommand) {
-                $defcommand = trim($defcommand);
-                if( strlen($defcommand) > 0 && $defcommand[0] != '#') {
-                    if( ($pos = strpos($defcommand, ';') ) !== false ) {
-                        $defcommand = trim(substr($defcommand, 0, $pos));
-                    }
-                    $cmds[] = $defcommand;
-                }
-            }
-
-        // default parameters in a row, separated by space
-        } else if( is_string($defaultSettings) && strlen($defaultSettings) > 0 )  {
-
-            $defcommands = explode(" ", $defaultSettings);
-            foreach($defcommands as $defcommand) {
-                $defcommand = trim($defcommand);
-                if( strlen($defcommand) > 0 ) {
-                    $cmds[] = $defcommand;
-                }
-            }
-        
-            // Original variables if no default settings are set
-        } else{
-                $cmds[] = '-refs';
-                $cmds[] = '6';
-                $cmds[] = '-coder';
-                $cmds[] = '1';
-                $cmds[] = '-sc_threshold';
-                $cmds[] = '40';
-                $cmds[] = '-flags';
-                $cmds[] = '+loop';
-                $cmds[] = '-me_range';
-                $cmds[] = '16';
-                $cmds[] = '-subq';
-                $cmds[] = '7';
-                $cmds[] = '-i_qfactor';
-                $cmds[] = '0.71';
-                $cmds[] = '-qcomp';
-                $cmds[] = '0.6';
-                $cmds[] = '-qdiff';
-                $cmds[] = '4';
-                $cmds[] = '-trellis';
-                $cmds[] = '1';
-        }
-        
-        if( $getString ){
-            $cmds = implode(" ", $cmds);            
-        }
-        return $cmds;
     }
 
     /**

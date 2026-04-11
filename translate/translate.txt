@@ -19,6 +19,7 @@ Barrel
 Bestfit
 Bevel
 bevel
+bitrate
 Blue shift
 Blursize
 Blur
@@ -105,6 +106,7 @@ Flip
 Flip vertically
 Flip horizontally
 Foldername
+Format
 Frame
 Framerate
 Frame color

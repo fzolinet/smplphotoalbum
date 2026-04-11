@@ -1688,4 +1688,8 @@ select#smpl_geom:focus {
   margin-left: auto;
   margin-right: auto;
   margin-top: 0.5em;
+}
+
+#SmplVidParams {
+  width: 100%;
 }/*# sourceMappingURL=smplphotoalbum.theme.css.map */

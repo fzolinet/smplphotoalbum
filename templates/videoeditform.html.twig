@@ -31,19 +31,28 @@
 		
 		<div id="smpl_video2mp4" class="smpl_edit_props">			
 			<div>			  
-				{{ Framerate }}: <input id="SmplVidFramerate" class="smpl_input_narrow" type="number" min="1" max="120" title="Framerate of the video">&nbsp; &nbsp;
-				{{ Group of Pictures }}: <input id="SmplVidGOP" class="smpl_input_narrow" type="number" min="1" max="20" title="GOP=The number of frames between two I-frames. A common standard is 1–2 seconds long (e.g., at 30 fps, a GOP size of 30 or 60)" alt="GOP=The number of frames between two I-frames. A common standard is 1–2 seconds long (e.g., at 30 fps, a GOP size of 30 or 60)"> sec
+				{{ Framerate }}:&nbsp;<input id="SmplVidFramerate" class="smpl_input_narrow" type="number" min="1" max="120" title="Framerate of the video">&nbsp; &nbsp;
+				{{ Group of Pictures }}:&nbsp;<input id="SmplVidGOP" class="smpl_input_narrow" type="number" min="1" max="20" title="GOP=The number of frames between two I-frames. A common standard is 1–2 seconds long (e.g., at 30 fps, a GOP size of 30 or 60)" alt="GOP=The number of frames between two I-frames. A common standard is 1–2 seconds long (e.g., at 30 fps, a GOP size of 30 or 60)"> sec
+				Video {{ bitrate }}:&nbsp;<input id="SmplVidBitrate" class="smpl_input_mid" type="number" min="0" title="Video bitrate in Kilo bit per second">&nbsp;Kbps&nbsp;
+				Audio {{ bitrate }}:&nbsp;<input id="SmplVidAudioBitrate" class="smpl_input_mid" type="number" min="0" title="Audio bitrate in Kilo bit per second">&nbsp;Kbps&nbsp;
 			</div>
 			<div>
-				{{ width }}: <input id="SmplVidWidth" type="number" class="smpl_input_mid" value="640" min="160" >&nbsp;
-				{{ height }}: <input id="SmplVidHeight" type="number" class="smpl_input_mid" value="480" min="120">&nbsp;
-				{{ Constrain_aspect_ratio }}: <input type="checkbox" id="SmplVidAspect" checked="checked">&nbsp;				
+				{{ Format }}:&nbsp;<select id="SmplVidFormat">
+					<option value="original" selected>{{ Original }}</option>
+					<option value="mp4">MP4</option>
+					<option value="webm">WEBM</option>
+					<option value="ogg">OGG</option>
 			</div>
 			<div>
-				{{ Clip start }}: <input id="SmplVidStart" type="number" class="smpl_input_mid" value="0" min="0" step="0.01">&nbsp;sec&nbsp;
-				{{ Clip end }}: <input id="SmplVidEnd" type="number" class="smpl_input_mid" value="0" min="0" max="" step="0.01">&nbsp;sec&nbsp;
-				{{ Clip duration }}: <input id="SmplVidDuration" type="text" class="smpl_input_mid" value="0" readonly="readonly">&nbsp;sec&nbsp;<br />
-				{{ Rotate }}: <select id="SmplVidRotate">
+				{{ width }}:&nbsp;<input id="SmplVidWidth" type="number" class="smpl_input_mid" value="640" min="160" >&nbsp;
+				{{ height }}:&nbsp;<input id="SmplVidHeight" type="number" class="smpl_input_mid" value="480" min="120">&nbsp;
+				{{ Constrain_aspect_ratio }}:&nbsp;<input type="checkbox" id="SmplVidAspect" checked="checked">&nbsp;				
+			</div>
+			<div>
+				{{ Clip start }}:&nbsp;<input id="SmplVidStart" type="number" class="smpl_input_mid" value="0" min="0" step="0.01">&nbsp;sec&nbsp;
+				{{ Clip end }}:&nbsp;<input id="SmplVidEnd" type="number" class="smpl_input_mid" value="0" min="0" max="" step="0.01">&nbsp;sec&nbsp;
+				{{ Clip duration }}:&nbsp;<input id="SmplVidDuration" type="text" class="smpl_input_mid" value="0" readonly="readonly">&nbsp;sec&nbsp;<br />
+				{{ Rotate }}:&nbsp;<select id="SmplVidRotate">
 					<option value="0" selected>-</option>
 					<option value="90">{{ Right }} 90°</option>
 					<option value="180">180°</option>
@@ -54,7 +63,8 @@
 				{{ to mp4 }} <input type="radio" id="SmplVidExtMp4" name="SmplVidExt" value="mp4">&nbsp;
 			</div>
 			<div class="smpl_edit_props" style="width: 100%;">
-			{{ FFMpeg parameters }}: <textarea id="SmplVidParams" type="text" class="smpl_input_wide" style="width: 100% !important;" placeholder="-qscale 0" title="Other ffmpeg parameters, split by space or any other separation parameters, split by space or any other separation characters. For example: -qscale 0">
+			{{ FFMpeg parameters }} (default): 			
+			<textarea id="SmplVidParams" type="text" placeholder="-qscale 0" title="Other ffmpeg parameters, split by space or any other separation parameters, split by space or any other separation characters. For example: -qscale 0">
 			</textarea>
 			</div>
 			<div class="smpl_edit_props">

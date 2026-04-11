@@ -425,6 +425,15 @@
             url += '&newext=original';
           }
           
+          //Bitrate change
+          if( $("#SmplVidBitrate").val() > 0 ) {
+            url += '&videokilobitrate=' + $("#SmplVidBitrate").val();
+          }
+          
+          if ($("#SmplVidAudioBitrate").val() > 0) {
+            url += '&audiokilobitrate=' + $("#SmplVidAudioBitrate").val();
+          }
+          
           //video size changed
           url += (smpl.video_size_changed) ? '&width=' + $("#SmplVidWidth").val() + '&height=' + $("#SmplVidHeight").val() : '';          
 
@@ -448,10 +457,10 @@
           if ($("#SmplVidRotate").val() != '0') {
               url += '&rotate=' + $("#SmplVidRotate").val();
           }
-           
+
           var params = $("#SmplVidParams").val();
-          if (params.length > 0) {            
-            url += '&params=' + params.replaceAll(" ","%20");
+          if (params.length > 0) {
+            url += '&params=' + params.replaceAll(" ", "%20");
           }
 
           //hosszú folyamat
@@ -508,7 +517,7 @@
 
     $("#SmplVidId").val(smpl.id);
     $("#SmplVidQue").val(smpl.que);   
-    $("#SmplVidParams").val(smpl.params);
+    $("#SmplVidParams").val(smpl.params);    
     $("#SmplVidIdx").val(smpl.idx); 
     $("#SmplVidPrev").val(smpl.prev);
     $("#SmplVidNext").val(smpl.next);
@@ -518,6 +527,9 @@
     $("#SmplVidSize").html(smpl.width + "x" + smpl.height);
     $("#SmplVidFilesize").html(smpl.filesize);
     $("#SmplVidFramerate").val(smpl.framerate);
+    $("#SmplVidBitrate").val(smpl.videokilobitrate);
+    $("#SmplVidAudioBitrate").val(smpl.audiokilobitrate);
+
     $("#SmplVidGOP").val(smpl.gop);
     $("#SmplVidStart").val(0);
     $("#SmplVidEnd").val(Math.round(smpl.clipend * 100) / 100);    
@@ -554,7 +566,6 @@
       Player(smpl.ourl);      
     };
   });
-
 
   /**
    * Last changed video
