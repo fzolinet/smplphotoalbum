@@ -285,8 +285,8 @@ abstract class AbstractVideo extends Audio
      * Get the default settings from software
      * @return string 
      */
-    public function getDefaultSettings(){
-        $cmds = $this->defaultSettings("");
+    public function getDefaultSettings($getString = false){
+        $cmds = $this->defaultSettings("", $getString);
         $cmdstring = implode(" ", $cmds);
         return $cmdstring;
     }

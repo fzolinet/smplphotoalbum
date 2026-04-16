@@ -80,6 +80,7 @@ class Lib{
     $t = self::slash($t);
     return $t . $path;
   }
+
   /**
    * It makes slash from double slash or backslash
    * @param mixed $p 
@@ -122,8 +123,13 @@ class Lib{
    * @return mixed 
    */
   public static function getModulepath(){
-    return \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
+    static $modulepath = "";
+    if( empty( $modulepath ) ){
+      $modulepath = \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath ();
+    }
+    return $modulepath;    
   }
+
   /**
    * Reset Edit Session
    * @return void 
@@ -178,7 +184,20 @@ class Lib{
     $session->set( $str, $val );
   }
 
-    /**
+  /**
+   * Delete the session variable
+   * @param mixed $str 
+   * @return void 
+   */
+  public static function deleteSession( $str ){
+    static $session = null;
+    if ( $session == null ) {
+      $session = \Drupal::request()->getSession();
+    }
+    $session->remove( $str );
+  }
+
+  /**
    * Make a new name of temporary file
    *
    * @param string $name
@@ -206,6 +225,14 @@ class Lib{
     return $str;
   }
   
+  public static function DeleteSignFile($temppath, $SignFile){
+    
+    if ( file_exists($temppath . $SignFile ) ) {      
+      return unlink($temppath . $SignFile);      
+    }
+    return false;
+}
+
   public static function SignUrl( &$ts ){    
     return  $ts["tempurl"] . self::Sign($ts["tempname"] );
   }

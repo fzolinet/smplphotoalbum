@@ -25,7 +25,7 @@ class VideoEdit {
   private $root;  // photoalbum source folder
   private $temppath; // Temporary folder
   private $public;
-  private $sign; // It sings the long process   
+  private $SignFile; // It sings the long process   
     
   // Session variables
   private $rq;
@@ -88,9 +88,9 @@ class VideoEdit {
     // edit folder url to edit
     $this->ts['tempurl'] = LIB::getTempUrl();
     if (!isset($this->ts["tempname"])) $this->ts["tempname"] ="";   
-    $this->sign = Lib::Sign($this->ts["tempname"]);
+    $this->SignFile = Lib::Sign($this->ts["tempname"]);
     //Percentage of conversion 
-    $this->bt  = new BreakVideo( $this->temppath, $this->sign, 10, false, true ); 
+    $this->bt  = new BreakVideo( $this->temppath, $this->SignFile, 10, false, true ); 
     $this->bt->setMax(100);   
   }
 
@@ -259,17 +259,16 @@ class VideoEdit {
     $this->ts["audiokilobitrate"] = $audiokilobitrate;
     //
     $defaultParams = LIB::Request("params", "");
-    if(strlen($defaultParams ) > 0){
+    if( strlen($defaultParams ) > 0) {
       $defaultParams  = $this->changeFFMpegParams($defaultParams);
       $video->setDefaultSettings($defaultParams );
     }       
     
-    //Percentage of conversion   
-    $SignFile = LIB::Sign($this->ts["tempname"]);
+    //Percentage of conversion       
     
     $this->bt  = new BreakVideo( 
       $this->temppath,
-      $SignFile, 
+      $this->SignFile, 
       1000, 
       false, 
       true 
@@ -293,7 +292,10 @@ class VideoEdit {
       $this->ts["cmd"][$this->ts["idx"] ] = $this->ts["tempname"];
       //
       if(empty($defaultParams)){
-        $defaultParams = $video->getDefaultSettings();
+        $defaultParams = $video->getDefaultSettings(true);
+      }
+      if( is_array($defaultParams) ){
+        $defaultParams = implode(" ", $defaultParams);
       }
       $this->ts["params"] = $defaultParams;
       //
@@ -302,12 +304,8 @@ class VideoEdit {
       $this->ts["msg"] = "Conversion cancelled by the user or failed because of FFMpeg problem! Error message: " . $e->getMessage(); 
       $this->ts["ok"] = -1;     
     }
-
-    //Sign file delete
     
-    if ( file_exists($this->temppath . $SignFile)) {
-      @unlink($this->temppath . $SignFile);      
-    } 
+    $this->DeleteSignFile();
 
     return $this->MakeJson();
   }
@@ -321,8 +319,7 @@ class VideoEdit {
   function changeFFMpegParams($params = ""){    
     if( is_array($params)){
       $params = implode(" ",$params);
-    } else{
-      $params = str_replace("%20", " ", $params);
+    } else{      
       $params = str_replace( ["%20", "  ", ","], " ", $params);
       $params = trim($params);    
       $params = explode(" ",$params); 
@@ -446,8 +443,7 @@ class VideoEdit {
    */
   public function Cancel(){
     // delete the sign file  
-    //$ok = unlink( $this->temppath . $this->sign);
-
+    $ok = $this->DeleteSignFile();
     
     // delete the temporay files
     $filename = LIB::getFilename( $this->ts["name"] );   ;    
@@ -462,20 +458,31 @@ class VideoEdit {
    * Close the video edit, unset all the session variables and delete the temp files
    * @return array{id: string, msg: string}
    */
-  public function Close(){
-    $ok = @unlink( $this->temppath . $this->sign);
-
-    // delete the temporay files    
-    array_map ( 'unlink', glob ( $this->temppath . "*_temp_#*" ) );       
+  public function Close(){    
+    $ok = $this->DeleteSignFile();  
+    
+    // delete the temporay files       
+    array_map ( "unlink", glob ( $this->temppath . "*" ) );     
 
     // Stop the ffmpeg process if it is still running    
     $this->killFFMpeg(); 
 
     // The session has to reset for the next video edit
-    LIB::ResetEditSession("video", $this->ts);    
+    LIB::ResetEditSession( "video", $this->ts) ;    
     return ["ok" => "closed" ];
   } 
 
+  /**
+   * Delete the Sign File which sings the long process of video conversion
+   * @return bool 
+   */
+  function DeleteSignFile(){
+    $ok = true;
+    if ( file_exists($this->temppath . $this->SignFile)) {      
+      $ok = unlink($this->temppath . $this->SignFile);      
+    }
+    return $ok; 
+  }
   /**
    * Stop the long process of video conversion by killing the ffmpeg process 
    * on Linux & Windows
@@ -548,7 +555,6 @@ class VideoEdit {
     while (file_exists( $path . $bak ) ) {
       $bak = pathinfo($filename, PATHINFO_FILENAME)."_bak".rand(1000,9999).".".pathinfo($filename, PATHINFO_EXTENSION);
     }
-
     return $bak;
   }
  

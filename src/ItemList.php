@@ -334,7 +334,7 @@ class ItemList {
 			$db++;
 		}
 		
-		//statistics of this page
+		// Statistics of this page
 		if ($this->stat) {
 			$this->numitems = count ($this->Items);
 			$this->sumviews = 0;
@@ -345,9 +345,8 @@ class ItemList {
 
 		// Save in the session the serial number of image 
 		if ($this->slide) {
-			$this->Slide = new SlideShow( $this->path );
-			$this->Slide->NewSlideShow( $this->words, $this->Items );
-			//-----------------------------------------		
+			$this->Slide = new SlideShow( $this->path, $this->tpl );
+			$this->Slide->NewSlideShow( $this->words, $this->Items );			
 		}					
 	}
 
@@ -394,9 +393,7 @@ class ItemList {
 		$this->notes = isset ( $this->params['notes'] ) && !empty( $this->params[ 'notes' ] ) ? '<div class="smpl_notes">' . $this->params['notes'] . '</div>' : '';
 		
 		// Slideshow
-		if( Lib::Request("SmplSlide", false) ){
-			$this->params['slide'] = true;
-		}
+		$this->params['slide'] = false && Lib::Request("SmplSlide", false);		
 	  $this->slide_checking = $this->params['slide_checking'];		
 		$this->slide          = $this->params['slide'] && $this->params['slide_checking'];
 		$this->slidestyle     = $this->params['slidestyle'];
@@ -449,24 +446,24 @@ class ItemList {
 	 */
 	function LoadTpls(){		
 		$p = $this->params["realmodulepath"] . "/templates";				
-		$this->tpl['smplphotoalbum'] = file_get_contents ( $p . "/smplphotoalbum.html.twig" );
-		$this->tpl['image']        = file_get_contents ( $p . "/image.html.twig" );
-		$this->tpl['videohtml5']   = file_get_contents ( $p . "/videohtml5.html.twig" );
-		$this->tpl['video']        = file_get_contents ( $p . "/video.html.twig" );
-		$this->tpl['audiohtml5']   = file_get_contents ( $p . "/audiohtml5.html.twig" );
-		$this->tpl['audio']        = file_get_contents ( $p . "/audio.html.twig" );
-		$this->tpl['other']        = file_get_contents ( $p . "/other.html.twig" );		
-	  $this->tpl['pagerbuttons'] = file_get_contents ( $p . "/pagerbuttons.html.twig" );
-	  $this->tpl['sortorder']    = file_get_contents ( $p . "/sortorder.html.twig" );
-	  $this->tpl['stat']         = file_get_contents ( $p . "/stat.html.twig" );
+		$this->tpl["smplphotoalbum"] = file_get_contents ( $p . "/smplphotoalbum.html.twig" );
+		$this->tpl["image"]        = file_get_contents ( $p . "/image.html.twig" );
+		$this->tpl["videohtml5"]   = file_get_contents ( $p . "/videohtml5.html.twig" );
+		$this->tpl["video"]        = file_get_contents ( $p . "/video.html.twig" );
+		$this->tpl["audiohtml5"]   = file_get_contents ( $p . "/audiohtml5.html.twig" );
+		$this->tpl["audio"]        = file_get_contents ( $p . "/audio.html.twig" );
+		$this->tpl["other"]        = file_get_contents ( $p . "/other.html.twig" );		
+	  $this->tpl["pagerbuttons"] = file_get_contents ( $p . "/pagerbuttons.html.twig" );
+	  $this->tpl["sortorder"]    = file_get_contents ( $p . "/sortorder.html.twig" );
+	  $this->tpl["stat"]         = file_get_contents ( $p . "/stat.html.twig" );
 		$this->tpl["js"]           = file_get_contents ($p  . "/smpl_js.html.twig");
 		if($this->folders){
 			$this->tpl["folder"]     = file_get_contents ( $p . "/folder.html.twig" );
 		}
 
 	  if ($this->slide) {
-	   	$this->tpl['slide']      = file_get_contents ( $p . "/slide.html.twig" );
-	   	$this->tpl['slideimage'] = file_get_contents ( $p . "/slideimage.html.twig" );			
+	   	$this->tpl["slide"]      = file_get_contents ( $p . "/slide.html.twig" );
+	   	$this->tpl["slideimage"] = file_get_contents ( $p . "/slideimage.html.twig" );			
 	  }
 
 		if( $this->access ){
@@ -969,56 +966,8 @@ class ItemList {
 		if ( $this->access && Lib::Request( 'SmplCacheClear') && $this->access)  {
 			$this->CacheClear();
 		}
-
-		// Load smpl template	and set the javascript variables	
-		$strjs = "<script>".$this->tpl["js"]."</script>";
-
 		$imgeditform = Lib::Request("imgeditform","0");
-		$id = Lib::Request("id",-1);
-
-		$strjs = str_replace(
-			[ 
-				"{{ base_path }}",
-				"{{ wmpath }}",				
-				"{{ imagickversion }}",
-				"{{ imgeditform }}",
-				"{{ id }}",
-
-				'{{ extimages }}',
-				'{{ extaudio }}',
-				'{{ extaudiohtml5 }}',
-				'{{ extvideo }}',
-				'{{ extvideohtml5 }}',
-				'{{ extapplication }}',
-				'{{ extcompressed }}',
-				'{{ extdocument }}',
-				'{{ extother }}',				
-				'{{ extensions }}',
-
-				"{{ maxsize }}",
-			],
-			[
-				$base_path,
-				$this->wmpath, 				
-				$this->imgver[1], 
-				$imgeditform, 
-				$id,
-				
-				$this->extensionstring("image"),
-				$this->extensionstring("audio"),
-				$this->extensionstring("audiohtml5"),
-				$this->extensionstring("video"),
-				$this->extensionstring("videohtml5"),
-				$this->extensionstring("app"),
-				$this->extensionstring("cmp"),
-				$this->extensionstring("doc"),
-				$this->extensionstring("oth"),				
-				$this->extensionstring("all"),
-
-				ini_parse_quantity( ini_get('post_max_size') ),
-			],  
-			$strjs 
-		);
+		$strjs = $this->StrJS($imgeditform);
 
 		$str = $this->tpl["smplphotoalbum"];
 		$str .= $strjs;
@@ -1105,6 +1054,9 @@ class ItemList {
 
 		// CacheClear button
 		$this->CacheClearButton( $str );
+		
+		//SlideShow button
+		$this->SlideShowButton( $str );
 	
 		// Upload button
 		$this->UploadButton( $str );
@@ -1302,6 +1254,14 @@ class ItemList {
 		}
 	}
 
+	function SlideShowButton(&$str){
+		if( $this->slide ){
+			$str = str_replace( ['<SlideShowButton>','</SlideShowButton>'], '', $str );
+		}else{
+			$str = preg_replace ( "#<SlideShowButton(.*?)<\/SlideShowButton>#imxs",'', $str );
+		}
+	}
+
 	/**
 	 * Graphic driver
 	 * @param string $str
@@ -1479,12 +1439,13 @@ function FFMpeginfo( &$str ){
 	 *
 	 * @return string
 	 */
-	function Slideshow() {		
+	function RenderSlide() {		
+
 		return $this->Slide->RenderSlideShow(
 			$this->params, 			
 			$this->title,
 			$this->slide_subtitle,
-			$this->notes,
+			$this->notes,			
 		);				
 	}
 
@@ -1718,6 +1679,69 @@ function FFMpeginfo( &$str ){
 		return $str;
 	}
 
+	/**
+	 * @param string $imgeditform - editform for slide
+	 * @return mixed 
+	 */
+	function StrJS( &$imgeditform){
+		global $base_path;
+		// Load smpl template	and set the javascript variables	
+		$strjs = "<script>".$this->tpl["js"]."</script>";
+
+		
+		$id = Lib::Request("id",-1);
+
+		$strjs = str_replace(
+			[ 
+				"{{ base_path }}",
+				"{{ wmpath }}",				
+				"{{ imagickversion }}",
+				"{{ imgeditform }}",
+				"{{ id }}",
+
+				'{{ extimages }}',
+				'{{ extaudio }}',
+				'{{ extaudiohtml5 }}',
+				'{{ extvideo }}',
+				'{{ extvideohtml5 }}',
+				'{{ extapplication }}',
+				'{{ extcompressed }}',
+				'{{ extdocument }}',
+				'{{ extother }}',				
+				'{{ extensions }}',
+
+				"{{ maxsize }}",
+			],
+			[
+				$base_path,
+				$this->wmpath, 				
+				$this->imgver[1], 
+				$imgeditform, 
+				$id,
+				
+				$this->extensionstring("image"),
+				$this->extensionstring("audio"),
+				$this->extensionstring("audiohtml5"),
+				$this->extensionstring("video"),
+				$this->extensionstring("videohtml5"),
+				$this->extensionstring("app"),
+				$this->extensionstring("cmp"),
+				$this->extensionstring("doc"),
+				$this->extensionstring("oth"),				
+				$this->extensionstring("all"),
+
+				ini_parse_quantity( ini_get('post_max_size') ),
+			],  
+			$strjs 
+		);
+		return $strjs;
+	}
+
+	/**
+	 * Link to statistic page with filter
+	 *
+	 * @return string
+	 */
 	function SmplStat() {
 		$p = substr ( $this->path, 0, 1 ) == "/" ? substr ( $this->path, 1 ) : $this->path;
 		$str = '<a href="admin/config/fz/smplphotoalbum/stat?smpl_path_filter=' . $p . '" target="SimpleStat">Statistics</a>';

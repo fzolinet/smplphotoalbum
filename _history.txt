@@ -143,6 +143,10 @@ Docs:
 
 History:
 ~~~~~~~
+2026.04.16 - 1.10.3-beta3
+- Bugfix:AI kliens tested
+- SlideShow disabled permanently
+
 2026.04.11 - 1.10.2-beta3
 - BugFix: The quality of encoded video is bad (initial or additional parameters problem) 
   Video && audio bitrate & default init parameters

@@ -7,11 +7,13 @@ use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceExce
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\smplphotoalbum\controller\Lib;
 
 class SlideShow {
 	protected $cfg;
 	protected $root;
   protected $tpl = [];
+	protected $session = [];
 	protected $interval = 10;
 	protected $slide_checking = False;
 	protected $slide_extension = array();
@@ -29,19 +31,19 @@ class SlideShow {
 	protected $modulepath ="";
 	protected $serverName ="";
 
-  function __construct( $path = "" ){
-		$this->cfg  = \Drupal::config( 'smplphotoalbum.settings' );
-		$this->root = $this->cfg->get( 'root' );
-    if( !empty( $path ) ){
-      unset( $_SESSION["slide"]);
-      $_SESSION["slide"] ["path"] = $path;
-			$_SESSION["slide"] ["id"]   = -1;
-			$_SESSION["slide"] ["i"]		= -1;
-    }
-		$this->modulepath = \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath ();
-		$p = realpath($this->modulepath."/templates");
-		$this->tpl['slide']      = file_get_contents ( $p . "/slide.html.twig" );
-		$this->tpl['slideimage'] = file_get_contents ( $p . "/slideimage.html.twig" );
+  function __construct( $path = "", $tpl ){		
+		$this->root = LIB::getConfig( 'root' );
+		$this->tpl = $tpl;
+		$this->modulepath = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();;		
+
+		if( !empty( $path ) ){
+			LIB::deleteSession("slide");		
+			$sess["path"] = $path;
+			$sess["id"]   = -1;
+			$sess["i"]    = -1;
+			LIB::setSession("slide", $sess);
+   	}
+	 	$this->session = LIB::getSession("slide");
   }
 
   /**
@@ -56,14 +58,16 @@ class SlideShow {
     $this->Items = $Items;
     $this->words = $words;
 	
-    $this->path  = $_SESSION["slide"]["path"];
-		$this->id    = $_SESSION["slide"]["id"];		
+    
+		$this->path  = $this->session["path"];		
+		$this->id    = $this->session["id"];		
 
     foreach( $Items AS $i => $Item){            
-			$_SESSION["slide"] [$i] ["id"]       = (int) $Item->getId();
-			$_SESSION["slide"] [$i] ['subtitle'] = $Item->getSubtitle();
-      $_SESSION['slide'] [$i] ['name']     = $Item->getEntry();
+			$this->session[$i] ["id"]       = (int) $Item->getId();
+			$this->session[$i] ['subtitle'] = $Item->getSubtitle();
+      $this->session[$i] ['name']     = $Item->getEntry();
     }
+
 
 		// Choose randomly from actual image
     if( count( $Items ) > 0){

@@ -147,7 +147,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $ImgList = new ItemList( $this->params );
     
     if ( $ImgList->getSlide()) {
-      $out = $ImgList->SlideShow();
+      $out = $ImgList->RenderSlide();
     } else {      
       $out = $ImgList->Render();
     }
@@ -227,7 +227,7 @@ class FilterSmplphotoalbum extends FilterBase {
   function ParamsInit() {  
     global $base_url;  
     $this->params = $this->getSmplConfig();
-    $this->params['modulepath'] = $base_url . "/" . \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath (); 
+    $this->params['modulepath'] = $base_url . "/" . LIB::getModulepath();    
     $this->params['realmodulepath'] =  realpath(__DIR__ ."/../../..");    
     $this->params['title']    = '';
     $this->params['notes']    = '';

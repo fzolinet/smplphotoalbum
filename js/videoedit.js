@@ -36,8 +36,7 @@
    */
   $("#SmplVidPrev").click(function (e) {
     VidPrevNext("prev");
-    PrevNext(smpl.idx, smpl.que, smpl.prev, smpl.next); 
-    e.preventDefault();
+    PrevNext(smpl.idx, smpl.que, smpl.prev, smpl.next);     
     return false;
   });
 
@@ -46,8 +45,7 @@
    */
   $("#SmplVidNext").click(function (e) {
     VidPrevNext("next");
-    PrevNext(smpl.idx, smpl.que, smpl.prev, smpl.next); 
-    e.preventDefault();
+    PrevNext(smpl.idx, smpl.que, smpl.prev, smpl.next);     
     return false;
   });
 
@@ -476,11 +474,11 @@
               smpl.progress(false);
               if ( data.ok == -1 ||data.id == '-1' || data.id == '-2') {
                 smpl.ErrorC( data.msg );
-              } else if(smpl.ok == "cancel"){
-                smpl.AlertC("Conversion cancelled", 'warning');
+              } else if( smpl.ok == "cancel" ){
+                smpl.AlertC( "Conversion cancelled", 'warning' );
               } else{                
-                load(data);
-                smpl.AlertC(data.msg, 'status');                
+                load( data );
+                smpl.AlertC( data.msg, 'status' );                
               }
               ShowButtons();
               HideButton("#SmplVidCancel");
@@ -516,7 +514,7 @@
     }
 
     $("#SmplVidId").val(smpl.id);
-    $("#SmplVidQue").val(smpl.que);   
+    $("#SmplVidQue").val(smpl.que); 
     $("#SmplVidParams").val(smpl.params);    
     $("#SmplVidIdx").val(smpl.idx); 
     $("#SmplVidPrev").val(smpl.prev);

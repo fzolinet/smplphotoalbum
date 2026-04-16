@@ -28,7 +28,6 @@ use Gemini\Enums\MimeType;
 use Drupal\smplphotoalbum\AI;
 use Drupal\smplphotoalbum\SlideShow;
 
-
 class SmplphotoalbumController extends ControllerBase{  
   private $cfg;
   private $mp;
@@ -574,7 +573,7 @@ class SmplphotoalbumController extends ControllerBase{
       return $response;
     }
 
-    $Slide = new SlideShow();
+    $Slide = new SlideShow($path = "", null, $this->mp);
     $json = $Slide->SlideGet($cmd);
     $content = json_encode( $json );    
     $response->addCommand( new InsertCommand( '', $content, [] ) );
@@ -850,7 +849,7 @@ class SmplphotoalbumController extends ControllerBase{
       return $response;
     }
 
-    $p = Lib::slash( $this->root. $a["path"]."/".$a["name"] );
+    $p =  LIB::slash($this->root. $a["path"]."/".$a["name"], "file");
     
     if( $this->aigemini ){
       $this->ReadWords();
