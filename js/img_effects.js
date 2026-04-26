@@ -350,7 +350,7 @@
 	//-------------- Resize -----------
 	function Resize() {
 		$("#smpl_resize").click(function () {
-			return label_actual("resize", "Rectangle");
+			return label_actual("resize");			
 		});
 
 		$("#smpl_resize_percent").val(100)

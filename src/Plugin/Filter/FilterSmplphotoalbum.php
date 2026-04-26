@@ -377,7 +377,9 @@ class FilterSmplphotoalbum extends FilterBase {
             break;
           case 'private'   : $this->params['private'] = $v; break;    // private store          
           // is this slideshow
-          case 'slide'     : $this->params['slide']     = $this->truefalse($v); break;
+          case 'slide'     : 
+            $this->params['slide']     = $this->truefalse($v); 
+            break;
           // style of slide
           case 'slidestyle': $this->params['slidestyle']= $v; break;
           // style of smplbox
@@ -415,6 +417,7 @@ class FilterSmplphotoalbum extends FilterBase {
         }
       }
     }
+    ksort($this->params);
   }
 
   /**

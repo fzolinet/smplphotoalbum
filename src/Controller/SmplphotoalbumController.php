@@ -487,7 +487,7 @@ class SmplphotoalbumController extends ControllerBase{
     }
     $tn = strpos($id, "&tn=");
     $id = (int) (str_replace("&tn=1","",$id));
-    $pics = $this->Pics();
+    $pics = Lib::Pics();
 
     if( $_SESSION["slide"]["i"] >-1 ) {
 
@@ -500,8 +500,8 @@ class SmplphotoalbumController extends ControllerBase{
       }
       $record["i"]        = $i;
       $record["path"]     = $_SESSION["slide"]['path'];
-      $record["name"]     = $_SESSION["slide"][$i]['name'];
-      $record["subtitle"] = $_SESSION["slide"][$i]['subtitle'];
+      $record["name"]     = $_SESSION["slide"]["img"][$i]['name'];
+      $record["subtitle"] = $_SESSION["slide"]["img"][$i]['subtitle'];
 
     }else{
 
@@ -522,11 +522,11 @@ class SmplphotoalbumController extends ControllerBase{
         $i = 0;
       }
 
-      $_SESSION["slide"] ['id'] = $i;
+      $_SESSION["slide"] ['i']  = $i;
       $_SESSION["slide"] ["id"] = $id;
-      $_SESSION["slide"] [$i] ['path'] = $record["path"];
-      $_SESSION["slide"] [$i] ['name'] = $record["name"];
-      $_SESSION["slide"] [$i] ['subtitle'] = $record["subtitle"];      
+      $_SESSION["slide"] ["img"] [$i] ['path'] = $record["path"];
+      $_SESSION["slide"] ["img"] [$i] ['name'] = $record["name"];
+      $_SESSION["slide"] ["img"] [$i] ['subtitle'] = $record["subtitle"];      
     }
 
     if( empty( $record ) ) {
@@ -573,7 +573,7 @@ class SmplphotoalbumController extends ControllerBase{
       return $response;
     }
 
-    $Slide = new SlideShow($path = "", null, $this->mp);
+    $Slide = new SlideShow($path = "", "", $this->mp);
     $json = $Slide->SlideGet($cmd);
     $content = json_encode( $json );    
     $response->addCommand( new InsertCommand( '', $content, [] ) );
@@ -1131,7 +1131,7 @@ class SmplphotoalbumController extends ControllerBase{
   }
 
   function Pics(){
-		$pics = $_SESSION["slide"];
+		$pics = $_SESSION["slide"]["img"];
 		unset ($pics["id"], $pics["path"], $pics["i"]);
 		return $pics;
 	}

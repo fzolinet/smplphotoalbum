@@ -293,9 +293,10 @@ class VideoEdit {
       //
       if(empty($defaultParams)){
         $defaultParams = $video->getDefaultSettings(true);
-      }
-      if( is_array($defaultParams) ){
-        $defaultParams = implode(" ", $defaultParams);
+      } else{
+        if( is_array($defaultParams) ){
+          $defaultParams = implode(" ", $defaultParams);
+        }
       }
       $this->ts["params"] = $defaultParams;
       //

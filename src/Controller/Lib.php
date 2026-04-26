@@ -163,10 +163,7 @@ class Lib{
    * @return mixed 
    */
   public static function getSession( $str ){
-    static $session = null;
-    if ( $session == null ) {
-      $session = \Drupal::request()->getSession();
-    } 
+    $session = \Drupal::request()->getSession();
     return $session->get( $str );
   }
 
@@ -176,25 +173,19 @@ class Lib{
    * @param mixed $val 
    * @return void 
    */
-  public static function setSession( $str, $val ){
-    static $session = null;
-    if ( $session == null ) {
-      $session = \Drupal::request()->getSession();
-    }
-    $session->set( $str, $val );
+  public static function setSession( $str, $val ){    
+    $session = \Drupal::request()->getSession();  
+    $session->set($str, $val);
   }
 
   /**
-   * Delete the session variable
+   * Delete Session
    * @param mixed $str 
    * @return void 
    */
   public static function deleteSession( $str ){
-    static $session = null;
-    if ( $session == null ) {
-      $session = \Drupal::request()->getSession();
-    }
-    $session->remove( $str );
+    $session = \Drupal::request()->getSession();
+    $session->remove($str);
   }
 
   /**
@@ -272,7 +263,10 @@ class Lib{
     return $default;
   }
 
-   /**
+  public static function RequestServer( $key){
+    return \Drupal::request()->server->get($key );
+  }
+  /**
    * Can you acces the smplphotoalbum
    * @return bool 
    * @throws ContainerNotInitializedException 
@@ -282,6 +276,14 @@ class Lib{
   public static function smplphotoalbum_access() {
 		$roles = \Drupal::currentUser()->getroles();
 		return in_array( 'administrator', $roles ) ? true : false;
+	}
+
+  /**
+	 * Copy to array pics from session
+	 * @return array mixed
+	 */
+	public static function Pics(){		
+		return $_SESSION["slide"]["img"];		
 	}
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Extension\InfoParser;
 use Drupal\smplphotoalbum\controller\Lib;
@@ -11,7 +12,7 @@ require "vendor/autoload.php";
 function smplphotoalbum_help($route_name, RouteMatchInterface $route_match) {
   global $language;  
   $output = '';
-  $m = Lib::getModulepath();
+  $m = \Drupal::service ( 'module_handler' )->getModule ( 'smplphotoalbum' )->getPath ();
     
   switch ($route_name) {
     case "help.page.smplphotoalbum" :
@@ -71,6 +72,7 @@ function smplphotoalbum_theme($existing, $type, $theme, $path) {
   
   return $theme;
 }
+
 /**
  * Load js library if you are Administrator and 
  * there is photoalbum on the page

@@ -12,38 +12,40 @@ use Drupal\smplphotoalbum\controller\Lib;
 class SlideShow {
 	protected $cfg;
 	protected $root;
-  protected $tpl = [];
+  protected $tplslide = "";	//Templates
 	protected $session = [];
 	protected $interval = 10;
 	protected $slide_checking = False;
 	protected $slide_extension = array();
 	protected $slide = False;
-	protected $path = "";
+	protected $path = "";		//slideshow path
 	protected $i = 0;
 	protected $id = 0;
 	protected $db;
 	protected $subtitle = "";
 	protected $name     = "";
-	protected $style    = "none";
+	protected $style    = "none";	
   protected $params;
   protected $Items;
   protected $words;
 	protected $modulepath ="";
 	protected $serverName ="";
 
-  function __construct( $path = "", $tpl ){		
+  function __construct( $path = "", $tpl, $mp ="" ){		
 		$this->root = LIB::getConfig( 'root' );
-		$this->tpl = $tpl;
-		$this->modulepath = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();;		
-
-		if( !empty( $path ) ){
-			LIB::deleteSession("slide");		
-			$sess["path"] = $path;
-			$sess["id"]   = -1;
-			$sess["i"]    = -1;
-			LIB::setSession("slide", $sess);
-   	}
-	 	$this->session = LIB::getSession("slide");
+		$this->tplslide = $tpl;
+		if( !empty($path)){
+			unset($_SESSION["slide"] );
+			$_SESSION["slide"]["path"] = $path;
+			$_SESSION["slide"]["id"] = -1;
+			$_SESSION["slide"]["i"]	=-1;
+			$_SESSION["slide"]["actual"] = -1;
+			$_SESSION["slide"]["img"] = [];
+		}			
+		
+		$this->path     = $_SESSION["slide"] ["path"];
+		
+		$this->modulepath = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
   }
 
   /**
@@ -54,47 +56,40 @@ class SlideShow {
 	* @param mixed $tpl 
 	* @return void 
 	*/
-  public function NewSlideShow( &$words, &$Items) {   
+  public function NewSlideShow( $words, &$Items) {   
     $this->Items = $Items;
     $this->words = $words;
-	
-    
-		$this->path  = $this->session["path"];		
-		$this->id    = $this->session["id"];		
-
-    foreach( $Items AS $i => $Item){            
-			$this->session[$i] ["id"]       = (int) $Item->getId();
-			$this->session[$i] ['subtitle'] = $Item->getSubtitle();
-      $this->session[$i] ['name']     = $Item->getEntry();
+		$this->path  = $_SESSION["slide"]["path"];
+		$this->id    = (int)($_SESSION["slide"]["id"]);
+    $this->db    = count( $Items );
+		$i = 0;
+    foreach( $Items AS $Item){            		
+			$_SESSION["slide"] ["img"] [$i] ["id"] = $Item->getId();
+			$_SESSION["slide"] ["img"] [$i] ["subtitle"] = $Item->getSubtitle();
+			$_SESSION["slide"] ["img"] [$i] ["name"] = $Item->getEntry();			
+			$i++;
     }
 
+		// Choose randomly from actual images
+    if( $this->db > 0){
+			$pics = Lib::Pics();
+			$_SESSION["slide"] ["i"]  = $this->i  = rand(0 , $this->db-1 );      
+			$_SESSION["slide"] ["id"] = $this->id = (int) ($pics[ $this->i ][ "id" ]);
 
-		// Choose randomly from actual image
-    if( count( $Items ) > 0){
-			$pics = $this->Pics();
-			$this->i = rand(0 , count($pics));
-      
-			$this->id  = $pics[ $this->i ][ "id" ];
-
-			// Set the actual datas of image      
-			$_SESSION["slide"] ["i"]  = $this->i; 
-			$_SESSION["slide"] ["id"] = $this->id; 
-      $this->path     = $_SESSION["slide"] ["path"];
-			$this->subtitle = $_SESSION["slide"] [$this->i] ['subtitle'];
-      $this->name     = $_SESSION["slide"] [$this->i] ['name'];
-      $this->db       = count( $pics );
+			// Set the actual datas of image      			  			       
+			$this->subtitle = $_SESSION["slide"] ["img"] [$this->i] ["subtitle"];
+      $this->name     = $_SESSION["slide"] ["img"] [$this->i] ["name"];      
     }
   }
 
   /**
    * Rendering a Slideshow.
-	 * Itt Called from FilterSmplPhotoalbum.php
-	 * 
+   * Itt Called from FilterSmplPhotoalbum.php
+   * 
    * @param array &$params 
-   * @param array &$tpl 
-   * @param string $name 
-   * @param string $subtitle 
-   * @param string $notes 
+   * @param string $name   
+   * @param string $slide_subtitle 
+   * @param string $slide_notes 
    * @return string|string[] 
    * @throws ContainerNotInitializedException 
    * @throws ServiceCircularReferenceException 
@@ -104,6 +99,7 @@ class SlideShow {
     global $base_path, $base_url;
     $this->params   = $params;
     $this->interval = $params["interval"];
+		$this->slide    = $params['slide'];
     $s = [];
 		$r = [];
 		$s["linksrc"] = "{{ linksrc }}";
@@ -131,7 +127,7 @@ class SlideShow {
 		$r["id"] = $this->id;
 
 		$s["interval"] = '{{ interval }}';
-		$r["interval"] = $params["interval"] * 1000;
+		$r["interval"] = $params["interval"] * 500;
 
 		$s["slidestyle"] = "{{ slidestyle }}";
 		$r["slidestyle"] = $params["slidestyle"];
@@ -144,10 +140,10 @@ class SlideShow {
 
     // It makes url from actual url
 		$requestUri = \Drupal::request()->getRequestUri();				
-		$serverName = \Drupal::request()->server->get("SERVER_NAME");
+		$serverName = Lib::RequestServer("SERVER_NAME");
 		$this->serverName = $serverName;
-		$scheme     = \Drupal::request()->server->get("REQUEST_SCHEME");		
-		$port       = ":". \Drupal::request()->server->get("SERVER_PORT");
+		$scheme     =  Lib::RequestServer("REQUEST_SCHEME");		
+		$port       = ":" . Lib::RequestServer("SERVER_PORT");
 
     if( ($scheme == "http"  && $port == ":80") || ( $scheme == "https" && $port == ":443") ){
 			$port = "";
@@ -160,12 +156,20 @@ class SlideShow {
 		$r["smplurl"] = str_replace( "&SmplSlide=1" , "", $request );
 		
 		$this->RenderSlideTnGet($s, $r);
+		
+		$s["Up"] = '{{ Up }}';
+		$r["Up"] = $this->words["Up"];
+		
+		$s["Down"] = '{{ Down }}';
+		$r["Down"] = $this->words["Down"];
 
-		foreach( $this->words as $i => $e ) {
-			$s [$i] = '{{ ' . $e . ' }}';
-			$r [$i] =  $e;
-		}
-		$str = str_ireplace ( $s, $r, $this->tpl["slide"] );
+		$s["Previous"] = '{{ Previous }}';
+		$r["Previous"] = $this->words["Previous"];
+
+		$s["Next"] = '{{ Next }}';
+		$r["Next"] = $this->words["Next"];
+		
+		$str = str_ireplace ( $s, $r, $this->tplslide );
 		return $str;
   }
 
@@ -183,7 +187,7 @@ class SlideShow {
 
 		$response = new AjaxResponse();
 
-		$pics = $this->Pics();
+		$pics = Lib::Pics();
 
 		$id = (int) ($this->Request("id",-1));
 
@@ -245,37 +249,32 @@ class SlideShow {
 	 */
 	function RenderSlideTnGet(&$s, &$r){
 		global $base_url;
-		$pics = $this->Pics();
+		$pics = Lib::Pics();
 		$str = "";
 
 		$idx = 0;
 		while( $idx < count($pics) && $this->id != $pics[$idx]["id"]){
 			$idx++;
 		}
-		
-		$i = 0;
-		for($j = $idx-4; $j < $idx + 5; $j++, $i++ ){			
+				
+		for($j = $idx-4, $i = 0; $j < $idx + 5; $j++, $i++ ){			
 			$s["id$i"]         = "{{ id$i }}";
 			$s["linktn$i"]     = "{{ linktn$i }}";
 			$s["titletn$i"]    = "{{ titletn$i }}";
 			$s["tnsubtitle$i"] = "{{ slidetnsubtitle$i }}";
-					
+			$jp = ($j<0) ? $j + count($pics) : $j;
+			
+			$jmod = $jp % count($pics);	
 			try{
-				$r["id$i"]         = $pics[$j]["id"];
-				$r["linktn$i"]     = $base_url . "/smplphotoalbum/slide/" . $pics[ $j ][ "id" ] . "&tn=1";
+				$r["id$i"]         = $pics[$jmod]["id"];
+				$r["linktn$i"]     = $base_url . "/smplphotoalbum/slide/" . $pics[ $jmod ][ "id" ] . "&tn=1";
 			} catch( \Exception $e){
 				fz_die( $pics );
 			}
 			
-			$r["titletn$i"]    = $pics[$j]["name"];
-			$r["tnsubtitle$i"] = $pics[$j]["subtitle"];
-		}
-		
-		if($this->serverName == "localhost" ){
-			print("<pre>");
-			print_r($_SESSION["slide"]);
-			print("</pre>");
-		}		
+			$r["titletn$i"]    = $pics[ $jmod ]["name"];
+			$r["tnsubtitle$i"] = $pics[ $jmod ]["subtitle"];
+		}			
 	}
 
 	/**
@@ -315,16 +314,7 @@ class SlideShow {
    * @return string
    */
   function Request($key, $default = '' ){    
-    return  \Drupal::request()->get($key, $default );  // $_GET / $_POST    
+    return  Lib::Request($key, $default );  // $_GET / $_POST  
   }
 
-	/**
-	 * Copy to array pics from session
-	 * @return array mixed
-	 */
-	function Pics(){
-		$pics = $_SESSION["slide"];
-		unset ($pics["id"], $pics["path"], $pics["i"], $pics["actual"]);
-		return $pics;
-	}
 }

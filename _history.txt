@@ -6,12 +6,11 @@ Bugs:
 
 ImageEdit
 
-- Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
-- Need to check to how layers work
-- the ellipse / rectangle / grid / point eyedrop change 
-  for the scaled and dragged image 
+// TODO - Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
+   - Need to check to how layers work
+// TODO - the ellipse / rectangle / grid / point eyedrop change for the scaled and dragged image 
 
-Todo:
+// TODO:
 ~~~~~~~~
 - audio (wav, mp3, flac, ogg ) editing
 - Video Convert Break handling (Error or cancelled) 
@@ -20,24 +19,21 @@ Todo:
 	https://www.digitalocean.com/community/tutorials/how-to-use-the-javascript-fetch-api-to-get-data 
 	https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
 
-- ffmpeg using
-	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
 
-- ffmpeg - write watermark on the video with ffmpeg
+// TODO - ffmpeg - write watermark on the video with ffmpeg
 	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
 	
-	stop / kill / abort ffmpeg from php => under Linux && under Windows
+// TODO - stop / kill / abort ffmpeg from php => under Linux && under Windows
 	https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues/218
 
-- Use javascript fetch instead of $.ajax
+//TODO - Use javascript fetch instead of $.ajax
   https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
 
-- if long process control the smpl.processvisible()
-- If the image is too big then the view lest max of the windows
+// TODO - if long process control the smpl.processvisible()	
 
-- Automate normalize is default on image
+// TODO - Automate normalize is default on image
 
-- Text write on the image
+// TODO - Text write on the image
 	https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
 	https://www.geeksforgeeks.org/computer-vision/image-processing-algorithms-in-computer-vision/
 
@@ -116,7 +112,10 @@ Docs:
 	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
 	
 	https://github.com/asheroto/ffmpeg-examples 
-	
+
+	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
+
+
 	https://www.fzolee.hu/fw2/ffmpeg-parameterei
 
 	PHP-FFMpeg - stop / kill / abort ffmpeg from php => under Linux && under Windows
@@ -143,6 +142,10 @@ Docs:
 
 History:
 ~~~~~~~
+2026.04.26 - 1.10.3-beta4
+- Bugfix: Slideshow
+- Bugfix: VideoEdit
+
 2026.04.16 - 1.10.3-beta3
 - Bugfix:AI kliens tested
 - SlideShow disabled permanently

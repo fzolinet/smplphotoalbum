@@ -133,7 +133,7 @@ class ItemList {
 			// subfolder - upfolder
 			$this->subfolder = $this->sess->get("subfolder");
 
-			//If one level up
+			//If one level up / down
 			$upfolder = Lib::Request("upfolder", false );		
 			$subfolder = Lib::Request("subfolder", false);
 					
@@ -144,7 +144,7 @@ class ItemList {
 
 				Lib::setSession("subfolder", $this->subfolder);
 
-			} else if( ( $subfolder) ){
+			} else if( $subfolder ){
 					$this->subfolder = Lib::slash( $subfolder . "/" );
 					Lib::setSession("subfolder", $this->subfolder);								
 			} 
@@ -156,7 +156,7 @@ class ItemList {
 		}
 
 		// Make an Image object
-		if ( !is_dir ( $this->root . $this->path . $this->subfolder) ) {
+		if ( !is_dir( $this->root . $this->path . $this->subfolder) ) {
 			\Drupal::messenger()->addMessage( 
 				$this->t( "Set the right folder in settings of Smplphotoalbum. This is not a folder: " ) ."'".
 				$this->root . $this->path . $this->subfolder . "'"
@@ -170,7 +170,7 @@ class ItemList {
 			$ok = mkdir ( $tn );
 		}
 
-		if (! $ok) {
+		if (!$ok) {
 			\Drupal::messenger()->addMessage(  "There is no cache folder or not writable: " . $tn , 'error' );
 		}
 
@@ -344,8 +344,8 @@ class ItemList {
 		}
 
 		// Save in the session the serial number of image 
-		if ($this->slide) {
-			$this->Slide = new SlideShow( $this->path, $this->tpl );
+		if( $this->slide && count( $this->Items ) > 0 ){
+			$this->Slide = new SlideShow( $this->path, $this->tpl["slide"] );
 			$this->Slide->NewSlideShow( $this->words, $this->Items );			
 		}					
 	}
@@ -355,7 +355,8 @@ class ItemList {
 	 *
 	 * @param array $params
 	 */
-	function preSettings() {		
+	function preSettings() {	
+		ksort($this->params);
 		$this->modulepath= $this->params['modulepath'];
 		$this->realmodulepath = $this->params['realmodulepath'];
 		$this->root      = $this->getRoot( $this->params['root'] );
@@ -392,9 +393,11 @@ class ItemList {
 		$this->title = isset ( $this->params['title'] ) && !empty( $this->params[ 'title' ] ) ? '<h2 class="smpl_title">' . $this->params['title'] . '</h2>' : '';
 		$this->notes = isset ( $this->params['notes'] ) && !empty( $this->params[ 'notes' ] ) ? '<div class="smpl_notes">' . $this->params['notes'] . '</div>' : '';
 		
-		// Slideshow
-		$this->params['slide'] = false && Lib::Request("SmplSlide", false);		
-	  $this->slide_checking = $this->params['slide_checking'];		
+		// Slideshow		
+	  $this->slide_checking = $this->params['slide_checking'];
+		if( Lib::Request("SmplSlide", false) ) {
+			$this->params['slide'] = true;
+		}
 		$this->slide          = $this->params['slide'] && $this->params['slide_checking'];
 		$this->slidestyle     = $this->params['slidestyle'];
 		$this->interval       = $this->params['interval'];
@@ -966,6 +969,7 @@ class ItemList {
 		if ( $this->access && Lib::Request( 'SmplCacheClear') && $this->access)  {
 			$this->CacheClear();
 		}
+
 		$imgeditform = Lib::Request("imgeditform","0");
 		$strjs = $this->StrJS($imgeditform);
 
@@ -982,7 +986,7 @@ class ItemList {
 		$str    = str_replace("{{ action }}", $origin, $str);
 		
 		// Edit form, upload form, folder form
-		if ( $this->access ) {			
+		if( $this->access ) {			
 			$str = str_replace( 
 							[ 
 								"{{ ImgEditDefault }}",
@@ -1255,7 +1259,7 @@ class ItemList {
 	}
 
 	function SlideShowButton(&$str){
-		if( $this->slide ){
+		if( true || $this->params['slide'] ){
 			$str = str_replace( ['<SlideShowButton>','</SlideShowButton>'], '', $str );
 		}else{
 			$str = preg_replace ( "#<SlideShowButton(.*?)<\/SlideShowButton>#imxs",'', $str );

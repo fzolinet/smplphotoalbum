@@ -287,8 +287,10 @@ abstract class AbstractVideo extends Audio
      */
     public function getDefaultSettings($getString = false){
         $cmds = $this->defaultSettings("", $getString);
-        $cmdstring = implode(" ", $cmds);
-        return $cmdstring;
+        if(is_array($cmds)){
+            $cmds = implode(" ", $cmds);
+        }        
+        return $cmds;
     }
 
     /**

@@ -332,7 +332,7 @@
               ShowButtons();
               smpl.ErrorC(error.responseText);
             });
-        }
+          }
 
         e.preventDefault();
         return false;

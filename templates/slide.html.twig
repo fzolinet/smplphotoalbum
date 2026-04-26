@@ -22,8 +22,7 @@
 		<div id="smplslidetn1" class="smplslidetn_container">			
 				<img id="smplslidetnid1" src="{{ linktn1 }}" title="{{ titletn1 }}"
 					alt="{{ slidetnsubtitle1 }}" class="smplslidetnimg"
-					data-id="{{ id1 }}" data-link="{{ linktn1 }}" />
-			
+					data-id="{{ id1 }}" data-link="{{ linktn1 }}" />			
 		</div>
 
 		<div id="smplslidetn2" class="smplslidetn_container">			
@@ -76,9 +75,8 @@
 	
 	class SmplSlide {};
 	var smplslide = new SmplSlide();
-	smplslide.ajax       = "{{ ajax }}";
-	smplslide.path       = "{{ path }}";
-	//smplslide.i          = {{ i }}; 		// No of item
+	smplslide.ajax       = "{{ ajax }}";	
+	smplslide.timer      = false;	
 	smplslide.id         = {{ id }};		// id in the database
 	smplslide.title      = '{{ title }}';
 	smplslide.subtitle   = "{{ sub }}";
