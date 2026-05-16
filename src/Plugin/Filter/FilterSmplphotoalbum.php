@@ -237,7 +237,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['slidestyle'] = 'none';
     $this->params['translate']  = false;     
     $this->params['methods']    = 'POST';
-    $this->params['folders']    = ($this->params['folders'] === 1 ? true: false);
+    $this->params['folders']    = ($this->params['folders'] === 1 ? true: false);    
     
     if (! isset ( $this->params['icon'] )) {
       $this->params['icon'] = '_col';
@@ -253,7 +253,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
     $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";    
     $this->params["aigemini"]              = $this->params["aigemini"];
-
+    ksort($this->params);    
   }
 
   /**

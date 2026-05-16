@@ -19,7 +19,7 @@ class ItemList {
 	public $Items = [];
 	protected $ascdesc = "asc"; // sorting order ascending or descending
 	protected $author    = "PiQasso Group";
-	protected $caption;
+	protected $caption   = "";
 	protected $con; // Drupal database connection string
 	protected $copyright = "PiQasso Group";
 	protected $edit = false;
@@ -39,21 +39,21 @@ class ItemList {
 	protected $modulepath = ''; 	// path of module in filesystem
 	protected $realmodulepath = '';
 
-	protected $number;         	  // Length of a page
+	protected $number     = 0; 	   // Length of a page
 	protected $numitems   = 0;
-	protected $order      = false;// sorting the items	
-	protected $page       = 0;    // No. of actual page
-	protected $pagenumber = 0; 		// number of pages
-	protected $pagelength = 1;	  // length of a page
-	protected $params;         	  // copy of params (maybe not the best choice)
-	protected $private;       	  // Using private file system
-	protected $request;           // request object
+	protected $order      = false; // sorting the items	
+	protected $page       = 0;     // No. of actual page
+	protected $pagenumber = 0; 		 // number of pages
+	protected $pagelength = 1;	   // length of a page
+	protected $params     = [];    // copy of params (maybe not the best choice)
+	protected $private    = false; // Using private file system
+	protected $request    = "";    // request object
 	protected $requestUri = '';   
 	protected $root       = '';   // root folder of photoalbum	
 	protected $path       = '';   // relative path to photoalbum folder
 	protected $folders    = FALSE;// list of folders
 	protected $subfolder  = '';   // subfolder from the path of actual folder from the 
-	protected $sess; 							// Drupal session handling
+	protected $sess;       				// Drupal session handling
 	protected $smplbox    = "smplbox"; // It helps to shows the image in a lightbox or colorbox
 	protected $sortorder  = 'filename'; // source of compare
 	protected $stat       = '';   // statistics
@@ -63,12 +63,12 @@ class ItemList {
 	protected $title = '';   	    // Title of page
 	protected $notes = '';		    // Notes of page
 	protected $tpl = [];     	    // array of templates
-	protected $html5;							// using html5 video & audio tags
+	protected $html5 = true;			// using html5 video & audio tags
 
 	//translating
 	protected $translate = false;
 	protected $url = '';
-	protected $user;         	// current user
+	protected $user = null;   // current user
 	protected $viewed = 0;   	// is the view number of image on?
 	protected $width = 0;		 	// Width of items
 	protected $wmpath  = ""; 	// watermark
@@ -87,7 +87,7 @@ class ItemList {
 	protected $ffmpeg = 1;
 	
 	// Slideshow
-	protected $Slide;
+	protected $SlideShow;
 	protected $interval = 10;
 	protected $slide_checking = False;
 	protected $slide_extension = array();
@@ -95,7 +95,7 @@ class ItemList {
 	protected $slide_path = "";
 	protected $slide_i = 0;
 	protected $slide_id = 0;
-	protected $slide_db;
+	protected $slide_db = 0;
 	protected $slide_subtitle = "";
 	protected $slide_title = "";
 	protected $slidestyle = "";
@@ -110,14 +110,12 @@ class ItemList {
 	function __construct(&$params) {
 
 		$this->user 		= \Drupal::currentUser();
-		$this->access	  = $this->RightAccess();
-		$this->request	= \Drupal::request();
+		$this->access	  = $this->RightAccess();		
 		$this->sess   	= \Drupal::request()->getSession();	
 		$this->con    	= \Drupal::database();		
-		$this->params     = &$params;			
+		$this->params   = &$params;			
 		$this->preSettings();
-		
-		$this->slide_path	= $this->params["path"];
+				
 		$this->upload 		= $this->access && $this->upload;		
 			
 		// If method comes from page
@@ -126,7 +124,7 @@ class ItemList {
 			if ( $method == "post" || $method == "get" ) {
 				$this->method = $method;
 			}
-		}
+		}		
 
 		//Works with folders
 		if( $this->folders ){			
@@ -136,7 +134,7 @@ class ItemList {
 			//If one level up / down
 			$upfolder = Lib::Request("upfolder", false );		
 			$subfolder = Lib::Request("subfolder", false);
-					
+								
 			if( $upfolder ){
 				$this->subfolder = dirname( $this->subfolder );
 
@@ -145,12 +143,12 @@ class ItemList {
 				Lib::setSession("subfolder", $this->subfolder);
 
 			} else if( $subfolder ){
-					$this->subfolder = Lib::slash( $subfolder . "/" );
-					Lib::setSession("subfolder", $this->subfolder);								
+				$this->subfolder = Lib::slash( $subfolder . "/" );
+				Lib::setSession("subfolder", $this->subfolder);								
 			} 
 
 			//List of folder: get folder from Request or session. Check the subfolder
-			if( $fname = Lib::Request("smpl_fname", "", "POST") ){
+			if( $fname = Lib::Request("SmplFolderName", "", "POST") ){
 				if( !empty( $fname ) ) $this->NewFolder( $fname );
 			}
 		}
@@ -158,8 +156,8 @@ class ItemList {
 		// Make an Image object
 		if ( !is_dir( $this->root . $this->path . $this->subfolder) ) {
 			\Drupal::messenger()->addMessage( 
-				$this->t( "Set the right folder in settings of Smplphotoalbum. This is not a folder: " ) ."'".
-				$this->root . $this->path . $this->subfolder . "'"
+				$this->words["Set the right folder in settings of Smplphotoalbum"].". ".$this->words["This is not a folder"].": " .
+				"'".$this->root . $this->path . $this->subfolder . "'"
 			);
 		}
 
@@ -171,7 +169,7 @@ class ItemList {
 		}
 
 		if (!$ok) {
-			\Drupal::messenger()->addMessage(  "There is no cache folder or not writable: " . $tn , 'error' );
+			\Drupal::messenger()->addMessage(  $this->words["There is no cache folder or not writable"].": " . $tn , 'error' );
 		}
 
 		//Thumbnails refresh
@@ -191,7 +189,7 @@ class ItemList {
 		
 		//------------------- Query dynamic -----------
 		$query = $this->con->select('{smplphotoalbum}', 's');
-		$query -> fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified', 'importance' ]);				
+		$query->fields('s', [ 'id', 'path', 'name', 'subtitle', 'typ', 'viewnumber', 'link', 'size', 'modified', 'importance' ]);				
 
 		//WHERE  path = 		
 		$pathCond = $query->condition( 'path', $this->path . $this->subfolder , "LIKE" );		
@@ -321,7 +319,7 @@ class ItemList {
 			$this->Items[$id] = new Item(
 				$id,
 				$RS->subtitle,
-				$RS->viewnumber,
+				(int) $RS->viewnumber,
 				$RS->link,
 				$this->params,
 				$this->words,
@@ -345,15 +343,13 @@ class ItemList {
 
 		// Save in the session the serial number of image 
 		if( $this->slide && count( $this->Items ) > 0 ){
-			$this->Slide = new SlideShow( $this->path, $this->tpl["slide"] );
-			$this->Slide->NewSlideShow( $this->words, $this->Items );			
+			$this->SlideShow = new SlideShow( $this->path, $this->tpl["slide"] );
+			$this->SlideShow->NewSlideShow( $this->words, $this->Items );			
 		}					
 	}
 
 	/**
 	 * Set parameters, load templates, etc.
-	 *
-	 * @param array $params
 	 */
 	function preSettings() {	
 		ksort($this->params);
@@ -361,6 +357,7 @@ class ItemList {
 		$this->realmodulepath = $this->params['realmodulepath'];
 		$this->root      = $this->getRoot( $this->params['root'] );
 		$this->path      = $this->params['path'];
+		$this->slide_path= $this->path;
 		$this->width     = ( int ) $this->params['width'];
 		$this->number    = ( int ) ($this->params['number']);
 		$this->order     = $this->params["order"];
@@ -378,7 +375,7 @@ class ItemList {
 		$this->ffmpeg    = $this->params["ffmpeg"];		// Video edit with ffmpeg
 		$this->wmpath    = $this->params["wmpath"];	  // Watermark		
 		$this->upload    = $this->params['upload'];	  // Upload enabled | disabled
-		$this->folders   = $this->params['folders']; //List of folders enabled | disabled
+		$this->folders   = $this->params['folders'];  //List of folders enabled | disabled
 		//checking types of items
 		$this->audio = $this->params['audio_checking'];
 		$this->video = $this->params['video_checking'];
@@ -420,7 +417,7 @@ class ItemList {
 	  }
 
 	  // read the text
-		$this->ReadWords();
+		$this->words = Lib::ReadWords($this->params['lang']);
 		// Load templates
 		$this->LoadTpls();
 
@@ -444,8 +441,7 @@ class ItemList {
 	}
 
 	/**
-	 * Load templates
-	 * @return
+	 * Load templates	 
 	 */
 	function LoadTpls(){		
 		$p = $this->params["realmodulepath"] . "/templates";				
@@ -480,76 +476,44 @@ class ItemList {
 			$this->tpl["editform"]    = "";
 			$this->tpl["imgeditform"] = "";
 			$this->tpl["videditform"] = "";
-			$this->tpl["uploadform"]  = "";
-			
+			$this->tpl["uploadform"]  = "";			
 		}		
 	}
-
-	/**
- 	 * Reads the words of translating
-	 * @return
- 	 */
-	function ReadWords(){
-		$this->translate  = strtolower( trim( $this->params['translate'] ) );
-		if($this->params['lang'] == "" ){
-			$this->params['lang'] = 'en';
-		}
 	
-		if( $this->params['lang'] == 'en' ){
-			$words = file( $this->realmodulepath  ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
-		} else {			
-			$words = file( $this->realmodulepath ."/translate/translate_" . strtolower(trim( $this->params['lang'] )).".txt", FILE_IGNORE_NEW_LINES );
-		}
-		$words = str_replace( "_"," ", $words);
-		
-		foreach($words AS $e){
-			$e = trim( $e );
-			if( strpos( ' '.$e, ';' ) > 0 ){
-				continue;
-			}
-			$a = explode( "=", $e );
-
-			if( count( $a ) == 1 ) {
-				$this->words[ $e ] = $e;
-			}else{
-				$this->words[ trim( $a[0] ) ] = trim( $a[1] );
-			}
-		}
-	}
-
 	/**
 	 * New Folder makes in the actual subfolder
 	 * @param string $fname
 	 * @return true | false
 	 */
 	function NewFolder( $fname ){				
-		$sub   = Lib::Request("smpl_fsub" , "", "POST");		
-		$link  = Lib::Request("smpl_flink", "", "POST");
-		$ti    = Lib::Request("smpl_ftime", "", "POST");
-		$size  = Lib::Request("smpl_fsize", "", "POST");
+		$sub   = Lib::Request("SmplFolderSubtitle" , "", "POST");		
+		$link  = Lib::Request("SmplFolderLink", "", "POST");		
 
 		if ( empty( $fname ) ) return false;						
-		$fname = $this->slash( trim( $fname ) );
+			$fname = $this->slash( trim( $fname ) );
+		
+			if(empty($sub)) $sub = $fname;
 
 		$ok = $this->Validation( $fname ); // folder name validation 
 		if( !$ok ){
-			\Drupal::messenger()->addMessage( $this->t("There is disabled folder path in the subfolder path.'").": '$fname'", 'error' );
+			\Drupal::messenger()->addMessage( $this->words["There is disabled folder path in the subfolder path"].". '$fname'", 'error' );
 			return false;
 		}
 
 		// Végződik-e / jellel						
-		$uri = $this->root . $this->path . $this->subfolder . $fname;
+		$uri = Lib::slash($this->root . $this->path . $this->subfolder) . $fname;
 		if( is_dir( $uri ) ){
-			\Drupal::messenger()->addMessage( $this->t("This subfolder already exists: ") ." '$fname'", 'error' );			
+			\Drupal::messenger()->addMessage( $this->words["This subfolder already exists"].": ( $fname )", 'error' );			
 			return false;
 		}
 
 		$ok = mkdir( $uri, 0777 );		
 		if(!$ok){
-			\Drupal::messenger()->addMessage( $this->t("Can not make this subfolder. Maybe the permission is the problem')") .": '$fname'", 'error' );
+			\Drupal::messenger()->addMessage( $this->words["Can not make this subfolder. Maybe the permission is the problem"] .".: '$fname'", 'error' );
 			return false;
 		}
-		$this->InsertNewFile( $this->path . $this->subfolder, $fname, $sub, "folder", $link,	0, $ti, 0 );
+		
+		$this->InsertNewFile( $this->path . $this->subfolder, $fname, $sub, "folder", $link,	0, filemtime($uri), 0 );
 		$this->RefreshFolder();
 		return ($ok ? "1" : "-2");
 	}
@@ -573,35 +537,35 @@ class ItemList {
 		
 		// Validation of filename
 		if( !($extok = stripos( $this->extensionstring("all") , pathinfo ( $filename , PATHINFO_EXTENSION ) ) > 0) ){
-			\Drupal::messenger()->addMessage( "Can not upload this file '$name' is not enabled file type!", 'warning' );
+			\Drupal::messenger()->addMessage( $this->words["Can not upload this file"]." '$name' ".$this->words["is not enabled file type"]."!", 'warning' );
 			return false;
 		}
 		
 		// Validating the maxsize of uploaded file
 		if( $size > ini_parse_quantity( ini_get('post_max_size') ) ){
-			\Drupal::messenger()->addMessage( "Can not upload this file '$name', because the size is too big!", 'warning' );
+			\Drupal::messenger()->addMessage( $this->words["Can not upload this file"]." '$name' ".$this->words["the file is too big"]."!",  'warning' );
 			$ok = false;
 		}
 
 		$uri = $this->root . $this->path . $this->subfolder;
 		
 		if( file_exists ($uri . $filename)){
-			\Drupal::messenger()->addMessage( "Can not upload this file '$filename' to this place: '$this->path" . $this->subfolder."' because the file exists!", 'warning' );
+			\Drupal::messenger()->addMessage( $this->words["Can not upload this file"]." '$filename' ".$this->words["to this place"].": '".$this->path . $this->subfolder."' ".$this->words["because the file exists"]."!", 'warning' );
 			$ok = false;
 		}
 
 		$ok = move_uploaded_file( $tmpname, $uri . $filename );
 		if( !$ok ){
-			\Drupal::messenger()->addMessage( "Can not upload this file '$filename'. Maybe the application not enough rights to this place: '" . $this->path. $this->subfolder . "' or other problems!", 'warning' );
+			\Drupal::messenger()->addMessage( $this->words["Can not upload this file"]." '$filename' ".$this->words["Maybe the application not enough rights to this place"].": '" . $this->path. $this->subfolder ."'!", 'warning' );
 		}
 
 		//Save uploaded data into database
 		if( $ok ){
 			$ok = $this->InsertNewFile( $this->path . $this->subfolder, $filename, $sub, $type, $link, $size, $ti, (int) ($importance ) );
 			if($ok){
-				\Drupal::messenger()->addMessage( " '$filename' added into database", 'notice' );
+				\Drupal::messenger()->addMessage( "'$filename' ".$this->words["added into database"], 'notice' );
 			}else{
-				\Drupal::messenger()->addMessage( " There was '$filename' in the database table in this folder!", 'warning' );
+				\Drupal::messenger()->addMessage( "'$filename' ".$this->words["already exists in this folder in the database table"]."!", 'warning' );
 			}
 		}
 		
@@ -617,20 +581,12 @@ class ItemList {
  * @param string $type  - type of item
  * @param string $link  - Link if has
  * @param integer $size - size in bytes
- * @param integer $tim  - Modified or created time
+ * @param integer $timestamp - modified timestamp
+ * @param integer $importance - importance of item for sorting
  * @return int - last id in the table
  */
-	function InsertNewFile( $path ="/", $name = "", $sub = "", $type ="", $link = "", $size = 0, $tim = 0, $importance = 0){
-		if( is_string($tim) ){
-			$tim .= "#";
-			$tim = str_replace(".#","", $tim);
-			$tim = str_replace( [' ','.'], ['','-'], $tim);
-			$dt = date_create($tim);
-			$timestamp = date_timestamp_get($dt); 
-		}else{
-			$timestamp = $tim;
-		}
-	
+	function InsertNewFile( $path ="/", $name = "", $sub = "", $type ="", $link = "", $size = 0, $timestamp = 0, $importance = 0){
+
 		try{
 			$last_id = $query = $this->con->Insert('smplphotoalbum')
 				->fields([
@@ -651,8 +607,9 @@ class ItemList {
 
 	/**
 	 * Refresh the actual folder
-	 *
-	 * @param string $path - actual path
+	 * It checks the files in the folder and the database records. 
+	 * If there are files without database record, it will be added into database.
+	 * If there are database records without file, it will be deleted from database.	 
 	 * @return void
 	 */
 	function RefreshFolder( ) {		
@@ -684,12 +641,12 @@ class ItemList {
 		foreach( $dbnames AS $id => $dbname ){			
 			if( !array_search( $dbname->name, $names ) ){
 				$this->con->query($sql, [":path" => $this->path . $this->subfolder , ":id" => $id ]);
-				\Drupal::messenger ()->addMessage ( "Delete from database: '$dbname->name'", "status");
+				\Drupal::messenger ()->addMessage ( $this->words["Delete from database"].": '$dbname->name'", "status");
 			}
 		}
 
 		if(empty($msg)){
-			\Drupal::messenger ()->addMessage ("There was nothing change", "status");
+			\Drupal::messenger ()->addMessage ($this->words["There was nothing change"], "status");
 		}		 
 	}
 
@@ -710,7 +667,12 @@ class ItemList {
 		$source    = $this->slash( $this->root . $path ."/". $name);
 		$thumbnail = $this->slash( $this->root . $path . self::TN . "/" . $name );						
 		
-		$msg .= $this->ChkThumbnail($name, $source, $thumbnail, $folder);
+		$msg .= (string) $this->ChkThumbnail(
+			$name, 
+			$source, 
+			$thumbnail, 
+			$folder
+		);
 		
 		// Refresh other data 
 		$sql = "SELECT `name`, `size`, `modified` FROM {smplphotoalbum} WHERE `path` = :path AND `name` = :name";
@@ -738,7 +700,7 @@ class ItemList {
 			if( !empty($s) || !empty($t) ){
 				$sql .= $s . $t . " WHERE `path`=:path AND `name`= :name;";
 				$this->con->query( $sql, $e );
-				$msg .= "Datas of '".$name."' updated";
+				$msg .= $this->words["Datas updated"] . ": '$name'";
 			}			
 		}elseif ($db == 0 ){
 			if( $name != ".."){
@@ -773,7 +735,7 @@ class ItemList {
 					'modified' => $time
 				]);			
 			$x = $qry->execute();		
-			$msg .= " '$name' ($type) added to DB";
+			$msg .= $this->words["Item added to DB"] . ": '$name' ($type)";
 		}
 		return $msg;
 	}
@@ -783,26 +745,23 @@ class ItemList {
  	 * @param string $name - name of item
 	 * @param string $source - source path
 	 * @param string $thumbnail - thumbnail
+	 * @param bool   $folder - is this an item a folder
 	 * @return string;
 	 */
 	function ChkThumbnail( $name, $source, $thumbnail, $folder = false ){
 		
-		$msg ="";
+		$msg = "";
 		if( !$this->isimage( $name ) || $this->isfolder($name) ){
 			$thumbnail .= ".png";
 		}
 				
 		if( !file_exists( $thumbnail ) ){	
-
 			$this->MakeThumbnail(	$name, $source, $thumbnail, $msg, $folder);
-			$msg = "New thumbnail '$name' => ok";
-
+			$msg = $this->words["New thumbnail"] . " '$name' => ok";
 		}elseif( filemtime($thumbnail) < filemtime($source)){
-
 			unlink($thumbnail);
 			$this->MakeThumbnail(	$name, $source, $thumbnail, $msg, $folder);
-			$msg ="Refreshed thumbnail '$name' => ";
-
+			$msg = $this->words["Refreshed thumbnail"] . " '$name' => ";
 		}
 		return $msg;
 	}
@@ -1186,8 +1145,8 @@ class ItemList {
 	  }	  
 	}
 
-		/**
-	 * Cache clear button views or not
+	/**
+	 * Show / Hide Edit path button
 	 * @param string &$str
 	 */
 	function EditPathButton(string &$str){
@@ -1199,7 +1158,7 @@ class ItemList {
 	}
 
 	/**
-	 * Cache clear button views or not
+	 * Show / Hide Cache clear button
 	 * @param string &$str
 	 */
 	function CacheClearButton(string &$str){
@@ -1211,7 +1170,7 @@ class ItemList {
 	}
 
 	/**
-	 * Upload button views or not
+	 * Show / Hide Upload button
 	 * @param string &$str
 	 */
 	function UploadButton(string &$str){
@@ -1223,7 +1182,7 @@ class ItemList {
 	}
 
 	/**
-	 * Upload button views or not
+	 * Show / Hide Upload button
 	 * @param string &$str
 	 */
 	function NewFolderButton(string &$str){
@@ -1235,7 +1194,7 @@ class ItemList {
 	}
 
 	/**
-	 * Refresh button views or not
+	 * Show / Hide Refresh button
 	 * @param string &$str
 	 */
 	function ThumbnailsButton(string &$str){
@@ -1245,6 +1204,7 @@ class ItemList {
 			$str = preg_replace("#<ThumbnailsButton(.*?)<\/ThumbnailsButton>#imxs", "", $str );
 		}		
 	}
+
 	/**
 	 * Testing code from the main page
 	 * @param string $str
@@ -1258,6 +1218,11 @@ class ItemList {
 		}
 	}
 
+	/**
+	 * Show / Hide slideshow button
+	 * @param mixed &$str 
+	 * @return void 
+	 */
 	function SlideShowButton(&$str){
 		if( true || $this->params['slide'] ){
 			$str = str_replace( ['<SlideShowButton>','</SlideShowButton>'], '', $str );
@@ -1305,15 +1270,17 @@ class ItemList {
 	  }
 	}
 
-/**
- * FFMPeg information
- */
-function FFMpeginfo( &$str ){	
-	require __DIR__."/../vendor/autoload.php";
-	$ffmpeg = \FFMpeg\FFMpeg::create();	
-	$version = $ffmpeg->getFFMpegDriver()->getVersion();
-	$str = str_replace("{{ FFMpegVersion }}", $version, $str);
-}
+	/**
+	 * FFMPeg information
+	 * @param string $str
+	 * @return void
+	 */
+	function FFMpeginfo( &$str ){	
+		require __DIR__."/../vendor/autoload.php";
+		$ffmpeg = \FFMpeg\FFMpeg::create();	
+		$version = $ffmpeg->getFFMpegDriver()->getVersion();
+		$str = str_replace("{{ FFMpegVersion }}", $version, $str);
+	}
 
 	/**
 	 * Add watermark to image
@@ -1434,8 +1401,7 @@ function FFMpeginfo( &$str ){
 					"",
 					""], 
 				$str);			
-		}
-		return;	
+		}		
 	}
 
 	/**
@@ -1445,7 +1411,7 @@ function FFMpeginfo( &$str ){
 	 */
 	function RenderSlide() {		
 
-		return $this->Slide->RenderSlideShow(
+		return $this->SlideShow->RenderSlideShow(
 			$this->params, 			
 			$this->title,
 			$this->slide_subtitle,
@@ -1648,6 +1614,7 @@ function FFMpeginfo( &$str ){
 	 * @return string
 	 */
 	function Statistics() {
+		$this->words = Lib::ReadWords( $this->lang );
 		$str = $this->tpl ["stat"];
 		$s = [
 				'{{ Statistics }}',
@@ -1765,32 +1732,32 @@ function FFMpeginfo( &$str ){
 	 * Check the type of item
 	 * @return boolean
 	 */
-	public function isaudio($entry) {
-		return stripos( " " . $this->params ["audio_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
+	public function isaudio($entry = "") {
+		return stripos( " " . $this->params["audio_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function isaudiohtml5($entry) {
-		return stripos( " " . $this->params ["audiohtml5_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
+	public function isaudiohtml5($entry = "") {
+		return stripos( " " . $this->params["audiohtml5_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function isvideo($entry) {
-		return stripos( " " . $this->params ["video_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
+	public function isvideo($entry = "") {
+		return stripos( " " . $this->params["video_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function isvideohtml5($entry) {
-		return stripos( $this->params ["videohtml5_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
+	public function isvideohtml5($entry = "") {
+		return stripos( $this->params["videohtml5_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function isdoc($entry) {
-		return stripos( $this->params ["doc_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
+	public function isdoc( $entry = "") {
+		return stripos( $this->params["doc_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function iscmp($entry) {
-		return stripos($this->params ["cmp_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
+	public function iscmp($entry = "") {
+		return stripos($this->params["cmp_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function isapp($entry) {
+	public function isapp($entry = "") {
 		return stripos( $this->params ["app_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
-	public function isoth($entry) {
+	public function isoth($entry = "") {
 		return stripos($this->params ["oth_extensions"]." ", pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
 	
-	public function isimage($entry) {
+	public function isimage($entry = "") {
 		if( version_compare(PHP_VERSION , "8.1.0" >= 0 ) ){
 			return stripos( $this->params ["image_extensions"], pathinfo ( $entry, PATHINFO_EXTENSION )." ") > 0;
 		}
@@ -1798,11 +1765,11 @@ function FFMpeginfo( &$str ){
 		return stripos( $ext, pathinfo ( $entry, PATHINFO_EXTENSION )." " ) > 0;
 	}
 
-	public function isdis($entry) {
+	public function isdis($entry = "") {
 		return stripos( $this->params ["dis_extensions"], pathinfo ( $entry, PATHINFO_EXTENSION ) ) > 0;
 	}
 
-	public function isfolder($entry){
+	public function isfolder($entry = ""){
 		$p = realpath($this->root . $this->path . $this->subfolder . $entry );
 		return is_dir( $p );
 	}
@@ -1838,10 +1805,10 @@ function FFMpeginfo( &$str ){
 
 	/**
 	 * Filetype
- 	 * @param $entry
-	 * @return type
+ 	 * @param string $entry
+	 * @return string $type
  	 */
-	function Type($entry) {
+	function Type( string $entry = "" ){ 
 		if ($this->isimage ( $entry )) $type = "image";
 		elseif ($this->isfolder ( $entry )) $type = "folder";
 		elseif ($this->isaudiohtml5 ( $entry ))	$type = "audiohtml5";
@@ -1865,7 +1832,7 @@ function FFMpeginfo( &$str ){
 	 * @return string
 	 */
 	public function testImageInDB(string $entry, string $type, string $path){
-		$id = $this->ChkItemInDB ( $entry, $path );
+		$id = (int) $this->ChkItemInDB ( $entry, $path );
 		return ($id > 0 ? 'ok, id: '.$id : 'false');
 	}
 
@@ -1873,8 +1840,7 @@ function FFMpeginfo( &$str ){
 	 * Test Make new Thumbnail
 	 * @param string $entry
 	 * @param string $source
-	 * @param string $thumbnail
-	 * @param string $text
+	 * @param string $thumbnail	 
 	 * @return string
 	 */
 	public function testMakeNewThumbnail(string $entry, string $source, string $thumbnail, $width = 150){
@@ -1897,6 +1863,8 @@ function FFMpeginfo( &$str ){
 
 	/**
 	 * Give back the extension of image
+	 * @param string $str
+	 * @return string
 	 */
 	public function getExt($str){
 		return strtolower(pathinfo($str,PATHINFO_EXTENSION));
@@ -1925,12 +1893,17 @@ function FFMpeginfo( &$str ){
 
 	/**
 	 * Filename / Subfolder name validation
+	 * @param string $fname
+	 * @param boolean $ext - Check only the extension of filename
+	 * @return int|false
 	 */
 	function Validation($fname, $ext = false){
 		if (strlen($fname) < 1) return false;
+		
+		$ar = [];
   	if ($ext) {
-    	$ar = str_split($fname);
-      $fname = $ar[0];			
+    	$ar = explode(".", $fname,-1);
+      $fname = $ar[0];
   	}
 		// Disabled subfolder name
 		if( $fname == Self::TN || $fname == $this->temp ) return false;
@@ -1946,7 +1919,7 @@ function FFMpeginfo( &$str ){
   	if ( !$ext) return true;
 
   	//extension checking    
-  	$extension = strtolower ( $ar[strlen($ar) - 1] );
+  	$extension = strtolower ( $ar[count($ar) - 1] );
 		$ExtString = $this->extensionstring("all", false );
   	return stripos($extension, $ExtString);
 	}

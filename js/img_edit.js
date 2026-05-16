@@ -583,7 +583,7 @@
 		if (!smpl.imgeditsaved) {
 			Swal.fire({
 				html: smpl.words.Edit_not_saved,
-				title: "The changed image not saved. Do you want to close?",
+				title: smpl.words.Changed_image_not_saved + " " + smpl.words.Close_the_window,
 				className: "smpl-message-warning",
 				closeOnClickOutside: true,
 				closeOnEsc: true,

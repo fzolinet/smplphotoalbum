@@ -147,5 +147,7 @@ function smplphotoalbum_update_19500(): void{
 
 function smplphotoalbum_update_19700(){
   $schema = Database::getConnection()->schema();
-  $schema->addUniqueKey("smplphotoalbum","path_name_index", ["path","name"]);
+  if(!$schema->indexExists("smplphotoalbum","path_name_index")){
+    $schema->addUniqueKey("smplphotoalbum","path_name_index", ["path","name"]);  
+  }  
 }

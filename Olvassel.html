@@ -1,6 +1,4 @@
-<p>Abból az igényből alakult ki a modul, hogy a szerverre egy
-	könyvtárba feltöltött sok képből hogyen lesz lapozható fotóalbum a
-	lehető legkevesebb kézi munkával</p>
+<p>Abból az igényből alakult ki a modul, hogy a szerverre egy könyvtárba feltöltött sok képből hogyan lesz lapozható fotóalbum a lehető legkevesebb kézi munkával</p>
 
 <h3>Tulajdonságok</h3>
 
@@ -13,7 +11,7 @@
 	<li>Amikor a node-ot először megnézzük, akkor készít a modul:</li>
 	<ul>
 		<li>bélyegképeket a képfájlokból,</li>
-		<li>a bélyegképeket beteszi a _tn_ alkönyvtárba,</li>
+		<li>a bélyegképeket beteszi a '_tn_' alkönyvtárba,</li>
 		<li>adatokat tárol az adatbázisban a fájlokról</li>
 		<li>A bélyegképekből táblázatot készít.</li>
 	</ul>
@@ -39,14 +37,12 @@
 </ul>
 
 <h3>Telepítés</h3>
-
 <ul>
 	<li>Töltsd le és telepítsd a JQuery UI, JQuery Draggable és JQuery UI Resizable modulokat</li>
 	<li>Töltsd le és másold be a Simple Photoalbum fájljait a megfelelő helyre és engedélyezd a modult.</li>
 	<li>Állítsd be a modul paramétereit az admin/config/fz/smplphotoalbum útvonalon</li>
-	<li>Engedélyezd különböző tartalomtípusokban a Simple Photoalbum tartalomszűrőt, elsődlegesen a Full HTML-ben és a
-		többi szükséges
-		típusban itt: admin/config/content/formats</li>
+	<li>Engedélyezd különböző tartalomtípusokban a Simple Photoalbum tartalomszűrőt, 
+		elsődlegesen a Full HTML-ben és a többi szükséges	típusban itt: admin/config/content/formats</li>
 </ul>
 
 <h3>Alapértelmezések</h3>
@@ -71,9 +67,7 @@
 </ul>
 
 <h3>Események galéria módban</h3>
-
 <p>Egy bélyegképre kattintva:</p>
-
 <ul>
 	<li>Kép: megjelenik a nagy kép (colorboxban)</li>
 	<li>Videó: elkezdi a böngészőben letölteni vagy lejátszani</li>
@@ -98,38 +92,33 @@
 	<li>Maximális számú elem a táblázatban: szám</li>
 	<li>A bélyegképek maximális szélessége: szám (default: 150px)</li>
 	<li>A bélyegképek CSS osztálya: string (default: smpl_image)</li>
-	<li>A photoalbumok gyökérkönyvtára: string (default: public://photoalbum)</li>
-</ul>
-
-<p>Minden album egy könyvtárstruktúrában található a szerveren. Ez
+	<li>A photoalbumok gyökérkönyvtára: string (default: public://photoalbum)
+		<p>Minden album egy könyvtárstruktúrában található a szerveren. Ez
 	abszolút elérési útvonal a szerver gyökérkönyvtrárától. Ha a
 	"__DRUPALROOT__" jelet használjuk, akkor a szerver, mentéskor
 	behelyettesíti a Drupal gyökérkönyvtárának elérési útvonalát a
-	megadott helyre.</p>
-
-<ul>
-	<li>A Drupal menük újraépítése (fejlesztők számára)</li>
+	megadott helyre.</p></li>
 	<li>Az fájlokhoz tartozó URL-ek megjelenítése (engedély/tiltás)</li>
 	<li>Alapértelmezett URL cél (default: _blank)</li>
 	<li>Using taxonomy Photoalbum (enable/disable) - Under Construction</li>
 </ul>
-
+<h4>Menü lehetőségek</h4>
 <ul>
+	<li><strong>Szűrő</strong> - a lista szűrése</li>
 	<li><strong>File feltöltés</strong> - upload a file into the folder (if upload enabled)</li>
-	<li><strong>Új Mappa </strong>- makes a new folder if it is enabled centralized or on this node</li>
+	<li><strong>Új Mappa</strong>- makes a new folder if it is enabled centralized or on this node</li>
 	<li><strong>Útvonal szerkesztés</strong>- A mappában lévő fájlok képaláírásait szerkeszti</li>
 	<li><strong>Cache-ek törlése</strong>- Törli a Drupal cache-t és az Opcpde cache-t</li>
 	<li><strong>Frissítés</strong> - bélyegképek és adatbázis frissítése</li>
 	<li><strong>Slideshow</strong> - Az aktuális könyvtár képeiből slideshow</li>
-	<li>Súgó</li>
+	<li><strong>Súgó</strong></li>
 </ul>
 
 <ul>
 	<li>Az adminisztrátor engedélyezheti / tilthatja
 		<ul>
 			<li>A fájlok megtekintések (letöltések) számának megjelenítése</li>
-			<li>A fájl egyéb tulajdonságainak (exif információ, bitráta,
-				méret, stb.) megfjelenítése</li>
+			<li>A fájl egyéb tulajdonságainak (exif információ, bitráta, méret, stb.) megjelenítése</li>
 			<li>Fájlok képaláírásának megjelenítése</li>
 			<li>Fájlhoz tartozó, az adatbázisba beírt linkek megjelenítése</li>
 			<li>Fájlok feltöltését a fotóalbumba (engedélyezett filetípusokat)</li>
@@ -175,9 +164,7 @@
 <h4>1. Egyszerű fotoalbum készítése egy megadott könyvtárban lévő fájlokból (régi szintaktika)</h4>
 <p>A modul alapértelmezett beállításainak használatával jön létre a fotóalbum</p>
 <p>
-<pre><code class="language-plaintext">
-		[smpl|relatív elérési útvonal a photoalbum gyökérkönyvtárától]
-	</code></pre>
+<pre><code class="language-plaintext">[smpl|relatív elérési útvonal a photoalbum gyökérkönyvtárától]</code></pre>
 </p>
 
 <h4>2. Fejlettebb szintaxis fotoalbum egy könyvtárból</h4>
@@ -186,88 +173,108 @@
 	A paraméterek listájában az útvonal kötelező
 </p>
 <p>
-<pre><code> 
-		[smplphotoalbum] 
-			{parameter1: érték} 
-			{parameter2: érték}
-			{parameter3: érték} .... 
-		[/smplphotoalbum]
+<pre><code class="language-plaintext">[smplphotoalbum] 
+  {parameter1: érték} 
+  {parameter2: érték}
+  {parameter3: érték} .... 
+[/smplphotoalbum]
 </code></pre>
-<pre><code class="language-plaintext">
-	{smplphotoalbum}
-    {name_of_parameter: value}
-		...
-	{/smplphotoalbum}
+<pre><code class="language-plaintext">{smplphotoalbum}
+  {name_of_parameter: value}
+  ...
+{/smplphotoalbum}
 </code></pre>
 </p>
 
 <p>Példák:</p>
 <p>
-<pre><code>[smplphotoalbum]
-	{path: /teszt}
-	{number: 12}
-	{width: 180px}
+<pre><code class="language-plaintext">[smplphotoalbum]
+  {path: /teszt}
+  {number: 12}
+  {width: 180px}
 [/smplphotoalbum]
-	or
+or
 {smplphotoalbum}
-	{path: /teszt}
-	{number: 12}
-	{width: 180px}
+  {path: /teszt}
+  {number: 12}
+  {width: 180px}
 {/smplphotoalbum}
 </code></pre>
 </p>
-
 <p>
-	<strong>Paraméterek:</strong>
+	<h3>Paraméterek</h3>
+	Az oldal létrehozója paramétereken keresztül megváltoztathatja a fotóalbum viselkedését.
 </p>
 
 <ul>
-	<li>{paraméter-neve: paraméter értéke}</li>
-	<li>path: A folder relatív elérési útvonala (kötelező)</li>
-	<li>notes: Bármilyen megjegyzés szöveg</li>
-	<li>number: A kirakott fájlok száma (D8+)</li>
-	<li>width: a bélyegkép szélessége pixelben</li>
-	<li>order: sorrend növekvő / csökkenő / véletlen</li>
-	<li>sort: rendezhető a sorrend (true|false, alapértelmezett: true)</li>
-	<li>sub: legyen képaláírás (true|false, alapértelmezett: true)</li>
-	<li>viewed: mutassa a megtekintések számát</li>
-	<li>graphic: gd / imagick (imagick only if it is installed)</li>
-	<li>edit: szerkeszthetőek legyenek a képek (true|false)</li>
-	<li>exif: Mutassa az exif és egyéb információkat egy linken</li>
-	<li>audio: mutassa meg az audió fájlokat (true|false, alapértelmezett: true)</li>
-	<li>video: mutassa meg az videó fájlokat (true|false, alapértelmezett: true)</li>
-	<li>doc: mutassa meg az dokumentum fájlokat (true|false, alapértelmezett: true)</li>
-	<li>cmp: mutassa meg az tömörített fájlokat (true|false, alapértelmezett: true)</li>
-	<li>app: mutassa meg az végrehajtható fájlokat (true|false, alapértelmezett: true)</li>
-	<li>url: shows mutassa meg a fájlhoz tartozó website linkjét (true|false, alapértelmezett: true)</li>
-	<li>target: mi legyen a target a linkhez (alapértelmezett: _blank)</li>
-	<li>html5: A video és audio fájlokat HTML5 taggel mutatja meg (true|false, alapértelmezett: true)</li>
-	<li>copyright: Exif információ a jpeg / png fileba</li>
-	<li>author: Exif információ a jpeg / png fileba</li>
-	<li>autoclose: A szerkesztett kép mentése után záródjon be az szerkesztő ablak</li>
-	<li>upload: Engedélyezett fájltípus feltöltése</li>
-	<li>Vízjel</li>
+	<li><h4>Alap paraméterek</h4>
+	<ul>
+		<li>title: A fotóalbum címe</li>
+		<li>subtitle: A fotóalbum alcíme</li>		
+		<li>path: A folder relatív elérési útvonala (kötelező)</li>
+		<li>link: A fájlhoz tartozó link szövege</li>
+		<li>url: A fájlhoz tartozó link URL-je</li>
+		<li>notes: Bármilyen megjegyzés szöveg</li>
+		<li>number: Az egy oldalon kirakott tételek száma</li>
+  	<li>width: A bélyegkép szélessége pixelben</li>
+		<li>lang: A megjelenítés nyelve. (en-angol, hu-magyar, alapértelmezett en)</li>
+	</ul>
+  </li>	
+	<li>
+		<h4>További paraméterek</h4>
+	<ul>
+		<li>order: A sorrend növekvő / csökkenő / véletlen</li>
+		<li>sort: Rendezhető a sorrend (true|false, alapértelmezett: true)</li>		
+		<li>ascdesc: A sorrend alapértelmezetten (asc|desc)</li>
+		<li>sub: Képaláírás engedélyezése/tiltása (true|false, alapértelmezett: true)</li>
+		<li>viewed: Mutassa a megtekintések számát (true|false, alapértelmezett: true)</li>
+		<li>graphic: gd vagy imagick (imagick csak akkor, ha telepítve van a szerveren)</li>
+		<li>audio: Mutassa meg az audió fájlokat (true|false, alapértelmezett: true)</li>
+		<li>video: Mutassa meg az videó fájlokat (true|false, alapértelmezett: true)</li>
+		<li>doc: Mutassa meg az dokumentum fájlokat (true|false, alapértelmezett: true)</li>
+		<li>cmp: Mutassa meg az tömörített fájlokat (true|false, alapértelmezett: true)</li>
+		<li>app: Mutassa meg az végrehajtható fájlokat (true|false, alapértelmezett: true)</li>
+		<li>url: Mutassa meg a fájlhoz tartozó website linkjét (true|false, alapértelmezett: true)</li>
+		<li>edit: Szerkeszthetőek legyenek a képek/videók/hangfájlok (true|false)</li>
+		<li>exif: Mutassa az exif és egyéb információkat egy linken</li>
+		<li>target: mi legyen a target a linkhez (alapértelmezett: _blank)</li>
+		<li>html5: A video és audio fájlokat HTML5 taggel mutatja meg (true|false, alapértelmezett: true)</li>
+		<li>copyright: Exif információ a jpeg / png fileba</li>
+		<li>author: Exif információ a jpeg / png fileba</li>
+  	<li>autoclose: A szerkesztett kép mentése után záródjon be az szerkesztő ablak</li>
+		<li>ai: Ai használata a képek felismeréséhez vagy a kép AI által készült-e</li>
+	  <li>upload: Engedélyezett fájltípus feltöltése</li>
+	</ul>
+	</li>
+	<li><h4>Vízjel</h4>
 	<ul>
 		<li>wm: Vízjel amikor megjeleníti | szerkeszti a képet (true|false, alapértelmezett: true)</li>
 		<li>wmpath: A vízjel kép helye.
 			<br>Alapértelmezett a Simple Photoalbumból: smplphotoalbum://images/watermark.png.
 			<br>Publikus fájlrendszerből: A file elérési útjának kezdete 'public://'.
 		</li>
-		<li>wmalpha: a vízjel halványsága. <br />Érték: 0...100, <br />0-láthatatlanm 100 teljesen látszik, <br />default:
-			10 (halvány)</li>
+		<li>wmalpha: a vízjel halványsága. <br />Érték: 0...100, <br />0-láthatatlan 100 teljesen látszik, <br />default:	10 (halvány)</li>
 		<li>wmtext: tetszőleges szöveg</li>
 	</ul>
-	<li>test: teszt üzemmód (true|false)</li>
-	<li>method: GET | POST. Csak adminisztrátori mód esetén</li>
-	<li>icon: Beállítja az ikonokat színes és fekete-fehér között (_col / _bw)</li>
-	<li>slide: Legyen Slideshow (True) - Slideshow legyen. Slideshow paraméterek</li>
-	<ul>
-		<li>title: A slideshow címe</li>
-		<li>interval: A képek cserélődése milisecundumban</li>
-		<li>height: A főkép magassága</li>
-		<li>style: A kép cserélődésének módja - fade / slide / zero / zero1</li>
-		<li>slstyle: A fő kép stílusainak stringje. Default: 'max-width: 100%; height: 600px;'</li>
-	</ul>
+	</li>
+	<li><h4>Adminisztrátori/fejlesztői paraméterek</h4>
+		Ezeket a paramétereket csak adminisztrátori módban lehet használni. Ezek a paraméterek nem jelennek meg a fotóalbum látogatói számára.
+		<ul>
+			<li>test: teszt üzemmód (true|false)</li>
+			<li>method: GET | POST. Csak adminisztrátori mód esetén</li>
+			<li>icon: Beállítja az ikonokat színes és fekete-fehér között (_col / _bw)</li>			
+		</ul>
+	</li>
+	<li><h4>Slideshow paraméterek</h4>
+		<ul>
+			<li>slide: Legyen Slideshow (True)</li>
+			<li>title: A slideshow címe</li>
+			<li>interval: A képek cserélődésének időtartama milisecundumban</li>
+			<li>height: A főkép magassága</li>
+			<li>style: A kép cserélődésének módja - fade / slide / zero / zero1</li>
+			<li>slstyle: A fő kép stílusainak stringje. Default: 'max-width: 100%; height: 600px;'</li>
+		</ul>
+	</li>
 </ul>
 
 <h3>Példa</h3>
@@ -318,7 +325,7 @@
 	<li><strong>Mentés</strong> és <strong>Mentés másként</strong> ugyanabba a könyvtárba az aktuálisan kiválasztott
 		állapotot</li>
 </ul>
-<h3>Video fájl konvertálása (Fejlesztés alatt)</h3>
+<h3>Video fájl konvertálása</h3>
 FFMpeg segítségével Linux vagy Windows szerveren<br />
 <ul>
 	<li>video méret csökkentése</li>
@@ -330,7 +337,7 @@ FFMpeg segítségével Linux vagy Windows szerveren<br />
 	<li><strong>Előző</strong> / <strong>Következő</strong> gombok használata</li>
 </ul>
 
-<p>2025.12.23.<br /> Zoltan Fabian</p>
+<p>2026.05.16.<br /> Zoltan Fabian</p>
 
 <p>
 	fz@fzolee.hu<br /> <a href="http://www.fzolee.hu">http://www.fzolee.hu</a>

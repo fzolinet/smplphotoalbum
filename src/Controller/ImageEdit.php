@@ -184,12 +184,12 @@ class ImageEdit {
     }
 
     // driver GD / Imagick
-    $size = getimagesize ( $this->temppath . $this->ts["newname"] );
+    $size = getimagesize ( $this->temppath . $this->ts["tempname"] );
     $this->ts["width"]    = $size [0];
     $this->ts["height"]   = $size [1];
-    $this->ts["filesize"] = Lib::ShowFileSize( filesize( $this->temppath . $this->ts["newname"] ) );
-    $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->temppath . $this->ts["newname"] ) );
-    $this->ts["avgcolor"] = $this->AverageColor( $this->temppath . $this->ts["newname"] , $size [0], $size [1] );
+    $this->ts["filesize"] = Lib::ShowFileSize( filesize( $this->temppath . $this->ts["tempname"] ) );
+    $this->ts["modified"] = date ( "Y.m.d H:i:s",filemtime($this->temppath . $this->ts["tempname"] ) );
+    $this->ts["avgcolor"] = $this->AverageColor( $this->temppath . $this->ts["tempname"] , $size [0], $size [1] );
     //
     LIB::setSession( "smpl", $this->ts );
     return $this->MakeJson();

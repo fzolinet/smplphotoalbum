@@ -1,17 +1,194 @@
+; Original version
+; translation:
+; original text=translated text
+
+# Main
 Add
-Add noise
-AI check
-AI_recognition
-AI generated image
-AI image recognition Gemini client
-Alpha
+added into database
+already exists in this folder in the database table
 Amount
 Application
-Are you sure you want to convert this video to MP4 format?
+Are you sure
 Ascending
 Audio
-Author
 Auto
+because the file exists
+bytes
+Cancel
+Cache Clear
+Can not delete
+Can not make this subfolder. Maybe the permission is the problem
+Can not upload this file
+Center
+Client side validation
+Close
+Compressed
+Contrast
+Copyright
+Correction
+Correction Strength
+This text saved into the Copyright IPTC/exif field of image only jpeg file
+This text saved into the Author / owner IPTC field of image only jpeg file
+Created
+Creator
+Datas updated
+Date
+Deep
+Depht
+default
+Delete
+Delete from database
+desc
+Descending
+Description
+Detail
+Direction
+Do you want to close the window
+Document
+Done
+Edit
+edit
+Edit Path
+Error message
+Error on server side
+exif
+Exit
+Extension
+Factor
+Filename
+File size
+File type
+FileSize
+Format
+Frame color
+fsize
+Group of Pictures
+Height
+Help
+Horizontal
+Horizontal Center
+HTML5
+Image
+Image open in new tab
+Importance
+important
+In
+Initial
+Input
+Inner
+Item added to DB
+Kill
+Level
+Lin
+Log
+Left
+Left top
+Levels
+Linear
+Link
+Maybe the application not enough rights to this place
+Mode
+Modified
+Name
+Name of data of this node
+Network response was not ok
+New thumbnail
+Number of items in the folder
+None
+Nothing
+Ok
+Open in new tab
+Original
+Original size
+Other
+Out
+Output
+Page
+Path
+pixels
+Point
+Previous
+Propertie
+Refresh
+Refreshed thumbnail
+Rename
+Repair
+Reset
+Save
+Save As
+Save Size
+Scale
+Set the right folder in settings of Smplphotoalbum
+Show
+Search
+Size
+Sort
+Source
+statistics
+Status message
+Strength
+Subtitle
+Target
+text
+There is no cache folder or not writable
+There was nothing change
+This is not a folder
+Thumbnail
+Thumbnails refresh
+to this place
+Trash
+Type
+Undo
+Url
+Value
+Vertical
+Vertical Center
+Video
+view last
+viewnumber
+Views
+Warning message
+Width
+
+#Help
+About
+Author
+Module
+Simple Photoalbum shows a set of picture and other filetypes
+Timestamp
+version
+
+# AI
+AI check
+AI recognition
+AI generated image
+AI image recognition Gemini client
+Is there this image AI generated?
+What is on the picture?
+
+# Edit
+Caption Edit
+The changed properties not saved
+
+# File upload
+File Upload
+is not enabled file type
+Max size
+The file is too big
+the file is too big
+There is no filename
+There is no enabled file name or type
+Upload
+
+# Folder
+Foldername
+New folder
+There is disabled folder path in the subfolder path
+This subfolder already exists
+
+# ImageEdit
+Add noise
+Alpha
 Auto gamma
 Auto histogram
 Auto orient
@@ -19,7 +196,6 @@ Barrel
 Bestfit
 Bevel
 bevel
-bitrate
 Blue shift
 Blursize
 Blur
@@ -28,76 +204,29 @@ Box blur
 Brightness
 Burn
 B/W
-bytes
-Denoise
-Caption Edit
-Cancel
-Cache Clear
-Can not delete
-Center
 Channel
 Charchoal
 Circle
 CLAHE
-Clip start
-Clip duration
-Clip end
-Close
 Color
-Compressed
-Constrain_aspect_ratio
-Contrast
-Converting video to mp4 format is a long process
-Conversion_running
 Convolution
-Copyright
-Correction
-Correction Strength
-This text saved into the Copyright IPTC/exif field of image only jpeg file
-This text saved into the Author / owner IPTC field of image only jpeg file
-Created
-Creator
 Crop
 cropped
-Date
 Darken
-Deep
-Depht
-default
 Degree of rotate
 Dehaze
-Delete
 Denoise
-desc
-Descending
-Detail
-Direction
 Distortion
-Document
 Dodge
-Done
-Down
 Edge
-Edit
-Edit Path
 Effect
 Emboss
 Enhance
 Ellipse
 Equalize
 Exposure
-exif
-Exit
-Extension
 Eyedropper
 Face edit
-Factor
-Ffmpeg parameters
-Filename
-File size
-File type
-File Upload
-FileSize
 Filter
 FilterValue
 Find edges
@@ -105,149 +234,97 @@ Fisheye
 Flip
 Flip vertically
 Flip horizontally
-Foldername
-Format
-Frame
-Framerate
-Frame color
-fsize
 Gamma
 Gaussian blur
 Geometry
-Group of Pictures
 Grayscale
-Height
-Help
 Histogram
-Horizontal
-Horizontal Center
-HTML5
 Hue
-In
-Initial
-Input
-Inner
-Image
 Image Edit
-Image open in new tab
-Importance
-important
-Lens
-Level
-Lightning
-Lin
-Liquify
-Log
 Kind
-Matte
-Next
-Kill
-Last modified
-Left
-Left top
-Levels
+Lens
+Lightning
+Liquify
 Lighting
 Light EQ
-Linear
-Link
-Link to statistics
-Mode
-Modified
-Name
-Name of data of this node
-New folder
+Matte
 Noise
-None
-Normalize
-Nothing
-Number of items
-Number of views
-Average of views
-Oil
-Ok
-Open in new tab
-Original
-Original size
-Other
-Out
-Outer
-Output
-Page
-Path
 Perspective
 Pinchusion
-pixels
-Point
-Previous
-Propertie
-Properties
+Normalize
+Oil
+Outer
 Radius
 Recip
 Rect
+Resize
 Red eye
 Redo
-Refresh
-Rename
-Repair
-Reset
-Resize
 RGB
 Right
 Right bottom
 Rotate
 Saturation
-Save
-Save As
-Scale
-Search
 Selected
 Sepia
 Sharpen
 Shave
 Show Grid
 Sigma
-Size
-Skin tune
-Slideshow
 Smooth
 Solarize
-Sort
-Source
-Spec Effects
-Statistics
-statistics
-Strength
-Subtitle
+Skin tune
 Swirl
-Target
-Thumbnail
-text
-to mp4
-to original
-Top
+Spec Effects
+The changed image not saved
 Transparent
-Trash
 Trim
-Type
-Undo
 Unsharp
-Up
-Upload
-Url
-Value
-Vertical
-Vertical Center
-Video
-Video convert
-Video Edit
-view last
-viewnumber
-Views
 Vignette
 Watermark
 Wave
 White
 Whitebalance
-Width
-What is on the picture?
-Is there this image AI generated?
+
+# Video Edit
+Are you sure you want to convert this video to MP4 format?
+bitrate
+Clip start
+Clip duration
+Clip end
+Constrain aspect ratio
+Conversion_running
+Conversion canceled by the user
+Converting video to mp4 format is a long process
+The edited videoclip not saved
+Error canceling conversion
+Error closing video editor
+Ffmpeg parameters
+Frame
+Framerate
+to mp4
+to original
+Video convert
+Video Edit
+
+# Slideshow
+Slideshow
+Down
+Next
+Top
+Up
+
+# Statistics
+Average of views
+Link to statistics
+Number of items
+Number of views
+Statistics
+
+# Properties
+Invalid ID
+or parent folder
+Last modified
+Number of items in the folder
+Properties
+There is no such item

@@ -50,7 +50,7 @@ audiohtml5_extensions: "mp3 ogg wav"
 # Video
 video_checking: true
 video_extensions: "avi mpeg mpg divx rm flv 3gp m4v asf wmv swf m4v qt ogg mp4 webm mkv"
-videohtml5_extensions: "mp4 webm mov"
+videohtml5_extensions: "mp4 webm mov 3gp"
 html5_checking: true
 
 #Documents
@@ -58,7 +58,7 @@ doc_checking: true
 doc_extensions: "pdf docx doc xlsx xls xlt xlsm xltx xltm pptx ppt ppsx txt odt ods slk"
 
 cmp_checking: true
-cmp_extensions: "zip rar gz tar arj chm 7z"
+cmp_extensions: "zip rar gz tar arj chm 7z 7zip tar cue"
 
 #Applications
 app_checking: true

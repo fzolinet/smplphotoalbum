@@ -16,32 +16,29 @@ class VideoEdit {
   private $width = 1280;
   private $height = 720;
   private $framerate = 30;  
-  private $gop = 2; // group of picture for framerate change
-  private $clipstart = 0; //beginning of clip >=0
-  private $clipend = 0; // end of clip <= duration
-  private $duration = 0; // length of original video
-  private $rotate = 0; // rotate angle of video, in degree, 90, 180, 270
-  private $cfg;   // smpl config;
-  private $root;  // photoalbum source folder
-  private $temppath; // Temporary folder
+  private $gop = 2;       // group of picture for framerate change
+  private $clipstart = 0; // beginning of clip >=0
+  private $clipend = 0;   // end of clip <= duration
+  private $duration = 0;  // length of original video
+  private $rotate = 0;    // rotate angle of video, in degree, 90, 180, 270
+  private $cfg = [];      // smpl config;
+  private $root = "";     // photoalbum source folder
+  private $temppath = ""; // Temporary folder
   private $public;
-  private $SignFile; // It sings the long process   
+  private $SignFile = 0;  // It sings the long process   
     
   // Session variables
   private $rq;
   private $sess;
-  private $ts; // Session, as array
-  public $bt; // BreakTime class for long process
-  public $lib; // Lib class for common functions
-  public $initialParams = [ 
-    "-qscale",
-    0
-  ];
-  public $mp;
+  private $ts = []; // Session, as array
+  public  BreakVideo $bt; // BreakTime class for long process
+  public  Lib $lib; // Lib class for common functions
+  public  $initialParams = [ "-qscale", 0 ];
+  public  $mp = ""; // smplphotoalbum module path for ffmpeg default params file
 
   // Video2MP4 class implementation
   function __construct(
-    $id,
+    $id   = 0,
     $path = '', 
     $name = '', 
     $type = "video", // what is the type now (video or notvideo)
@@ -206,9 +203,10 @@ class VideoEdit {
     // rotate video if needed
     if( isset($this->rotate ) && in_array($this->rotate, [90, 180, 270]) ){
       switch($this->rotate){
-        case 90: $rot = \FFMpeg\Filters\Video\RotateFilter::ROTATE_90; break;
+        case 90:  $rot = \FFMpeg\Filters\Video\RotateFilter::ROTATE_90; break;
         case 180: $rot = \FFMpeg\Filters\Video\RotateFilter::ROTATE_180; break;
         case 270: $rot = \FFMpeg\Filters\Video\RotateFilter::ROTATE_270; break;
+        default:  $rot = 0; break;
       }
       $video->filters()->rotate( $rot );      
     }   
@@ -302,8 +300,13 @@ class VideoEdit {
       //
       $this->ts["msg"] .= "Conversion successful from '<b>$this->path . $newname</b>'.";  
     } catch (\Exception $e) {     
-      $this->ts["msg"] = "Conversion cancelled by the user or failed because of FFMpeg problem! Error message: " . $e->getMessage(); 
-      $this->ts["ok"] = -1;     
+      if(!file_exists($this->temppath . $this->SignFile)){
+        $this->ts["msg"] = "Conversion cancelled by the user!";
+        $this->ts["ok"] = 1;       
+      } else{
+        $this->ts["msg"] = "Conversion cancelled by the user or failed because of FFMpeg problem! Error message: " . $e->getMessage(); 
+        $this->ts["ok"] = -1;
+      }           
     }
     
     $this->DeleteSignFile();
@@ -443,12 +446,12 @@ class VideoEdit {
    * Stop the long video edit process
    */
   public function Cancel(){
-    // delete the sign file  
+    // delete the sign file
     $ok = $this->DeleteSignFile();
     
     // delete the temporay files
-    $filename = LIB::getFilename( $this->ts["name"] );   ;    
-    array_map ( 'unlink', glob ( $this->temppath . $filename . "_#*" ) );       
+    $filename = LIB::getFilename( $this->ts["name"] );
+    array_map ( 'unlink', glob ( $this->temppath . $filename . "_#*" ) );
 
     // Stop the ffmpeg process if it is still running    
     $ok = $this->killFFMpeg();
@@ -478,12 +481,15 @@ class VideoEdit {
    * @return bool 
    */
   function DeleteSignFile(){
-    $ok = true;
-    if ( file_exists($this->temppath . $this->SignFile)) {      
+    
+    $ok = unlink($this->temppath . $this->SignFile);
+    while ( is_readable($this->temppath . $this->SignFile)) { 
       $ok = unlink($this->temppath . $this->SignFile);      
     }
     return $ok; 
   }
+
+
   /**
    * Stop the long process of video conversion by killing the ffmpeg process 
    * on Linux & Windows

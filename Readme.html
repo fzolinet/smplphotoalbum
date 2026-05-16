@@ -39,8 +39,7 @@
 	<li>Copy the files of module into the modules directory and enable.</li>
 	<li>Set the appropriate properties in the 'admin/config/fz/smplphotoalbum'</li>
 	<li>In the 'admin/config/content/formats' enable the Simple Photoalbum filters in the Full HTML or any other content
-		types</li>
-	<li>Default: The image shown in the other blank window.</li>
+		types</li>	
 </ul>
 
 <h3>Defaults</h3>
@@ -50,7 +49,7 @@
 	<li>The admin sets what kind of files enables / disables. It can
 		<ul>
 			<li>image (default),</li>
-			<li>videos (default) normal or HTML5 Video format</li>
+			<li>video (default) normal or HTML5 Video format</li>
 			<li>audio (default) HTML5 Audio format</li>
 			<li>document,</li>
 			<li>compressed,</li>
@@ -63,7 +62,6 @@
 </ul>
 
 <h3>Events in gallery mode</h3>
-
 <p>If you click on a thumbnail:</p>
 <ul>
 	<li>image: showing in original size (in colorbox)</li>
@@ -71,8 +69,9 @@
 	<li>HTML5 &lt;Video&gt;: plays the media,</li>
 	<li>audio: downloads or plays</li>
 	<li>HTML5 &lt;Audio&gt;: plays the media,</li>
-	<li>documents, compressed, executable, other types downloaded</li>
+	<li>documents, compressed, executable, other types it downloads</li>
 </ul>
+
 <h3>Events in slideshow mode</h3>
 <ul>
 	<li>Shows an image, then after a few seconds it disappears
@@ -90,7 +89,7 @@
 	<li>Root folder of photoalbums: string (default: public://photoalbum/)</li>
 </ul>
 
-<p class="rteindent1">All the albums are in a folder structure on
+<p>All the albums are in a folder structure on
 	the server. This is absolute path in the filesystem. If you use in the
 	path the&nbsp; __DRUPALROOT__&nbsp; substitutes the Drupal path with it.</p>
 
@@ -100,6 +99,7 @@
 	<li>Default target of link of image (default: _blank)</li>
 	<li>Using taxonomy Photoalbum (enable/disable) - Under Construction</li>
 </ul>
+<h4>Menu options</h4>
 <ul>
 	<li><strong>File upload</strong> - upload a file into the folder (if upload enabled)</li>
 	<li><strong>New Folder </strong>- makes a new folder if it is enabled centralized or on this node</li>
@@ -107,15 +107,16 @@
 	<li><strong>Caches clear</strong>- Clear the caches of Drupal and Opcache</li>
 	<li><strong>Refresh</strong> - Refresh or make thumbnails of this path</li>
 	<li><strong>Play</strong> - plays a slideshow from images of this path</li>
-	<li>Help</li>
+	<li><strong>Help</strong></li>
 </ul>
 <ul>
-	<li>The admin can enable / disable the &nbsp;
+	<li>The admin can enable / disable the 
 		<ul>
 			<li>Shows the number of views (downloads) of images (files)</li>
 			<li>Exif and other properties of images (exif info, bitrate, etc.) and documents</li>
-			<li>Substitle of files</li>
+			<li>Subtitle of files</li>
 			<li>Link of files (URL of original website etc...)&nbsp;&nbsp; &nbsp;</li>
+			<li>Upload files into the photoalbum folder</li>
 			<li>Importance of item</li>
 		</ul>
 	</li>
@@ -155,24 +156,18 @@
 	1. Make a simple photoalbum from a folder - <u>old syntax:</u>
 </h4>
 <p>
-<pre>
-		<code class="language-plaintext">
-			[smpl|/path-to-folder]
-		</code>
-	</pre>
+<pre><code class="language-plaintext">[smpl|/path-to-folder]</code></pre>
 </p>
 <h4>
 	2. Make a simple photoalbum from a folder - <u>new syntax:</u>
 </h4>
 <p>
-<pre><code class="language-plaintext">
-	[smplphotoalbum]
-    {name_of_parameter: value}
-	[/smplphotoalbum]
+<pre><code class="language-plaintext">[smplphotoalbum]
+  {name_of_parameter: value}
+[/smplphotoalbum]
 </code></pre>
 
-<pre><code class="language-plaintext">
-	{smplphotoalbum}
+<pre><code class="language-plaintext">{smplphotoalbum}
     {name_of_parameter: value}
 		...
 {/smplphotoalbum}
@@ -194,36 +189,53 @@
 {/smplphotoalbum}
 </code></pre>
 </p>
+<p>
 <h3>Parameters:</h3>
+The editor or admin user can change the behavior of photoalbum with parameters. The parameters are in the format of {name-of-parameter: value-of-parameter} and they are between the opening and closing tags of filter. The parameters are separated with new lines. The name of parameter and the values are case insensitive.
+</p>
 <ul>
-	<li>{name-of-parameter: value-of-parameter}</li>
-	<li>path: relative path to photoalbum folder (required)</li>
-	<li>notes: some-text</li>
-	<li>number: number of images on one page (from D8)</li>
-	<li>width: width of thumbnails in pixel</li>
-	<li>lang: (en | hu, default en ) </li>
-	<li>order: asc / desc / rand, default asc</li>
-	<li>ascdesc: asc /desc, default asc (D8)</li>
-	<li>sort: sortable of this album - (true|false, default: true)</li>
-	<li>sub: is there subtitle? (true|false, default: true)</li>
-	<li>viewed: shows the number of views, (true|false, default: true)</li>
-	<li>graphic: gd / imagick</li>
-	<li>edit: Editable images (true|false), default: true, when user is admin of Drupal</li>
-	<li>exif: shows the exif information of images (true|false), default: true</li>
-	<li>audio: shows this type of files (true|false, default: true)</li>
-	<li>video: shows this type of files (true|false, default: true)</li>
-	<li>doc: shows this type of files (true|false, default: true)</li>
-	<li>cmp: shows this type of files (true|false, default: true)</li>
-	<li>app: shows this type of files (true|false, default: true)</li>
-	<li>url: shows the URL of item website</li>
-	<li>target: what is the target (default: _blank)</li>
-	<li>html5: the video and audio file shows with HTML5 audio and video tags</li>
-	<li>autoclose: After save the edited image the edit windows auto close (true|false, default: false)</li>
-	<li>ai: name of image from image recognition of AI (Gemini)</li>
+	<li><h4>Basic parameters</h4>
+	<ul>
+		<li>title: The title of photoalbum</li>
+		<li>subtitle: The subtitle of photoalbum</li>
+		<li>path: relative path to photoalbum folder (required)</li>
+		<li>notes: some-text</li>
+		<li>number: number of images on one page</li>
+		<li>width: width of thumbnails in pixel</li>
+		<li>lang: (en|hu, default en )</li>
+		<li>translate: true|false</li>
+	</ul>	
+	</li>
+	<li><h4>More parameters</h4>
+		<ul>
+			<li>order: asc / desc / rand, default asc</li>
+			<li>sort: sortable of this album - (true|false, default: true)</li>
+			<li>ascdesc: asc /desc, default asc (D8)</li>
+			<li>sub: is there subtitle? (true|false, default: true)</li>
+			<li>viewed: shows the number of views, (true|false, default: true)</li>
+			<li>graphicdrv: which graphic driver, <strong>gd</strong> or <strong>imagick</strong> (if it is installed)</li>
+			<li>exif: shows the exif information of images (true|false), default: true</li>
+			<li>audio: shows this type of files (true|false, default: true)</li>
+			<li>video: shows this type of files (true|false, default: true)</li>
+			<li>html5: the video and audio file shows with HTML5 audio and video tags</li>
+			<li>doc: shows this type of files (true|false, default: true)</li>
+			<li>cmp: shows this type of files (true|false, default: true)</li>
+			<li>app: shows this type of files (true|false, default: true)</li>
+			<li>image: shows the images</li>
+			<li>other: shows other types of files (true|false, default: true)</li>
+			<li>prohibited: shows prohibited types of files (true|false, default: false)</li>
+			<li>edit: Editable images (true|false), default: true, when user is admin of Drupal</li>
+			<li>url: shows the URL of item website (true|false, default: true)</li>
+			<li>target: what is the target (default: _blank)</li>	
+			<li>autoclose: After save the edited image the edit windows auto close (true|false, default: false)</li>
+			<li>ai: name of image from image recognition of AI (Gemini)</li>
+			<li>upload: Upload enabled filetypes (true|false, default: true), when admin access folder</li>
+			<li>folder: makes subfolder (true|false, default: true), when admin access folder</li>
+		</ul>			
+	</li>
 	<li>method: GET / POST</li>
-	<li>upload: Upload enabled filetypes (true|false, default: true), when admin access folder</li>
-	<li>folder: makes subfolder (true|false, default: true), when admin access folder</li>
-	<li>Watermark</li>
+	
+	<li><h4>Watermark</h4>
 	<ul>
 		<li>wm: Watermark when show|edit the image (true|false)</li>
 		<li>wmpath: Watermark path
@@ -234,20 +246,24 @@
 		<li>wmcopyright: any text into copyright IPTC/Exif field</li>
 		<li>wmauthor: any text into author / Owner IPTC/Exif field</li>
 	</ul>
-	<li>test: test mode, only the (true|false, default false)</li>
-	<li>method: GET | POST (GET better the testing). Only admin mode!</li>
-	<li>graphicdrv: which graphic driver, <strong>gd</strong> or <strong>imagick</strong> (if it is installed)</li>
-	<li>lang: hu | en</li>
-	<li>translate: true|false
-	<li>icon: Set the color of icons on the page (_col / _bw)</li>
-	<li>slide: True - Let slideshow. The parameters of slideshow</li>
-	<ul>
-		<li>title: - title of slideshow</li>
-		<li>interval: time of changing in sec</li>
-		<li>height: Height of main image (px)</li>
-		<li>style: Mode of changing images - fade / slide / zero / zero1</li>
-		<li>slstyle: string of css settings of the main image. Default: 'max-width: 100%; height: 600px;'</li>
-	</ul>
+	</li>
+	<li><h4>Amind/developer parameters</h4>
+		<ul>
+			<li>test: test mode, only the (true|false, default false)</li>
+			<li>method: GET | POST (GET better the testing). Only admin mode!</li>
+			<li>icon: Set the color of icons on the page (_col / _bw)</li>
+		</ul>
+	</li>
+	<li><h4>Slideshow parameters</h4>
+		<ul>
+			<li>slide: True - Let slideshow. The parameters of slideshow</li>
+			<li>title: - title of slideshow</li>
+			<li>interval: time of changing in sec</li>
+			<li>height: Height of main image (px)</li>
+			<li>style: Mode of changing images - fade / slide / zero / zero1</li>
+			<li>slstyle: string of css settings of the main image. Default: 'max-width: 100%; height: 600px;'</li>
+		</ul>
+	</li>	
 </ul>
 
 <h3>Example:</h3>
@@ -291,7 +307,8 @@ If you are administrator you can edit the images online
 	</li>
 	<li>The <strong>Save</strong> and the <strong>Save As</strong> saves the edited image into the same folder</li>
 </ul>
-<h3>Convert a video (under construction)</h3>
+
+<h3>Convert a video</h3>
 with ffmpeg on Linux or Windows<br/>
 <ul>
 <li>crop the video</li>
@@ -301,14 +318,13 @@ with ffmpeg on Linux or Windows<br/>
 <li>rotate</li>
 <li>Break the long conversion process with Escape key or <strong>Cancel</strong> button</li>
 <li>There are <strong>Undo</strong> / <strong>Redo</strong> buttons</li>
-
 </ul>
 
 The using is similar than ACDSee or any other image editing software.
 You can use the mouse to move, zoom in or zoom out the image.
 </h3>
 <p>
-	2025.12.23.<br /> Zoltan Fabian
+	2026.05.16<br /> Zoltan Fabian
 </p>
 
 <p>

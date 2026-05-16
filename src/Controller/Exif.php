@@ -307,13 +307,16 @@ class Exif{
    * Exif of compressed files
    */
   function comp() {
-    switch ($this->ext) {
+    switch ( $this->ext ) {
       case 'chm' : $exif = $this->_chm(); break;
       case 'rar' : $exif = $this->_rar(); break;
       case 'zip' :
       case '7zip':
       case '7z'  :
       case 'gz'  : $exif = $this->_zip(); break;
+      case 'tar' : $exif = $this->_tar(); break;
+      case 'cue' : $exif = $this->_cue(); break;
+      default    : $exif = $this->t ( "Unknown compressed file" );
     }
     return $exif;
   }
@@ -353,6 +356,26 @@ class Exif{
     return $this->media ( $finfo, $this->t ( "Zip compressed file" ) );
   }
   
+   /**
+   * TAR file exif information
+   * @return string
+   */
+  function _tar() {
+    $finfo = $this->GetID3->analyze ( $this->p );
+    $finfo = $this->arrayflat ( $finfo );    
+    return $this->media ( $finfo, $this->t ( "TAR compressed file" ) );
+  }
+
+  /**
+   * CUE file exif information
+   * @return string
+   */
+  function _cue() {
+    $finfo = $this->GetID3->analyze ( $this->p );
+    $finfo = $this->arrayflat ( $finfo );    
+    return $this->media ( $finfo, $this->t ( "TAR compressed file" ) );
+  }
+
   /**
    * doc file exif information
    * @return string
@@ -464,6 +487,7 @@ class Exif{
    * @return string
    */
   function _excel(){    
+    
     $pinfo = pathinfo($this->p);
     $ext = strtolower($pinfo["extension"]);
     switch ($ext){
@@ -491,6 +515,9 @@ class Exif{
         $props = $sp->getProperties();
         $type = " ( SYLK = SYmbolic LinK )";
         break;
+      default :
+        $type = "";
+        $props = null;
     }
 
     $finfo["creator"]       = $props->getCreator();
@@ -651,7 +678,8 @@ class Exif{
    * @return string
    */
   function oth(){
-    switch ($this->ext) {
+    $exif = "";  
+    switch ($this->ext) {      
       case "txt" :
         $exif = $this-> t ( "Simple ASC or UTF8 / Unicode text file" );
         break;

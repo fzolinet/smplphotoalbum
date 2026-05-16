@@ -91,7 +91,7 @@
     fetch(url)
       .then(response => {
         if (!response.ok) {
-          smpl.ErrorC("Network response was not ok");
+          smpl.ErrorC(smpl.words.Network_response_not_ok);
           smpl.progress(false);
         }
         var x = response.json();
@@ -214,10 +214,10 @@
     fetch(url)
       .then(response => response.json())
       .then(data => function (data) {
-        smpl.AlertC("{{ The conversion canceled }}", 'status');
+        smpl.AlertC(smpl.words.Conversion_canceled, 'status');
         ShowButtons();
       }).catch(error => function (error) {
-        smpl.AlertC("{{ Error canceling conversion }}", 'error');
+        smpl.AlertC(smpl.words.Error_canceling_conversion, 'error');
         ShowButtons();
       });    
     e.preventDefault();
@@ -231,8 +231,8 @@
   $("#SmplVidClose").click(function (e) {
     if ( smpl.videosaved === false) {
       Swal.fire({
-        title: "The Edited Videoclip not saved. Do you want to close?",
-        html: smpl.words.Edit_not_saved,
+        title: smpl.words.not_saved,
+        html: smpl.words.Videoclip_not_saved + " " + smpl.words.Close_the_window,
         className: "smpl-message-warning",
         closeOnClickOutside: true,
         closeOnEsc: true,
@@ -278,7 +278,7 @@
         PrevNext(0, 0, false);       
         ShowButtons();
       }).catch(error => function (error) {        
-        smpl.AlertC("{{ Error closing video edit }}", 'error');
+        smpl.AlertC(smpl.words.Error_closing_video_edit, 'error');
         PrevNext(0, 0, false);       
         ShowButtons();
       });    
@@ -475,7 +475,7 @@
               if ( data.ok == -1 ||data.id == '-1' || data.id == '-2') {
                 smpl.ErrorC( data.msg );
               } else if( smpl.ok == "cancel" ){
-                smpl.AlertC( "Conversion cancelled", 'warning' );
+                smpl.AlertC(smpl.words.Conversion_canceled, 'warning' );
               } else{                
                 load( data );
                 smpl.AlertC( data.msg, 'status' );                

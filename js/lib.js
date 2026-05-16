@@ -34,58 +34,64 @@ function fz_t(data, show = -1) {
 }
 
 /**
-  * Filename and extension validation
-  * @param {string} fname 
-  * @param {string} ext 
-  * @return
-  */
-smpl.Validation = function (fname, ext) {
-  // Too short
-  if (fname.length < 1) return false;
-  if (ext) {
-    let ar = fname.split(".");
-    fname = ar[0];
-  }
-  //
-  const disabled = " .<>|([]{},\/áéíóöőúüűÁÉÍÓÖŐÚŰ ";
-  let i = 0;
-  while (i < disabled.length && !fname.includes(disabled.substring(i, i + 1))) {
-    i++;
-  }
-  if (i < disabled.length) return false;
-
-  // Dont check the extension
-  if (typeof ext === undefined || !ext) return true;
-
-  //extension checking    
-  let extension = (ar[ar.length - 1]).toLowerCase();
-  return smpl.extensions.includes(extension);
-}
-
-/**
- * Get cookie
- * @returns false
+ * Innen a jQuery lib-ek
  */
-smpl.getcookie = function (name) {
-  if (smpl.isUndefined(name)) {
-    name = "fz_test";
-  }
-  let nameEQ = name + "=";
-  let ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-  }
-  return false;
-}
+(function ($, Drupal, smpl, Swal) {
+  /**
+   * Filename and extension validation
+   * @param {string} fname 
+   * @param {string} ext 
+   * @return
+   */
+  smpl.Validation = function(fname, ext) {
+    // Too short
+    fname = fname.replace("C:\\fakepath\\", "");
+    if (fname.length < 1) return false;
+  
+    var ar;
+    if (ext) {
+      ar = fname.split(".");
+      fname = ar[0];
+    }
+    //
+    const disabled = " .<>|([]{},\/áéíóöőúüűÁÉÍÓÖŐÚŰ ";
+    let i = 0;
+    while (i < disabled.length && !fname.includes(disabled.substring(i, i + 1))) {
+      i++;
+    }
+    if (i < disabled.length) return false;
 
+    // Dont check the extension
+    if (typeof ext === undefined || !ext) return true;
+
+    //extension checking    
+    let ex = (ar[ar.length - 1]).toLowerCase();
+    return smpl.extensions.includes(ex);
+  }
+
+  /**
+   * Get cookie
+   * @returns false
+   */
+  smpl.getcookie = function(name) {
+    if (smpl.isUndefined(name)) {
+      name = "fz_test";
+    }
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return false;
+  }
 
 /**
  * Setcookie
  * @param {*} value - cookie
  */
-smpl.setcookie = function (key, value) {
+smpl.setcookie = function(key, value) {
   if (smpl.isUndefined(key)) {
     key = "fz_test";
   }
@@ -99,16 +105,15 @@ smpl.setcookie = function (key, value) {
  * @param mixed value
  * @return void
  */
-smpl.setLocalStorage = function (key, value) {
+smpl.setLocalStorage = function(key, value) {
   if (!smpl.isUndefined(value)) {
     localStorage.setItem(key, value);
   } else {
     localStorage.removeItem(key, value);
   }
-
 }
 
-smpl.getLocalStorage = function (key) {
+smpl.getLocalStorage = function(key) {
   return localStorage.getItem(key);
 }
 
@@ -132,16 +137,12 @@ function setDivInWindow(w, pos) {
   w.css("position", "absolut");
 }
 
-/**
- * Innen a jQuery lib-ek
- */
-(function ($, Drupal, smpl, Swal) {
   /**
    * Progress indicator on/off
    * @param Boolean on 
    * @return
    */
-  smpl.progress = function (on, timer) {
+  smpl.progress = function(on, timer) {
     const maxc = 3600;
     var count = 0; // 1 hour
     
@@ -162,8 +163,13 @@ function setDivInWindow(w, pos) {
         // https://stackoverflow.com/questions/29246444/fetch-how-do-you-make-a-non-cached-request
         //
         smpl.timer = setInterval(function() {                               
-          fetch( smpl.signurl, { cache: "no-cache" } )
-            .then( response => response.text() )
+          fetch(smpl.signurl, { cache: "no-cache" })
+            .then(response => {
+              if (response.ok) { 
+                return response.text();
+              };
+              
+            })
             .then(d => {                
               $("#smpl_progress").text(d);  
               if (d == "100%") {
@@ -189,7 +195,7 @@ function setDivInWindow(w, pos) {
     return false;
   };
 
-  smpl.progressvisible = function (){
+  smpl.progressvisible = function(){
     return $("#smpl_progress").is(":visible");
   }
 
@@ -202,7 +208,7 @@ function setDivInWindow(w, pos) {
    * @param {*} rb 
    * @returns string
    */
-  smpl.colorBrightness = function (color, rr, rg, rb) {
+  smpl.colorBrightness = function(color, rr, rg, rb) {
     var r, g, b;
     if (color.match(/^rgb/)) {
       color = color.match(/rgba?\(([^)]+)\)/)[1];
@@ -237,21 +243,21 @@ function setDivInWindow(w, pos) {
    * @param {*} cmd - message
    * @param {*} status - status code
    */
-  smpl.AlertC = function (cmd, status) {
+  smpl.AlertC = function(cmd, status) {
     var cl;
     switch (status) {      
       case 'warning':        
         cl = "smpl-message-warning";
-        title = "Warning message";
+        title = smpl.words.Warning;
         break;
       case 'status':
         cl = "smpl-message-status";
-        title = "Status message";
+        title = smpl.words.Status;
         break;
       case 'error': 
       default:
         cl = "smpl-message-error";
-        title = "Error message";
+        title = smpl.words.Error;
         break;
     }
 
@@ -282,7 +288,7 @@ function setDivInWindow(w, pos) {
   /* 
    * Warning popup box
    */
-  smpl.ConfirmC = function (cmd) {
+  smpl.ConfirmC = function(cmd) {
     smpl.confirm = false;
     smpl.AlertC("Warning: " + cmd, 'warning');
   }
@@ -291,15 +297,15 @@ function setDivInWindow(w, pos) {
     * ErrorC - Error alert
     * @param {*} cmd
     */
-  smpl.ErrorC = function (cmd) {
-    smpl.AlertC("Error on server side: " + cmd, 'error');
+  smpl.ErrorC = function(cmd) {
+    smpl.AlertC(smpl.words.ErrorServerSide + cmd, 'error');
   }
 
   // Draggable window
   $('#smpl-message').draggable();
 
   // ImageBox
-  smpl.ImageBox = function (link, alias) {
+  smpl.ImageBox = function(link, alias) {
     Swal.fire({
       imageUrl: link,
       imageAlt: alias,
@@ -316,5 +322,29 @@ function setDivInWindow(w, pos) {
 
       }
     });
+  }
+  /**
+   * Show file size in B, KB, MB or GB
+   * @param mixed $size in bytes
+   * @return string 
+   */
+
+  smpl.ShowFileSize = function (size) {
+    const KB = 1024;
+    const MB = 1048576;
+    const GB = 1073741824;
+    const TB = 1099511627776;
+    if (size > TB) {
+      s = parseInt(size / TB) + '&nbsp;TB';
+    } else if (size > GB) {
+      s = parseInt(size / GB) + '&nbsp;GB';
+    } else if (size > MB) {
+      s = parseInt(size / MB) + '&nbsp;MB';
+    } else if (size > KB) {
+      s = parseInt(size / KB) + '&nbsp;KB';
+    } else {
+      s = size + '&nbsp;B';
+    }
+    return s;
   }
 })(jQuery, Drupal, smpl, Swal);

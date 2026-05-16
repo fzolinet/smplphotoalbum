@@ -40,7 +40,7 @@
 							</ai>
 						</td>
 					</tr>
-					<tr>
+					<tr id="smpl_type">
 						<td align="left" valign="top"><label class="smpl" for="smpl_type">{{ Type }}</label></td>
 						<td align="left" valign="top">
 							<select id="smpl_type" name="smpl_type" class="smpl_dropdown">
@@ -52,17 +52,18 @@
 								<option value="app">{{ Application }}</option>
 								<option value="cmp">{{ Compressed }}</option>
 								<option value="doc">{{ Document }}</option>
+								<option value="folder">{{ Folder }}</option>
 								<option value="other">{{ Other }}</option>
 							</select>
 						</td>
 					</tr>
-					<tr>
+					<tr id="smpl_importance">
 						<td align="left" valign="top"><label class="smpl" for="smpl_importance">{{ Importance }}</label></td>
 						<td align="left" valign="top">
 							<input id="smpl_importance" name="smpl_importance" type="number" value="0" min="0" max="255">
 						</td>
 					</tr>
-					<tr>
+					<tr id="smpl_link">
 						<td align="left" valign="top"><label class="smpl" for="smpl_link">{{ Url }}</label></td>
 						<td align="left" valign="top"><input id="smpl_link" type='text' name="smpl_link" value="" size="40" maxlength="255"/></td>
 					</tr>

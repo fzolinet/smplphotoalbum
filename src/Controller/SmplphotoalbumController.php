@@ -29,15 +29,15 @@ use Drupal\smplphotoalbum\AI;
 use Drupal\smplphotoalbum\SlideShow;
 
 class SmplphotoalbumController extends ControllerBase{  
-  private $cfg;
-  private $mp;
-  private $root;
-  private $public;
-  private $TN;
+  private $cfg; // Configuration
+  private string $mp = '';   // Module path
+  private string $root = ''; // Root path of items
+  private $public = true;
+  private $TN = '_tn_/';
   private $sess;
-  private $wm;  
-  private $aigemini;
-  private $lang;
+  private $wm = true;        // Watermark on/off
+  private $aigemini = false; // AI Gemini on/off
+  private $lang = "en";
   private $words = [];
   private $ffmpeg = false;   // true/false
   private $ffmpeg_path = ''; // on Linux: /usr/bin/ffmpeg and on Windows for example C:\\ffmpeg\\bin\\ffmpeg.exe
@@ -46,16 +46,16 @@ class SmplphotoalbumController extends ControllerBase{
    * Class constructor.
    */
   public function __construct() {      
-    $this->cfg    = \Drupal::config( 'smplphotoalbum.settings' );
+    $this->cfg    = \Drupal::config( 'smplphotoalbum.settings' );    
     $this->lang   = $this->cfg->get( 'lang' );
     $this->mp     = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
     $this->public = \Drupal::service( 'file_system' )->realpath( "public://" );
     $this->sess   = \Drupal::request()->getSession();
-    $this->wm     = $this->sess->get("wm", false);    
+    $this->wm     =  $this->sess->get("wm", false);    
+    $this->words = Lib::ReadWords($this->lang);
     $root = $this->cfg->get( 'root' );    
     $root = str_replace( "public://", $this->public . "/", $root );
     $root .= substr( $root, - 1 ) != '/' ? "/" : '';
-
     $this->root = Lib::slash( $root );
     $this->TN = $this->cfg->get( 'TN' );       
     $this->aigemini = $this->cfg->get("aigemini");    
@@ -66,18 +66,18 @@ class SmplphotoalbumController extends ControllerBase{
   // ...
   // AJAX Callback to read a message.
   public function help() {
-    $output = '<h3>' . $this->t( 'About' ) . '</h3>';
+    $output = '<h3>' . $this->words['About'] . '</h3>';
     $path = $this->mp . '/smplphotoalbum.info.yml';
     $InfoParsed = new InfoParser( \Drupal::root() );
     $info = $InfoParsed->parse( $path );
     $output .= "<h4>Simple Photoalbum</h4>";
-    $output .= 'Author: <a href="http://www.fzolee.hu">Zoltan Fabian</a><br/>';
-    $output .= "Drupal ".$this->t("version") .": ".\Drupal::VERSION."<br/>";
-    $output .= $this->t("Module")." ".$this->t( 'version' ) . ': ' . $info['version'] . '<br/>';
-    $output .= $this->t( 'compiled' ) . ': ' . date( 'Y.m.d', $info['datestamp'] );
-    $output .= "<p>" . $this->t( "Simple Photoalbum shows a set of picture and other filetypes ." ) . "</p>";
-    $lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    if($lang == "hu") {
+    $output .= $this->words[ "Author" ].': <a href="http://www.fzolee.hu">Zoltan Fabian</a><br/>';
+    $output .= "Drupal ".$this->words[ "version" ] ." ".\Drupal::VERSION."<br/>";
+    $output .= $this->words[ "Module" ] ." ".$this->words[ 'version' ] . ': ' . $info['version'] . '<br/>';
+    $output .= $this->words[ 'Timestamp' ] . ': ' . date( 'Y.m.d', $info['datestamp'] );
+    $output .= "<p>" . $this->words [ "Simple Photoalbum shows a set of picture and other filetypes" ] . ".</p>";    
+
+    if($this->lang == "hu") {
       $output .= file_get_contents( $this->mp . "/Olvassel.html" );
     } else {
       $output .= file_get_contents( $this->mp . "/Readme.html" );
@@ -89,7 +89,7 @@ class SmplphotoalbumController extends ControllerBase{
     $response->addCommand( new InsertCommand( $selector, $content, $settings ) );
     return $response;
   }
-
+  
   /**
    * Delete an item from server
    * 
@@ -129,7 +129,8 @@ class SmplphotoalbumController extends ControllerBase{
 
     if($db == 1) {
       $path = $this->DblSlashToSmpl($a["path"]);
-      //
+      
+      // Thumbnail delete
       $tn = $this->root . $path . $this->TN . $a["name"];
       if( $a['typ'] !="image" ){
         $tn .= ".png";
@@ -139,14 +140,20 @@ class SmplphotoalbumController extends ControllerBase{
       if( file_exists($tn) ){
         $ok = unlink( $tn );
       }
-      //
+
+      // Item delete
       if($ok) {
-        $img = $this->root . $path . $a["name"];        
-        if( file_exists( $img ) ) 
-          $ok = unlink( $img );
-        else           
-          $ok = false;
+        $item = $this->root . $path . $a["name"]; 
         
+        if($a['typ'] != "folder" ){
+          if( file_exists( $item ) ) 
+            $ok = unlink( $item );
+          else           
+            $ok = false;
+        } else{
+          $ok = Lib::removeDir( $item );
+        }
+                  
         // Delete from database
         if($ok) {
           $db = $con->delete( "smplphotoalbum" )->condition( "id", $id, "=" )->execute();
@@ -163,10 +170,15 @@ class SmplphotoalbumController extends ControllerBase{
    * Exif information of image
    * @param string $id
    * @param string $type
-   * @return \Drupal\Core\Ajax\AjaxResponse
+   * @return \Drupal\Core\Ajax\AjaxResponse|array|string    
    */
-  public function exif($id = 1, $type ='' ) {
+  public function exif($id = 1, $type = '' ) {
     $response = new AjaxResponse();
+
+    if( empty( $id ) ) {
+      $response->addCommand( new InsertCommand( '', $this->words["Invalid ID"]." ".$this->words["or parent folder"], [] ) );
+      return $response;
+    }
 
     $con = \Drupal::database();
     $record = $con->select( 'smplphotoalbum', 's' )->fields( 's', [
@@ -182,21 +194,52 @@ class SmplphotoalbumController extends ControllerBase{
         'importance'       
     ] )->condition( 's.id', $id, '=' )->execute();
     $a = $record->fetchAssoc();
-  
-    //
-    $ex = new Exif( $a, $this->cfg );
-    
-    //Video convert
-    if ( !empty($type) && $a['typ'] == "video" ){
-      $ex->Videoinfo( $a );
-      return $a;
+
+    if( empty( $a ) ) {
+      $response->addCommand( new InsertCommand( '', $this->words["Invalid ID"], [] ) );
+      return $response;
     }
+
     
-    $exif = (string) $ex->Info();        
+    if( $a["typ"] == "folder" ){
+      if( $a["name"] !=".." ){
+        $query = $con->select('smplphotoalbum','s');
+        $query->condition('s.path', $a["path"], "LIKE");        
+        $db = (int) $query->countQuery()->execute()->fetchField();
+        $exif = file_get_contents( $this->mp. '/templates/exif_folder.html.twig' );
+        $s=[
+          "{{ Number of items in the folder }}",
+          "{{ db }}",
+          "{{ Last modified }}",
+          "{{ lastmodified }}",
+        ];
+
+        $r = [
+          $this->words["Number of items in the folder"],
+          $db,
+          $this->words["Last modified"],
+          date("Y.m.d", $a["modified"])
+        ];
+
+        $exif = str_replace( $s, $r, $exif );
+      } else {
+        $exif = "";
+      }
+    }else{
+      //
+      $ex = new Exif( $a, $this->cfg );
+    
+      //Video convert
+      if ( !empty($type) && $a['typ'] == "video" ){
+        $ex->Videoinfo( $a );
+        return $a;
+      }    
+      $exif = (string) $ex->Info(); 
+    }
+
     $str = file_get_contents( $this->mp . "/templates/exif.html.twig" );
     $str = str_replace( "{{ exif }}", $exif, $str );
-        //
-    $this->Readwords();
+        //    
     $s = [
       "{{ id }}",
       "{{ desc }}",
@@ -208,6 +251,7 @@ class SmplphotoalbumController extends ControllerBase{
       "{{ Number of views }}",
       "{{ viewnumber }}",
     ];
+
     $r = [
       $a["id"],
       $a["name"]." => ".$a["subtitle"],
@@ -219,7 +263,8 @@ class SmplphotoalbumController extends ControllerBase{
       $this->words["Number of views"],
       $a["viewnumber"],
     ];
-    $str =str_replace($s, $r, $str);
+
+    $str = str_replace($s, $r, $str);
     $response->addCommand( new InsertCommand( '', $str, [] ) );
     return $response;
   }
@@ -250,13 +295,15 @@ class SmplphotoalbumController extends ControllerBase{
     ] )->condition( 's.id', $id, '=' )->execute();
 
     $a = $record->fetchAssoc();
-    if($a['typ'] == "video") {
+    if( $a['typ'] == "video" ) {
       $x = $this->exif($id, 'video');  
       $a["width"]     = $x['width'];
       $a["height"]    = $x['height'];
       $a["framerate"] = $x['framerate']; 
       $a['filesize']  = $x['filesize'];
       $a['clipend']   = $x['clipend'];      
+    } else if($a['typ'] == "folder"){
+      $a['link'] = "";
     }
 
     $content = json_encode( $a );
@@ -299,8 +346,8 @@ class SmplphotoalbumController extends ControllerBase{
       $fromtn = $this->root . $path . $this->TN . $a["name"];
       $totn   = $this->root . $path . $this->TN . $json->name;
 
-      $fromtn = Lib::slash( $fromtn );
-      $totn   = Lib::slash( $totn );
+      $fromtn = Lib::slash( $fromtn, "file" );
+      $totn   = Lib::slash( $totn, "file" );
 
       if( $a['typ'] != "image" ){
         $fromtn .= ".png";
@@ -316,8 +363,8 @@ class SmplphotoalbumController extends ControllerBase{
       if( $ok ) {
         $fromimg = $this->root . $path . $a["name"];
         $toimg   = $this->root . $path . $json->name;
-        $fromimg = Lib::slash( $fromimg );
-        $toimg   = Lib::slash( $toimg );
+        $fromimg = Lib::slash( $fromimg, "file" );
+        $toimg   = Lib::slash( $toimg, "file" );
         if( file_exists( $fromimg ) ) {
           $ok = rename( $fromimg, $toimg );
         } else {
@@ -789,18 +836,18 @@ class SmplphotoalbumController extends ControllerBase{
   /**
    * Make a GD image from image on the disk
    *
-   * @param string $src
-   * @param string $ext
+   * @param string $src   
    * @return \GdImage|resource
    */
   function ImageCreateFrom( $src ) {
     $p = pathinfo( $src );
+    $img = imagecreatetruecolor( 1, 1 );
     switch(strtolower($p["extension"])){
       case "avif": $img = @imagecreatefromavif( $src ); break;        
       case "bmp" : $img = @ImageCreateFromBmp( $src );  break;        
       case 'gif' : $img = @ImageCreateFromGif( $src );  break;
       case 'jpg' :
-      case 'jpeg': $img = ImageCreateFromJPEG( $src );  break;
+      case 'jpeg': $img = @ImageCreateFromJPEG( $src );  break;
       case 'png' : $img = @ImageCreateFromPNG( $src );  break;
       case 'wbmp': $img = @ImageCreateFromwbmp( $src ); break;
       case "webp": $img = @ImageCreateFromWebp( $src ); break;
@@ -852,7 +899,7 @@ class SmplphotoalbumController extends ControllerBase{
     $p =  LIB::slash($this->root. $a["path"]."/".$a["name"], "file");
     
     if( $this->aigemini ){
-      $this->ReadWords();
+      $this->words = LIB::ReadWords( $this->lang );
       $AI = new AIGemini( $p, $cmd, $this->words );     
       $answer = $AI->process();
     } else{     
@@ -1135,36 +1182,4 @@ class SmplphotoalbumController extends ControllerBase{
 		unset ($pics["id"], $pics["path"], $pics["i"]);
 		return $pics;
 	}
-
-  /**
- 	 * Reads the words of translating
-	 * @return
- 	 */
-	function ReadWords(){		
-		if($this->lang == ""){
-			$this->lang = 'en';
-		}
-		if( $this->lang == 'en' ){
-			$words = file( $this->mp ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
-		} else {			
-			$words = file( $this->mp ."/translate/translate_" . $this->lang . ".txt", FILE_IGNORE_NEW_LINES );
-		}
-		$words = str_replace( "_"," ", $words);
-		
-		foreach($words AS $e){
-			$e = trim( $e );
-			if( strpos( ' '.$e, ';' ) > 0 ){
-				continue;
-			}
-			$a = explode( "=", $e );
-
-			if( count( $a ) == 1 ) {
-				$this->words[ $e ] = $e;
-			}else{
-				$this->words[ trim( $a[0] ) ] = trim( $a[1] );
-			}
-		}
-	}	
-
-
 }

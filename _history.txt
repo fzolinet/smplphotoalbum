@@ -1,19 +1,19 @@
 Bugs:
 ~~~~
 
-- use POST method the Drupal cache problem => 
-  action of form random, but it is not good solution
-
 ImageEdit
-
 // TODO - Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
    - Need to check to how layers work
 // TODO - the ellipse / rectangle / grid / point eyedrop change for the scaled and dragged image 
 
 // TODO:
 ~~~~~~~~
+- use POST method the Drupal cache problem => 
+  action of form random, but it is not good solution
+
+- write rights (chmod on Linux and ... on windows ) give the subfolder
 - audio (wav, mp3, flac, ogg ) editing
-- Video Convert Break handling (Error or cancelled) 
+
 - using $.ajax => fetch api 
 	https://metabox.io/send-get-post-request-with-javascript-fetch-api/
 	https://www.digitalocean.com/community/tutorials/how-to-use-the-javascript-fetch-api-to-get-data 
@@ -23,10 +23,7 @@ ImageEdit
 // TODO - ffmpeg - write watermark on the video with ffmpeg
 	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
 	
-// TODO - stop / kill / abort ffmpeg from php => under Linux && under Windows
-	https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues/218
-
-//TODO - Use javascript fetch instead of $.ajax
+// TODO - Use javascript fetch instead of $.ajax
   https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
 
 // TODO - if long process control the smpl.processvisible()	
@@ -115,7 +112,6 @@ Docs:
 
 	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
 
-
 	https://www.fzolee.hu/fw2/ffmpeg-parameterei
 
 	PHP-FFMpeg - stop / kill / abort ffmpeg from php => under Linux && under Windows
@@ -142,7 +138,18 @@ Docs:
 
 History:
 ~~~~~~~
-2026.04.26 - 1.10.3-beta4
+2026.05.12 - 1.10.3-beta5
+- BugFix: Exif properties of upfolder
+- Added:  Exif tar & cue compressed file
+- BugFix: Videi edit status message
+- BugFix: Rename, Folde make, Delete
+- Bugfix: New Folder window
+- Bugfix: New Folder <=> Upload file submit button problem
+- Bugfix: Translating problems
+- Bugfix: Translating problem
+- Bugfix: Videoconvert - the progress first call is good too
+
+2026.04.28 - 1.10.3-beta4
 - Bugfix: Slideshow
 - Bugfix: VideoEdit
 

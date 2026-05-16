@@ -1,6 +1,7 @@
 <?php
 namespace Drupal\smplphotoalbum;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\smplphotoalbum\controller\Lib;
 
 class Item {
 	const TN = '_tn_/';
@@ -16,24 +17,24 @@ class Item {
 	protected $id ='0';      	// id of item
 	protected $imgedit = false;
 	protected $lang = "en";
-	protected $link = "";    // link associated with image
+	protected $link = "";     // link associated with image
 	protected $modulepath = ''; // module path in filesystem
-	protected $path ='';	   // relativ path to item
-	protected $smplbox ='';  // it helps to colorbox or any other similar module
+	protected $path ='';	    // relativ path to item
+	protected $smplbox ='';   // it helps to colorbox or any other similar module
 	protected $sortorder ='filename';	// type of order
-	protected $sub = '';     // Shows the subtitle of pictures
-	public 		$subtitle =''; // Actual subtitle below the image
-	protected $root ='';     // The root of photoalbums
+	protected $sub = '';      // Shows the subtitle of pictures
+	public 		$subtitle = ''; // Actual subtitle below the image
+	protected $root ='';      // The root of photoalbums
 	protected $test = false;
-	public 		$thdate = 0;      //date of thumbnail
-	protected $tpl = [];     //template array
+	public 		$thdate = 0;    //date of thumbnail
+	protected $tpl = [];      //template array
 	protected $translate = false;
 	public    $type ='';
 	protected $url = false;
 	protected $v = '';         // viever link with parameter	
 	protected $viewed = false; // Shows the number of view?
 	public    $viewnumber = 0; // View number
-	protected $width;          // Width of items
+	protected $width = 150;    // Width of items
 	protected $words = [];     // translations
 	protected $subfolder = ''; // Sub folder
 	
@@ -41,12 +42,12 @@ class Item {
 	
 	// Constructor
 	Function __construct(
-		$id, 
-		$subtitle, 
-		$viewnumber, 
-		$link, 
-		&$params, 
-		&$words, 
+		$id = 0, 
+		$subtitle = "", 
+		$viewnumber = 0, 
+		$link = "",
+		array  &$params, 
+		array  &$words, 
 		$entry = '', 
 		$importance = 0 , 
 		$type = 'image', 
@@ -100,8 +101,8 @@ class Item {
 	function Render( $editok, $last = false ) {
 		switch ($this->type) {
 			case 'image'      : $str = $this->RenderImage(); break;			
-			case 'videohtml5' : $str = ($this->html5)? $this->RenderHTML5Video() : $this->RenderVideo(); break;
-			case 'audiohtml5' : $str = ( $this->html5 )? $this->RenderHTML5Audio(): $this->RenderOther();	break;
+			case 'videohtml5' : $str = ( $this->html5 ) ? $this->RenderHTML5Video() : $this->RenderVideo(); break;
+			case 'audiohtml5' : $str = ( $this->html5 ) ? $this->RenderHTML5Audio() : $this->RenderOther();	break;
 			case 'folder'     : $str = $this->RenderFolder();	break;
 			case 'video'      : $str = $this->RenderVideo(); break;
 			case 'audio'     	:
@@ -207,13 +208,13 @@ class Item {
 				$this->words['Last modified'],
 				"",
 				$this->words['FileSize'],
-				$this->ShowFileSize(),
+				Lib::ShowFileSize($this->filesize),
 				$this->words['File type']	
 		];
 		$str = str_replace( $s, $r, $str );
 	}
 
-/**
+  /**
 	 * Show Image Edit buttons
 	 * @param string $str
 	 * @return string
@@ -257,24 +258,6 @@ class Item {
 	function NoEdit(string &$str){
 		$str = preg_replace("#<Edit(.*?)<\/Edit>#imxs", '', $str);
 	}
-
-	/**
-	 * Get file size
-	 * @return string
-	 */
-	function ShowFileSize() {
-		$size = ( int ) $this->filesize;
-		if ($size > 1073741824) {
-			$s = ( int ) ( $size / 1073741824 ) . '&nbsp;Gb';
-		} else if ( $size > 1048576 ) {
-			$s = ( int ) ( $size / 1048576 ) . '&nbsp;Mb';
-		} else if ( $size > 1024)  {
-			$s = ( int ) ( $size / 1024 ) . '&nbsp;Kb';
-		} else {
-			$s = $size . '&nbsp;b';
-		}
-		return $s;
-	}
 	
 	/**
 	 * Render image media
@@ -310,7 +293,7 @@ class Item {
 	 */
 	function RenderFolder() {
 		// href to file
-		$href = $this->Request("REQUEST_URI", '','SERVER');
+		$href = Lib::Request("REQUEST_URI", '','SERVER');
 		$href = preg_replace("#subfolder=(.*?)(&|$)#imxs","", $href );
 		$href = preg_replace("#upfolder=1#imxs","", $href);	
 		$href = preg_replace("#(&+)#","&", $href);
@@ -526,17 +509,19 @@ class Item {
 	public function getOpened() {
 	  return ( int ) ($this->viewnumber);
 	}
+
 	 /**
    * Get the file ID - Call From ImageList
-	 * @return number
+	 * @return int
    */
   public function getID() {
     return $this->id;
   }
+
 	/**
    * Get Subtitle - Call From ImageList
 	 * 
-	 * @return number 
+	 * @return string 
    */
   public function getSubtitle() {
     return $this->subtitle;
@@ -599,5 +584,4 @@ class Item {
 		}
 		return \Drupal::request()->request->get($key, $default);
   }
-
 }

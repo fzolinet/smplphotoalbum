@@ -11,7 +11,7 @@
 
 		Swal.fire({
 			html: smpl.words.Delete + ": '" + name + "' ?",
-			title: "Are you sure?",
+			title: smpl.words.AreYouSure,
 			className: "smpl-message-warning",
 			closeOnClickOutside: true,
 			closeOnEsc: true,

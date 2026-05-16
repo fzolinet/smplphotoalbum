@@ -29,22 +29,23 @@
     SmplFolderForm.offset({ top: pos.top + dy, left: pos.left });
   });
 
-  $("#smpl_fname").change(function () {
+  $("#SmplFolderName").change(function () {
     let fname = $(this).val();
     if (!smpl.Validation(fname, false)) {
       smpl.AlertC("Client side validation: There is no enabled folder name: '" + fname + "' !", 'warning');
     }
   });
+
   /**
    * click on cancel button of windows of properties
    * @return false
      */
   $("#SmplFolderClose").click(function (e) {
     SmplFolderForm.hide();
-    $("input#smpl_fid").val('');
-    $("input#smpl_fname").val('');
-    $("input#smpl_fsub").val('');
-    $("input#smpl_flink").val('');
+    $("input#SmplFolderId").val('');
+    $("input#SmplFolderName").val('');
+    $("input#SmplFolderSubtitle").val('');
+    $("input#SmplFolderLink").val('');
     e.preventDefault();
     return false;
   });
@@ -53,24 +54,24 @@
    * Folder form send to server
    * @return false
    */
-  $("#SmplUploadSubmit").click(function () {
-    let id = $("input#smpl_fid").val();
-    var fname = $("#smpl_fname").val();
+  $("#SmplFolderSubmit").click(function () {
+    let id = $("input#SmplFolderId").val();
+    var name = $("input#SmplFolderName").val();
 
     // client side validation
     // - It can't is empty
     // - Disabled character '.'
     // - Can not in space
     // - script
-    if (!smpl.Validation(fname)) {
-      smpl.AlertC("Client side validation: There is no enabled folder name: '" + fname + "' !", 'warning');
+    if (!smpl.Validation(name)) {
+      smpl.AlertC(smpl.words.ClientSide + "This is no enabled foldername: '" + name + "' !", 'warning');
       return false;
     }
 
     let formData = {
-      name: $("input#smpl_fname").val(),
-      subtitle: $("input#smpl_fsub").val(),
-      link: $("input#smpl_flink").val(),
+      name: $("input#SmplFolderName").val(),
+      subtitle: $("input#SmplFolderSubtitle").val(),
+      link: $("input#SmplFolderLink").val(),
     };
     return true;
   });

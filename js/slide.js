@@ -41,6 +41,7 @@
    */
 	function smplslideload(cmd, id) {
 		// If the image loaded by click, the timer stop
+		console.log(smplslide.timer);
 		clearInterval(smplslide.timer);
 		smplslide.timer = false;
 		smplslide.lastcmd = cmd;
@@ -51,7 +52,7 @@
 		}
 
 		smpl.progress(true);
-
+		
 		fetch(url)
 			.then(response => response.json())
 			.then(data => {
@@ -59,6 +60,7 @@
 				smpl.progress(false);
 				if (data.id != -1) {
 					smplslidewrite(data, img, cmd);
+					smplslide.timer = setInterval(smplslideload, smplslide.interval, smplslide.lastcmd, -1);
 				} else {
 					smpl.ErrorC(data.error);
 				}
@@ -152,4 +154,7 @@
 				.attr("data-link", smplslide.linksrc + smplslide.ths[i].id + "?tn=1");
 		}
 	}
+	// Start the slideshow
+	smplslide.timer = setInterval(smplslideload, smplslide.interval, smplslide.lastcmd, -1);
+
 })(jQuery, Drupal, smpl, smplslide);

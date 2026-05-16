@@ -30,9 +30,9 @@
   });
 
   /**
-   * click on cancel button of windows of properties
+   * Click on cancel button of windows of upload
    * @return false
-     */
+   */
   $("#SmplUploadClose").click(function (e) {
     SmplUploadForm.hide();
     $("input#smpl_upload_id").val('');
@@ -53,40 +53,40 @@
   $("#SmplUploadSubmit").click(function () {
     let id = $("input#smpl_uid").val();
     if ($("#smpl_uname").val().length < 1) {
-      smpl.AlertC('Client side validation: There is no filename!', 'warning');
+      smpl.AlertC(smpl.words.Validation + smpl.words.No_filename, 'warning');
       return false;
     }
     let formData = {
-      name: $("input#smpl_uname").val(),
-      subtitle: $("input#smpl_usub").val(),
+      name: $("#smpl_uname").val(),
+      subtitle: $("#smpl_usub").val(),
       type: $("select#smpl_utype option:selected").val(),
-      link: $("input#smpl_ulink").val(),
-      importance: $("input#smpl_uimportance").val(),
+      link: $("#smpl_ulink").val(),
+      importance: $("#smpl_uimportance").val(),
     };
 
     // client side validation
     var fname = $("#smpl_uname").val();
-    if (smpl.Validation(fname, true)) {
-      return true;
-    }
-    smpl.AlertC("Client side validation: There is no enabled File name or type: '" + fname + "' !", 'warning');
-    return false;
+    if (!smpl.Validation(fname, true)) {
+      smpl.AlertC(smpl.words.Validation + smpl.word.Enabled_file_name_or_type + " '" + fname + "' !", 'warning');
+      return;
+    }   
+    return true;
   });
 
   /**
    * Validating the uploaded file extension && size
    */
   $("#smpl_uname").change(function () {
-    let fname = $(this).val();
+    let fname = ($(this).val()).replace("C:\\fakepath\\", "");
     if (!smpl.Validation(fname, true)) {
-      smpl.AlertC("Client side validation: There is no enabled File name or type: '" + fname + "'!", 'warning');
+      smpl.AlertC(smpl.words.Validation + smpl.words.Enabled_file_name_or_type + " '" + fname + "'!", 'warning');
       return;
     }
 
     //Max size
-    var size = document.getElementById("smpl_uname").files[0].size;
+    var size = document.getElementById("smpl_uname").files[0].size;    
     if (size > smpl.maxsize) {
-      smpl.AlertC("The file '" + fname + "' is too big! Max size of file is: " + smpl.maxsize + " bytes", "warning");
+      smpl.AlertC(smpl.words.Validation +" '" + fname + "' "+smpl.words.Too_big +"<br>"+ smpl.words.Max_size + smpl.ShowFileSize(smpl.maxsize) + " bytes", "warning");
       return;
     }
     $("input#smpl_usize").val(size);

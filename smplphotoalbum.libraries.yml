@@ -4,8 +4,8 @@ smplphotoalbum:
     state:
       css/smplphotoalbum.theme.css: {}
       js/sweetalert2/sweetalert2.min.css: {}
-  js:
-    js/sweetalert2/sweetalert2.all.min.js: {}
+  js:    
+    js/sweetalert2/sweetalert2.all.min.js: {}    
     js/lib.js: { preprocess: false }
     js/smpl.js: { preprocess: false }
     js/exif.js: {}
@@ -23,10 +23,11 @@ smplphotoalbum:
 
 smplphotoalbum-edit:
   version: 1.x
-  js:
+  js:       
     js/mousewheel/jquery.mousewheel.min.js: {}
     js/jcanvas/dist/min/jcanvas.min.js: {}
     js/jcanvas/dist/min/jcanvas-handles.min.js: {}
+    js/lib.js: { preprocess: false }
     js/delete.js: {}
     js/edit.js: {}
     js/video/jquery.video.min.js: {}    
@@ -60,7 +61,6 @@ smplphotoalbum-slide:
   version: 1.x
   js:
     js/slide.js: { preprocess: false }
-    #js/slide.js: {}
 
   dependencies:
     - core/jquery

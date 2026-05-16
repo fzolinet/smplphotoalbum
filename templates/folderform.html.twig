@@ -13,24 +13,20 @@
 					<th>{{ Value }}</th>
 				</tr>
 				<tr>
-					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_fname">{{ Foldername }}</label></td>
-					<td align="left" valign="top">
-						<input type='text' id="smpl_fname" name="smpl_fname" value="" size="45" maxlength="255" title="Name of folder. Can not use dot, slash, backslash, space characters and js code in the name of folder!" alt="Name of folder"/>
+					<th colspan='2' align="left">{{ Foldername }}</th>
+					<td align="left">
+						<input type='text' id="SmplFolderName" name="SmplFolderName" value="" size="45" maxlength="255" title="Name of folder. Can not use dot, slash, backslash, space characters and js code in the name of folder!" alt="Name of folder"/>
 					</td>
 				</tr>
 				<tr>
-					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_ftime">{{ Created }} | {{ Modified }}</label></td>
-					<td align="left"><input type='text' id="smpl_ftime" name="smpl_ftime" value="" readonly="readonly" />&nbsp;						
+					<th colspan='2' align="left">{{ Created }} | {{ Modified }}</th>
+					<td align="left"><input type='text' id="SmplFolderTime" name="SmplFolderTime" value="" readonly="readonly" />&nbsp;						
 					</td>
 				</tr>					
 				<tr>
-					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_fsub">{{ Subtitle }}</label></td>
-					<td align="left" valign="top"><input type='text' id="smpl_fsub" name="smpl_fsub" value="" size="45" maxlength="255"/>&nbsp;						
+					<th colspan='2' align="left">{{ Description }}</th>
+					<td align="left"><input type='text' id="SmplFolderSubtitle" name="SmplFolderSubtitle" value="" size="45" maxlength="255"/>&nbsp;						
 					</td>
-				</tr>
-				<tr>
-					<td colspan='2' align="left" valign="top"><label class="smpl" for="smpl_flink">{{ Url }}</label></td>
-					<td align="left" valign="top"><input id="smpl_flink" type='text' name="smpl_flink" value="" size="45" maxlength="255"/></td>
 				</tr>
 			</table>
 		</div>

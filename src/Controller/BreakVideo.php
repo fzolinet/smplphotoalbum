@@ -109,11 +109,18 @@ class BreakVideo{
 	 * @return void
 	 */
 	public function writeSign( $r = 100, $event = "" ){
-		static $change = 0;		
-		$this->percent = round( 100 * $r / $this->max );
-		if ( $change != $this->percent || !empty($event) ){
-			$change = $this->percent;			
+		static $change = 0;	
+		if($change == 0){
 			file_put_contents( $this->path . $this->sign, $this->percent ."%");
+		}
+
+		$this->percent = round( 100 * $r / $this->max );
+		if ( ($change < $this->percent) || !empty($event) ){
+			$change = $this->percent;	
+			if( file_exists($this->path . $this->sign ) && is_writable($this->path . $this->sign )	)
+			{	
+				file_put_contents( $this->path . $this->sign, $this->percent ."%");
+			}
 		}		
 	}
 

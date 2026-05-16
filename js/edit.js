@@ -43,31 +43,39 @@
 				$("select#smpl_type option").attr("selected", false).change();
 				$("select#smpl_type option[value='" + data.typ + "']").attr("selected", "selected").change();
 				$("input#smpl_link").val(data.link);
-
-				if (data.typ == "image") {
-					$("#smplairecognition").show();
-					$("#smplairecognition-info").show();
-					$("#smpl_ai_check").val(data.ai);
-					$(".smpl_ai_check").show();
-				} else {
-					$("#smplairecognition").hide();
-					$("#smplairecognition-info").hide();
-					$(".smpl_ai_check").hide();
+				switch (data.typ) {
+					case "image":
+						$("#smplairecognition").show();
+						$("#smplairecognition-info").show();
+						$("#smpl_ai_check").val(data.ai);
+						$(".smpl_ai_check").show();
+						break;
+					case "video":
+						video_aspect_ratio = parseFloat( data.height / data.width);
+						video_size_changed = false;
+						$("tr#smpl_video2mp4").show();
+						$("input#smpl_video_size").val((data.filesize).toLocaleString());
+						$("input#smpl_video_width").val(data.width);
+						$("input#smpl_video_height").val(data.height);
+						$("input#smpl_video_framerate").val(data.framerate);
+						$("input#smpl_video_clip_start").val(0);
+						$("input#smpl_video_clip_duration").val(data.length);
+						$("input#smpl_video_clip_end").val(data.length);
+						video_aspect_ratio = parseFloat(data.height / data.width);
+						break;
+					case "folder":
+						$("tr#smpl_link").hide();
+						$("input#smpl_type").hide();
+						$("tr#smpl_type").hide();
+						$("tr#smpl_importance").hide();
+						break;
+					default:
+						$("#smplairecognition").hide();
+						$("#smplairecognition-info").hide();
+						$(".smpl_ai_check").hide();
+						$("tr#smpl_video2mp4").hide();
 				}
 
-				if (data.typ == "video") {
-					$("tr#smpl_video2mp4").show();
-					$("input#smpl_video_size").val( (data.filesize).toLocaleString());
-					$("input#smpl_video_width").val(data.width);
-					$("input#smpl_video_height").val(data.height);
-					$("input#smpl_video_framerate").val(data.framerate);
-					$("input#smpl_video_clip_start").val(0);
-					$("input#smpl_video_clip_duration").val(data.length);
-					$("input#smpl_video_clip_end").val(data.length);
-					video_aspect_ratio = parseFloat( data.height / data.width);
-				} else {
-					$("tr#smpl_video2mp4").hide();
-				}
 
 				let pos = $("#SubBtn" + id).offset();
 				let dy = parseFloat($("html").css("font-size")) * 5;
@@ -111,7 +119,7 @@
 	$("#SmplEClose").click(function (e) {
 		if (smpl.editsaved === false) {
 			Swal.fire({
-				title: "The changed properties not saved. Do you want to close?",
+				title: smpl.words.Properties_not_saved + " " +smpl.words.Close_the_window,
 				html: smpl.words.Edit_not_saved,
 				className: "smpl-message-warning",
 				closeOnClickOutside: true,

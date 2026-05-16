@@ -115,46 +115,56 @@ You want to make a simple photoalbum:
     
 Parameters
 ~~~~~~~~~~
+  title: 
+  subtitle:
+  path: 
   notes: some-text
-  number: number of images on one page (from D8)
+  number: number of images on one page
   width: width of thumbnails in pixel
-  order: asc /desc / rand, default asc
   lang: en|hu, default: en
-  ascdesc: asc /desc, default asc (D8)
-  sort: sortable of this album - (True/False)
+  translate: true|false
+
+More parameters  
+~~~~~~~~~~~~~~~  
+  order: asc /desc / rand, default asc
+  sort: sortable of this album - (true|false)
+  ascdesc: asc /desc, default asc (D8)  
   sub: is there subtitle (true|false)
-  viewed: shows the number of views
-  edit: Editable images (true|false)
+  viewed: shows the number of views (true|false)
+  graphicdrv: which graphic driver use to edit?  gd or imagick (if it installed)
   exif: shows the exif onformation of images
   audio: shows this type of files (true|false)
-  video:shows this type of files (true|false)
+  video:shows this type of files (true|false) 
+  html5: the video and audio file shows with HTML5 audio and video tags
   doc:shows this type of files (true|false)
   cmp:shows this type of files (true|false)
-  app:shows this type of files (true|false)
+  app:shows this type of files (true|false)  
+  image: shows the images
+  edit: Editable images (true|false)  
   url: shows the URL of image website
   target: what is the target (default: _blank)
-  html5: the video and autio file shows with HTML5 audio and video tags
   autoclose: After save the edited image the edit windows auto close (true|false)
-  ai: name of image from image recognition of AI
-  method: GET / POST
-  upload: can admin upload enabled file types into the photoalbum
+  ai: using AI for recognition of Images or made by AI  
+  upload: can admin upload enabled file types into the photoalbum (true|false)
   
-  Watermark
-    wm: Watermark when show|edit the image (true|false)
-    wmpath: Watermark path 
-      From public folder (beginning of public://)
-      From Simple Photoalbum module default:(beginning of smplphotoalbum://images/). 
-    wmalpha: watermark alpha value: 0..100 (in %). <br/>0 - invisible, 100 - max, default: 10
-    wmcopyright: any text into copyright IPTC/Exif field
-    wmauthor: any text into author / Owner IPTC/Exif field   
-  
-  test: test mode, only the  true|false
-  graphicdrv: which graphic driver use to edit?  gd or imagick (if it installed)
-  
-  lang: choose language file - hu |en
-  translate: do you want to use translate d interface - true|false
-  icon: Set the color of icons on the page (_col / _bw)
+Watermark
+~~~~~~~~~
+  wm: Watermark when show|edit the image (true|false)
+  wmpath: Watermark path 
+    From public folder (beginning of public://)
+    From Simple Photoalbum module default:(beginning of smplphotoalbum://images/). 
+  wmalpha: watermark alpha value: 0..100 (in %). <br/>0 - invisible, 100 - max, default: 10
+  wmcopyright: any text into copyright IPTC/Exif field
+  wmauthor: any text into author / Owner IPTC/Exif field   
 
+Administration/developer parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test: test mode, only the  true|false
+  method: GET / POST
+  icon: Set the color of icons on the page (_col / _bw)
+  
+Slideshow parameters
+~~~~~~~~~~~~~~~~~~~~
   slide: True - Let slideshow. The parameters of slideshow  
     title: - title of slideshow
     interval: time of changin in milisec  
@@ -199,8 +209,8 @@ It is uses the GD driver or Imagick driver if it is installed on server
 If the change takes too long you can break it with press the Escape key or 
 push the Cancel button.
 
-Convert an video (under construction)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Convert an video
+~~~~~~~~~~~~~~~~
 with ffmpeg on Linux or Windows
 - crop the video
 - change the length 
@@ -212,7 +222,7 @@ with ffmpeg on Linux or Windows
 The using is similar than ACDSee or any other image editing software.
 You can use the mouse to move, zoom in or zoom out the image.
 
-2026.02.19
+2026.05.16
 
 Zoltan Fabian
 

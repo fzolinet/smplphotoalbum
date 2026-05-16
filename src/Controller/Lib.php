@@ -34,6 +34,8 @@ class Lib{
 
  /**
 	 * Give back the extension of image
+   * @param string $str
+   * @return string
 	 */
   public static function getExt( $str ) {
     $ext = pathinfo( $str, PATHINFO_EXTENSION );
@@ -74,6 +76,11 @@ class Lib{
     return self::slash(\Drupal::service ( 'file_system' )->realpath ( $t ) );
   } 
 
+  /**
+   * 
+   * @param string $path 
+   * @return string 
+   */
   public static function getTempVideoUrl($path){
     $t = self::getConfig( 'temp' );
     $t = \Drupal::service( 'file_url_generator' )->generateAbsoluteString ( $t );
@@ -129,6 +136,50 @@ class Lib{
     }
     return $modulepath;    
   }
+  
+	/**
+ 	 * Reads the words of translating
+   * @param string $lang - language code, e.g. "en", "hu"
+   * @return array
+ 	 */
+	public static function ReadWords( $lang = "" ){
+  static $twords = [];
+
+    if( !empty( $twords ) ){
+      return $twords;
+    }
+
+		if( $lang == "" ){
+			$lang = 'en';
+		}
+    
+    $mp = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
+    
+		if( $lang == 'en' ){
+			$words = file( $mp  ."/translate/translate.txt", FILE_IGNORE_NEW_LINES );
+		} else {			
+			$words = file( $mp ."/translate/translate_" . strtolower(trim( $lang )).".txt", FILE_IGNORE_NEW_LINES );
+		}
+		//$words = str_replace( "_"," ", $words);
+		    
+		foreach( $words AS $e){
+			$e = trim( $e );
+			if( strpos( ' '.$e, ';' ) > 0 || 
+          strpos( ' '.$e, '#' ) > 0 || 
+          strpos( ' '.$e, '//' ) > 0 || 
+          empty( $e ) ){
+				continue;
+			}
+			$a = explode( "=", $e );
+
+			if( count( $a ) == 1 ) {
+				$twords[ $e ] = $e;
+			}else{
+				$twords[ trim( $a[0] ) ] = trim( $a[1] );
+			}
+		}
+		return $twords;
+	}
 
   /**
    * Reset Edit Session
@@ -189,10 +240,34 @@ class Lib{
   }
 
   /**
+   * Remove directory structure
+   * @param string $dir 
+   * @return bool 
+   */
+  public static function removeDir( $dir = "" ){
+    if (! is_dir($dir)) {
+        return false;
+    }
+    if (substr($dir, strlen($dir) - 1, 1) != '/') {
+        $dir .= '/';
+    }
+
+    $files = glob($dir . '*', GLOB_MARK);
+    foreach ($files as $file) {
+        if (is_dir($file)) {
+            Lib::removeDir($file);
+        } else {
+            unlink($file);
+        }
+    }
+    $ok = rmdir($dir);    
+    return $ok;
+  }
+  /**
    * Make a new name of temporary file
    *
    * @param string $name
-   * @param number $i
+   * @param int $i
    * @return string
    */
   public static function NewName( $name = "", $i = 0 ) {
@@ -215,15 +290,26 @@ class Lib{
     }    
     return $str;
   }
-  
+
+  /**
+   * 
+   * @param string $temppath 
+   * @param string $SignFile 
+   * @return bool|false 
+   */
   public static function DeleteSignFile($temppath, $SignFile){
     
     if ( file_exists($temppath . $SignFile ) ) {      
       return unlink($temppath . $SignFile);      
     }
     return false;
-}
+  }
 
+  /**
+   * Get the URL of the sign file
+   * @param array $ts
+   * @return string
+   */
   public static function SignUrl( &$ts ){    
     return  $ts["tempurl"] . self::Sign($ts["tempname"] );
   }
@@ -263,15 +349,18 @@ class Lib{
     return $default;
   }
 
+  /**
+   * 
+   * @param string $key 
+   * @return mixed 
+   */
   public static function RequestServer( $key){
     return \Drupal::request()->server->get($key );
   }
+
   /**
    * Can you acces the smplphotoalbum
-   * @return bool 
-   * @throws ContainerNotInitializedException 
-   * @throws ServiceCircularReferenceException 
-   * @throws ServiceNotFoundException 
+   * @return bool
    */
   public static function smplphotoalbum_access() {
 		$roles = \Drupal::currentUser()->getroles();
@@ -286,4 +375,3 @@ class Lib{
 		return $_SESSION["slide"]["img"];		
 	}
 }
-
