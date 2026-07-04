@@ -38,6 +38,29 @@ function fz_t(data, show = -1) {
  */
 (function ($, Drupal, smpl, Swal) {
   /**
+   * Position of the windows
+   * @param {*} Wnd - variable of window
+   * @param {*} btnid - id of button
+   * @param {*} id  - id of button
+   */
+  smpl.WindowPosition = function ( Wnd, btnid , divid) {
+    let pos = $( btnid ).offset();
+    let dy = parseFloat($("html").css("font-size")) * 3;
+    let w = Wnd.width();
+    let ww = window.innerWidth;
+    pos.left = (ww - w) * 0.5;
+    if (pos.left < 0) {
+      pos.left = 0
+    } else if (pos.left + w > ww) {
+      pos.left = ww - w - 2 * dy;
+    }
+    $(divid).hide();
+    Wnd.show();
+    Wnd.offset({ top: pos.top + dy, left: pos.left });     
+  }
+  
+  
+  /**
    * Filename and extension validation
    * @param {string} fname 
    * @param {string} ext 

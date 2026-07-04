@@ -20,6 +20,8 @@ class ItemList {
 	protected $ascdesc = "asc"; // sorting order ascending or descending
 	protected $author    = "PiQasso Group";
 	protected $caption   = "";
+
+	/** @var \Drupal\Core\Database\Connection */
 	protected $con; // Drupal database connection string
 	protected $copyright = "PiQasso Group";
 	protected $edit = false;
@@ -53,7 +55,8 @@ class ItemList {
 	protected $path       = '';   // relative path to photoalbum folder
 	protected $folders    = FALSE;// list of folders
 	protected $subfolder  = '';   // subfolder from the path of actual folder from the 
-	protected $sess;       				// Drupal session handling
+	
+	protected $sess;              // Drupal session handling
 	protected $smplbox    = "smplbox"; // It helps to shows the image in a lightbox or colorbox
 	protected $sortorder  = 'filename'; // source of compare
 	protected $stat       = '';   // statistics
@@ -68,7 +71,9 @@ class ItemList {
 	//translating
 	protected $translate = false;
 	protected $url = '';
-	protected $user = null;   // current user
+
+	/** @var \Drupal\user\Entity\User	*/
+	protected $user;     // current user
 	protected $viewed = 0;   	// is the view number of image on?
 	protected $width = 0;		 	// Width of items
 	protected $wmpath  = ""; 	// watermark
@@ -87,6 +92,7 @@ class ItemList {
 	protected $ffmpeg = 1;
 	
 	// Slideshow
+	/** @var SlideShow */
 	protected $SlideShow;
 	protected $interval = 10;
 	protected $slide_checking = False;
@@ -372,7 +378,7 @@ class ItemList {
 		
 		$this->edit      = $this->params["edit"];		  // Edit 
 		$this->imgedit   = $this->params["imgedit"];	// Image Edit
-		$this->ffmpeg    = $this->params["ffmpeg"];		// Video edit with ffmpeg
+		$this->ffmpeg    = $this->params["ffmpeg"];		// Video and audio edit with ffmpeg
 		$this->wmpath    = $this->params["wmpath"];	  // Watermark		
 		$this->upload    = $this->params['upload'];	  // Upload enabled | disabled
 		$this->folders   = $this->params['folders'];  //List of folders enabled | disabled
@@ -468,7 +474,8 @@ class ItemList {
 		if( $this->access ){
 			$this->tpl["editform"]      = file_get_contents ( $p . "/editform.html.twig" );
 			$this->tpl["imgeditform"]   = file_get_contents ( $p . "/imgeditform.html.twig" );			
-			$this->tpl["videoeditform"] = $this->ffmpeg ? (file_get_contents ( $p . "/videoeditform.html.twig" )):"" ;
+			$this->tpl["videoeditform"] = $this->ffmpeg ? (file_get_contents ( $p . "/videoeditform.html.twig" )) : "" ;
+			$this->tpl["audioeditform"] = $this->ffmpeg ? (file_get_contents ( $p . "/audioeditform.html.twig" )) : "" ;
 		
 			$this->tpl["uploadform"]    = file_get_contents ( $p . "/uploadform.html.twig" );
 			$this->tpl["folderform"]    = file_get_contents ( $p . "/folderform.html.twig" );			
@@ -476,6 +483,7 @@ class ItemList {
 			$this->tpl["editform"]    = "";
 			$this->tpl["imgeditform"] = "";
 			$this->tpl["videditform"] = "";
+			$this->tpl["audioeditform"] = "";
 			$this->tpl["uploadform"]  = "";			
 		}		
 	}
@@ -952,6 +960,7 @@ class ItemList {
 								"{{ EditForm }}", 
 								"{{ ImgEditForm }}",
 								"{{ VideoEditForm }}",
+								"{{ AudioEditForm }}",
 								"{{ UploadForm }}",
 								"{{ NewFolderForm }}",
 								"{{ method }}"
@@ -960,7 +969,8 @@ class ItemList {
 								$base_path . $this->modulepath . "/image/404.png",
 								$this->tpl["editform"], 
 							  $this->tpl["imgeditform"], 
-								($this->ffmpeg ? $this->tpl["videoeditform"] :""), 																								
+								($this->ffmpeg ? $this->tpl["videoeditform"] :""),
+								($this->ffmpeg ? $this->tpl["audioeditform"] :""), 																								
 								($this->upload ? $this->tpl["uploadform"]: ''),
 								($this->folders ? $this->tpl["folderform"] : ''),
 								$this->method
@@ -982,6 +992,7 @@ class ItemList {
 					"{{ EditForm }}", 
 					"{{ ImgEditForm }}", 
 					"{{ VideoEditForm }}",
+					"{{ AudioEditForm }}",
 					"{{ UploadForm }}",
 					"{{ NewFolderForm }}"
 				],"", $str );

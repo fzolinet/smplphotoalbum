@@ -42,10 +42,10 @@ class Item {
 	
 	// Constructor
 	Function __construct(
-		$id = 0, 
-		$subtitle = "", 
-		$viewnumber = 0, 
-		$link = "",
+		string $id, 
+		string $subtitle, 
+		string $viewnumber, 
+		string $link,
 		array  &$params, 
 		array  &$words, 
 		$entry = '', 

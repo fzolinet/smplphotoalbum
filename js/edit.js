@@ -1,7 +1,6 @@
 /**
  * Edit properties of image
  */
-
 (function ($, Drupal, smpl, Swal) {
 	//Edit button
 	$('.smpl_edit').mouseover(function () {
@@ -213,109 +212,45 @@
 		let id = $("input#smpl_edit_id").val();
 		let url = smpl.ajax + "/ai/" + id + '/recognition';
 		smpl.progress(true);
-		$.ajax({
-			url: url,
-			type: "GET",
-			success: function (response) {
-				let data = JSON.parse(response[0].data);
+		fetch(url)
+			.then(response => response.json() )
+			.then(data => {
+				data = JSON.parse(data[0].data);
 				smpl.progress(false);
-				if (data.id == '-1' || data.id == '-2') {
+				if (data.id == -1 || data.id == -2) {
 					smpl.ErrorC(data.msg);
-				} else {
+				} else {					
 					var t = $("textarea#smpl_sub").val() + " \n!!! " + data.msg;
 					$("textarea#smpl_sub").val(t);
 				}
-			},
-			error: function (response) {
-				smpl.ErrorC(response.responseText);
+			})
+			.catch(error => function (error) {
+				smpl.ErrorC(error.responseText);
 				smpl.progress(false);
-			}
-		});
+			});		
 	});
 
 	$("button#smpl_ai_check").click(function () {
 		let id = $("input#smpl_edit_id").val();
 		let url = smpl.ajax + "/ai/" + id + '/check';
 		smpl.progress(true);
-		$.ajax({
-			url: url,
-			type: "GET",
-			success: function (response) {
-				let data = JSON.parse(response[0].data);
+
+		fetch(url)
+			.then(response => response.json())
+			.then(data => {
+				data = JSON.parse(data[0].data);
 				smpl.progress(false);
-				if (data.id == '-1' || data.id == '-2') {
+				
+				if (data.ok == -1 || data.ok == -2) {
 					smpl.ErrorC(data.msg);
-				} else {
+				} else {					
 					$("textarea#smpl_ai_check").val(data.msg);
 				}
-			},
-			error: function (response) {
-				smpl.ErrorC(response.responseText);
+			})
+			.catch(error => function (error) {
+				smpl.ErrorC(error.responseText);
 				smpl.progress(false);
-			}
-		});
+			})		
 	});
-
-	/** video conversion */
-	$("button#smpl_video2mp4").click(function (e) {
-		Swal.fire({
-			title: smpl.words.converting_long + ".", 
-			html: smpl.words.Video_conversion_confirm_msg, 
-			className: "smpl-message-warning",
-			closeOnClickOutside: true,
-			closeOnEsc: true,
-			dangerMode: true,
-			showCloseButton: true,
-			showCancelButton: true,
-			cancelButtonText: smpl.words.Cancel,
-			confirmButtonText: smpl.words.Confirm,
-			icon: "warning",
-			animation: false
-		})
-			.then((ok) => {
-				if (ok.isConfirmed) {
-					var id = $("input#smpl_edit_id").val();
-					var url = smpl.ajax + "/video2mp4/" + id;
-					var width = $("input#smpl_video_width").val();
-					var height = $("input#smpl_video_height").val();
-					var framerate = $("input#smpl_video_framerate").val();
-
-					if( video_size_changed ) {					
-						url += '?width=' + $("input#smpl_video_width").val();
-						url += '&height=' + $("input#smpl_video_height").val();
-						url += '&framerate=' + $("input#smpl_video_framerate").val();
-					}
-
-					var clipstart = $("#smpl_video_clip_start").val();
-					var clipend = $("#smpl_video_clip_end").val();
-
-					if (clipstart > 0 && clipend < video_length ) {
-						url += '&clipstart=' + $("#smpl_video_clip_start").val();
-						url += '&clipend='   + $("#smpl_video_clip_end").val();
-					}
-						
-					smpl.progress(true);	
-					$.ajax({
-						url: url,
-						type: "GET",
-						success: function (response) {
-							let data = JSON.parse(response[0].data);
-							smpl.progress(false);
-							if (data.id == '-1' || data.id == '-2') {
-								smpl.ErrorC(data.msg);
-							} else {
-								smpl.AlertC(data.msg);
-							}
-						},
-						error: function (response) {
-							smpl.ErrorC(response.responseText);
-							smpl.progress(false);
-						}
-					});
-				}
-				e.preventDefault();
-				return false;
-			});		
-	});
-
+	
 })(jQuery, Drupal, smpl, Swal);

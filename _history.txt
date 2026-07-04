@@ -1,5 +1,6 @@
 Bugs:
 ~~~~
+// TODO: Audio editing
 
 ImageEdit
 // TODO - Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
@@ -138,10 +139,21 @@ Docs:
 
 History:
 ~~~~~~~
-2026.05.12 - 1.10.3-beta5
+2026.07.04 - 1.10.4-beta2
+- Bug: Video convert
+- Bug: Audio convert
+2026.06.13 - 1.10.4-beta1
+- audio mp3 converted 
+
+2026.05.17 - 1.10.4-Alpha
+- Start: Audio Edit Form
+
+2026.05.16 - 1.10.3-rc1
 - BugFix: Exif properties of upfolder
 - Added:  Exif tar & cue compressed file
-- BugFix: Videi edit status message
+- BugFix: Video edit status message
+
+2026.05.12 - 1.10.3-beta5
 - BugFix: Rename, Folde make, Delete
 - Bugfix: New Folder window
 - Bugfix: New Folder <=> Upload file submit button problem

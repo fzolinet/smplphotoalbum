@@ -7,14 +7,15 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 require_once "Xml2Assoc.php";
 require_once realpath(__DIR__ . "/../../vendor/") . "/autoload.php";
+
 class Exif{
   use StringTranslationTrait;
-  private $mp;
-  private $entry;
+  private string $mp;
+  private string $entry;
   private $type;
-  private $path;
-  private $p;
-  private $cfg;   // configuration array
+  private string $path;
+  private string $p;
+  private array $cfg;   // configuration array
   private $verbose;
   private $exif;  // Exif information array
   private $GetID3;  // GetID3 class
@@ -129,19 +130,18 @@ class Exif{
     'xing flags row',  
   ];
 
-  public function __construct($a, &$cfg, $temppath = false) {  
+  public function __construct($a = [], $temparea = false) {  
     $this->mp    = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
     $this->path       = $a['path'];
     $this->entry      = $a['name'];
     $this->type       = $a['typ'];
-
-    $this->cfg   = $cfg;//
-    $root        = $cfg->get ( "root" );
+    
+    $root        = Lib::getConfig("root");
     $root        = str_replace( "\\", "/", \Drupal::service ( 'file_system' )->realpath ( $root ) ) . "/";
-    if( $temppath ){
-      $this->p     = $this->slash( $this->path ) . $this->entry ;
+    if( $temparea ){
+      $this->p     = Lib::slash( $this->path ) . $this->entry ;
     }else{
-      $this->p     = $this->slash( $root . $this->path ) . $this->entry ;
+      $this->p     = Lib::slash( $root . $this->path ) . $this->entry ;
     }
     
     $this->ext   = strtolower( pathinfo ( $this->entry, PATHINFO_EXTENSION ) );
@@ -154,13 +154,13 @@ class Exif{
   public function Info() {
     $this->GetID3 = new \getID3();
 
-    if ($this->isaudio() || $this->isaudiohtml5())      $exif = $this->audio();
-    elseif ($this->isvideo() || $this->isvideohtml5())  $exif = $this->video();
-    elseif ($this->isimage()) $exif = $this->image();
-    elseif ($this->isdoc())   $exif = $this->doc();
-    elseif ($this->iscmp())   $exif = $this->comp();
-    elseif ($this->isapp())   $exif = $this->app();
-    elseif ($this->isoth())   $exif = $this->oth();
+    if ( $this->isaudio() || $this->isaudiohtml5() )      $exif = $this->audio();
+    elseif ( $this->isvideo() || $this->isvideohtml5() )  $exif = $this->video();
+    elseif ( $this->isimage() ) $exif = $this->image();
+    elseif ( $this->isdoc() )   $exif = $this->doc();
+    elseif ( $this->iscmp() )   $exif = $this->comp();
+    elseif ( $this->isapp() )   $exif = $this->app();
+    elseif ( $this->isoth() )   $exif = $this->oth();
     else   $exif = $this->t ( 'Unknown filetype' );
     return $exif;
   }
@@ -169,13 +169,13 @@ class Exif{
    * Video information
    * @parameter &a - reference array
    */
-  public function Videoinfo( &$a ){
+  public function VideoInfo( &$a = [] ){
     $this->GetID3 = new \getID3();
     $finfo = $this->GetID3->analyze ( $this->p );
     $finfo = $this->arrayflat ( $finfo );
-    $a["width"]     = $finfo["resolution_x"];
-    $a["height"]    = $finfo["resolution_y"];
-    $a["filesize"]  = $finfo["filesize"];
+    $a["width"]     = isset( $finfo["resolution_x"] ) ? $finfo["resolution_x"] : 0;
+    $a["height"]    = isset( $finfo["resolution_y"] ) ? $finfo["resolution_y"] : 0;
+    $a["filesize"]  = isset( $finfo["filesize"] ) ? $finfo["filesize"] : 0  ;
     $a["framerate"] = ( isset( $finfo["frame_rate"] ) ? 
       $finfo["frame_rate"] : 
       (isset( $finfo["Frame rate"]) ? 
@@ -201,17 +201,52 @@ class Exif{
   }
 
   /**
+   * Audio information
+   * @param array &$a 
+   * @return void 
+   */
+  public function AudioInfo( &$a = [] ){
+    $this->GetID3 = new \getID3();
+    $finfo = $this->GetID3->analyze ( $this->p );
+    $finfo = $this->arrayflat ( $finfo );
+    ksort($finfo);
+    
+    $a["filesize"]  = $finfo["filesize"];
+    if(isset ($finfo["duration"])){
+      $a["clipend"]  = $finfo["duration"];  
+      $a["duration"] = $finfo["duration"];      
+
+    } else if( isset($finfo["playtime_seconds"]) ){      
+      $a["clipend"]  = $finfo["playtime_seconds"];
+      $a["duration"] = $finfo["playtime_seconds"];
+
+    }else{
+      $a["clipend"]  = 0;  
+      $a["duration"] = 0;            
+    }
+
+    $a["bitrate_mode"] = isset( $finfo["bitrate_mode"] ) ? $finfo["bitrate_mode"] : "";
+    $a["bitrate"]      = isset( $finfo["bitrate"] ) ? $finfo["bitrate"] : 0;
+    $a["channels"]     = isset( $finfo["channels"] ) ? $finfo["channels"] : 0; 
+    $a["channelmode"]  = isset( $finfo["channelmode"] ) ? $finfo["channelmode"] : "";
+    $a['composer']     = isset( $finfo["composer"] ) ? $finfo["composer"] : "";
+    $a["date"]         = isset( $finfo["DATE"] ) ? $finfo["DATE"] : "";
+    $a["lossless"]     = isset( $finfo["lossless"] );
+    $a["sample_rate"]  = isset( $finfo["sample_rate"] ) ? $finfo["sample_rate"] : 44100;
+  }
+
+  /**
    * Is_type
    */
-  public function isapp() { return stripos( " " . $this->cfg->get ( "app_extensions" ), $this->ext ) > 0; }
-  public function isaudio() { return stripos( " " . $this->cfg->get ( "audio_extensions" ), $this->ext ) > 0; }
-  public function isaudiohtml5() { return stripos( " " . $this->cfg->get ( "audiohtml5_extensions" ), $this->ext ) > 0; }
-  public function iscmp() { return stripos( " " . $this->cfg->get ( "cmp_extensions" ), $this->ext ) > 0; }
-  public function isdoc() { return stripos( " " . $this->cfg->get ( "doc_extensions" ), $this->ext ) > 0; }
-  public function isimage() { return stripos( " " . $this->cfg->get ( "image_extensions" ), $this->ext ) > 0; }
-  public function isoth() { return stripos( " " . $this->cfg->get ( "oth_extensions" ), $this->ext ) > 0; }
-  public function isvideo() { return stripos( " " . $this->cfg->get ( "video_extensions" ), $this->ext ) > 0; }
-  public function isvideohtml5() { return stripos( " " . $this->cfg->get ( "videohtml5_extensions" ), $this->ext ) > 0; }
+  public function isapp()        { return stripos( " " . Lib::getConfig("app_extensions"), $this->ext ) > 0; }
+  public function isaudio()      { return stripos( " " . Lib::getConfig("audio_extensions"), $this->ext ) > 0; }
+  public function isaudiohtml5() { return stripos( " " . Lib::getConfig("audiohtml5_extensions"), $this->ext ) > 0; }
+  public function iscmp()        { return stripos( " " . Lib::getConfig("cmp_extensions"), $this->ext ) > 0; }
+  public function isdoc()        { return stripos( " " . Lib::getConfig("doc_extensions"), $this->ext ) > 0; }
+  public function isimage()      { return stripos( " " . Lib::getConfig("image_extensions"), $this->ext ) > 0; }
+  public function isoth()        { return stripos( " " . Lib::getConfig("oth_extensions"), $this->ext ) > 0; }
+  public function isvideo()      { return stripos( " " . Lib::getConfig("video_extensions"), $this->ext ) > 0; }
+  public function isvideohtml5() { return stripos( " " . Lib::getConfig("videohtml5_extensions"), $this->ext ) > 0; }
   
   /**
    * Application "exif"
@@ -753,12 +788,5 @@ class Exif{
   function is_utf8($str ='') {
     return ( bool ) preg_match ( '//u', $str );
   } 
-  	/**
-	 * it makes slash from backslash or double slash
-	 * @param mixed $p 
-	 * @return string|string[] 
-	 */
-	public function slash($p){
-		return str_replace(["\\","//"],'/',$p);
-	}
+  
 }

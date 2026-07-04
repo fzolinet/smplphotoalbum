@@ -29,7 +29,7 @@ use Drupal\smplphotoalbum\AI;
 use Drupal\smplphotoalbum\SlideShow;
 
 class SmplphotoalbumController extends ControllerBase{  
-  private $cfg; // Configuration
+  private $cfg = []; // Configuration
   private string $mp = '';   // Module path
   private string $root = ''; // Root path of items
   private $public = true;
@@ -46,21 +46,24 @@ class SmplphotoalbumController extends ControllerBase{
    * Class constructor.
    */
   public function __construct() {      
-    $this->cfg    = \Drupal::config( 'smplphotoalbum.settings' );    
-    $this->lang   = $this->cfg->get( 'lang' );
+    $this->cfg    = Lib::getConfig();        
     $this->mp     = \Drupal::service( 'module_handler' )->getModule( 'smplphotoalbum' )->getPath();
     $this->public = \Drupal::service( 'file_system' )->realpath( "public://" );
     $this->sess   = \Drupal::request()->getSession();
-    $this->wm     =  $this->sess->get("wm", false);    
-    $this->words = Lib::ReadWords($this->lang);
-    $root = $this->cfg->get( 'root' );    
-    $root = str_replace( "public://", $this->public . "/", $root );
-    $root .= substr( $root, - 1 ) != '/' ? "/" : '';
-    $this->root = Lib::slash( $root );
-    $this->TN = $this->cfg->get( 'TN' );       
-    $this->aigemini = $this->cfg->get("aigemini");    
-    $this->ffmpeg = $this->cfg->get("ffmpeg");
-    $this->ffmpeg_path = $this->cfg->get("ffmpeg_path");        
+    $this->wm     =  $this->sess->get("wm", false);
+    
+    $this->lang   = Lib::getConfig("lang");
+    $this->words  = Lib::ReadWords($this->lang);
+
+    $root         = Lib::getConfig("root");
+    $root         = str_replace( "public://", $this->public . "/", $root );
+    $root        .= substr( $root, - 1 ) != '/' ? "/" : '';
+    $this->root   = Lib::slash( $root );
+
+    $this->TN          = Lib::getConfig('TN');       
+    $this->aigemini    = Lib::getConfig("aigemini"); 
+    $this->ffmpeg      = Lib::getConfig("ffmpeg");
+    $this->ffmpeg_path = Lib::getConfig("ffmpeg_path");        
   }
   
   // ...
@@ -172,7 +175,7 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $type
    * @return \Drupal\Core\Ajax\AjaxResponse|array|string    
    */
-  public function exif($id = 1, $type = '' ) {
+  public function exif( $id = 1, $type = '' ) {
     $response = new AjaxResponse();
 
     if( empty( $id ) ) {
@@ -227,7 +230,7 @@ class SmplphotoalbumController extends ControllerBase{
       }
     }else{
       //
-      $ex = new Exif( $a, $this->cfg );
+      $ex = new Exif( $a );
     
       //Video convert
       if ( !empty($type) && $a['typ'] == "video" ){
@@ -700,7 +703,7 @@ class SmplphotoalbumController extends ControllerBase{
           ->execute();
 
       // Watermark if you want depends of type of file
-      if( $this->isimage( $p ) && Lib::getSession("wm", false)) {
+      if( $this->isimage( $p ) && Lib::getSession("wm")) {
         $p = $this->watermarkonfly( $id, $p );
       }
     }
@@ -721,7 +724,7 @@ class SmplphotoalbumController extends ControllerBase{
   /**
    * Watermark on fly
    *
-   * @param number $id
+   * @param int $id
    * @param string $p
    * @return string
    */
@@ -734,7 +737,7 @@ class SmplphotoalbumController extends ControllerBase{
 
     // load watermark file
     if(empty( $wmpath )){
-      $wmpath = Lib::getSession("wmpath", false);
+      $wmpath = Lib::getSession("wmpath");
       if( !$wmpath ){
         $wmpath = Lib::getConfig( 'wmpath' );
       }
@@ -779,7 +782,7 @@ class SmplphotoalbumController extends ControllerBase{
     return $p;
   }
 
-  function OutputImage($img, $src) {
+  function OutputImage($img, $src = "") {
     $p = pathinfo( $src );
     switch(strtolower($p["extension"])){
       case "avif":
@@ -891,19 +894,22 @@ class SmplphotoalbumController extends ControllerBase{
 
     //no Image
     if( $a[ 'typ' ] != "image" ){
-      $str = json_encode( ["id" => "-1", "msg" => "The type of file does not 'image'!" ] );     
+      $str = json_encode( ["ok" => "-1", "msg" => "The type of file does not 'image'!" ] );     
       $response->addCommand( new InsertCommand( '', $str, [] ) );
       return $response;
     }
 
     $p =  LIB::slash($this->root. $a["path"]."/".$a["name"], "file");
     
-    if( $this->aigemini ){
-      $this->words = LIB::ReadWords( $this->lang );
-      $AI = new AIGemini( $p, $cmd, $this->words );     
-      $answer = $AI->process();
+    if( $this->aigemini ){      
+      try{
+        $AI = new AIGemini( $p, $cmd, $this->words );
+        $answer = $AI->process();
+      }catch(\Exception $e){
+        $answer = ["ok" => "-1", "msg" => $e->getMessage() ]; 
+      }      
     } else{     
-      $answer =["id" => "-1", "msg" => "There is no AI Gemini enabled!" ];     
+      $answer =["ok" => "-1", "msg" => "There is no AI Gemini enabled!" ];     
     }
     
     $str = json_encode( $answer);     
@@ -917,7 +923,7 @@ class SmplphotoalbumController extends ControllerBase{
    * @param string $cmd 
    * @return AjaxResponse 
    */
-  public function videoedit( $id = -1, $cmd = 'load', $oldname = '', $newname = '') {
+  public function VideoEdit( $id = -1, $cmd = 'load', $oldname = '', $newname = '') {
     
     $response = new AjaxResponse();
 
@@ -928,13 +934,13 @@ class SmplphotoalbumController extends ControllerBase{
 
     // Is there enabled the ffmpeg conversion 
     if( !$this->ffmpeg ){
-      $response->addCommand( new InsertCommand( '', "FFMpeg conversion is disabled", [] ) );
+      $response->addCommand( new InsertCommand( '', $this->words["FFMpeg conversion is disabled"], [] ) );
       return $response;
     }
 
     // Is there ffmpeg installed on the server 
     if( ! file_exists( $this->ffmpeg_path ) ) {  
-      $response->addCommand( new InsertCommand( '', "FFMpeg path is invalid", [] ) );
+      $response->addCommand( new InsertCommand( '', $this->words["FFMpeg path is invalid"], [] ) );
       return $response;
     }
 
@@ -950,13 +956,13 @@ class SmplphotoalbumController extends ControllerBase{
     $a = $record->fetchAssoc();
 
     if( !isset( $a['id']) || $a['id'] != $id  ){      
-      $response->addCommand( new InsertCommand( '', "There is no record" , [] ) );
+      $response->addCommand( new InsertCommand( '', $this->words["There is no record"] , [] ) );
       return $response;
     }
 
     // not video
     if( !in_array($a['typ'], ["video" , "videohtml5"]) ) {
-      $response->addCommand( new InsertCommand( '',  "The item is no video", [] ) );
+      $response->addCommand( new InsertCommand( '',  $this->words["The item is no video"], [] ) );
       return $response;
     } 
     
@@ -964,42 +970,27 @@ class SmplphotoalbumController extends ControllerBase{
     $p = Lib::slash( $this->root . $a["path"]."/".$a["name"] );        
     $ext = strtolower(pathinfo( $p, PATHINFO_EXTENSION ));
     
-    if($id != 0) {
-      $oldname = Lib::Request('oldname', 0 );
-      $newname = Lib::Request('newname', 0 );      
-      $newext = Lib::Request('newext', $ext );       // extension of output video
-      $width = Lib::Request('width', 0 );
-      $height = Lib::Request('height', 0 );
-      $framerate = Lib::Request('framerate', 30 );
-      $gop = Lib::Request('gop', 2 );             // group of pictures
-      $clipstart = Lib::Request('clipstart', 0 ); // clip start time >=0      
-      $clipend = Lib::Request('clipend', 0 );     // clip last time <= duration
-      $rotate = Lib::Request('rotate', 0 );       // rotate video 90,180,270      
-      $duration = Lib::Request('duration', 0 );   // Length of video      
-            
+    if($id != 0) {            
       $video = new VideoEdit( 
         $id, 
         $a['path'],
-        $a['name'],
+        $a['name'],        
         $a['typ'],
         $ext,
-        $newext,
-        $width,
-        $height,
-        $framerate,
-        $gop,
-        $clipstart,
-        $clipend,
-        $rotate,
-        $duration,
-        $oldname,
-        $newname        
+        
       );
 
       switch($cmd){
-        case 'load'  :  $json = $video->Load(); break;       
-        case 'save'  :  $json = $video->Save(); break;
-        case 'saveas':  $json = $video->SaveAs(); break;
+        case 'load'  :  $json = $video->Load(); break; 
+              
+        case 'save'  : 
+          $idx = LIB::Request('idx',0);
+          $json = $video->Save(); 
+          break;
+        case 'saveas': 
+          $idx = LIB::Request('idx',0);          
+          $json = $video->SaveAs($idx, $newname); 
+          break;
         case 'convert': $json = $video->Convert(); break;
         case 'prev'  :  $json = $video->Prev(); break;
         case 'next'  :  $json = $video->Next(); break;
@@ -1014,6 +1005,96 @@ class SmplphotoalbumController extends ControllerBase{
     return $response;
   }
   
+
+   /**
+   * Audio edit window open
+   * @param int $id 
+   * @param string $cmd 
+   * @return AjaxResponse 
+   */
+  public function AudioEdit( $id = -1, $cmd = 'load', $oldname = '', $newname = '') {
+    
+    $response = new AjaxResponse();
+
+    if(! $this->access()) {
+      $response->addCommand( new InsertCommand( '', "-1", [] ) );
+      return $response;
+    }
+
+    // Is there enabled the ffmpeg conversion 
+    if( !$this->ffmpeg ){
+      $response->addCommand( new InsertCommand( '', $this->words["FFMpeg conversion is disabled"], [] ) );
+      return $response;
+    }
+
+    // Is there ffmpeg installed on the server 
+    if( ! file_exists( $this->ffmpeg_path ) ) {  
+      $response->addCommand( new InsertCommand( '', $this->words["FFMpeg path is invalid"], [] ) );
+      return $response;
+    }
+
+    $con = \Drupal::database();
+    $record = $con->select( 'smplphotoalbum', 's' )->fields( 's', [
+        'id',
+        'path',
+        'name',
+        'typ',                
+    ] )->condition( 's.id', $id, '=' )->execute();
+    
+    // there is no record
+    $a = $record->fetchAssoc();
+
+    if( !isset( $a['id']) || $a['id'] != $id  ){      
+      $response->addCommand( new InsertCommand( '', $this->words["There is no record"] , [] ) );
+      return $response;
+    }
+
+    // not video
+    if( !in_array($a['typ'], ["audio" , "audiohtml5"]) ) {
+      $response->addCommand( new InsertCommand( '',  $this->words["The item is no audio"], [] ) );
+      return $response;
+    } 
+    
+    // original extension of video
+    $p = Lib::slash( $this->root . $a["path"]."/".$a["name"] ,"audio");        
+    $ext = strtolower(pathinfo( $p, PATHINFO_EXTENSION ));
+    
+    if($id != 0) {     
+
+      $audio = new AudioEdit( 
+        $id, 
+        $a['path'],
+        $a['name'], 
+        $a['typ'],       
+        $ext,
+      );
+
+      switch( $cmd ){
+        case 'load'  :  $json = $audio->Load(); break;       
+        case 'save'  :  
+          $idx = LIB::Request('idx',0);
+          $json = $audio->Save(); 
+          break;
+        case 'saveas':  
+          $idx = LIB::Request('idx',0);  
+          $newname = LIB::Request('newname',''); 
+          $json = $audio->SaveAs($idx, $newname);
+           break;
+        case 'convert': $json = $audio->Convert(); break;
+        case 'prev'  :  $json = $audio->Prev(); break;
+        case 'next'  :  $json = $audio->Next(); break;
+        case 'cancel':  $json = $audio->Cancel(); break;
+        case 'close' :
+        default      :  $json = $audio->Close();
+      }
+    } else {
+      $json = ["cmd", $cmd ];
+    }     
+    $response->addCommand( new InsertCommand( '', json_encode( $json ), [] ) );
+    return $response;
+  }
+  
+
   /**
    * Load data of an item
    *
@@ -1091,7 +1172,7 @@ class SmplphotoalbumController extends ControllerBase{
    * @return boolean
    */
   public function isimage( $entry ) {
-    $exts = $this->cfg->get( 'image_extensions' );
+    $exts = Lib::getConfig('image_extensions');
     if( version_compare(PHP_VERSION , "8.1.0" >= 0 ) ){
       return stripos( " " . $exts, pathinfo ( $entry, PATHINFO_EXTENSION ) ) > 0;
     }
@@ -1160,7 +1241,7 @@ class SmplphotoalbumController extends ControllerBase{
     return implode( " ", $b );
   }
 
-  function smpl_ext_replace($str, $r = "") {
+  function smpl_ext_replace(string $str, string $r = "") {
     return str_ireplace( $this->smpl_extensions(), $r, $str );
   }
 

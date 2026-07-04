@@ -29,9 +29,11 @@ smplphotoalbum-edit:
     js/jcanvas/dist/min/jcanvas-handles.min.js: {}
     js/lib.js: { preprocess: false }
     js/delete.js: {}
-    js/edit.js: {}
-    js/video/jquery.video.min.js: {}    
+    js/edit.js: {}   
+    # js/video/jquery.video.min.js: {}
+    js/media/jquery.media.js: {}            
     js/videoedit.js: {}
+    js/audioedit.js: {}
     js/upload.js: {}
     js/folder.js: {}
     js/editpath.js: {}

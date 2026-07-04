@@ -213,7 +213,7 @@ class Lib{
    * @param mixed $str 
    * @return mixed 
    */
-  public static function getSession( $str ){
+  public static function getSession( $str, $default = false ){
     $session = \Drupal::request()->getSession();
     return $session->get( $str );
   }
@@ -270,11 +270,14 @@ class Lib{
    * @param int $i
    * @return string
    */
-  public static function NewName( $name = "", $i = 0 ) {
+  public static function NewName( $name = "", $i = 0, $newext = "" ) {
     $p = pathinfo ( $name );
     $p[ "filename"] = preg_replace( '/_temp_\d+/',"", $p[ "filename"] );
     $name = $p ["filename"] . "_temp_" . $i;
     $ext  = $p ["extension"];
+    if(!empty($newext)){
+      $ext = $newext;
+    }
     return $name . "." . $ext;
   }
 
@@ -283,24 +286,28 @@ class Lib{
    * @return string
    */
   public static function Sign( $str = "" ){
+    static $SignFile = "";
+    if(!empty( $signFile )) return $SignFile;
+
     if( empty( $str ) ){
       $str = "_sign.txt";
     } else{
       $str = pathinfo ( $str, PATHINFO_FILENAME ) ."_sign.txt";
     }    
+    $SignFile = $str;
     return $str;
   }
 
   /**
-   * 
+   * Delete the sign file in the temporary path
    * @param string $temppath 
    * @param string $SignFile 
    * @return bool|false 
    */
-  public static function DeleteSignFile($temppath, $SignFile){
-    
-    if ( file_exists($temppath . $SignFile ) ) {      
-      return unlink($temppath . $SignFile);      
+  public static function DeleteSignFile($temppath, $SignFile){    
+    $ok = unlink($temppath . $SignFile);
+    while ( is_readable($temppath . $SignFile)) { 
+      $ok = unlink($temppath . $SignFile);      
     }
     return false;
   }
@@ -348,6 +355,22 @@ class Lib{
     }
     return $default;
   }
+
+  /**
+   * Translate a text
+   * @param string $original
+   * @param array $words
+   * @param array $args ["%1" => "value1", "%2" => "value2", ...]
+   * @return string
+   */
+  static function tr( $original, &$words, $args = [] ){
+    $str = $words[ $original ];
+    foreach( $args AS $i => $e ){
+      $str = str_replace( $i,$e, $str );
+    }  
+    return $str;
+  }
+
 
   /**
    * 

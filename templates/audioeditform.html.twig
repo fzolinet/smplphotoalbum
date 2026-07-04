@@ -1,0 +1,69 @@
+<AudioEditForm>
+<div id="SmplAudioEditForm" class="smpl_window_form ui-draggable ui-draggable-handle">
+	<form id="SmplAudioEditForm" method="{{ method }}">
+		<input id="SmplAudId" type="hidden" value="0"/>	
+		<div class="smpl_pop_title">
+			<h3>{{ Edit }}: <div id="SmplAudFilename" class="smpl_imgedit_filename">Filename</div> ( {{ audio }} )</h3>
+				<button id="SmplAudClose" onclick="return false;" class="smpl_close{{ icon }} smpl_button right_corner" title="{{ Close }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+		</div>
+		<div id="SmplAudEditProps" class="smpl_edit_props">
+		  <span id="SmplAudFilesize"></span> | 
+		  <span id="SmplAudSize"></span> | 
+		  {{ Last modified }}: <span id="SmplAudModified"></span> |
+			<span id="smpl_ffmpegversion" class="smpl"> FFMpeg Version: {{ FFMpegVersion }}</span>	<br />			
+		</div>		
+		<div id="smpl_audedit_buttons" class="smpl_edit_props">
+			Stack:
+			<input id="SmplAudIdx" class="smpl_readonly smpl_step smpl_input_narrow" readonly="readonly" type="text" value="0"> /
+			<input id="SmplAudQue" class="smpl_readonly smpl_que smpl_input_narrow" readonly="readonly" type="text" value="0">
+			<button id="SmplAudInit" onclick="return false;" class="smpl_init{{ icon }} smpl_button" title="{{ Initial }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>		
+			<button id="SmplAudPrev" onclick="return false;" class="smpl_undo{{ icon }} smpl_button" title="{{ Undo }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button id="SmplAudNext" onclick="return false;" class="smpl_redo{{ icon }} smpl_button" title="{{ Redo }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button id="SmplAudSave" onclick="return false;" class="smpl_save{{ icon }} smpl_button" title="{{ Save }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<button id="SmplAudSaveAs" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}" disabled="disabled">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			<div id="smpl_audsaveas">
+				<input id="SmplAudSaveAsInput" type="text" class="smpl_text_output" val="">				
+				<button id="SmplAudSaveAsOK" onclick="return false;" class="smpl_saveas{{ icon }} smpl_button" title="{{ Save As }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				<button id="SmplAudSaveAsCancel" onclick="return false;" class="smpl_cancel{{ icon }} smpl_button" title="{{ Cancel }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+			</div>
+			<button id="SmplAudCancel" onclick="return false;" class="smpl_cancel{{ icon }} smpl_button" title="{{ Cancel }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>			
+		</div>
+		
+		<div id="smpl_audio2mp3" class="smpl_edit_props">			
+			<div>			  			
+				Audio {{ bitrate }}:&nbsp;<input id="SmplAudAudioBitrate" class="smpl_input_mid" type="number" min="1" max="640" title="Audio bitrate in Kilo bit per second. Default 256.">&nbsp;Kbps&nbsp;
+			</div>
+			<div>
+				{{ Format }}:&nbsp;<select id="SmplAudFormat">
+					<option value="original" selected>{{ Original }}</option>
+					<option value="mp3">MP3</option>					
+					<option value="ogg">OGG</option>
+					<option value="wav">WAV</option>
+					<option value="flac">FLAC</option>
+					</select>			
+			</div>
+			<div>
+				{{ Start }}:&nbsp;<input id="SmplAudStart" type="number" class="smpl_input_mid" value="0" min="0" step="0.01">&nbsp;sec&nbsp;
+				{{ End }}:&nbsp;<input id="SmplAudEnd" type="number" class="smpl_input_mid" value="0" min="0" max="" step="0.01">&nbsp;sec&nbsp;
+				{{ Duration }}:&nbsp;<input id="SmplAudDuration" type="text" class="smpl_input_mid" value="0" readonly="readonly">&nbsp;sec&nbsp;<br />
+			</div>
+			<div class="smpl_edit_props" style="width: 100%;">
+			{{ FFMpeg parameters }} (default): 			
+			<textarea id="SmplAudParams" type="text" placeholder="-qscale 0" title="Other ffmpeg parameters, split by space or any other separation parameters, split by space or any other separation characters. For example: -qscale 0">
+			</textarea>
+			</div>
+			<div class="smpl_edit_props">
+				<label class="smpl" for="SmplAudConvert">{{ Audio convert }}</label>
+				<button id="SmplAudConvert" name="SmplAudConvert" onclick="return false;" class="smpl_convert{{ icon }} smpl_button" title="{{ Audio convert }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>				
+			</div>
+			<div class="audio-player">
+				<audio id="SmplAudPlayer" controls="controls" src=""></audio>
+			</div>
+	</form>
+
+	<div id="smpl_error" class="smpl_error ui-draggable ui-draggable-handle">
+		<div id="smpl_error_close" class="smpl_help_close{{ icon }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<div id="smpl_error_content">Error</div>
+	</div>
+</div>
+</AudioEditForm>

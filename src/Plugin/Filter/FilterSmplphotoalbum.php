@@ -41,14 +41,7 @@ class FilterSmplphotoalbum extends FilterBase {
    * @throws BadRequestException 
    * @throws InvalidArgumentException 
    */
-  public function process($text, $langcode) {
-    // global $base_root;    
-
-    $this->cfg  = Lib::getConfig(); //\Drupal::config ( 'smplphotoalbum.settings' );
-    $this->rq   = \Drupal::request();
-    $this->sess = $this->rq->getSession ();
-    $this->ts   = Lib::getSession("smpl");
-
+  public function process($text, $langcode) {    
     // Is there on the page photoalbum? I give the other part of the module
     $GLOBALS["smplphotoalbum"] = False;
 
@@ -56,9 +49,9 @@ class FilterSmplphotoalbum extends FilterBase {
     $ml01 = [];
     $ml02 = []; 
     $ml03 = [];
-    $minta01 = "/\[smpl\|[^]]*\]/simx"; 
-    $minta02 = "/\{smpl\|[^]]*\}/simx";
-    $minta03 ="/[\[\{]smplphotoalbum[\]\}].*[\[\{]\/smplphotoalbum[\]\}]/simx";
+    $minta01  = "/\[smpl\|[^]]*\]/simx"; 
+    $minta02  = "/\{smpl\|[^]]*\}/simx";
+    $minta03  = "/[\[\{]smplphotoalbum[\]\}].*[\[\{]\/smplphotoalbum[\]\}]/simx";
     $is_img01 = preg_match( $minta01, $text, $ml01 );
     $is_img02 = preg_match( $minta02, $text, $ml02 );
     $is_img03 = preg_match( $minta03, $text, $ml03 ); // New Style
@@ -66,6 +59,11 @@ class FilterSmplphotoalbum extends FilterBase {
     if( !($is_img01 > 0 || $is_img02 > 0 || $is_img03 > 0 ) ){ 
       return new FilterProcessResult ( $text );
     }
+
+    $this->cfg  = Lib::getConfig(); //\Drupal::config ( 'smplphotoalbum.settings' );
+    $this->rq   = \Drupal::request();
+    $this->sess = $this->rq->getSession ();
+    $this->ts   = Lib::getSession("smpl");
 
     //------------------   
     if( $is_img01 > 0 ){      
@@ -144,12 +142,12 @@ class FilterSmplphotoalbum extends FilterBase {
 
     $this->sess->set('smpl', $this->ts);
 
-    $ImgList = new ItemList( $this->params );
+    $ItemList = new ItemList( $this->params );
     
-    if ( $ImgList->getSlide()) {
-      $out = $ImgList->RenderSlide();
+    if ( $ItemList->getSlide()) {
+      $out = $ItemList->RenderSlide();
     } else {      
-      $out = $ImgList->Render();
+      $out = $ItemList->Render();
     }
 
     if( $is_img01 > 0 ){
@@ -168,7 +166,7 @@ class FilterSmplphotoalbum extends FilterBase {
 
     $lib = [ 'smplphotoalbum/smplphotoalbum' ];
     
-    if( $ImgList->getSlide() ){
+    if( $ItemList->getSlide() ){
       
       $lib[] = "smplphotoalbum/smplphotoalbum-slide";
 
@@ -201,7 +199,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $msg = ( strlen( $this->params["root"] ) < 1) ? $this->t ( 'The main folder of Simple Photoalbum has to set! Please fix it in /admin/config/fz/smplphotoalbum!' ) : '';
     $msg .= ( $this->params["root"] == "/" || substr ( $root, 2 ) == ":/") ? $this->t ( 'Are you sure, the main folder of Simple Photoalbum is equal the server root?' ) : '';
     $msg .= substr( $this->params["root"], - 1, 1 ) == "/" ? $this->t ( "Simple Photoalbum Main folder must not end with '/'" ) : '';
-    $msg .= ! is_dir( $this->params["root"] ) ? 'There is not the smplphotoalbum root folder' : '';
+    $msg .= !is_dir( $this->params["root"] ) ? 'There is not the smplphotoalbum root folder' : '';
 
     if (strlen ( $msg ) > 0) {
       $msg = $msg . $this->t ( ' Please fix it in /admin/config/fz/smplphotoalbum' );

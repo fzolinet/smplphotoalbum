@@ -10,7 +10,7 @@ Amount
 Application
 Are you sure
 Ascending
-Audio
+
 Auto
 because the file exists
 bytes
@@ -131,6 +131,7 @@ Subtitle
 Target
 text
 There is no cache folder or not writable
+There is no record
 There was nothing change
 This is not a folder
 Thumbnail
@@ -286,12 +287,13 @@ Wave
 White
 Whitebalance
 
-# Video Edit
+# Video & Audio Edit
 Are you sure you want to convert this video to MP4 format?
+audio
+Audio
+Audio convert
+audio file
 bitrate
-Clip start
-Clip duration
-Clip end
 Constrain aspect ratio
 Conversion_running
 Conversion canceled by the user
@@ -299,11 +301,22 @@ Converting video to mp4 format is a long process
 The edited videoclip not saved
 Error canceling conversion
 Error closing video editor
+Error saving
+Error saving the: '<b>%1</b>' file.
+FFMpeg conversion is disabled
 Ffmpeg parameters
+FFMpeg path is invalid
 Frame
 Framerate
+file saved successfully
 to mp4
 to original
+The audio file: '<b>%1</b>' was saved successfully.
+The edited audioclip not saved
+The item is no video
+The item is no audio
+The new name of audio can not be empty!
+The new name of audio can not be the same <b>'%1'</b>!"
 Video convert
 Video Edit
 
@@ -328,3 +341,10 @@ Last modified
 Number of items in the folder
 Properties
 There is no such item
+
+#AI
+Unknown image type for AI recognition!
+The file is empty!
+What is on the picture?
+Is there this image AI generated?
+Unknown AI command!

@@ -23,7 +23,7 @@ class ExifRW{
     return "";
   }
   
-  function write($src, $wmtext){    
+  function write($src ="", $wmtext ="" ){    
     $iptc = new iptc($src);    
     $iptc->set(IPTC_COPYRIGHT_STRING, $wmtext);
     $iptc->write();

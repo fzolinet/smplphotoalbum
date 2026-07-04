@@ -594,6 +594,11 @@ $icons: (
   .smpl_undo#{$icon} {
     background-image: url("../image/b_undo#{$icon}.png");
   }
+
+  .smpl_audedit#{$icon} {
+    background-image: url("../image/b_audedit#{$icon}.png");
+  }
+
   .smpl_videdit#{$icon}{
     background-image: url("../image/b_videdit#{$icon}.png");
   }
@@ -608,7 +613,7 @@ $icons: (
 }
 
 /* Save AS div*/
-div#smpl_saveas, div#smpl_vidsaveas {
+div#smpl_saveas, div#smpl_vidsaveas, div#smpl_audsaveas {
   display: none;
   z-index: 10;
   position: absolute;

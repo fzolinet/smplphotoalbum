@@ -134,7 +134,7 @@ smplphotoalbum.v:
 smplphotoalbum.videoedit:
   path: "/smplphotoalbum/videoedit/{id}/{cmd}"
   defaults:
-    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::videoedit'
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::VideoEdit'
     _title: "edit a video"
     id: "-1"
   requirements:
@@ -144,6 +144,18 @@ smplphotoalbum.videoedit:
       id:
       cmd:
 
+smplphotoalbum.audioedit:
+  path: "/smplphotoalbum/audioedit/{id}/{cmd}"
+  defaults:
+    _controller: '\Drupal\smplphotoalbum\Controller\SmplphotoalbumController::AudioEdit'
+    _title: "edit an audio file"
+    id: "-1"
+  requirements:
+    _permission: "access content"
+  options:
+    parameters:
+      id:
+      cmd:
 smplphotoalbum.slide:
   path: "/smplphotoalbum/slide/{id}"
   defaults:

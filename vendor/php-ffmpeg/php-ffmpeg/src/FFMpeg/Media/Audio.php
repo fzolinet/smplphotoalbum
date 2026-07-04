@@ -23,6 +23,7 @@ use FFMpeg\Format\ProgressableInterface;
 
 class Audio extends AbstractStreamableMedia
 {
+    private $defaultSettings = null;
     /**
      * {@inheritdoc}
      *
@@ -129,9 +130,78 @@ class Audio extends AbstractStreamableMedia
         }
         $commands[] = $outputPathfile;
 
+        // changed by FZ
+        $def = $this->defaultSettings( $this->defaultSettings );
+        $commands =array_merge($commands, $def);
         return $commands;
     }
 
+    /**
+     * get the default settings from software
+     * @return string|false 
+     */
+    public function getDefaultSettings(){
+        $cmds = $this->defaultSettings("", $getString);
+        if(is_array($cmds)){
+            $cmds = implode(" ", $cmds);
+        }        
+        return $cmds;
+    }
+
+    /**
+     * Sets the default settings for the audio processing.
+     *
+     * @param string $defaultSettings The default settings as a string or file path.
+     */
+    public function setDefaultSettings( $defaultSettings = ""){
+        $this->defaultSettings = $defaultSettings;
+    }
+    
+    /**
+     * Made by FZ.
+     * Default settings are the default parameters for audio encoding
+     * @param array | string $defaultSettings      
+     * @return array|false 
+     */
+    public function defaultSettings($defaultSettings = [], $getString = false){
+        $cmds = [];
+
+        // The array is the default settings
+        if(is_array($defaultSettings) && count($defaultSettings() >0 )){
+            $cmds = &$defaultSettings;
+        
+        // The string is file path to a file with the default settings
+        } else if( is_string($defaultSettings) && strlen($defaultSettings) > 0 && file_exists($defaultSettings) ){
+            $cmds = file($defaultSettings, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach( $cmds AS $i => $cmd ){
+                $cmd = trim($cmd);
+                if($strlen($cmd) >0 && substr($cmd, 0, 1) == "#" ){
+                    unset($cmds[$i]);
+                } else if( $pos = strpos($cmd, ';') !== false ){                
+                    $cmds[$i] = trim( substr( $cmd, 0, $pos ) );
+                }
+            }
+        
+        // The string is the default settings
+        } else if( is_string($defaultSettings) && strlen($defaultSettings) > 0 ){
+            $cmds = explode(" ", $defaultSettings);
+
+        // The format is used to get the default settings
+        } else{
+            if ($format instanceof AudioInterface) {
+                if (null !== $format->getAudioKiloBitrate()) {
+                    $cmds[] = '-b:a';
+                    $cmds[] = $format->getAudioKiloBitrate().'k';
+                }
+                if (null !== $format->getAudioChannels()) {
+                    $cmds[] = '-ac';
+                    $cmds[] = $format->getAudioChannels();
+                }
+            }
+        }         
+
+        return $cmds;
+    }
     /**
      * Gets the waveform of the video.
      *

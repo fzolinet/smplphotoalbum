@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of PHP-FFmpeg.
  *
@@ -16,15 +15,12 @@ use FFMpeg\Exception\InvalidArgumentException;
 use FFMpeg\Exception\RuntimeException;
 use FFMpeg\Filters\Audio\SimpleFilter;
 use FFMpeg\Filters\FilterInterface;
-use FFMpeg\Filters\Video\ClipFilter;
-use FFMpeg\Filters\Video\VideoFilters;
 use FFMpeg\Format\AudioInterface;
 use FFMpeg\Format\FormatInterface;
 use FFMpeg\Format\ProgressableInterface;
-use FFMpeg\Format\VideoInterface;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
-abstract class AbstractVideo extends Audio
+abstract class AbstractAudio extends Audio
 {
     private $defaultSettings = null;
     /**
@@ -48,7 +44,7 @@ abstract class AbstractVideo extends Audio
      */
     public function filters()
     {
-        return new VideoFilters($this);
+        return new AudioFilters($this);
     }
 
     /**
@@ -295,10 +291,15 @@ abstract class AbstractVideo extends Audio
 
     /**
      * Modified by FZ to allow custom config file for video encoding, if not set use default settings
-     * @param string $defaultSettings The default settings as a string or file path.
+     * Set the default config file:
+     * array => settings
+     * string => path-to-config-file
+     * string => one line config string, separated by space
+     * otherwise the original default parameters are used
+     * @param mixed $defaultSettings 
      * @return void 
      */
-    public function setDefaultSettings( $defaultSettings = "" ) 
+    public function setDefaultSettings( $defaultSettings ) 
     {
         $this->defaultSettings = $defaultSettings;
     }

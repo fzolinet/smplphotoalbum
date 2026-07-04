@@ -50,9 +50,9 @@
 				{{ Constrain_aspect_ratio }}:&nbsp;<input type="checkbox" id="SmplVidAspect" checked="checked">&nbsp;				
 			</div>
 			<div>
-				{{ Clip start }}:&nbsp;<input id="SmplVidStart" type="number" class="smpl_input_mid" value="0" min="0" step="0.01">&nbsp;sec&nbsp;
-				{{ Clip end }}:&nbsp;<input id="SmplVidEnd" type="number" class="smpl_input_mid" value="0" min="0" max="" step="0.01">&nbsp;sec&nbsp;
-				{{ Clip duration }}:&nbsp;<input id="SmplVidDuration" type="text" class="smpl_input_mid" value="0" readonly="readonly">&nbsp;sec&nbsp;<br />
+				{{ Start }}:&nbsp;<input id="SmplVidStart" type="number" class="smpl_input_mid" value="0" min="0" step="0.01">&nbsp;sec&nbsp;
+				{{ End }}:&nbsp;<input id="SmplVidEnd" type="number" class="smpl_input_mid" value="0" min="0" max="" step="0.01">&nbsp;sec&nbsp;
+				{{ Duration }}:&nbsp;<input id="SmplVidDuration" type="text" class="smpl_input_mid" value="0" readonly="readonly">&nbsp;sec&nbsp;<br />
 				{{ Rotate }}:&nbsp;<select id="SmplVidRotate">
 					<option value="0" selected>-</option>
 					<option value="90">{{ Right }} 90°</option>
@@ -73,7 +73,7 @@
 				<button id="SmplVidConvert" name="SmplVidConvert" onclick="return false;" class="smpl_convert{{ icon }} smpl_button" title="{{ Video convert }}">&nbsp;&nbsp;&nbsp;&nbsp;</button>				
 			</div>
 			
-			<video id="SmplPlayer" controls="controls" src=""></video>
+			<video id="SmplVidPlayer" controls="controls" src=""></video>
 	</form>
 
 	<div id="smpl_error" class="smpl_error ui-draggable ui-draggable-handle">

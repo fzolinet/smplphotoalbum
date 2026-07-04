@@ -127,10 +127,10 @@
 	 * @returns
 	 */
 	function SaveButtons(enable) {
-		var sb = $("#SmplSubmit");
-		var sa = $("#SmplSaveAs");
-		var sbkp = $("#SmplInit");
-		var divsaveas = $('div#smpl_saveas');
+		var sb = $("#SmplImgSubmit");
+		var sa = $("#SmplImgSaveAs");
+		var sbkp = $("#SmplImgInit");
+		var divsaveas = $('div#smpl_imgsaveas');
 		if (enable) {
 			sb.prop("disabled", false);
 			sb.removeClass("smpl_darkenbuttons");
@@ -188,8 +188,8 @@
 	 * @param next - next number
 	 */
 	function UndoRedo(idx, que, prev, next) {
-		let ud = $("#SmplUndo");
-		let rd = $("#SmplRedo");
+		let ud = $("#SmplImgUndo");
+		let rd = $("#SmplImgRedo");
 		ud.prop("title", smpl.words.Undo + ": " + prev);
 		rd.prop("title", smpl.words.Redo + ": " + next);
 		if (idx > 0) {
@@ -473,19 +473,8 @@
 				}
 				//Load image
 				load(data);
-
-				let pos = $('#ImgBtn' + smpl.id).offset();
-				let dy = parseFloat($("html").css("font-size")) * 5;
-				SmplImgEditForm.show();
-				let w = SmplImgEditForm.width();
-				let ww = window.innerWidth;
-				pos.left = (ww - w) * 0.5;
-				if (pos.left < 0) {
-					pos.left = 0
-				} else if (pos.left + w > ww) {
-					pos.left = ww - w - 2 * dy;
-				}
-				SmplImgEditForm.offset({ top: pos.top + dy, left: pos.left });
+				
+				smpl.WindowPosition(SmplImgEditForm, '#ImgBtn' + smpl.id, "#smpl_vidsaveas");				
 				return false;
 			},
 			error: function (response) {
@@ -499,7 +488,7 @@
 	/**
 	 * If End and Save the editing of picture
 	 */
-	$("#SmplSubmit").click(function () {
+	$("#SmplImgSubmit").click(function () {
 		let url = smpl.ajax + "/imgedit/" + smpl.id + "/save?idx=" + smpl.idx;
 		smpl.progress(true);
 		$.ajax({
@@ -524,21 +513,21 @@
 	});
 
 	//----------------  Save As -----------------
-	$("#SmplSaveAs").click(function () {
-		$("input#smpl_saveas_input").val(smpl.name);
-		$("div#smpl_saveas").show();
+	$("#SmplImgSaveAs").click(function () {
+		$("input#SmplImgSaveAsInput").val(smpl.name);
+		$("div#smpl_imgsaveas").show();
 	});
 
-	$("#SmplSaveAsCancel").click(function () {
-		$("input#smpl_saveas_input").val("");
-		$("div#smpl_saveas").hide();
+	$("#SmplImgSaveAsCancel").click(function () {
+		$("input#SmplImgSaveAsInput").val("");
+		$("div#smpl_imgsaveas").hide();
 	});
 
 	/**
 	 * If End and Save the editing of picture
 	 */
-	$("#SmplSaveAsOK").click(function () {
-		var newname = $("input#smpl_saveas_input").val();
+	$("#SmplImgSaveAsOK").click(function () {
+		var newname = $("input#SmplImgSaveAsInput").val();
 		if (smpl.name == newname) {
 			smpl.ErrorC('The new name is the same as the original name!');
 			return false;
@@ -566,7 +555,7 @@
 	});
 
 	// ---- Cancel Button -----------
-	$("#SmplCancel").click(function () {
+	$("#SmplImgCancel").click(function () {
 		Cancel();
 	});
 
@@ -579,7 +568,7 @@
 	/**
 	 * Cancel the modified image and close the window
 	 */
-	$("#SmplClose").click(function () {
+	$("#SmplImgClose").click(function () {
 		if (!smpl.imgeditsaved) {
 			Swal.fire({
 				html: smpl.words.Edit_not_saved,
@@ -630,7 +619,7 @@
 	/**
 	 * Show Original image
 	 **/
-	$("button#SmplInit").on("mousedown", function () {
+	$("#SmplImgInit").on("mousedown", function () {
 		if (smpl.idx > 0) {
 			smpl.bkp = smpl.idx;
 			smpl.bwidth = smpl.width;
@@ -643,7 +632,7 @@
 	/**
 	 * Last changed image
 	 */
-	$("#SmplInit").on("mouseup", function () {
+	$("#SmplImgInit").on("mouseup", function () {
 		if ( smpl.bkp > 0 ) {
 			smpl.idx = smpl.bkp;
 			smpl.width = smpl.bwidth;
@@ -657,7 +646,7 @@
 	 * Undo the modified image
 	 * back values: image src, width, height, undo number, max undo stack
 	 */
-	$("#SmplUndo").click(function () {
+	$("#SmplImgUndo").click(function () {
 		Undo();
 	});
 
@@ -682,7 +671,7 @@
 	/**
 	 *  Redo the images
 	 */
-	$("#SmplRedo").click(function () {
+	$("#SmplImgRedo").click(function () {
 		Redo();
 	});
 

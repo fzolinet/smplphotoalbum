@@ -11,7 +11,7 @@ Amount=Mérték
 Application=Alkalmazás
 Are you sure=Biztos vagy benne
 Ascending=Növekvő
-Audio=Hang
+
 Auto=Automatikus
 because the file exists=mert a fájl létezik
 bytes=bájt
@@ -47,6 +47,7 @@ Direction=Irány
 Do you want to close the window=Bezárod az ablakot
 Document=Dokumentum
 Done=Kész
+Duration=Hossz
 Edit=Szerkesztés
 edit=szerkesztés
 Edit Path=Az mappa összes tételének tulajdonságait szerkesztjük
@@ -131,6 +132,7 @@ Subtitle=Alcím
 Target=Cél
 text=szöveg
 There is no cache folder or not writable=Nincsen cache folder vagy nem írható
+There is no record=Nincsen megfelelő adat az adatbázisban
 There was nothing change=Nem változott semmi
 This is not a folder=Ez nem mappa
 Thumbnail=Bélyegkép
@@ -286,8 +288,12 @@ Wave=Hullám
 White=Fehér
 Whitebalance=Fehéregyensúly
 
-# Video Edit
+# Video && Audio Edit
 Are you sure you want to convert this video to MP4 format?=Biztosan konvertálod a videot MP4 formátumba?
+Audio=Hang
+audio=Hang
+Audio convert=Hang szerkesztése
+audio file=hangfájl
 bitrate=bitráta
 Clip start=Klip kezdete
 Clip duration=Klip hossza
@@ -296,16 +302,30 @@ Constrain aspect ratio=Arányok megtartása
 Conversion is running=A video / kép módosítás fut. Állítsd le vagy várd meg a befejezését.
 Conversion canceled by the user=A felhasználó megszakította a konverziót!
 Converting video to mp4 format is a long process=A video konvertálása mp4 formátumba hosszú folyamat
+Duration
+End=Vége
 Error canceling conversion=Nem sikerült leállítani a konverziót
 Error closing video editor=A videoeditor bezárásakor hiba keletkezett
+Error saving=Hiba a mentéskor
+Error saving the: '<b>%1</b>' audio file.=Hiba az audio fájl mentésekor: '<b>%1</b>'.
 The edited videoclip not saved=A szerkesztett videoklipet nem mentettük el
+FFMpeg conversion is disabled=FFMpeg konverzió tiltott
 FFMpeg parameters=FFMpeg paraméterek
+FFMpeg path is invalid=FFMpeg elérési útvonal érvénytelen
 Frame=Keret
 Framerate=Frame/sec
+Start=Kezdés
 to mp4=mp4
 to original=eredeti
+The edited audioclip not saved=A szerkesztett hangfájlt nem mentetted
+The item is no video=Nem video fájl
+The item is no audio=Nem audio fájl
+The audio file: '<b>%1</b>' was saved successfully.=Az audio fájlt '<b>%1</b>' sikeresen mentettem
+The new name of audio can not be empty!=Az audio file új neve nem lehet üres!
+The new name of audio can not be the same <b>'%1'</b>!=Az audio fájl <b>'%1'</b> neve nem lehet ugyanaz, mint az eredeti fájl neve!
 Video convert=Video konvertálása
 Video Edit=Video szerkesztés
+
 
 # Slideshow
 Slideshow=Vetítő
@@ -328,3 +348,10 @@ Last modified=Utoljára módosítva
 Number of items in the folder=Az elemek száma a mappában
 Properties=Tulajdonságok
 There is no such item=Nincsen ilyen tétel
+
+#AI
+Unknown image type for AI recognition!=Ismeretlen típus a MI felismeréshez!
+The file is empty!=A file üres!
+What is on the picture?=Mi van képen?
+Is there this image AI generated?=Ez a kép MI által készített?
+Unknown AI command!=Ismeretlen MI parancs

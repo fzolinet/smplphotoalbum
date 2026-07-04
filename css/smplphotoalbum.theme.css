@@ -546,6 +546,10 @@ select {
   background-image: url("../image/b_undo_col.png");
 }
 
+.smpl_audedit_col {
+  background-image: url("../image/b_audedit_col.png");
+}
+
 .smpl_videdit_col {
   background-image: url("../image/b_videdit_col.png");
 }
@@ -832,6 +836,10 @@ select {
 
 .smpl_undo_bw {
   background-image: url("../image/b_undo_bw.png");
+}
+
+.smpl_audedit_bw {
+  background-image: url("../image/b_audedit_bw.png");
 }
 
 .smpl_videdit_bw {

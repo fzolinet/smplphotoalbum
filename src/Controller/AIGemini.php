@@ -10,7 +10,7 @@ Class AIGemini{
   private $cmd = "";
   private $words = [];
 
-  public function __construct( $path, $cmd, &$words ){
+  public function __construct( string $path, string $cmd, array &$words ){
     $this->p = $path;
     $this->cmd = $cmd;
     $this->words = &$words;
@@ -23,8 +23,6 @@ Class AIGemini{
    * Name: Default Gemini API Key
    * Project name: projects/818815699870
    * Project number:818815699870
-   * @param mixed $bytes - content of file
-   * @param mixed $p - file path 
    * @return string
    */
   public function process(){    
@@ -55,21 +53,25 @@ Class AIGemini{
     }    
 
     if( $mimeType->value == 'unknown' ){      
-      return ["id" => $id, "msg" => "Unknown image type for AI recognition!"];
+      return ["ok" => -1, "msg" => $this->words["Unknown image type for AI recognition!"]];
     }
 
     $bytes = file_get_contents($this->p);
 
     if(empty( $bytes ) ){      
-      return ["id" => $id, "msg" => "The file is empty!"]; 
+      return ["ok" => -1, "msg" => $this->words["The file is empty!"]]; 
     }
 
     if( $this->cmd == "recognition" ){
+      
       $ask = $this->words["What is on the picture?"];
+
     } else if( $this->cmd == "check"){
+      
       $ask = $this->words["Is there this image AI generated?"];
+
     } else{
-      return ["id" => $id, "msg" => "Unknown AI command!"];
+      return ["ok" => -1, "msg" => $this->words["Unknown AI command!"]];
     }
 
     $yourAPIKey = "AIzaSyCIiBe91lTFiO1ioBU4iNBf3ChUW3iTFck";
@@ -79,9 +81,8 @@ Class AIGemini{
       ->generateContent([
           $ask,
           new Blob( mimeType: $mimeType, data: base64_encode( $bytes ) )
-        ]);
-    $id = "1";
+        ]);    
     $msg = $result->text();    
-    return ["id" => $id, "msg" => $msg]; 
+    return ["ok" => 1, "msg" => $msg]; 
   }
 }

@@ -854,7 +854,7 @@ class SettingsForm extends ConfigFormBase {
 
     $form['ffmpeg_settings'] = [
         '#type' => 'fieldset',
-        '#title' => $this->t ( 'FFMPEG settings for video conversion from (almost) any video to mp4' ),
+        '#title' => $this->t ( 'FFMPEG settings for video and audio editing and conversion if ffmpeg is installed' ),
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,        
     ];
@@ -886,6 +886,8 @@ class SettingsForm extends ConfigFormBase {
         }else{
             $ffmpeg_path = "/usr/bin/ffmpeg";
         }
+    }else{
+        $ffmpeg_path = str_replace("\\", "/", $ffmpeg_path);
     }
 
     $form['ffmpeg_settings']['ffmpeg_path'] = [
@@ -899,12 +901,15 @@ class SettingsForm extends ConfigFormBase {
         // Windows operation system        
         $out = " ".shell_exec( $ffmpeg_path);        
         $ffmpeg_installed = (stripos($out, "ffmpeg") > 0 ) ? true : false;
-        $out = "Windows System & FFMPEG " . ($ffmpeg_installed ? "is installed!" : "is not installed");
-
+        $os = "Windows System & FFMPEG " . ( $ffmpeg_installed ? "is installed!" : "is not installed" );
+        
     }else if(PHP_OS == "Linux" ){
         // Linux operational system                       
         $ffmpeg_installed = file_exists($ffmpeg_path) ? true : false;
-        $os = "Linux system. FFMEPG ". ($ffmpeg_installed ? "is installed" : "is not installed");        
+        $os = "Linux system. FFMEPG ". ( $ffmpeg_installed ? "is installed" : "is not installed" );        
+    } else{
+        $ffmpeg_installed = false;
+        $os = "Your system is ".PHP_OS.". I can not check the FFMPEG installation on this system. Please check it manually and write the path of ffmpeg executable into the FFMPEG path field.";
     }
 
     $ffmpeg = $cfg->get("ffmpeg");

@@ -1,18 +1,18 @@
 <?php 
 namespace Drupal\smplphotoalbum\Controller;
 
-class BreakVideo{
+class BreakMedia{
 	private $d = 20;
 	private $path = "";
 	private $sign = "";
-	private $lastTime;			// LastTime
+	private $lastTime = 0;			// LastTime
 	private $max = 1000;		// end of counter
 	private $percent = 0;		// percent
-	private $startTime;			// beginning of process
-	private $last;					// Last Write into the sign file
+	private $startTime = 0;	// beginning of process
+	private $last = 0;			// Last Write into the sign file
 	private $log = false;		// do you want a log into PHP
 	private $logfile = "";
-	private $freq;					// frequency of examination
+	private $freq = 100;		// frequency of examination
 	public $cnt = 0;				// counter	
 
 	function __construct($path = "", $sign = "" , $freq = 100 , $log = false, $max = 100){
