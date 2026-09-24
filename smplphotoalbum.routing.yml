@@ -156,6 +156,7 @@ smplphotoalbum.audioedit:
     parameters:
       id:
       cmd:
+      
 smplphotoalbum.slide:
   path: "/smplphotoalbum/slide/{id}"
   defaults:

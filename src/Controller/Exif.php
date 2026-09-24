@@ -211,7 +211,7 @@ class Exif{
     $finfo = $this->arrayflat ( $finfo );
     ksort($finfo);
     
-    $a["filesize"]  = $finfo["filesize"];
+    $a["filesize"]  = isset( $finfo["filesize"] ) ? $finfo["filesize"] : 0;Y
     if(isset ($finfo["duration"])){
       $a["clipend"]  = $finfo["duration"];  
       $a["duration"] = $finfo["duration"];      

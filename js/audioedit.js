@@ -260,7 +260,7 @@
         }
 
         if (ok.isConfirmed) {
-          var url = smpl.ajax + "/audioedit/" + smpl.id + "/save?idx=" + smpl.idx;
+          var url = smpl.ajax + "/audioedit/" + smpl.id + "/save?idx=" + smpl.idx + "&newext="+ smpl.newext;  
           smpl.progress(true, true);
 
           // Ajax hívás
@@ -310,8 +310,9 @@
       smpl.ErrorC('The new name is the same as the original name!');
       return false;
     }
+    smpl.newext = newname.split('.').pop();
     
-    let url = smpl.ajax + "/videoedit/" + smpl.id + "/saveas/?idx=" + smpl.idx + "&newname=" + newname;
+    let url = smpl.ajax + "/audioedit/" + smpl.id + "/saveas/?idx=" + smpl.idx + "&newname=" + newname + "&newext=" + smpl.newext;
     
     smpl.progress(true);
     fetch(url)
@@ -436,7 +437,11 @@
   function load(data) {            
     smpl.tempname = data.tempname;
     smpl.name = data.name;
-    smpl.ext = data.ext;
+    if( data.newext.length > 0 && data.ext != data.newext ) {
+      smpl.ext = data.newext;
+    } else {
+      smpl.ext = data.ext;
+    }
     $("#SmplAudFilename").html(data.name);
     
     for (var prop of Object.keys( data )) {
@@ -456,7 +461,11 @@
     $("#SmplAudModified").html(smpl.modified);            
     $("#SmplAudFilesize").html(smpl.filesize);    
     $("#SmplAudAudioBitrate").val(smpl.audiokilobitrate);
-    $("#SmplAudFormat").val(smpl.ext);
+    if( smpl.newext.length > 0 && smpl.ext != smpl.newext ) {
+      $("#SmplAudFormat option[value='" + smpl.newext + "']").prop("selected", true);
+    } else {
+      $("#SmplAudFormat option[value='" + smpl.ext + "']").prop("selected", true);
+    }    
     
     $("#SmplAudStart").val(0);
     $("#SmplAudEnd").val(Math.round(smpl.clipend * 100) / 100);    

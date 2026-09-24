@@ -297,8 +297,7 @@ function setDivInWindow(w, pos) {
       dangerMode: true,
     })
       .then((ok) => function(e){
-        smpl.confirm = ok.isConfirmed;
-       // e.preventDefault();
+        smpl.confirm = ok.isConfirmed;       
         return false;
      });
     

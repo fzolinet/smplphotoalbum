@@ -79,7 +79,7 @@ class AudioEdit {
    */
   public function Load(){
     //A file adatok betöltése az adatbázisból
-    $record = ['id'=>$this->id, 'path'=>$this->path, 'name' => $this->name ];
+    $record = ['id'=>$this->id, 'path'=>$this->path, 'name' => $this->name, 'typ'=>$this->type];
     
     $ex = new Exif( $record  );
     $ex->AudioInfo( $record );
@@ -165,8 +165,7 @@ class AudioEdit {
     } 
      
     //Syncronize the filters after all changes
-    //$audio->filters()->synchronize();
-    $ewext = Lib::Request("newext", $this->newext);
+    //$audio->filters()->synchronize();    
 
     // The new or same extension of video after conversion
     if( $this->ext !== $this->newext && !empty($this->newext) ){ 
@@ -299,16 +298,20 @@ class AudioEdit {
       $this->ts['ok'] = "-1";
       return $this->MakeJson(); 
     }
-    
-    $from = $this->temppath . $this->ts['cmd'] [ $idx ];
-    $to = $this->path . $this->name;
-    
-    // Develop time has to backup the original file
-    $bak = $this->path . $this->BackupFileName( $this->name, $this->path);     
-
-    $ok = rename ( $to, $bak ); // backup the original file before overwriting
-    $ok = $ok && copy ( $from, $to ); // $overwriting the original file with the converted file
-
+        
+    if( !empty( $this->newext ) && $this->newext != $this->ext ) {
+      $from = $from = $this->temppath . $this->ts['cmd'] [ $idx ];
+      $to = $this->path . LIB::ChangeExtension( $this->name, $this->newext );
+      $ok = copy ( $from, $to ); // $overwriting the original file with the converted file        
+    }else{
+      $from = $this->temppath . $this->ts['cmd'] [ $idx ];    
+      $to = $this->path . $this->name;
+      $bak = $this->path . $this->BackupFileName( $this->name, $this->path);     
+      // Develop time has to backup the original file
+      $ok = rename ( $to, $bak ); // backup the original file before overwriting
+      $ok = $ok && copy ( $from, $to ); // $overwriting the original file with the converted file
+    }
+            
     if (!$ok) {
       $this->ts['msg'] = Lib::tr(
         "Error saving the: '<b>%1</b>' audio file.", 
@@ -500,9 +503,7 @@ class AudioEdit {
     $this->ts["path"]     = $record['path'];
     $this->ts["ext"]      = $this->ext;
     $this->ts["newext"]   = $this->newext;            
-    $this->ts["width"]    = $record["width"];
-    $this->ts["height"]   = $record["height"];
-    $this->ts["clipstart"]= $record["clipstart"];
+    $this->ts["clipstart"]= $record["clipstart"] = 0;
     $this->ts["clipend"]  = $record["clipend"];      
     $this->ts["duration"] = $record["duration"]; 
     $this->ts["cmd"][ $this->ts["idx"] ] = $this->ts["tempname"];

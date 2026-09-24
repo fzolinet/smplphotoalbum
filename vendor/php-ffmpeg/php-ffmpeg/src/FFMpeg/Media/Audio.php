@@ -141,7 +141,7 @@ class Audio extends AbstractStreamableMedia
      * @return string|false 
      */
     public function getDefaultSettings(){
-        $cmds = $this->defaultSettings("", $getString);
+        $cmds = $this->defaultSettings("");
         if(is_array($cmds)){
             $cmds = implode(" ", $cmds);
         }        
@@ -163,7 +163,7 @@ class Audio extends AbstractStreamableMedia
      * @param array | string $defaultSettings      
      * @return array|false 
      */
-    public function defaultSettings($defaultSettings = [], $getString = false){
+    public function defaultSettings($defaultSettings = [],){
         $cmds = [];
 
         // The array is the default settings

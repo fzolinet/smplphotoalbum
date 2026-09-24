@@ -281,6 +281,17 @@ class Lib{
     return $name . "." . $ext;
   }
 
+  /**
+   * Change an extension of filename
+   * @param string $name 
+   * @param string $newext 
+   * @return string 
+   */
+  public static function ChangeExtension( string $name, string $newext ){
+    $p = pathinfo ( $name );    
+    return $p["filename"] . "." .  $newext;    
+  }
+
    /**
    * Make a sign file into the temporary folder
    * @return string
@@ -311,7 +322,7 @@ class Lib{
     }
     return false;
   }
-
+  
   /**
    * Get the URL of the sign file
    * @param array $ts
