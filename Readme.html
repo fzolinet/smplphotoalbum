@@ -1,332 +1,1170 @@
-<h3>Features</h3>
 
-<ul>
-	<li>The modul works as a Drupal filter of any nodes on it.</li>
-	<li>It makes a table or list of images, videos, documents, compressed or executable files from a directory on the
-		server.</li>
-	<li>When the node is viewed first time the module makes</li>
-	<ul>
-		<li>thumbnails from the images,</li>
-		<li>the thumbnails saves into the '_tn_' subdirectory,</li>
-		<li>save the datas of files into the database table</li>
-		<li>makes automatically thumbnails and insert into a table of database.</li>
-	</ul>
-	<li>It make a slideshow from the images (pictures) of folder</li>
-</ul>
+Simple Photoalbum 1.10.x-xxxx
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Features
+~~~~~~~~
+- The modul works as a Drupal filter of any nodes on it.
+- It makes a table / list of images, videos, documents compressed or executable files 
+  from a directory on the server.
+- When the node is viewed pushed the Refresh button the module makes 
+  - thumbnails from the images,
+  - the thumbnails saves into the _tn_ subdirectory,
+  - save the datas of files into the database table 
+- makes automatically thumbnails and insert into a table of database.
 
-<h3>Dependencies</h3>
-<ul>
-	<li>Must be installed the GD lib of PHP</li>
-	<li>Before jQuery UI is in the core of Drupal and there is no dependencies.</li>
-	<li>From Drupal 9.5.1 the jQuery UI is not in the core of Drupal</li>
-	<li>Download and install the contrib modules:
-		<ul>
-			<li>jQuery UI: <a href="https://www.drupal.org/project/jquery_ui">https://www.drupal.org/project/jquery_ui</a>
-			</li>
-			<li>jQuery UI Draggable:<a
-					href="https://www.drupal.org/project/jquery_ui_draggable">https://www.drupal.org/project/jquery_ui_draggable</a>
-			</li>
-			<li>jQuery UI Resizable: <a
-					href="https://www.drupal.org/project/jquery_ui_resizable">https://www.drupal.org/project/jquery_ui_resizable</a>
-			</li>
-		</ul>
-	</li>
-</ul>
+Dependencies
+~~~~~~~~~~~~
+- Before jQuery UI is in the core of Drupal and there is no dependencies.
+- From Drupal 9.5.1 the jQuery UI is not in the core of Drupal and 
+  download and install the contrib modules from here
+  - jQuery UI: https://www.drupal.org/project/jquery_ui
+  - jQuery UI Draggable:https://www.drupal.org/project/jquery_ui_draggable
+  - jQuery UI Resizable: https://www.drupal.org/project/jquery_ui_resizable
 
-<h3>Installation:</h3>
-<ul>
-	<li>Download and install JQuery UI Jquery UI Draggable and jQuery UI Resizable.</li>
-	<li>Copy the files of module into the modules directory and enable.</li>
-	<li>Set the appropriate properties in the 'admin/config/fz/smplphotoalbum'</li>
-	<li>In the 'admin/config/content/formats' enable the Simple Photoalbum filters in the Full HTML or any other content
-		types</li>	
-</ul>
+Installation:
+~~~~~~~~~~~~
+- Download and install JQuery UI Jquery UI Draggable and jQuery UI Resizable.
+- Copy the files of module into the modules directory and enable.
+- Set the appropriate properties in the admin/config/fz/smplphotoalbum   
+- In the admin/config/content/formats
+  Enable the Simple Photoalbum filters in the Full HTML type.
+- Default: The image shown in the other blank window.
 
-<h3>Defaults</h3>
-<ul>
-	<li>The thumbnails showed in table format (flex)</li>
-	<li>The table has pager</li>
-	<li>The admin sets what kind of files enables / disables. It can
-		<ul>
-			<li>image (default),</li>
-			<li>video (default) normal or HTML5 Video format</li>
-			<li>audio (default) HTML5 Audio format</li>
-			<li>document,</li>
-			<li>compressed,</li>
-			<li>executable,</li>
-			<li>other types</li>
-			<li>prohibited files.</li>
-		</ul>
-	</li>
-	<li>The admin can modify the list of extensions of files types</li>
-</ul>
+Defaults
+~~~~~~~~
+- The thumbnails showed in table format (css flex)
+- The table has pager
+- The admin sets what kind of files enables / disables. It can 
+  - image (enables default), 
+  - videos (enables default) normal or HTML5 Video format
+  - audio (enables default) HTML5 Audio format
+  - document,
+  - compressed,
+  - executable,
+  - other types, 
+  - prohibited 
+  files.
+- The admin can change the extension of types.
 
-<h3>Events in gallery mode</h3>
-<p>If you click on a thumbnail:</p>
-<ul>
-	<li>image: showing in original size (in colorbox)</li>
-	<li>video: downloads or plays</li>
-	<li>HTML5 &lt;Video&gt;: plays the media,</li>
-	<li>audio: downloads or plays</li>
-	<li>HTML5 &lt;Audio&gt;: plays the media,</li>
-	<li>documents, compressed, executable, other types it downloads</li>
-</ul>
+Events
+~~~~~~
+If you click on a thumbnail:
+- image: showing in original size
+- Video: downloads or plays
+- HTML5 Video - plays
+- audio: downloads or plays
+- HTML5 Audio - plays
+- documents, compressed, executable, other types downloads
 
-<h3>Events in slideshow mode</h3>
-<ul>
-	<li>Shows an image, then after a few seconds it disappears
-		and the next image in the directory appears.
-		The image can be navigated forward/backward with buttons on the sides.</li>
-	<li>If you click on the image, it shows in full screen.</li>
-	<li>When the mouse hovers over the image, the slideshow stops</li>
-</ul>
+Administration settings
+~~~~~~~~~~~~~~~~~~~~~~~
+- Maximum number of items on a page
+- Maximum width of thumbnail: (default 150px)
+- CSS class of thumbnails (default: smpl_image)
+- Root folder of photoalbums:
+  This is absolute path in the filesystem. If you use in the path the 
+  __DRUPALROOT__ then it substitutes the Drupal path with it.
+- Rebuild of pathes of menus (for developers)
+- Shows the URL of associated with items (enable/disable)
+- Default target of link of image (default: _blank)
+- Using taxonomy Photoalbum (enable/disable) - Under Construction
 
-<h3>Administration settings</h3>
-<ul>
-	<li>Maximum number of items on a page</li>
-	<li>Maximum width of thumbnail in pixel: number (default: 150px)</li>
-	<li>CSS class of thumbnail: string (default: smpl_image)</li>
-	<li>Root folder of photoalbums: string (default: public://photoalbum/)</li>
-</ul>
+On the page there are buttons for admin 
+- File upload - upload a file into the folder (if upload enabled)
+- New Folder - makes a new folder if it is enabled centralized or on this node
+- Edit Path - Edit subtitles of items of this path
+- Clear the caches of Drupal and Opcache
+- Refresh - Refresh or make thumbnails of this path
+- Play - plays a slideshow from images of this path
+- Help 
 
-<p>All the albums are in a folder structure on
-	the server. This is absolute path in the filesystem. If you use in the
-	path the&nbsp; __DRUPALROOT__&nbsp; substitutes the Drupal path with it.</p>
+The admin can enable / disable the  
+- Shows the number of views (downloads) of images (files)
+- Exif and other properties of images (exif info, bitrate, etc.) and documents
+- Substitute of item
+- Link of files (URL of original website etc...)
+- importance of item
 
-<ul>
-	<li>Rebuild of pathes of Drupal menus (for developers)</li>
-	<li>Shows the URL of associated with items (enable/disable)</li>
-	<li>Default target of link of image (default: _blank)</li>
-	<li>Using taxonomy Photoalbum (enable/disable) - Under Construction</li>
-</ul>
-<h4>Menu options</h4>
-<ul>
-	<li><strong>File upload</strong> - upload a file into the folder (if upload enabled)</li>
-	<li><strong>New Folder </strong>- makes a new folder if it is enabled centralized or on this node</li>
-	<li><strong>Edit Path </strong>- Edit subtitles of items of this path</li>
-	<li><strong>Caches clear</strong>- Clear the caches of Drupal and Opcache</li>
-	<li><strong>Refresh</strong> - Refresh or make thumbnails of this path</li>
-	<li><strong>Play</strong> - plays a slideshow from images of this path</li>
-	<li><strong>Help</strong></li>
-</ul>
-<ul>
-	<li>The admin can enable / disable the 
-		<ul>
-			<li>Shows the number of views (downloads) of images (files)</li>
-			<li>Exif and other properties of images (exif info, bitrate, etc.) and documents</li>
-			<li>Subtitle of files</li>
-			<li>Link of files (URL of original website etc...)&nbsp;&nbsp; &nbsp;</li>
-			<li>Upload files into the photoalbum folder</li>
-			<li>Importance of item</li>
-		</ul>
-	</li>
-	<li>There are buttons below the files and you can enable / disable
-		the functions:
-		<ul>
-			<li>Edit images online (GD or if installed ImageMagic module on PHP)</li>
-			<li>Edit the subtitles of images with AI, link, importance, filename of items</li>
-			<li>Delete from database and directory &nbsp;</li>
-		</ul>
-	</li>
-	<li>Simple Photoalbum temporary folder for Editing the images: relative path from Drupal root</li>
-	<li>Change the order of files / images (enable /disable)</li>
-	<li>Using filter in lists (enable / disable)</li>
-	<li>Check and delete the wrong links of files from database (shrinks the table)</li>
-	<li>Change or delete the subtitles automatically (string substitues with a space)</li>
-	<li>File types (enable / disable). Let's see on top of this document
-		<ul>
-			<li>image (default: enable),</li>
-			<li>video (default:enable) normal or HTML5 Video format</li>
-			<li>audio (default) HTML5 Audio format</li>
-			<li>document,</li>
-			<li>compressed,</li>
-			<li>executable,</li>
-			<li>other types</li>
-			<li>prohibited files.</li>
-		</ul>
-	</li>
-	<li>Admin can upload files (enabled types) to the server folder of photoalbum</li>
-	<li>Set the lists of extensions of any file types</li>
-</ul>
+- There are buttons below the files and you can
+  - Edit images online (if installed GD or Imagic module on PHP)
+  - Edit the subtitles of images with AI, link, importance, filename of items 
+  - Delete from database and directory 
 
-<h3>Using</h3>
+Simple Photoalbum temporary folder for Editing the images
+- Change the order of files / images
+- Using filter in lists (enable / disable)   
+- Check and delete the wrong links from database
+- Change or delete the subtitles automatically (string substitues with a space)
+- File types (enable / disable). Let's see on top of this document
+- Set the lists of extensions of any types
 
-<p>You can define a content filter on the node if the content filter is enabled on the content type.</p>
-<h4>
-	1. Make a simple photoalbum from a folder - <u>old syntax:</u>
-</h4>
-<p>
-<pre><code class="language-plaintext">[smpl|/path-to-folder]</code></pre>
-</p>
-<h4>
-	2. Make a simple photoalbum from a folder - <u>new syntax:</u>
-</h4>
-<p>
-<pre><code class="language-plaintext">[smplphotoalbum]
-  {name_of_parameter: value}
-[/smplphotoalbum]
-</code></pre>
+Using:
+~~~~~
 
-<pre><code class="language-plaintext">{smplphotoalbum}
+You want to make a simple photoalbum:
+
+  [smplphotoalbum]
     {name_of_parameter: value}
-		...
-{/smplphotoalbum}
-</code></pre>
-</p>
+    ...
+  [/smplphotoalbum]
 
-<p>Example:</p>
-<p>
-<pre><code>[smplphotoalbum]
-	{path: /teszt}
-	{number: 12}
-	{width: 180px}
-[/smplphotoalbum]
-	or
-{smplphotoalbum}
-	{path: /teszt}
-	{number: 12}
-	{width: 180px}
-{/smplphotoalbum}
-</code></pre>
-</p>
-<p>
-<h3>Parameters:</h3>
-The editor or admin user can change the behavior of photoalbum with parameters. The parameters are in the format of {name-of-parameter: value-of-parameter} and they are between the opening and closing tags of filter. The parameters are separated with new lines. The name of parameter and the values are case insensitive.
-</p>
-<ul>
-	<li><h4>Basic parameters</h4>
-	<ul>
-		<li>title: The title of photoalbum</li>
-		<li>subtitle: The subtitle of photoalbum</li>
-		<li>path: relative path to photoalbum folder (required)</li>
-		<li>notes: some-text</li>
-		<li>number: number of images on one page</li>
-		<li>width: width of thumbnails in pixel</li>
-		<li>lang: (en|hu, default en )</li>
-		<li>translate: true|false</li>
-	</ul>	
-	</li>
-	<li><h4>More parameters</h4>
-		<ul>
-			<li>order: asc / desc / rand, default asc</li>
-			<li>sort: sortable of this album - (true|false, default: true)</li>
-			<li>ascdesc: asc /desc, default asc (D8)</li>
-			<li>sub: is there subtitle? (true|false, default: true)</li>
-			<li>viewed: shows the number of views, (true|false, default: true)</li>
-			<li>graphicdrv: which graphic driver, <strong>gd</strong> or <strong>imagick</strong> (if it is installed)</li>
-			<li>exif: shows the exif information of images (true|false), default: true</li>
-			<li>audio: shows this type of files (true|false, default: true)</li>
-			<li>video: shows this type of files (true|false, default: true)</li>
-			<li>html5: the video and audio file shows with HTML5 audio and video tags</li>
-			<li>doc: shows this type of files (true|false, default: true)</li>
-			<li>cmp: shows this type of files (true|false, default: true)</li>
-			<li>app: shows this type of files (true|false, default: true)</li>
-			<li>image: shows the images</li>
-			<li>other: shows other types of files (true|false, default: true)</li>
-			<li>prohibited: shows prohibited types of files (true|false, default: false)</li>
-			<li>edit: Editable images (true|false), default: true, when user is admin of Drupal</li>
-			<li>url: shows the URL of item website (true|false, default: true)</li>
-			<li>target: what is the target (default: _blank)</li>	
-			<li>autoclose: After save the edited image the edit windows auto close (true|false, default: false)</li>
-			<li>ai: name of image from image recognition of AI (Gemini)</li>
-			<li>upload: Upload enabled filetypes (true|false, default: true), when admin access folder</li>
-			<li>folder: makes subfolder (true|false, default: true), when admin access folder</li>
-		</ul>			
-	</li>
-	<li>method: GET / POST</li>
-	
-	<li><h4>Watermark</h4>
-	<ul>
-		<li>wm: Watermark when show|edit the image (true|false)</li>
-		<li>wmpath: Watermark path
-			<br>From public folder (beginning of public://)
-			<br>From Simple Photoalbum module default:(beginning of smplphotoalbum://images/).
-		</li>
-		<li>wmalpha: watermark alpha value: 0..100 (in %). <br />0 - invisible, 100 - max, default: 10</li>
-		<li>wmcopyright: any text into copyright IPTC/Exif field</li>
-		<li>wmauthor: any text into author / Owner IPTC/Exif field</li>
-	</ul>
-	</li>
-	<li><h4>Amind/developer parameters</h4>
-		<ul>
-			<li>test: test mode, only the (true|false, default false)</li>
-			<li>method: GET | POST (GET better the testing). Only admin mode!</li>
-			<li>icon: Set the color of icons on the page (_col / _bw)</li>
-		</ul>
-	</li>
-	<li><h4>Slideshow parameters</h4>
-		<ul>
-			<li>slide: True - Let slideshow. The parameters of slideshow</li>
-			<li>title: - title of slideshow</li>
-			<li>interval: time of changing in sec</li>
-			<li>height: Height of main image (px)</li>
-			<li>style: Mode of changing images - fade / slide / zero / zero1</li>
-			<li>slstyle: string of css settings of the main image. Default: 'max-width: 100%; height: 600px;'</li>
-		</ul>
-	</li>	
-</ul>
+  {smplphotoalbum}
+    {name_of_parameter: value}
+    ...
+  {/smplphotoalbumn}
+    
+Parameters
+~~~~~~~~~~
+  title: 
+  subtitle:
+  path: 
+  notes: some-text
+  number: number of images on one page
+  width: width of thumbnails in pixel
+  lang: en|hu, default: en
+  translate: true|false
 
-<h3>Example:</h3>
+More parameters  
+~~~~~~~~~~~~~~~  
+  order: asc /desc / rand, default asc
+  sort: sortable of this album - (true|false)
+  ascdesc: asc /desc, default asc (D8)  
+  sub: is there subtitle (true|false)
+  viewed: shows the number of views (true|false)
+  graphicdrv: which graphic driver use to edit?  gd or imagick (if it installed)
+  exif: shows the exif onformation of images
+  audio: shows this type of files (true|false)
+  video:shows this type of files (true|false) 
+  html5: the video and audio file shows with HTML5 audio and video tags
+  doc:shows this type of files (true|false)
+  cmp:shows this type of files (true|false)
+  app:shows this type of files (true|false)  
+  image: shows the images
+  edit: Editable images (true|false)  
+  url: shows the URL of image website
+  target: what is the target (default: _blank)
+  autoclose: After save the edited image the edit windows auto close (true|false)
+  ai: using AI for recognition of Images or made by AI  
+  upload: can admin upload enabled file types into the photoalbum (true|false)
+  
+Watermark
+~~~~~~~~~
+  wm: Watermark when show|edit the image (true|false)
+  wmpath: Watermark path 
+    From public folder (beginning of public://)
+    From Simple Photoalbum module default:(beginning of smplphotoalbum://images/). 
+  wmalpha: watermark alpha value: 0..100 (in %). <br/>0 - invisible, 100 - max, default: 10
+  wmcopyright: any text into copyright IPTC/Exif field
+  wmauthor: any text into author / Owner IPTC/Exif field   
 
-<p>
-<pre><code>[smplphotoalbum]
-  {title: Bassguitar}
-  {path:/2004_Bassguitar}
-  {slide: true}
-  {interval: 10000}
-  {height: 800px}
-  {style: fade} 
-[/smplphotoalbum]</code></pre>
-</p>
+Administration/developer parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test: test mode, only the  true|false
+  method: GET / POST
+  icon: Set the color of icons on the page (_col / _bw)
+  
+Slideshow parameters
+~~~~~~~~~~~~~~~~~~~~
+  slide: True - Let slideshow. The parameters of slideshow  
+    title: - title of slideshow
+    interval: time of changin in milisec  
+    style: Mode of changing images - fade / slide / zero / zero1
+    slstyle: string of css settings of the main image. Default: 'max-width: 100%; height: 600px;'
+  
+Example default
+~~~~~~~~~~~~~~~
+    [smplphotoalbum]
+      {path: /teszt}
+      {number: 12}
+      {width: 180px}
+    [/smplphotoalbum]<br>
+  
+Example for slideshow
+~~~~~~~~~~~~~~~~~~~~~   
+    [smplphotoalbum] 
+      {title: Bassguitar}
+      {path:/2004_Bassguitar}
+      {slide: true}
+      {interval: 10000}
+      {height: 800px}
+      {style: fade}
+    [/smplphotoalbum]
 
-<h3>Edit An image (This is under construction)</h3>
+Edit An image (this is under construction)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If you are administrator you can edit the images online
-<ul>
-	<li>You can edit the name of file, subtitle</li>
-	<li>Move the image with: mouse drag or keyboard cursor keys</li>
-	<li>Zoom in / out: mouse wheel or keyboard "+" & "-" key</li>
-	<li>You can edit a lot of properties of image with buttons and parameters, for example</li>
-	<ul>
-		<li>Rotate, flip vertically, horizontally</li>
-		<li>Crop the image</li>
-		<li>Resize the image</li>
-		<li>Make Watermark over the image (Copyright and author info into jpeg file)</li>
-		<li>Make Border and Vignette</li>
-		<li>Normalize, Gamma, Brightness, Saturation, Hue, RGB, Grayscale, Contrast</li>
-		<li>Add Noise, Denoise</li>
-		<li>Sharpen, Emboss, Edge, Blur and Convolution (with convolution matrix)</li>
-	</ul>
+- You can edit the name of file, subtitle (caption) 
+- You can edit a lot of properties of image, for example
+-- Rotate, flip vertically, horizontally
+-- Crop the image
+-- Resize the image
+-- Make Watermark over the image (Copyright and author info into jpeg file)
+-- Make Border and Vignette
+-- Gamma, Brightness, Saturation, Hue, RGB, Grayscale, Contrast
+-- Add Noise, Denoise
+-- Sharpen, Emboss, Edge, Blur and Convolution (with convolution matrix)
 
-	<li>It is uses the GD driver or Imagick driver if it is installed on server</li>
-	<li>If the change takes too long you can break it with press the Escape key or push the <strong>Cancel</strong> button.</li>
-	<li>As admin the parameters change the web page img edit mode:</li>
-	<li>http://www.foo.com/node?imgedit=1&id=[image id]</li>
-	<li>The using similar than ACDSee or any other image editor application</li>
-	<li>The status of editing can use <strong>Undo</strong> / <strong>Redo</strong> button/function and original
-		version with <strong>Initial Image</strong> button
-	</li>
-	<li>The <strong>Save</strong> and the <strong>Save As</strong> saves the edited image into the same folder</li>
-</ul>
+It is uses the GD driver or Imagick driver if it is installed on server
 
-<h3>Convert a video</h3>
-with ffmpeg on Linux or Windows<br/>
-<ul>
-<li>crop the video</li>
-<li>change the length</li>
-<li>change the extension of video ( i.e. .mov => mp4 )</li>
-<li>change the framerate</li>
-<li>rotate</li>
-<li>Break the long conversion process with Escape key or <strong>Cancel</strong> button</li>
-<li>There are <strong>Undo</strong> / <strong>Redo</strong> buttons</li>
-</ul>
+If the change takes too long you can break it with press the Escape key or 
+push the Cancel button.
+
+Convert an video
+~~~~~~~~~~~~~~~~
+with ffmpeg on Linux or Windows
+- crop the video
+- change the length 
+- change the extension of video ( i.e. .mov => mp4 )
+- change the framerate
+- rotate
+- Break the long conversion process with Escape key or Cancel button
 
 The using is similar than ACDSee or any other image editing software.
 You can use the mouse to move, zoom in or zoom out the image.
-</h3>
-<p>
-	2026.05.16<br /> Zoltan Fabian
-</p>
 
-<p>
-	fz@fzolee.hu<br /> <a href="http://www.fzolee.hu">http://www.fzolee.hu</a>
-</p>
+2026.05.16
+
+Zoltan Fabian
+
+fz@fzolee.hu
+http://www.fzolee.hu
+--------------------------- History ---------------------
+Bugs:
+~~~~
+// TODO: Audio editing
+
+ImageEdit
+// TODO - Border - if Eyedropper is active the mouse dragging there is some strange ( layer problem )
+   - Need to check to how layers work
+// TODO - the ellipse / rectangle / grid / point eyedrop change for the scaled and dragged image 
+
+// TODO:
+~~~~~~~~
+- use POST method the Drupal cache problem => 
+  action of form random, but it is not good solution
+
+- write rights (chmod on Linux and ... on windows ) give the subfolder
+- audio (wav, mp3, flac, ogg ) editing
+
+- using $.ajax => fetch api 
+	https://metabox.io/send-get-post-request-with-javascript-fetch-api/
+	https://www.digitalocean.com/community/tutorials/how-to-use-the-javascript-fetch-api-to-get-data 
+	https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
+
+
+// TODO - ffmpeg - write watermark on the video with ffmpeg
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
+	
+// TODO - Use javascript fetch instead of $.ajax
+  https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
+
+// TODO - if long process control the smpl.processvisible()	
+
+// TODO - Automate normalize is default on image
+
+// TODO - Text write on the image
+	https://instrik.medium.com/writing-image-processing-algorithm-step-by-step-guide-cf894809d546
+	https://www.geeksforgeeks.org/computer-vision/image-processing-algorithms-in-computer-vision/
+
+- Add / Grain
+	https://fw3.com/web/smplphotoalbum/imgedit/2391/edit?cmd=grain&amount=10&smooth=10&size=1&graphicdrv=imagick
+
+Enhance menu (under construction)
+- AI Face Edit
+- Red Eye (AI?)
+- Repair
+- Skin Tune
+
+Geometry menu
+- Perspective
+- Distortion
+- Liquify
+
+Lighting
+- Exposure
+- Levels (histogram)
+- Autolevels
+- LightEQ
+- dehaze - (ködtelenítés)
+- Dodge # Burn
+
+Correction menu
+- Correction
+	GD
+		imageaffine — Return an image containing the affine transformed src image, using an optional clipping area
+		imageaffinematrixget — Get an affine transformation matrix
+		Imagick::distortImage 
+		Correction (Lens, Perspective, Distortion, Liquify) - Image Distortion -
+- Distortion Correction
+- Lens Correction
+
+Color menu
+- Color EQ (Brightnes, Hue, Saturation, Color Shift, Vibrance, R, G, B)
+- Brightness (Saturation, Hue)
+
+Imagick
+- Strange Images
+	- Imagick::shadeImage - távoli megvilágítás
+	- Imagick::shadowImage — Simulates an image shadow
+	
+- Imagick::contrastStretchImage(black=0..100, white=0..100, channel)  
+- Imagick::trimImage — Remove edges from the image   
+
+- Imagick::setImageMatte — Sets the image matte channel
+- Imagick::setImageGravity — Sets the image gravity
+
+- Imagick::quantizeImage ??????
+- Color matrix image 
+- Color treshold image
+- Imagick::complexImages - Original and black image logical and | or |
+
+- FloodFillPaint
+- Imagick::ChannelFXImage
+- Password ciphered: - interesting 
+	- imagick::decipherImage(string $passphrase)
+	- Imagick::encipherImage(string $passphrase): bool
+
+GD
+- Edit mp3 ID tags, long of file ...
+- Write tags into image exif - jpeg possible
+- Write png image Author & Copyright info - it is not possible
+- Let the blur pixel iteration's size bigger or change...
+- If the window too big and the screen too small
+- Light EQ
+
+Docs:
+~~~~~
+- FFMpeg using
+	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
+	
+- ffmpeg - write watermark on the video with ffmpeg
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg?tab=readme-ov-file#watermark	
+	
+	https://github.com/asheroto/ffmpeg-examples 
+
+	https://linuxmint.hu/blog/2023/11/ffmpeg-alapok-par-peldaval
+
+	https://www.fzolee.hu/fw2/ffmpeg-parameterei
+
+	PHP-FFMpeg - stop / kill / abort ffmpeg from php => under Linux && under Windows
+	https://github.com/PHP-FFMpeg/PHP-FFMpeg/issues/218
+
+- Use javascript fetch instead of $.ajax
+  https://www.geeksforgeeks.org/javascript/javascript-fetch-method/
+
+- Imagick
+	https://phpimagick.com/
+	https://www.rubblewebs.co.uk/imagick/functions/function.php
+
+- jCanvas
+	https://projects.calebevans.me/jcanvas/
+
+- swal
+	https://sweetalert2.github.io/
+
+- jquery.video Controller: 
+  https://github.com/faktorvier/jquery-video
+
+- PHP-FFMpeg:
+  https://github.com/PHP-FFMpeg/PHP-FFMpeg
+
+History:
+~~~~~~~
+2026.07.04 - 1.10.4-beta2
+- Bug: Video convert
+- Bug: Audio convert
+2026.06.13 - 1.10.4-beta1
+- audio mp3 converted 
+
+2026.05.17 - 1.10.4-Alpha
+- Start: Audio Edit Form
+
+2026.05.16 - 1.10.3-rc1
+- BugFix: Exif properties of upfolder
+- Added:  Exif tar & cue compressed file
+- BugFix: Video edit status message
+
+2026.05.12 - 1.10.3-beta5
+- BugFix: Rename, Folde make, Delete
+- Bugfix: New Folder window
+- Bugfix: New Folder <=> Upload file submit button problem
+- Bugfix: Translating problems
+- Bugfix: Translating problem
+- Bugfix: Videoconvert - the progress first call is good too
+
+2026.04.28 - 1.10.3-beta4
+- Bugfix: Slideshow
+- Bugfix: VideoEdit
+
+2026.04.16 - 1.10.3-beta3
+- Bugfix:AI kliens tested
+- SlideShow disabled permanently
+
+2026.04.11 - 1.10.2-beta3
+- BugFix: The quality of encoded video is bad (initial or additional parameters problem) 
+  Video && audio bitrate & default init parameters
+- Default coding parameter of ffmpeg
+
+2026.04.08 - 1.10.1-beta2
+- Converted video Save / Save AS
+- FFMpeg Additional parameters - not yet ready
+
+2026.03.29 - 1.10.0-beta1
+- Video events with Jquery Video Controller
+- Video length set
+- Problem with load image
+- Initial State button
+- Prev, Next function
+- More convert
+- Make a static Lib class
+- BugFix: Not only video wants to edit (cmp, doc, etc...)
+- The ffmpeg long process can stop on Linux & Windows from client
+- Conversion simple
+  - Rotate the video- ok
+	- change size of video - ok
+	- change framerate of video 
+- Counter of conversion - ok
+- Start Video edit / cut / convert to mp4 development
+
+2026.01.25 - 1.9.8-beta5
+- ffmpeg installed test on linux
+
+2026.01.24 - 1.9.8-beta4
+- BugFix: Not used buttons delete
+- Video convert start
+
+2026.01.10 - 1.9.8-beta3
+- Bugfix: if not logged in the folder does not shows
+- Sweetalert => SweetAlert2 (AlertC, ErrorC, WarningC, etc.)
+- Bugfix: php: file( url ) 
+- Bugfix: folder view
+
+2025.12.27 - 1.9.8-beta1
+- New: Ask Gemini to AI made image is?
+- Delete Clarifai client
+
+2025.12.23 - 1.9.7-beta3
+- Bugfix: image view (SmplphotoalbumController::v())
+- Bugfix: Multi language
+- Bugfix: Exif => '{{ File type }}'
+- Bugfix: javascript - when there is not Imagick, enadbled upload, enabled folder
+- Bugfix: {{ smpl_last_item_container }}
+
+2025.12.16 - 1.9.7-beta2
+- Bugfix: Buttons hide if there is no enabled access
+- Bugfix: ImgEditForm
+- Bugfix: Graphic driver logo
+- optimalization: Exif Properties
+- Last Item on page & little scss
+- Bugfix: swal bugs &  buttons
+- BugFix: ImageEdit - can not close the edit window
+- Bugfix: ImageEdit - AVG color timeout
+- Bugfix: other type icons thumbnails
+
+2025.12.04 - 1.9.7-beta1
+- Bugfix: Exif: Last Modified
+- Click on icon - show big picture or download
+- Shows properties of items in folder/subfolder
+- Shows the icons of items in folder/subfolder
+- Step up and down in the folders there
+- Make thumbnails icon the lower folder
+- go in the subfolder, view the upfolder icon
+
+2025.11.26 - 1.9.7-dev
+- New folder from interface
+
+2025.11.18 - 1.9.6-beta2
+- sweetalert.min.js: smpl.AlertC, smpl.ErrorC
+- When the important checked, then the first order is the:important desc
+
+2025.11.16 - 1.9.6ß
+- Bugfix: XML2assoc
+- Bugfix: Exif - ODT Opend Document exif info
+- smpl.AlertC, smpl.ErrorC
+- Bugfix: Upload file
+- AI Image Recognition with Gemini too
+
+2025.11.08 - 1.9.5ß
+- Added: Bevel
+
+2025.10.31 - 1.9.4a
+- Importance in the orders
+- Insert data of items into the database 
+- Upload file to photoalbum
+
+2025.10.21 - 1.9.3ß2
+- Bugfix: pager did not worked, its ok.
+- Bugfix: img_edit.js: SaveSubmit did not worked
+- Little improvement for imgedit, edit windows
+- Popup windows (imgedit, edit) positioning
+
+2025.09.30
+- Little bugs editing image with Imagick - ok
+- Histogram - Break problem
+
+2025.09.23
+- Little design change
+
+2025.08.24 - 1.9.2ß
+- Bugfix: There was javascript errors when the user was admin and not photoalbum page - solved
+- Speed optimalization
+
+2025.07.30
+- Properties access when the user is anonymous not admin
+
+2025.07.14
+- Better BreakTime handling
+
+2025.07.13
+- Bugfix: Sharpen (imagick) - resolved
+- Bugfix: There was a bug in the main query on Linux => The solution is dynamic query
+
+2025.07.10
+- Bugfix: Under Construction bug.
+- Bugfix: Lighteq - problem
+- Bugfix: ImgEdit: js bug. smpl_imgeditborder => smpl_imgedit_border
+- Change: change default imgedit folder from smplphotoalbum => public://photoalbum/_edit_
+
+2025.07.08
+- Bugfix: BreakTime up/lowcase
+
+2025.06.10
+- Slide works
+
+2025.05.10
+- Slide: automatic slide left, right, up, down
+
+2025.05.07.
+- Edit AI recognition button shows when the item is image
+
+2025.04.26 
+- Slide bugfix
+
+2025.04.23 - 1.9.1ß
+- Bugfix
+
+2025.04.21 - 1.9.0 - AI Clarifai client
+- FZ AI started working
+  https://docs.clarifai.com/api-guide/predict/images/
+  https://docs.clarifai.com/sdk/Inference-from-AI-Models/Image-as-Input/#image-to-image
+	GRPC install: https://cloud.google.com/php/grpc
+
+- Bugfix: Javascript keyboard handling
+
+2025.03.28 - 1.8.9
+- Bugfix: Slideshow - ok
+- Change from normal list to slideshow with button
+- Change from slideshow to normal list with link
+
+2025.03.18 
+-  Swirl effet - 1.8.8
+
+2025.03.06
+- Spec effects / Swirl Effect
+
+2025.03.15 - 1.8.7 
+- Spec effects / Wave effect
+
+2025.03.14 - 1.8.6
+- Solarize Effect Imagick
+
+2025.03.13 - 1.8.5
+- AutoHistogram - when load another image or Undo | Redo in the edit windows load the histogram automatic
+  The data store in the local Storage not cookie - ok
+
+2025.03.12 - 1.8.5 - dev
+- Delete the old histogram when new image loaded in
+
+2025.03.11
+- Bugfix: Histogram Imagic / GD - ok
+- Properties of the image shows in the image edit window
+
+2025.03.07 - 1.8.5
+- Long process break and process indicato shows in browser
+- GD / Whitebalance
+
+2025.03.07 - 1.8.5-dev
+- Long process break and process indicator shows % in browser
+
+2025.03.01
+- GD: Normalization
+- Progress % shows
+
+2025.02.26
+- GD: Histogram - dev
+
+2025.02.24
+- Bugfix: Effect / White (Imagick & GD)
+
+2025.02.23 - 1.8.4
+- Edit mode: Mouse click button: load original image <=> actual image to compare them
+
+2025.02.22
+- Effect memu / Oil (Imagick & gd)
+
+2025.02.19 - 1.8.3-ß 
+- Effect menu / Clahe
+- ImgEdit - Save AS...
+- Shave - GD / Imagick
+
+2025.02.15 - 1.8.2-dev
+- Quicker undo / Redo in Edit mode
+
+2025.02.12
+- quick image change in edit mode / original - last
+- img_edit.js => imh_edit.js + img_effects.js
+ 
+2025.02.07 - 1.8.1-dev
+- Color menu / Whitebalance - ok
+- Color menu / Normalize - ok
+- IMGEditForm autoload with url 
+
+2025.02.06
+- Bugfix: Links not shows - ok
+
+2025.02.05 - 1.8.0-dev
+- Refresh folder && Database - ok
+
+2025.02.02
+- Optimal speed
+
+2025.01.26
+- Geometry > Rotate / Flip ( GD / Imagick) - Tested
+- Effect > CLAHE ( Imagick ) - Tested
+- Effect > Sepia ( Imagick ) - Tested
+- Effect > Oil ( Imagick ) - Tested
+- Effect > Charcoal ( Imagick ) - Tested
+- Effect > White ( Imagick ) - Tested - But ???
+- Effect > B/W ( Imagick ) - Tested
+- Effect > Grayscale ( GD / Imagick ) - Tested
+
+- Detail > Trim (Imagick) - Tested 
+- Detail > Convolution ( GD / Imagic ) - Tested
+- Detail > Blur ( GD / Imagic ) - Tested
+- Detail > Edge ( GD / Imagic ) - Tested
+- Detail > Emboss ( GD / Imagic ) - Tested
+- Detail > Sharpen ( GD / Imagic ) - Tested
+
+- Color > Contrast ( GD / Imagick) - Tested
+- Color > RGB ( GD / Imagick) - Tested
+- Color > Brightness (GD / Imagick ) - Tested
+- Color > Gamma ( GD / Imagic) - Tested
+- Change Graphic driver > change the edit window - ok
+- Detail > Add Noise (GD / Imagic )- Tested
+
+2025.01.25
+- Watermark ( GD / Imagic ) - Tested
+- Vignette ( GD / Imagic ) - Tested
+- scss modifies
+
+2025.01.24
+- Bugfix: Cache Clear - solved
+
+2025.01.22
+- Bugfix: rename a part of page (editall_cache => editpath_cache ) - solved
+- Rename: EditAll => EditPath, editall.js => editpath.js
+
+2025.01.18
+- Bugfix: Pager does not works - ok
+- Bugfix: Sort does not woks - ok
+
+2025.01.17
+- Bugfix: updatepath - cleantext subscriptions of path
+- bugfix: using \Drupal::request()->get($key)
+
+2025.01.13
+- Little optimalization of command line
+
+2025.01.07 -v1.7.0-dev
+- Javascript hibák (smpl.colorBrightness, smpl.progress)
+
+2024.12.24
+- Starts PHPUnit tests
+
+2024.06.13
+- Bugfix: color picker with Eyedrop shows all the trimImage
+- <label></label> => <button></button> change
+
+2024.05.28
+- Bugfix: zoom & translate with keyboard & mouse - ok
+
+2024.05.26
+- IMGEDIT + Edit html code added not substracted
+- Bugfix: Edit only for admin user
+- Bugfix: Translate with keyboard & mouse
+- Bugfix: Zoom with keyboard & mouse wheel
+
+2024.05.20
+- ImgEdit is fix full page
+
+2024.05.17
+- Bugfix: js files load only if it needs not always
+- Bugfix: Buttons shows when user an Administrator (to Edit, Delete etc...)
+- Bugfix: Load properties
+
+2024.05.14
+- Bugfix: Edit properties bug
+- Bugfix: other js bugs
+
+2024.05.13
+- 1.6.5-dev
+  Notes in the area of images
+	Bugfix: EditAll => EditPath
+	
+2024.05.03
+- datas of Copyright && Author shows in ImageEdit window
+
+2024.05.01
+- Exif informations:
+  xls, xlsx, ods, pdf, 7zip, zip, rar, gz
+
+2024.04.27
+- Bugfix: Exif.php - Properties of items does not works when it is not an image or media file
+  Problem was: Exif.php => Xml2Assoc
+- Bugfix: Exif layer show / hide at click
+- Composer using =>
+- Bugfix: CHMlib hiányzik
+- Bugfix: GetID3 lib => vendor
+
+2024.04.21. - 1.6.4 - new version
+- AVIF shows
+- Bugfix: Old Style
+- Bugfix: if empty a folder
+- Bugfix: Order string ignoring case
+- Bugfix: Edit clear || cache rebuild missed!!!!
+
+2024.03.01.
+- usable the old style back: [smpl|/path]
+- test:
+Detail menu
+- Noise - ok
+	- Noise
+	- Denoise
+- Sharpen - ok
+- Emboss - ok
+- Trim
+- Edge - ok
+- Blur - ok
+- Clarity
+- Detail Brush
+- Convolution - ok
+
+2024.02.27
+Add menu
+- Watermark - Imagick - ok
+- Border - tested - ok
+- Vignette - tested - ok 
+
+Geometry menu (Tested)
+- Rotate / Flip - ok
+- Crop - ok
+- Resize - ok
+- Distorsion - ok
+- Lens - ok
+
+Effect menu
+- Gray - ok
+- B/W - ok
+- White - ok
+- Charcoal - ok
+- Oil - ok
+- Sepia - ok
+- CLAHE - ok
+
+2024.02.20 - 9.x-1.6.4
+- Refactoring js files
+- type change in database
+- ImgManipulate
+
+2024.02.18
+- Change the type of item
+
+2024.02.16
+- Update to jCanvas 22.0.1
+
+2024.02.09
+- Bugfix: avi show
+
+2024.02.05
+- bugfix: jquery library dependencies 
+- Bugfix: In the  Render function
+
+2023.12.29
+- Test: update item
+- BugFix: Delete Item
+- Bugfix: Search don't use after the Search on the next page => FilterFilter
+- Bugfix: Translation smpl_help
+- Bugfix: Text on pager buttons
+- Bugfix: cache problem (GET=>POST)
+- Bugfix: View image size problem
+- BugFix: Properties of item
+- BugFix: Edit: Properties
+- Add: webp, avif support
+
+2023.07.04
+- when size & position of canvas change => (rect) layer change
+ 
+2023.06.23.
+- Mouse Wheele Zoom in / out
+- Dragging the canvas
+- Default size and position
+- cursor changes
+
+2023.04.30
+- Drag the scaled image
+2023.04.04
+- Scale the canvas
+2023.04.03
+- Modulable Imageedit
+
+2023.03.23
+- EyeDrop && Transparency
+
+2023.03.21
+- Color of layers is change (invert)
+
+2023.03.19
+- Point layer bug (Eyedrop bug) - ok
+2023.03.18
+- Circle, Rectangle, Ellipse layer ok
+
+2023.03.14
+- jCanvas lib using
+
+2023.02.25
+- EyeDropper
+
+2023.02.21 - 9.x-1.5-dev
+- New Imagick menu points
+
+2023.02.14 - 9.x-1.41a
+- little change in Thumbnail messages
+- Not html5 video &audio icons shows
+
+2023.02.11 9.x-1.41
+- Imagick
+	Watermark bug - ok
+	Resize bug - ok
+	Imagick version 6.x.x vs 7.x.x - ok
+	
+2023.02.10 - 9.x-1.4
+- GD
+	 Vignette oval/rect - ok
+	 Border - ok
+	 Watermark - ok
+	 Sharpen - ok
+	 Blur - ok
+	 Add noise - ok
+
+- Imagick   
+	 Vignette oval / rect - ok
+	 Border - ok
+	 Watermark - ok
+	 Sharpen - ok
+	 Blur - ok
+	 Add noise - ok
+	 
+2023.01.24
+- GD/Imagick - Sharpen, Blur - ok
+2023.01.19
+- GD - Saturation, Hu are more quick
+- Change the GD /Imagick driver on Image Edit interface
+
+2023.01.17
+- GD
+	 Resize - ok
+	 Reset - ok
+	 Gamma - ok
+	 Brightness - ok
+	 RGB - ok
+	 GrayScale - ok
+	 Contrast - ok
+	 Convolution - ok
+- Imgedit interface little changes   
+
+2023.01.16
+- Bugfix: GD - Noise - ok
+
+2023.01.15
+- U can use cancel button to break long command 
+- GD: Saturation & hue works, but buggy
+
+2023.01.13.
+- From Drupal 9.5.1 jQuery UI, jQuery UI Draggable, jQuery UI Resizable
+	out of core of Drupal and has to use contrib modules
+	jQuery UI, jQuery UI Draggable, jQuery UI Resizable contrib modules!
+
+2023.01.12
+- Bugfix: imgedit=> GD / save - ok
+
+2023.01.11
+- Watermark text (copyright, author) write only into jpeg
+
+2023.01.03
+- GD:
+	- Vignette (rect, circle, ellipse) - ok
+	- Watermark - ok
+	- Border - ok
+	- Color / Lighting
+		-RGB - ok
+
+2022.12.31
+- Bugfix: ImgEdit window selection - ok
+
+2022.12.30
+- Translate system and translation file (Hu)
+
+2022.12.28
+- imgAreaSelect problem and optimalization
+
+2022.12.17
+- Imagick
+	Vignette
+	- Ellipse - ok
+	- Circle - ok
+	- Rect - ok
+- Slideshow: little changes of design
+2022.12.16
+- Slideshow: click on thumnail load the image
+2022.12.13
+- Bugfix: Slideshow: There are 'items' type of items are not images
+2022.12.11
+- Bugfix: Slideshow shows only images
+- Bugfix: Edit All function
+2022.12.02
+- Selenium IDE tests
+2022.11.20
+- 9.x-1.40-dev - Test Framework
+2022.11.11
+- Javascript optimalization
+2022.11.02
+- minor fixes of
+- Rename files on the server, change subtitle & link
+- stat of actual page
+
+2022.11.01
+- Write jpeg file Author & Copyright info && Save back
+
+2022.10.18
+	Bugfix: Imagick / GD Watermark
+
+2022.10.15
+	Bugfix: Exif:
+		- images
+		- videos
+		- compressed files
+		- Office files (doc, xls, ppt, docx, xlsx, pptx),
+		- executable files (exe, dll, apk)
+2022.10.13
+- Wignette OnFly
+
+2022.10.09
+- GD
+	RGB
+- Imagick
+	RGB
+2022.10.08
+- GD
+	Border
+- Imagick driver
+	Border (default color from the image average color)
+2022.09.29
+- Imagick driver
+	Vignette ellipse
+	Vignette circle
+
+2022.09.26
+- Imagick driver
+	Emboss
+	Edge
+
+2022.09.24
+	Sharpen
+	Add noise
+	Denoise
+
+2022.09.16
+- Imagick Driver
+	GrayScale
+	Contrast
+	Brightness
+	Gamma
+	Resize interface - ok
+
+2022.09.10
+- Imagick Driver
+	Resize - ok
+	Crop - ok
+	Rotate - ok
+	Mirror (Flip/Flop) - ok
+
+2022.07.03
+- open actual image in new tab
+
+2022.05.23 - 9.x-1.28-rc5
+- Vignette_ellipse works and optimalized
+
+2022.05.18 - 9.x-1.28-rc2
+- Long term image edit process break from browser
+
+2022.05.15 - 9.x-1.28-rc1
+- Vignette - ellipse - it works
+
+2022.05.14 - 9.x-1.28-dev
+- Style change (little)
+- Vignette - ellipse - it works almost
+- Vignette - circle - ok
+- Searching for some image (name, filename, caption) - ok
+
+2022.05.10
+- Vignette - rect - ok
+
+2022.04.09 - 9.x-1.27-dev
+- Color & B/W icons
+- ImageEdit chane and bug
+
+2022.03.26
+- Vignette effect
+- Watermark
+
+2022.03.22
+- Bugfix: Description id
+- Bugfix: Search only if enabled
+
+2022.03.20
+- Refactoring
+- Bugfix: wrong require_once
+
+2022.03.17
+- Edit All && Cache clear buttons acces only editors
+- Bugfix: Help Window
+- Bugfix: Sort
+
+2022.03.16
+- Bugfix: "Warning: copy(public://photoalbum/...): failed to open stream:
+			 "Drupal\Core\StreamWrapper\PublicStream::stream_open" call failed
+				in Drupal\smplphotoalbum\ImageList->MakeThumbnail()
+				(line 397 of modules/smplphotoalbum/src/ImageList.php)
+- Bugfix: Draggable (ImageEdit & Edit layer)
+- Image Edit Buttons on the top too... align in the middle of the row
+
+2021.12.05
+- Slideshow ready
+
+2021.11.12 - 9.x-1.12
+- Bugfix: js: Does not close the big picture
+
+2021.10.13 - 9.x-1.11
+- Slideshow animation
+
+2021.09.29 - 9.x-1.10
+- Slideshow ready
+
+2021.08.21 - 9.x-1.06
+- Bugfix: Delete item did not work
+- Edit subscription of all of the item in path
+
+2021.08.13
+- Bugfix: Did not save the modified image
+
+2021.08.07
+- Exif information bugs ( xls, etc...)
+- Bugfix: smpl variable does not exist when edit the view
+
+2021.08.07
+- Bugfix: If there is not title on the page there are warnings
+- Bugfix: When edit the caption, subtitle of image trim the string of subtitle
+
+2021.06.10
+- Bugfix: solved - When download, the filename only a number, not the original filename
+- Bugfix: solved - Image Download not works (Binary Response: SmplphotoalbumControlles::v())
+
+2021.06.09
+- Exif: doc files (under development PHPword not really good)
+
+2021.06.08
+- Exif: pdf, ppt
+
+2021.06.06
+- ppt Exif informations
+
+2021.06.04
+
+- Exif informations:
+	Audio files, video files, images
+	exe, dll, pdf
+	docx, pptx, xlsx,
+	chm
+
+2021.06.03.
+- Bugfix: UTF-8 problem in Exif - solved
+- exif info bugs.
+
+2021.06.01
+- jpg / png / gif etc exif info ok
+- docx exif info ok
+
+2021.05.28
+- Exif class: Video, audio, image, rar, zip, jar, apk
+
+2021.05.27
+- Exif class in
+
+2021.05.15 - 9.x - 1.0
+- Initial version of D9
+
+2021.01.25 - 8.x-1.03
+	add: images lazy loading
+	Add: new syntax of smplphotoalbum
+
+2021.01.12 - 8.x-1.02
+	Add: ImgEdit - Grayscale
+	Add: ImgEdit - Convolution matrix using
+	Add: ImgEdit - Emboss
+- bugfix: Undo / Redo show
+- bugfix: Underline at the pictures
+- bugfix: ImgEdit - resize / crop does not works!
+
+2021.01.08 - 8.x-1.01
+- change colorbox to own solution
+
+2021.01.05 - 8.x-1.0
+- Pager works and tested
+- Order is ready - tested
+
+2021.01.03
+	ImgEdit functions ready there are bugs
+	bugfix:Delete functions works
+
+2021.01.01
+	start the Image Edit functions
+	bugfixes
+
+2020.12.28
+	Edit subtitle and link
+
+2020.12.27
+	Exif window draggable
+	Exif readers: pdf, images, docx, audio, video, xlsx, xls, jar
+
+2020.12.26.
+	Optimalization - reprogram: Imagelist.php & Image.php
+
+2020.12.25
+	The images shows right
+
+2020.12.21
+	The pictures shows
+	makes new thumbnail
+	new rows in database
+	FilterSMplphotoalbum
+	beginning modify js files in /js/ - library
+
+2020.12.15
+	beginning modify CSS, sass
+
+2020.05.05
+	Install is ready
+	Readme, Olvassel, smplphotoalbum.module is ready
+2020.05.03 - the port of smpl photoalbum begins
+
