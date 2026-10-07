@@ -1,1 +1,268 @@
+# Schema for the configuration file of the Smplphotoalbum module
+
 smplphotoalbum.settings:
+  type: config_object
+  label: 'Simple Photo Album beállítások'
+  mapping:
+    TN: 
+      type: string
+      label: 'Icon folder'
+    PICTURE:
+      type: string
+      label: 'identifier of images'
+    VIDEO: 
+      tpye: string
+      label: 'Identifier of videos'
+    NOPIC: 
+      type: string
+      label: 'no picture'
+    QTIME: 
+      type: string
+      label: 'QuickTime'
+    RM:
+      type: string
+      label: 'identifier of something'
+    SOUND: 
+      tape: string
+      label: 'identifier of sound'
+    FOLDER: 
+      type: string
+      label: 'folder identifies'
+    SMPLADMIN: 
+      type: string
+      label: 'name os css of list'
+
+    # Alapértelmezett beállítások (Default settings)
+    test:
+      type: boolean
+      label: 'Test of Simple photoalbum'
+    number:
+      type: integer
+      label: 'Max number on page'
+    width:
+      type: integer
+      label: 'Max width of thumbnails'
+    root:
+      type: string
+      label: 'Galériák gyökérmappája'
+    method:
+      type: string
+      label: 'Űrlap metódus típusa (GET/POST)'
+    icon:
+      type: string
+      label: 'Style of icons of module '
+
+    # Megjelenítési beállítások (Viewing options)
+    langswitch:
+      type: boolean
+      label: 'Nyelvválasztó megjelenítése'
+    lang:
+      type: string
+      label: 'Kiválasztott nyelv'
+    lazy:
+      type: boolean
+      label: 'Képek késleltetett betöltése (Lazy loading)'
+    sub:
+      type: boolean
+      label: 'Fájlok feliratainak megjelenítése'
+    viewed:
+      type: boolean
+      label: 'Fájlok megtekintési számának megjelenítése'
+    exif:
+      type: boolean
+      label: 'EXIF információk megjelenítése'
+    url_checking:
+      type: boolean
+      label: 'Elemek URL-jének megjelenítése'
+    url_target:
+      type: string
+      label: 'Link alapértelmezett célablaka'
+    stat:
+      type: boolean
+      label: 'Mappák statisztikáinak megjelenítése'
+    smplbox:
+      type: string
+      label: 'style of box'
+
+    # Szűrés és rendezés (Filter & Ordering)
+    filter:
+      type: boolean
+      label: 'Képek szűrése'
+    sortorder:
+      type: string
+      label: 'Alapértelmezett rendezési elv'
+    order:
+      type: boolean
+      label: 'Elemek sorrendjének módosíthatósága'
+    important:
+      type: boolean
+      label: "Importance in the orders"
+    ascdesc:
+      type: string
+      label: 'Rendezési irány (növekvő/csökkenő)'
+
+    # Szerkesztési funkciók (Editing settings)
+    edit:
+      type: boolean
+      label: 'Fájlok tulajdonságainak szerkeszthetősége'
+    delete:
+      type: boolean
+      label: 'Aktuális fájl törölhetősége'
+    upload:
+      type: boolean
+      label: 'Fájlok szerverre történő feltöltésének engedélyezése'
+    folders:
+      type: boolean
+      label: 'Use more level of folders'
+
+    # Képszerkesztő és motor (Image editing)
+    imgedit:
+      type: boolean
+      label: 'Képek szerkeszthetősége a weben'
+    graphicdrv:
+      type: string
+      label: 'Kiválasztott grafikai meghajtó'
+    jpeg:
+      type: integer
+      label: 'JPG/JPEG minőség'
+    png:
+      type: integer
+      label: 'PNG tömörítési minőség'
+    temp:
+      type: string
+      label: 'Simple Photoalbum ideiglenes mappája'
+    autoclose:
+      type: boolean
+      label: 'Módosított kép mentése után ablak automatikus bezárása'
+
+    # Vízjel beállítások (Watermark settings)
+    wm:
+      type: boolean
+      label: 'Vízjel használata a képek megjelenítésekor'
+    wmpath:
+      type: string
+      label: 'Alapértelmezett vízjel elérési útja'
+    wmalpha:
+      type: integer
+      label: 'Alapértelmezett vízjel átlátszósági (alpha) értéke'
+    copyright:
+      type: string
+      label: 'Alapértelmezett szerzői jogi szöveg'
+    author:
+      type: string
+      label: 'Alapértelmezett szerző szövege'
+    translate:
+      type: boolean
+      label: 'something'
+
+     # Szerviz funkciók (Service functions)
+    menu_rebuild:
+      type: boolean
+      label: 'Menü útvonalak újraépítésének szükségessége'
+    check:
+      type: boolean
+      label: 'Árva vagy duplikált rekordok ellenőrzése az adatbázisban'
+    from:
+      type: integer
+      label: 'Hányadik elemtől induljon az ellenőrzés'
+    number_of_checking:
+      type: integer
+      label: 'Egy futás alatt ellenőrzött elemek száma'
+
+    # Fájltípusok (File types settings)
+    html5_checking:
+      type: boolean
+      label: 'HTML5 widgetek használata videó és audio fájlokhoz'
+    image_checking:
+      type: boolean
+      label: 'Képfájlok listázása'
+    image_extensions:
+      type: string
+      label: 'Képfájlok kiterjesztéseinek listája'
+    audio_checking:
+      type: boolean
+      label: 'Audio fájlok listázása'
+    audio_extensions:
+      type: string
+      label: 'Audio fájlok kiterjesztéseinek listája'
+    audiohtml5_extensions:
+      type: string
+      label: 'Audio kiterjesztések listája HTML5 lejátszóhoz'
+    video_checking:
+      type: boolean
+      label: 'Videó fájlok listázása'
+    video_extensions:
+      type: string
+      label: 'Videó fájlok kiterjesztéseinek listája'
+    videohtml5_extensions:
+      type: string
+      label: 'Videó kiterjesztések listája HTML5 lejátszóhoz'
+    doc_checking:
+      type: boolean
+      label: 'Dokumentum fájlok listázása'
+    doc_extensions:
+      type: string
+      label: 'Dokumentum fájlok kiterjesztéseinek listája'
+    cmp_checking:
+      type: boolean
+      label: 'Tömörített fájlok listázása'
+    cmp_extensions:
+      type: string
+      label: 'Tömörített fájlok kiterjesztéseinek listája'
+    app_checking:
+      type: boolean
+      label: 'Alkalmazás fájlok listázása'
+    app_extensions:
+      type: string
+      label: 'Alkalmazás fájlok kiterjesztéseinek listája'
+    oth_checking:
+      type: boolean
+      label: 'Egyéb fájlok listázása'
+    oth_extensions:
+      type: string
+      label: 'Egyéb típusú fájlok kiterjesztéseinek listája'
+    dis_checking:
+      type: boolean
+      label: 'Tiltott fájlok listájának használata'
+    dis_extensions:
+      type: string
+      label: 'Tiltott fájlok kiterjesztéseinek listája'
+    subtitle_change:
+      type: boolean
+      label: 'Feliratok automatikus módosítása'
+    subtitle_change_text:
+      type: string
+      label: 'Módosítható vagy törölhető karakterek a feliratokban'  
+
+    # Diavetítés (Slideshow Settings)
+    slide_checking:
+      type: boolean
+      label: 'Képek léptetése diavetítésben'
+    slide_extensions:
+      type: string
+      label: 'Diavetítés fájljainak kiterjesztései'
+    interval:
+      type: integer
+      label: 'Timer for slideshow'
+    style:
+      type: string
+      label: 'style for slideshow'
+    slstyle:
+      type: string
+      label: 'style for slideshow'
+
+    # Mesterséges Intelligencia (AI settings)
+    aigemini:
+      type: boolean
+      label: 'Képfelismerés használata GEMINI klienssel'  
+
+    # FFMPEG beállítások
+    ffmpeg:
+      type: boolean
+      label: 'FFMPEG telepítve van a szerverre'
+    ffmpeg_path:
+      type: string
+      label: 'FFMPEG végrehajtható program teljes útvonala'
+    ffprobe_path:
+      type: string
+      label: 'FFPROBE végrehajtható program teljes útvonala'

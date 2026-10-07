@@ -188,7 +188,7 @@ final class AmpResponseV5 implements ResponseInterface, StreamableInterface
         $delay = new DeferredFuture();
         $id = EventLoop::delay($timeout, $delay->complete(...));
 
-        awaitFirst((function () use ($delay, $multi) {
+        awaitFirst((static function () use ($delay, $multi) {
             yield $delay->getFuture();
 
             foreach ($multi->openHandles as $deferred) {
@@ -350,7 +350,7 @@ final class AmpResponseV5 implements ResponseInterface, StreamableInterface
                 $request->addHeader($name, $value);
             }
 
-            if ($request->getUri()->getAuthority() !== $originRequest->getUri()->getAuthority()) {
+            if ($request->getUri()->getScheme() !== $originRequest->getUri()->getScheme() || $request->getUri()->getAuthority() !== $originRequest->getUri()->getAuthority()) {
                 $request->removeHeader('authorization');
                 $request->removeHeader('cookie');
                 $request->removeHeader('host');

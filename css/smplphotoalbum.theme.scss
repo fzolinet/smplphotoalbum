@@ -101,8 +101,7 @@ $ButtonHeight: var(--sp2);
 }
 
 .smpl_last_item_container {
-  border-bottom: $BorderSettings;
-  width: calc(4 * $ItemWidth)
+  border-bottom: $BorderSettings;  
 }
 
 .smpl_table:last-child {

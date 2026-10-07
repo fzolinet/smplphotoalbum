@@ -1,29 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Framework (https://nette.org)
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Nette\Loaders;
 
 use Nette;
 use Nette\Utils\FileSystem;
+use Nette\Utils\Helpers;
 use SplFileInfo;
-use function array_merge, defined, extension_loaded, file_get_contents, file_put_contents, filemtime, flock, fopen, function_exists, hash, is_array, is_dir, is_file, realpath, rename, serialize, spl_autoload_register, sprintf, strlen, unlink, var_export;
-use const LOCK_EX, LOCK_SH, LOCK_UN, T_CLASS, T_COMMENT, T_DOC_COMMENT, T_ENUM, T_INTERFACE, T_NAME_QUALIFIED, T_NAMESPACE, T_STRING, T_TRAIT, T_WHITESPACE, TOKEN_PARSE;
+use function array_merge, extension_loaded, file_get_contents, file_put_contents, filemtime, flock, fopen, function_exists, hash, is_array, is_dir, is_file, realpath, rename, serialize, spl_autoload_register, sprintf, strlen, unlink, usleep, var_export;
 
 
 /**
- * Nette auto loader is responsible for loading classes and interfaces.
+ * Scans directories for PHP classes, interfaces, traits, and enums and autoloads them on demand.
+ * Unlike PSR-4, does not require any naming conventions — classes are discovered by content.
  *
  * <code>
  * $loader = new Nette\Loaders\RobotLoader;
  * $loader->addDirectory('app');
  * $loader->excludeDirectory('app/exclude');
- * $loader->setTempDirectory('temp');
+ * $loader->setCacheDirectory('temp');
  * $loader->register();
  * </code>
  */
@@ -31,21 +30,21 @@ class RobotLoader
 {
 	private const RetryLimit = 3;
 
-	/** @var string[] */
+	/** @var list<string> */
 	public array $ignoreDirs = ['.*', '*.old', '*.bak', '*.tmp', 'temp'];
 
-	/** @var string[] */
+	/** @var list<string> */
 	public array $acceptFiles = ['*.php'];
 	private bool $autoRebuild = true;
 	private bool $reportParseErrors = true;
 
-	/** @var string[] */
+	/** @var list<string> */
 	private array $scanPaths = [];
 
-	/** @var string[] */
+	/** @var list<string> */
 	private array $excludeDirs = [];
 
-	/** @var array<string, array{string, int}>  class => [file, time] */
+	/** @var array<class-string, array{string, int}>  class => [file, time] */
 	private array $classes = [];
 	private bool $cacheLoaded = false;
 	private bool $refreshed = false;
@@ -55,7 +54,7 @@ class RobotLoader
 
 	/** @var array<string, int>  file => mtime */
 	private array $emptyFiles = [];
-	private ?string $tempDirectory = null;
+	private ?string $cacheDirectory = null;
 	private bool $needSave = false;
 
 
@@ -67,6 +66,9 @@ class RobotLoader
 	}
 
 
+	/**
+	 * Saves the cache if it was modified during the request.
+	 */
 	public function __destruct()
 	{
 		if ($this->needSave) {
@@ -76,17 +78,18 @@ class RobotLoader
 
 
 	/**
-	 * Register autoloader.
+	 * Registers the autoloader via spl_autoload_register().
+	 * @param  bool  $prepend  Prepend instead of append to the autoloader stack.
 	 */
 	public function register(bool $prepend = false): static
 	{
-		spl_autoload_register([$this, 'tryLoad'], prepend: $prepend);
+		spl_autoload_register($this->tryLoad(...), prepend: $prepend);
 		return $this;
 	}
 
 
 	/**
-	 * Handles autoloading of classes, interfaces or traits.
+	 * Autoloads the requested class, interface, trait, or enum.
 	 */
 	public function tryLoad(string $type): void
 	{
@@ -97,25 +100,25 @@ class RobotLoader
 			return;
 		}
 
-		[$file, $mtime] = $this->classes[$type] ?? null;
+		[$file, $mtime] = $this->classes[$type] ?? [null, null];
 
 		if ($this->autoRebuild) {
 			if (!$this->refreshed) {
 				if (!$file || !is_file($file)) {
 					$this->refreshClasses();
-					[$file] = $this->classes[$type] ?? null;
+					[$file] = $this->classes[$type] ?? [null, null];
 					$this->needSave = true;
 
 				} elseif (filemtime($file) !== $mtime) {
 					$this->updateFile($file);
-					[$file] = $this->classes[$type] ?? null;
+					[$file] = $this->classes[$type] ?? [null, null];
 					$this->needSave = true;
 				}
 			}
 
 			if (!$file || !is_file($file)) {
 				$this->missingClasses[$type] = ++$missing;
-				$this->needSave = $this->needSave || $file || ($missing <= self::RetryLimit);
+				$this->needSave = true;
 				unset($this->classes[$type]);
 				$file = null;
 			}
@@ -128,15 +131,18 @@ class RobotLoader
 
 
 	/**
-	 * Add path or paths to list.
+	 * Adds one or more directories (or individual files) to scan for classes.
 	 */
 	public function addDirectory(string ...$paths): static
 	{
-		$this->scanPaths = array_merge($this->scanPaths, $paths);
+		$this->scanPaths = array_merge($this->scanPaths, array_values($paths));
 		return $this;
 	}
 
 
+	/**
+	 * Controls whether PHP parse errors in scanned files are rethrown. Enabled by default.
+	 */
 	public function reportParseErrors(bool $state = true): static
 	{
 		$this->reportParseErrors = $state;
@@ -145,17 +151,18 @@ class RobotLoader
 
 
 	/**
-	 * Excludes path or paths from list.
+	 * Excludes one or more directories (or individual files) from scanning.
 	 */
 	public function excludeDirectory(string ...$paths): static
 	{
-		$this->excludeDirs = array_merge($this->excludeDirs, $paths);
+		$this->excludeDirs = array_merge($this->excludeDirs, array_values($paths));
 		return $this;
 	}
 
 
 	/**
-	 * @return array<string, string>  class => filename
+	 * Returns all indexed classes with their file paths.
+	 * @return array<class-string, string>  class => filename
 	 */
 	public function getIndexedClasses(): array
 	{
@@ -170,21 +177,21 @@ class RobotLoader
 
 
 	/**
-	 * Rebuilds class list cache.
+	 * Rebuilds the class index from scratch, discarding any previously cached data.
 	 */
 	public function rebuild(): void
 	{
 		$this->cacheLoaded = true;
 		$this->classes = $this->missingClasses = $this->emptyFiles = [];
 		$this->refreshClasses();
-		if ($this->tempDirectory) {
+		if ($this->cacheDirectory) {
 			$this->saveCache();
 		}
 	}
 
 
 	/**
-	 * Refreshes class list cache.
+	 * Loads the cached index and incrementally updates it for any changed files.
 	 */
 	public function refresh(): void
 	{
@@ -197,7 +204,7 @@ class RobotLoader
 
 
 	/**
-	 * Refreshes $this->classes & $this->emptyFiles.
+	 * Scans all configured paths and updates the class index, reusing cached mtimes to skip unchanged files.
 	 */
 	private function refreshClasses(): void
 	{
@@ -249,8 +256,8 @@ class RobotLoader
 
 
 	/**
-	 * Creates an iterator scanning directory for PHP files and subdirectories.
-	 * @throws Nette\IOException if path is not found
+	 * Creates a recursive file iterator for the given directory, applying ignore and exclude filters.
+	 * @throws Nette\IOException  If the directory does not exist.
 	 */
 	private function createFileIterator(string $dir): Nette\Utils\Finder
 	{
@@ -274,6 +281,9 @@ class RobotLoader
 	}
 
 
+	/**
+	 * Re-scans a single file and updates the class index accordingly.
+	 */
 	private function updateFile(string $file): void
 	{
 		foreach ($this->classes as $class => [$prevFile]) {
@@ -285,11 +295,11 @@ class RobotLoader
 		$foundClasses = is_file($file) ? $this->scanPhp($file) : [];
 
 		foreach ($foundClasses as $class) {
-			[$prevFile, $prevMtime] = $this->classes[$class] ?? null;
+			[$prevFile, $prevMtime] = $this->classes[$class] ?? [null, null];
 
 			if (isset($prevFile) && @filemtime($prevFile) !== $prevMtime) { // @ file may not exist
 				$this->updateFile($prevFile);
-				[$prevFile] = $this->classes[$class] ?? null;
+				[$prevFile] = $this->classes[$class] ?? [null, null];
 			}
 
 			if (isset($prevFile)) {
@@ -301,14 +311,14 @@ class RobotLoader
 				));
 			}
 
-			$this->classes[$class] = [$file, filemtime($file)];
+			$this->classes[$class] = [$file, (int) filemtime($file)];
 		}
 	}
 
 
 	/**
-	 * Searches classes, interfaces and traits in PHP file.
-	 * @return string[]
+	 * Extracts class, interface, trait, and enum names from a PHP file using token parsing.
+	 * @return list<class-string>
 	 */
 	private function scanPhp(string $file): array
 	{
@@ -382,7 +392,8 @@ class RobotLoader
 
 
 	/**
-	 * Sets auto-refresh mode.
+	 * Enables or disables automatic cache refresh on every autoload attempt. Enabled by default.
+	 * Disable in production for better performance; clear the cache manually on deployment.
 	 */
 	public function setAutoRefresh(bool $state = true): static
 	{
@@ -392,21 +403,28 @@ class RobotLoader
 
 
 	/**
-	 * Sets path to temporary directory.
+	 * Sets the directory for storing the class index cache. Must be an absolute path.
 	 */
-	public function setTempDirectory(string $dir): static
+	public function setCacheDirectory(string $dir): static
 	{
 		if (!FileSystem::isAbsolute($dir)) {
-			throw new Nette\InvalidArgumentException("Temporary directory must be absolute, '$dir' given.");
+			throw new Nette\InvalidArgumentException("Cache directory must be absolute, '$dir' given.");
 		}
 		FileSystem::createDir($dir);
-		$this->tempDirectory = $dir;
+		$this->cacheDirectory = $dir;
 		return $this;
 	}
 
 
+	/** @deprecated  use setCacheDirectory() */
+	public function setTempDirectory(string $dir): static
+	{
+		return $this->setCacheDirectory($dir);
+	}
+
+
 	/**
-	 * Loads class list from cache.
+	 * Loads the class index from the cache file, building it from scratch if it does not exist yet.
 	 */
 	private function loadCache(): void
 	{
@@ -422,7 +440,7 @@ class RobotLoader
 		// 1) We want to do as little as possible IO calls on production and also directory and file can be not writable (#19)
 		// so on Linux we include the file directly without shared lock, therefore, the file must be created atomically by renaming.
 		// 2) On Windows file cannot be renamed-to while is open (ie by include() #11), so we have to acquire a lock.
-		$lock = defined('PHP_WINDOWS_VERSION_BUILD')
+		$lock = Helpers::IsWindows
 			? $this->acquireLock("$file.lock", LOCK_SH)
 			: null;
 
@@ -454,8 +472,8 @@ class RobotLoader
 
 
 	/**
-	 * Writes class list to cache.
-	 * @param  resource  $lock
+	 * Writes the class index to the cache file atomically.
+	 * @param  ?resource  $lock  An already-acquired exclusive lock, or null to acquire one.
 	 */
 	private function saveCache($lock = null): void
 	{
@@ -464,11 +482,31 @@ class RobotLoader
 		// on Windows: that the file is not read by another thread
 		$file = $this->generateCacheFileName();
 		$lock = $lock ?: $this->acquireLock("$file.lock", LOCK_EX);
-		$code = "<?php\nreturn " . var_export([$this->classes, $this->missingClasses, $this->emptyFiles], true) . ";\n";
+		$code = "<?php\nreturn " . var_export([$this->classes, $this->missingClasses, $this->emptyFiles], return: true) . ";\n";
+		$this->atomicWrite($file, $code);
+	}
 
-		if (file_put_contents("$file.tmp", $code) !== strlen($code) || !rename("$file.tmp", $file)) {
-			@unlink("$file.tmp"); // @ file may not exist
-			throw new \RuntimeException(sprintf("Unable to create '%s'.", $file));
+
+	/**
+	 * Atomically writes $content to $file via a temporary file and rename().
+	 * On Windows rename() of a momentarily locked file intermittently fails, so it is retried briefly.
+	 */
+	private function atomicWrite(string $file, string $content): void
+	{
+		$tmp = "$file.tmp";
+		if (file_put_contents($tmp, $content) !== strlen($content)) {
+			$error = Helpers::getLastError();
+			@unlink($tmp); // @ - file may not exist
+			throw new \RuntimeException(sprintf("Unable to create '%s'. %s", $file, $error));
+		}
+
+		for ($attempt = 1; !@rename($tmp, $file); $attempt++) {
+			if ($attempt >= 3 || !Helpers::IsWindows) {
+				$error = Helpers::getLastError();
+				@unlink($tmp); // @ - file may be locked
+				throw new \RuntimeException(sprintf("Unable to create '%s'. %s", $file, $error));
+			}
+			usleep(100_000);
 		}
 
 		if (function_exists('opcache_invalidate')) {
@@ -477,18 +515,22 @@ class RobotLoader
 	}
 
 
-	/** @return resource */
+	/**
+	 * Opens a lock file and acquires a shared or exclusive lock on it.
+	 * @param  LOCK_SH|LOCK_EX  $mode
+	 * @return resource
+	 */
 	private function acquireLock(string $file, int $mode)
 	{
 		$handle = @fopen($file, 'w'); // @ is escalated to exception
 		if (!$handle) {
-			throw new \RuntimeException(sprintf("Unable to create file '%s'. %s", $file, error_get_last()['message']));
+			throw new \RuntimeException(sprintf("Unable to create file '%s'. %s", $file, error_get_last()['message'] ?? ''));
 		} elseif (!@flock($handle, $mode)) { // @ is escalated to exception
 			throw new \RuntimeException(sprintf(
 				"Unable to acquire %s lock on file '%s'. %s",
 				$mode & LOCK_EX ? 'exclusive' : 'shared',
 				$file,
-				error_get_last()['message'],
+				error_get_last()['message'] ?? '',
 			));
 		}
 
@@ -498,14 +540,15 @@ class RobotLoader
 
 	private function generateCacheFileName(): string
 	{
-		if (!$this->tempDirectory) {
-			throw new \LogicException('Set path to temporary directory using setTempDirectory().');
+		if (!$this->cacheDirectory) {
+			throw new \LogicException('Set path to temporary directory using setCacheDirectory().');
 		}
 
-		return $this->tempDirectory . '/' . hash('xxh128', serialize($this->generateCacheKey())) . '.php';
+		return $this->cacheDirectory . '/' . hash('xxh128', serialize($this->generateCacheKey())) . '.php';
 	}
 
 
+	/** @return array{list<string>, list<string>, list<string>, list<string>, string} */
 	protected function generateCacheKey(): array
 	{
 		return [$this->ignoreDirs, $this->acceptFiles, $this->scanPaths, $this->excludeDirs, 'v2'];

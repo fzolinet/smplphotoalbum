@@ -139,9 +139,21 @@ Docs:
 
 History:
 ~~~~~~~
+
+2026.10.08 - 1.20.4-beta4
+- Bug: folders
+- Bug: schema warning
+- Link text in the notes or title be clicked link (a tag)
+- bug: ffmpeg default switch off
+- Bug: ffmpeg
+
+2026.09.30 - 1.10.4-beta3
+- Bug: SettingsForm
+
 2026.07.04 - 1.10.4-beta2
 - Bug: Video convert
 - Bug: Audio convert
+
 2026.06.13 - 1.10.4-beta1
 - audio mp3 converted 
 

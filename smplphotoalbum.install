@@ -117,37 +117,26 @@ function smplphotoalbum_schema() {
             'type' => 'int',
             'unsigned' => TRUE, 
             'default' => 0
+          ],
+          'importance' =>[
+            'description' => 'Importance of files. The larger the important',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'default' => 0
           ]
 
       ),
-      'primary key' => array (
+      'primary key' => [
           'id' 
-      ),
-      'indexes' => array () 
+      ],
+      'indexes' => [
+          'path_name_index' => [ 'path', 'name' ]
+      ] 
   );
   return $schema;
 }
 
 // update the module
-function smplphotoalbum_update_19300(): void{
+function smplphotoalbum_update_101100(): void{
 
-}
-
-// Update the modul extended database with importance: -32768 .. 0 ... 32767
-function smplphotoalbum_update_19500(): void{
-    // ADD new field: importance
-    $spec = [
-      'type' => 'int',
-      'default' => 0,
-      'description' => 'Importance of files. The larger the important',
-    ];
-    $schema = Database::getConnection()->schema();
-    $schema->addField('smplphotoalbum','importance', $spec);
-}
-
-function smplphotoalbum_update_19700(){
-  $schema = Database::getConnection()->schema();
-  if(!$schema->indexExists("smplphotoalbum","path_name_index")){
-    $schema->addUniqueKey("smplphotoalbum","path_name_index", ["path","name"]);  
-  }  
 }

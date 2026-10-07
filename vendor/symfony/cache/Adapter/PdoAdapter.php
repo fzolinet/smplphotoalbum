@@ -118,7 +118,7 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
             // - trailing space removal
             // - case-insensitivity
             // - language processing like é == e
-            'mysql' => "CREATE TABLE $this->table ($this->idCol VARBINARY(255) NOT NULL PRIMARY KEY, $this->dataCol MEDIUMBLOB NOT NULL, $this->lifetimeCol INTEGER UNSIGNED, $this->timeCol INTEGER UNSIGNED NOT NULL) COLLATE utf8mb4_bin, ENGINE = InnoDB",
+            'mysql' => "CREATE TABLE $this->table ($this->idCol VARBINARY(255) NOT NULL PRIMARY KEY, $this->dataCol MEDIUMBLOB NOT NULL, $this->lifetimeCol INTEGER UNSIGNED, $this->timeCol INTEGER UNSIGNED NOT NULL) ENGINE = InnoDB",
             'sqlite' => "CREATE TABLE $this->table ($this->idCol TEXT NOT NULL PRIMARY KEY, $this->dataCol BLOB NOT NULL, $this->lifetimeCol INTEGER, $this->timeCol INTEGER NOT NULL)",
             'pgsql' => "CREATE TABLE $this->table ($this->idCol VARCHAR(255) NOT NULL PRIMARY KEY, $this->dataCol BYTEA NOT NULL, $this->lifetimeCol INTEGER, $this->timeCol INTEGER NOT NULL)",
             'oci' => "CREATE TABLE $this->table ($this->idCol VARCHAR2(255) NOT NULL PRIMARY KEY, $this->dataCol BLOB NOT NULL, $this->lifetimeCol INTEGER, $this->timeCol INTEGER NOT NULL)",
@@ -223,12 +223,20 @@ class PdoAdapter extends AbstractAdapter implements PruneableInterface
             } else {
                 $sql = "TRUNCATE TABLE $this->table";
             }
+            $params = [];
         } else {
-            $sql = "DELETE FROM $this->table WHERE $this->idCol LIKE '$namespace%'";
+            // SQL Server also treats [ as a wildcard, while Oracle rejects an escape character followed by it
+            $namespace = preg_replace('sqlsrv' === $this->getDriver() ? '/[!%_[]/' : '/[!%_]/', '!$0', $namespace);
+            $sql = "DELETE FROM $this->table WHERE $this->idCol LIKE ? ESCAPE '!'";
+            $params = [$namespace.'%'];
         }
 
         try {
-            $conn->exec($sql);
+            if ($params) {
+                $conn->prepare($sql)->execute($params);
+            } else {
+                $conn->exec($sql);
+            }
         } catch (\PDOException) {
         }
 

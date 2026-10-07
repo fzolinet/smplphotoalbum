@@ -1,4 +1,7 @@
 <?php
+/**
+ * Helper object for handling IPTC data write into a jpeg file
+ */
 namespace Drupal\smplphotoalbum\Controller;
 
 DEFINE('IPTC_OBJECT_NAME', '005');
@@ -38,7 +41,7 @@ class iptc {
   private $file = false;
   private $iptc = array();
   
-  function __construct($filename) {
+  function __construct( string $filename) {
     $size = getimagesize($filename,$info);
             
     $this->isiptc = isset($info["APP13"]);
@@ -48,12 +51,12 @@ class iptc {
     $this->file = $filename;
   }
         
-  function set($tag, $data) {
+  function set( string $tag, string $data) {
     $this->iptc["2#".$tag] = Array( $data );
     $this->isiptc = True;
   }
         
-  function get($tag) {
+  function get(string $tag) {
     return isset($this->iptc["2#".$tag]) ? $this->iptc["2#".$tag][0] : false;
   }
        
@@ -70,7 +73,7 @@ class iptc {
     return $iptc_new;   
   }
         
-  function iptc_maketag($rec,$dat,$val) {
+  function iptc_maketag( int $rec, int $dat, string $val): string {
     $len = strlen($val);
     if ($len < 0x8000) {
       return chr(0x1c) . chr((int) $rec) . chr((int) $dat) . 

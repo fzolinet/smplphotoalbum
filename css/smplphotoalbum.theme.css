@@ -59,7 +59,6 @@
 
 .smpl_last_item_container {
   border-bottom: 1px solid #D0D0D0;
-  width: 96%;
 }
 
 .smpl_table:last-child {
@@ -855,7 +854,7 @@ select {
 }
 
 /* Save AS div*/
-div#smpl_saveas, div#smpl_vidsaveas {
+div#smpl_saveas, div#smpl_vidsaveas, div#smpl_audsaveas {
   display: none;
   z-index: 10;
   position: absolute;

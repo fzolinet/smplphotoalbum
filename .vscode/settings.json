@@ -6,5 +6,8 @@
     "*",
     "imagick"
   ],
-  "php.executablePath": "C:/Apache/php84/php.exe"
+  "php.executablePath": "C:/Apache/php84/php.exe",
+  "intelephense.environment.includePaths": [
+    "\\\\wsl$\\Debian\\var\\www\\fw3.com"
+  ]
 }

@@ -303,6 +303,7 @@ Error canceling conversion
 Error closing video editor
 Error saving
 Error saving the: '<b>%1</b>' file.
+FFMpeg does not installed
 FFMpeg conversion is disabled
 Ffmpeg parameters
 FFMpeg path is invalid

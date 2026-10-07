@@ -309,6 +309,7 @@ Error closing video editor=A videoeditor bezárásakor hiba keletkezett
 Error saving=Hiba a mentéskor
 Error saving the: '<b>%1</b>' audio file.=Hiba az audio fájl mentésekor: '<b>%1</b>'.
 The edited videoclip not saved=A szerkesztett videoklipet nem mentettük el
+FFMpeg does not installed=FFMpeg nincsen telepítve
 FFMpeg conversion is disabled=FFMpeg konverzió tiltott
 FFMpeg parameters=FFMpeg paraméterek
 FFMpeg path is invalid=FFMpeg elérési útvonal érvénytelen

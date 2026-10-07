@@ -5,16 +5,12 @@
  * Contains Drupal\smplphotoalbum\Form\MessagesForm.
  */
 namespace Drupal\smplphotoalbum\Form;
-
+use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-//use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
-//use Drupal\Core\Form\ConfigTarget;
 use Drupal\Core\Form\FormStateInterface;
-//use Drupal\Core\Path\PathValidatorInterface;
-//use Drupal\Core\Routing\RequestContext;
-//use Drupal\path_alias\AliasManagerInterface;
+use \Drupal\Core\Database\Connection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Drupal\Core\File;
@@ -26,7 +22,8 @@ class SettingsForm extends ConfigFormBase {
   protected $pathValidator;
   protected $requestContext;
 
-  private $con;
+  private Connection $con;
+  protected Config $cfg;
   /**
    * Class constructor.
    */
@@ -76,18 +73,27 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $cfg = $this->configFactory->get( 'smplphotoalbum.settings' );
+  public function buildForm(array $form, FormStateInterface $form_state) {    
+    $cfg = $this->config( 'smplphotoalbum.settings' );
+
     // If I want to config this server then I have to use state!
     $form = [ ];
-    
+
+    /**
+     * Default settings parameters
+     */
     $form ["default"] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Default settings' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE
+        '#open' => TRUE,        
     ];
     
+    $form ["default"]["description"] =[
+        '#type' => 'item',
+        '#title' => $this->t ( 'Description' ),
+        '#description' => $this->t ( "You can set the default settings of Simple Photoalbum." ),
+    ];
+
     $form ["default"] ['test'] = [
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Test the Simple photoalbum' ),
@@ -120,18 +126,7 @@ class SettingsForm extends ConfigFormBase {
         '#default_value' => $this->smpl_root ( $cfg->get( "root" ) ),
         '#description' => $this->t ( 'The root of photogalleries, somewhere in the public filesystem.' ) 
     ];
-    /*
-     * $form ['default'] ['private'] = [
-     * '#type' => 'checkbox',
-     * '#title' => $this->t ( 'Private access of files' ),
-     * '#default_value' => $cfg->get( 'private' ),
-     * '#description' => $this->t ( "The private access of files is little bit slower, but is is safe" ),
-     * '#attributes' => array (
-     * "readonly" => "readonly"
-     * )
-     * ];
-     */
-    
+   
     $form["default"] ["method"] = [
       "#type"  => 'select',
       '#title' => $this->t("The type of method of form"),
@@ -144,7 +139,7 @@ class SettingsForm extends ConfigFormBase {
       ],
       '#description' => $this->t ( "The Type of method of form (POST / GET), default POST)" ),
     ];
-    
+  
     $form ["default"] ['icon'] = [ 
         '#type' => 'select',
         '#title' => $this->t ( 'Icons of module' ),
@@ -156,25 +151,22 @@ class SettingsForm extends ConfigFormBase {
         ),
         '#description' => $this->t ( "Style of icons" ) 
     ];
-    /*
-     * if(!isset($cfg['directaccess'])) $cfg['directaccess'] = false;
-     * $form["default"]['directaccess'] = [
-     * '#type' => 'checkbox',
-     * '#title' => t('Direct access of files '),
-     * '#required' => FALSE,
-     * '#default_value' => $cfg['directaccess'],
-     * '#description' => t("Direct access to files in the filesystem."),
-     * '#attributes' => array('CHECKED'=>'checked', 'readonly' => 'readonly', 'onclick' => 'return false;', 'style'=>'background-color:#DDD;')
-     * ];
+
+    /**
+     * Viewing parameters
      */
-    
     $form ['view'] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Viewing options' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#open' => FALSE,        
     ];
     
+    $form ['view'] ['description'] = [ 
+        '#type' => 'item',
+        '#title' => $this->t ( 'Description' ),
+        '#description' => $this->t ( "You can set the viewing options of Simple Photoalbum." ), 
+    ];
+
     $form ['view'] ['langswitch'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Show the language switcher' ),
@@ -201,6 +193,7 @@ class SettingsForm extends ConfigFormBase {
         '#default_value' => $cfg->get( 'lazy' ),
         '#description' => $this->t ( "Enable or disable lazy loading" ) 
     ];
+
     $form ['view'] ['sub'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Show the subtitles of files' ),
@@ -231,7 +224,6 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "Output the width and height of the images and other properties of items" ) 
     ];
     
-    
     $form ['view'] ['url_checking'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Show the URL of items' ),
@@ -250,6 +242,7 @@ class SettingsForm extends ConfigFormBase {
             'style' => 'background-color:#DDD;' 
         ) 
     ];
+
     $form ['view'] ['stat'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Show the statistics of folders' ),
@@ -257,28 +250,43 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "Shows the statistics of folders." ) 
     ];
     
-    $form ['order'] = [ 
-        '#type' => 'fieldset',
-        '#title' => $this->t ( 'Ordering options' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,        
+    /**
+     * Filter & order settings
+     */
+    $form ['filterorder'] = [ 
+        '#type' => 'details',
+        '#title' => $this->t ( 'Filtering & Ordering options' ),
+        '#open' => FALSE,        
     ];
 
-    $form['order']['important'] =[
+    $form['filterorder']['description'] = [
+        '#type' => 'item',
+        '#title' => $this->t ( 'Description' ),        
+        '#description' => $this->t ( "The user can filter items and change the order of viewing list!" ) 
+    ];
+
+    $form ['filterorder'] ['filter'] = [ 
+        '#type' => 'checkbox',
+        '#title' => $this->t ( 'Filter the images' ),
+        '#default_value' => $cfg->get( 'filter' ),
+        '#description' => $this->t ( "The user can filter items in the actual path in name or subscription!" ) 
+    ];
+
+    $form['filterorder']['important'] =[
         '#type' => 'checkbox',
         '#title' => $this->t('Important items always on the top'),
         '#default_value' => $cfg->get('important'),
         '#description' => $this->t("If an item is important it is always on the top of the list.")
     ];
     
-    $form ['order'] ['order'] = [ 
+    $form ['filterorder'] ['order'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Change the order of items' ),
         '#default_value' => $cfg->get( 'order' ),
         '#description' => $this->t ( "If it is checked you can change the sorting order of files" ) 
     ];
     
-    $form ['order'] ['sortorder'] = [ 
+    $form ['filterorder'] ['sortorder'] = [ 
         '#type' => 'select',
         '#title' => $this->t ( 'Default sort order' ),
         '#default_value' => $cfg->get( 'sortorder' ),
@@ -294,7 +302,7 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "Default sortorder. Wich property of itemst is the source of order (filename, size, dates, etc." ) 
     ];    
     
-    $form ['order'] ['ascdesc'] = [ 
+    $form ['filterorder'] ['ascdesc'] = [ 
         '#type' => 'select',
         '#title' => $this->t ( 'Sort or randomize image order' ),
         '#default_value' => $cfg->get( 'ascdesc' ),
@@ -305,29 +313,20 @@ class SettingsForm extends ConfigFormBase {
         ),
         '#description' => $this->t ( "Ascending, descending" ) 
     ];
-    
-    $form ['filter'] = [ 
-        '#type' => 'fieldset',
-        '#title' => $this->t ( 'Filter options' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
-    ];
-    
-    $form ['filter'] ['filter'] = [ 
-        '#type' => 'checkbox',
-        '#title' => $this->t ( 'Filter the images' ),
-        '#default_value' => $cfg->get( 'filter' ),
-        '#description' => $this->t ( "The user can filter items in the actual path in name or subscription!" ) 
-    ];
-    
+ 
     /**
      * Editing settings
      */
     $form ['edit'] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Editing the list of items and properties of files' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#open' => FALSE
+    ];
+
+    $form ['edit']['description'] = [ 
+        '#type' => 'item',
+        '#title' => $this->t ( 'Description' ),
+        '#description' => $this->t ( "You can edit the properties of the files (name, caption, etc, taxonomy, url) and you can delete the actual file. You can upload new files to the server." ),        
     ];
 
     $form ['edit'] ['edit'] = [ 
@@ -346,7 +345,14 @@ class SettingsForm extends ConfigFormBase {
         '#type' => 'checkbox',
         '#title' => $this->t ('Uploading enable files to the server.'),
         '#default_value' => $cfg->get( 'upload' ),
-        '#description' => 'Uploading to the server is potentionally, possible dangerous!!!'
+        '#description' => $this->t ( "Uploading to the server is potentionally, possible dangerous!!!" ),
+    ];
+
+    $form['edit'] ['folders']= [
+        '#type' => 'checkbox',
+        '#title' => $this->t ('Use the multilevel folders in the list on the server.'),
+        '#default_value' => $cfg->get( 'folders' ),
+        '#description' => $this->t ( "If it is checked you can use multilevel folders in the lists. Other words more levels of galleries are visible." ),
     ];
     
     // Graphic driver are exist
@@ -357,7 +363,7 @@ class SettingsForm extends ConfigFormBase {
       $gdok = TRUE;
       $gdopt ['gd'] = 'GD2 library';
     } else {
-      $gdv = $this->t ( "<br>GD library not installed! " ) . $this->t ( "You can not edit the images on the web with GD!" );
+      $gdv = $this->t ( "<br>GD library not installed!</br>" ) . $this->t ( "You can not edit the images on the web with GD!" );
       $gdok = False;
     }
     
@@ -370,14 +376,23 @@ class SettingsForm extends ConfigFormBase {
       $imagickv = $this->t ( "<br>Imagick library not installed! " ) . $this->t ( "You can not edit images on the web with Imagick!" );
       $imagickok = False;
     }
-
+ 
+    /**
+     * images Editing functions
+     */
     $form['imgedit'] = [
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Editing images' ),
         '#collapsible' => TRUE,
-        '#collapsed' => FALSe,
-        "#description" => $this->t("You can edit the images on the web if you have GD or Imagick library. You can choose which library do you want to use for editing images on the web. The GD library is more common, but the Imagick library is more powerful and faster than GD."  )
+        '#collapsed' => FALSe,        
     ];
+
+    $form['imgedit']['description'] = [
+        '#type' => 'item',
+        '#title' => $this->t ( 'Description' ),
+        '#description' => $this->t ( "You can edit the images on the web if you have GD or Imagick library. You can choose which library do you want to use for editing images on the web. The GD library is more common, but the Imagick library is more powerful and faster than GD."  )
+    ];
+
     // you can edit images
     $form ['imgedit'] ['imgedit'] = [ 
         '#type' => 'checkbox',
@@ -416,7 +431,7 @@ class SettingsForm extends ConfigFormBase {
     ];
 
     // png default compression
-    $jpeg = $cfg->get( 'png' );
+    $png = $cfg->get( 'png' );
     if (! isset ( $png ) || empty ( $png )) {
       $png = - 1;
     }
@@ -430,10 +445,12 @@ class SettingsForm extends ConfigFormBase {
     ];
     
     // It makes smplphotoalbum temporary folder for editing images
-    if (empty ( $cfg->get( "temp" ) )) {
-      $cfg->set ( "temp", "public://smplptemp/" )->save ();
-    }
+    $temp =$cfg->get( "temp" );
     
+    if ( empty ( $temp )) {
+      $temp = "public://smplptemp/";
+    }
+
     if ($cfg->get( 'imgedit' )) {
       $pp = \Drupal::service ( 'file_system' )->realpath ( "public://" );
       $p = str_replace ( "public://", $pp . "/", $cfg->get( "temp" ) );
@@ -442,11 +459,11 @@ class SettingsForm extends ConfigFormBase {
         $p = PHP_OS_FAMILY == "Windows" ? str_replace ( "\\", "/", $p ) : $p;
         $ok = \Drupal::service ( "file_system" )->mkdir ( $p, 0777 );
         if (! $ok) {
-          \Drupal::messenger ()->addMessage ( $this->t ( "I can not make Smplphotoalbum temporary folder: " ) . $cfg->get( 'temp' ), "warning" );
+          \Drupal::messenger ()->addMessage ( $this->t( "I can not make Smplphotoalbum temporary folder: " ) . $temp , "warning" );
         }
       }
       if (! is_writable ( $p )) {
-        \Drupal::messenger ()->addMessage ( $this->t ( 'The Smplphotoalbum temporary folder not writeable and deleteable by Drupal!: ' . $cfg->get( "temp" ) ), "warning" );
+        \Drupal::messenger ()->addMessage ( $this->t( 'The Smplphotoalbum temporary folder not writeable and deleteable by Drupal!: ' . $temp ), "warning" );
       }
     }
     
@@ -454,7 +471,7 @@ class SettingsForm extends ConfigFormBase {
     $form ['imgedit'] ['temp'] = [ 
         '#type' => 'textfield',
         '#title' => $this->t ( 'Simple Photoalbum temporary folder!' ),
-        '#default_value' => $cfg->get( "temp" ),
+        '#default_value' => $temp,
         '#description' => $this->t ( "This folder has to can access from web and it has to be writeable and readable by Drupal." ),
         '#disabled' => ! $cfg->get( 'imgedit' ) 
     ];
@@ -467,14 +484,21 @@ class SettingsForm extends ConfigFormBase {
         '#disabled' => ! $cfg->get( 'imgedit' )
     ];
 
-    // Watermark settings
+    /**
+     * Watermark settings
+     */
     $form ['wm'] = [
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Watermark settings' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE
+        '#open' => FALSE,
     ];
     
+    $form["wm"]["description"] = [
+        "#type" => "item",
+        "#title"=> $this->t("Description"),
+        '#description' => $this->t (  "You can write watermark on images on the fly Watermark to protect against theft the images." ),
+    ];
+
     $form['wm']['wm'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Watermark using in show the images'),
@@ -496,7 +520,7 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "Default watermark path from public folder (beginning of public://) or from module (beginning of smplphotoalbum://images/) of Simple Photoalbum." ),
         '#disabled' => ! $cfg->get( 'imgedit' ) 
     ]; 
-    
+  
     // default watermark alpha
     $wmalpha = 10;
     if(!empty($cfg->get( 'wmalpha' ) ) ){
@@ -530,6 +554,7 @@ class SettingsForm extends ConfigFormBase {
     if(empty($author)){
       $author = "PiQasso";
     }
+
     $form['wm'] ['author'] = [
         '#type' => 'textfield',
         '#title' => $this->t ( 'Default Author text' ),
@@ -537,18 +562,22 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "Default watermark text. You can write it into the items ( image, audio file) of Simple Photoalbum." ),
         '#disabled' => ! $cfg->get( 'imgedit' )
     ];
-
+  
     /**
      * Service settings
      */
     $form['services'] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Service functions' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#description' => $this->t ( "Check and delete orphane or duplicate records from database" ) 
+        '#open' => FALSE,        
     ];
-    
+
+    $form["services"]["description"] = [
+        "#type" => "item",
+        "#title"=> $this->t("Description"),
+        '#description' => $this->t (  "Service functions of Simple photoalbum. You can check and delete the orphane or duplicate records from database." ),
+    ];
+
     $form ['services'] ['menu_rebuild'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Need the rebuild the pathes of menus?' ),
@@ -558,19 +587,21 @@ class SettingsForm extends ConfigFormBase {
     ];
     
     // SERVICE FUNCTION
-    $cfg = $this->configFactory->getEditable ( 'smplphotoalbum.settings' );
     $check = $cfg->get( 'check' );
-    $from = $cfg->get( 'from' );
+    $from  = $cfg->get( 'from' );
     $number_of_checking = $cfg->get( 'number_of_checking' );
     if ($check) {
       $this->removeduplicate ();
     }
-    
+      
     $db = $this->con->query ( 'SELECT count(id) AS db FROM {smplphotoalbum}' )->fetchField ();
+    if( $number_of_checking >$db ){
+        $number_of_checking = $db;
+    }
     
-    if ($check) {
+    if ( $check ) {
       if ($from + $number_of_checking > $db) {
-        $number_of_checking = $db - $from;
+        $number_of_checking = $db - $from-1;
       }
       $from = $this->checkrecords ( $from, $number_of_checking, $cfg->get( 'root' ) );
       $cfg->set ( 'check', False );
@@ -579,7 +610,7 @@ class SettingsForm extends ConfigFormBase {
     $form ['services'] ['check'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Check the orphane or duplicate records from database of smplphotoalbum' ),
-        '#default_value' => $cfg->get( 'check' ),
+        '#default_value' => $check,
         '#description' => $this->t ( "Check and delete the orphane records from database." ) 
     ];
     
@@ -597,22 +628,20 @@ class SettingsForm extends ConfigFormBase {
         '#title' => $this->t ( 'Number of items chekcing in one run' ),
         '#default_value' => $number_of_checking,
         '#min' => 1,
-        '#max' => $db - $from,
+        '#max' => (100 > $db ? 100 : $db),
         '#description' => $this->t ( "If the number is too high the script stops with timeout" ) 
     ];
-    
+      
     $form ['types_settings'] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'File types settings' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#open' => FALSE,        
     ];
 
-    $form['types_settings']['folders'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t ( 'Lists the folders' ),
-        '#default_value' => $cfg->get( 'folders' ),
-        '#description' => $this->t ( "If it is checked the folders are listed too. Other words more levels of galleries are visible." ), 
+    $form["types_settings"]["description"] = [
+        "#type" => "item",
+        "#title"=> $this->t("Description"),
+        '#description' => $this->t (  "Used filetypes of Simple photoalbum. You can change the list of filetypes, but be careful! If you change the list of filetypes, the existing files will not be listed in the galleries." ),
     ];
     
     $form ['types_settings'] ['html5_checking'] = [ 
@@ -683,7 +712,6 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "This is a list of extensions of HTML5 video files." ),        
     ];
 
-    
     $form ['types_settings'] ['doc_checking'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Lists the document files' ),
@@ -717,7 +745,7 @@ class SettingsForm extends ConfigFormBase {
             'style' => 'background-color:#DDD;' 
         )) 
     ];
-    
+     
     $form ['types_settings'] ['app_checking'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Lists the application files' ),
@@ -778,6 +806,7 @@ class SettingsForm extends ConfigFormBase {
     
     // This has to expand
     $a = [ ];
+
     $a = array_merge ( 
         explode ( " ", $cfg->get( 'image_extensions' ) ), 
         explode ( " ", $cfg->get( 'audio_extensions' ) ),
@@ -805,11 +834,18 @@ class SettingsForm extends ConfigFormBase {
     ];
        
     $form ['slideshow_settings'] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Slideshow Settings' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#open' => FALSE,
+        '#description' => $this->t ( "Slideshow settings for images" )
     ];
+
+    $form ['slideshow_settings']['description'] = [ 
+        '#type' => 'item',
+        '#title' => $this->t ( 'Description' ),        
+        '#description' => $this->t (  "Slideshow setting for images. "),
+    ];
+
     $form ['slideshow_settings'] ['slide_checking'] = [ 
         '#type' => 'checkbox',
         '#title' => $this->t ( 'Slide the images' ),
@@ -834,13 +870,16 @@ class SettingsForm extends ConfigFormBase {
         '#description' => $this->t ( "This is the default styles of image of slideshow" ),
     ];
     
-    // Image Recognition with AI
+    /**
+     * Image Recognition with AI
+     */    
     $form ['AI_settings'] = [ 
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'Image Recognition with AI' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE 
+        '#open' => FALSE,
+        '#description' => $this->t ( "Image recognition with AI. You can use GEMINI client for image recognition." )
     ];
+
     // Is there installed the right services
     $curl = extension_loaded("curl");    
     $AI   = $curl;    
@@ -852,12 +891,15 @@ class SettingsForm extends ConfigFormBase {
         '#description'   => "Image recognition with GEMINI client",         
     ];
 
+    /**
+     * FFMPEG Settings - tested in windows & Linux is alpha
+     */
     $form['ffmpeg_settings'] = [
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => $this->t ( 'FFMPEG settings for video and audio editing and conversion if ffmpeg is installed' ),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,        
+        '#open' => FALSE,
     ];
+
     $form["ffmpeg_settings"]["description"] = [
         "#type" => "item",
         "#title"=> $this->t("Description"),
@@ -870,25 +912,30 @@ class SettingsForm extends ConfigFormBase {
     } else{
         $php_ok = false;
     }
+
+    $ffmpeg_path  = $cfg->get("ffmpeg_path");
+    $ffmpeg_path  = empty($ffmpeg_path) ? "" : $ffmpeg_path;
+
+    $ffprobe_path = $cfg->get("ffprobe_path");
+    $ffprobe_path = empty($ffprobe_path) ? "" : $ffprobe_path;
     
-    $form["ffmpeg_settings"]["PHP"] = [
-        "#type" => "item",
-        "#title"=> "PHP version condition",
-        '#description' => $this->t ( "PHP version has to be greater than 8.2.0. The ".PHP_VERSION." " . ($php_ok ?">=":"<") . " 8.2.0. The condition is ". ($php_ok ? "ok.":"not ok.") ),
-    ];
+    if(PHP_OS == "WINNT"){
+        $os = "Windows System.";
+        if ( empty( $ffmpeg_path ) )  $ffmpeg_path  = "C:\\ffmpeg\\bin\\ffmpeg.exe";
+        if ( empty( $ffprobe_path ) ) $ffprobe_path  = "C:\\ffmpeg\\bin\\ffprobe.exe";
+        
+    } else if(PHP_OS == "Linux" ){
+        $os = "Linux system.";
+        $ffmpeg_path   = "/usr/bin/ffmpeg";
+        $ffprobe_path  = "/usr/bin/ffprobe";
 
-    $ffmpeg_path = $cfg->get("ffmpeg_path");
-
-    if( empty($ffmpeg_path) ){
-        // default path
-        if(PHP_OS == "WINNT"){
-            $ffmpeg_path = "C:\\ffmpeg\\bin\\ffmpeg.exe";
-        }else{
-            $ffmpeg_path = "/usr/bin/ffmpeg";
-        }
-    }else{
-        $ffmpeg_path = str_replace("\\", "/", $ffmpeg_path);
+    } else{
+        $os = PHP_OS." System.";
+        $ffmpeg_path = "";          
+        $ffprobe_path = "";
     }
+    $ffmpeg_path  = str_replace("\\", "/", $ffmpeg_path);
+    $ffprobe_path = str_replace("\\", "/", $ffprobe_path);
 
     $form['ffmpeg_settings']['ffmpeg_path'] = [
         '#type' => 'textfield',
@@ -897,32 +944,43 @@ class SettingsForm extends ConfigFormBase {
         '#description' => t("Write the full path of ffmpeg executable. Example: /usr/bin/ffmpeg or c:\Users\[username]\AppData\Local\Microsoft\WinGet\Links\\ffmpeg.exe" ),
     ];
 
-    if(PHP_OS == "WINNT"){
-        // Windows operation system        
-        $out = " ".shell_exec( $ffmpeg_path);        
-        $ffmpeg_installed = (stripos($out, "ffmpeg") > 0 ) ? true : false;
-        $os = "Windows System & FFMPEG " . ( $ffmpeg_installed ? "is installed!" : "is not installed" );
-        
+    $form['ffmpeg_settings']['ffprobe_path'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t ( 'FFPROBE path with exec progam' ),
+        '#default_value' => $ffprobe_path,
+        '#description' => t("Write the full path of ffprobe executable. Example: /usr/bin/ffprobe or c:\Users\[username]\AppData\Local\Microsoft\WinGet\Links\\ffprobe.exe" ),
+    ];
+
+    $ffmpeg_installed = @(file_exists( $ffmpeg_path ) && is_readable( $ffmpeg_path ) && is_executable( $ffmpeg_path ) ? true : false);
+    $ffprobe_installed = @(file_exists( $ffprobe_path ) && is_readable( $ffprobe_path ) && is_executable( $ffprobe_path ) ? true : false);
+
+    if(PHP_OS == "WINNT") {
+        $os = "Windows System."; 
     }else if(PHP_OS == "Linux" ){
-        // Linux operational system                       
-        $ffmpeg_installed = file_exists($ffmpeg_path) ? true : false;
-        $os = "Linux system. FFMEPG ". ( $ffmpeg_installed ? "is installed" : "is not installed" );        
+        $os = "Linux system.";  
     } else{
-        $ffmpeg_installed = false;
-        $os = "Your system is ".PHP_OS.". I can not check the FFMPEG installation on this system. Please check it manually and write the path of ffmpeg executable into the FFMPEG path field.";
+        $os = "Your system is ".PHP_OS.". I can not check the FFMPEG installation on this system. Please check it manually and write the path of ffmpeg && ffprobe executables into the FFMPEG path field.";
     }
+    $os .= " FFMPEG " . ( $ffmpeg_installed ? "is installed." : "is <strong>not installed or not readable or not executable</strong>. " );
+    $os .= " FFPROBE ". ( $ffprobe_installed ? "is installed." : "is <strong>not installed or not readable or not executable</strong>. " );  
+    $os .= " PHP version ".PHP_VERSION. ( $php_ok ? " is OK." : " is not OK. PHP 8.2 or higher is required for FFMPEG." );      
+    
+    $form["ffmpeg_settings"]["installed"] = [
+        "#type" => "item",
+        "#title"=> $this->t("FFMPEG installation check"),
+        '#description' => $this->t (  $os ),
+    ];
 
     $ffmpeg = $cfg->get("ffmpeg");
-
     $form['ffmpeg_settings']['ffmpeg']=[
         '#type' => 'checkbox',
         '#title' => $this->t ( $os ),
-        '#default_value' => $ffmpeg,
-        '#description' => $this->t ( "If it is checked the FFMPEG is installed on the server" ),
-        '#attributes' => $ffmpeg_installed && $php_ok ? [] :
+        '#default_value' => ( $ffmpeg && $ffmpeg_installed && $ffprobe_installed && $php_ok),
+        '#description' => $this->t ( "If the checking is ok the FFMPEG can be use on the server" ),
+        '#attributes' => ( $ffmpeg_installed && $ffprobe_installed && $php_ok) ? [] :
             [
                 'readonly' => 'readonly',
-                'style' => 'background-color:#DDD;' 
+                'disabled' => 'disabled',
             ]
     ];
     
@@ -938,11 +996,14 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $cfg = $this->configFactory->getEditable ( 'smplphotoalbum.settings' );
+  public function submitForm(array &$form, FormStateInterface $form_state) {    
+    $cfg = $this->configFactory->getEditable ( 'smplphotoalbum.settings' );    
+    //Delete the key from smplphotoalbum.settings
+    //$this->configFactory->getEditable ( 'smplphotoalbum.settings' )->clear("slidestyle");
     $vals = $form_state->getValues();
+
     $vals ['root'] = $this->smpl_root ( $vals ['root'] );
-    
+
     $cfg->set( "number", $vals ['number'] )
         ->set( 'width', $vals ['width'] )
         ->set( 'sub', $vals ['sub'] )
@@ -982,8 +1043,9 @@ class SettingsForm extends ConfigFormBase {
         // Editing list and properties of items
         ->set( 'edit', $vals ['edit'] )
         ->set( 'jpeg', $vals ['jpeg'] )->set ( 'png', $vals ['png'] )
-        ->set( 'delete', $vals ['delete'] )
+        ->set( 'delete', $vals['delete'] )
         ->set( 'upload', $vals['upload'])
+        ->set( 'folders', $vals['folders'])
         // Image editing
         ->set( 'imgedit', $vals ['imgedit'] )
         ->set( 'graphicdrv', $vals ['graphicdrv'] )
@@ -1007,12 +1069,13 @@ class SettingsForm extends ConfigFormBase {
         ->set( 'test', $vals ['test'] )
          // AI settings        
         ->set( 'aigemini', $vals['aigemini'] )
-        ->set( 'important', $vals['important'] )
-        ->set( 'folders', $vals['folders'] )
+        ->set( 'important', $vals['important'] )        
         ->set( 'langswitch', $vals['langswitch'] )
         ->set( 'lang', $vals['lang'] )
+        //ffmpeg settings
         ->set( 'ffmpeg', $vals['ffmpeg'] )
         ->set( 'ffmpeg_path', $vals['ffmpeg_path'] )
+        ->set( 'ffprobe_path', $vals['ffprobe_path'] )        
         ->save ();
   }
   /**
@@ -1037,19 +1100,20 @@ class SettingsForm extends ConfigFormBase {
    * @param int $number          
    * @return int
    */
-  private function checkrecords($from, $number, $root) {
+  private function checkrecords($from, $number, string $root) {
     // database record number
     $db = $this->con->query ( 'SELECT count(id) AS db FROM {smplphotoalbum}' )->fetchField ();
+    
     // real root of smplphotoalbum
     $realroot = \Drupal::service ( 'file_system' )->realpath ( $root );
     
     $del = '';
     
-    for($i = $from; $i < $from + $number && $i < $db; $i ++) {
+    for( $i = $from; $i < $from + $number && $i < $db; $i++ ) {
       $qry = $this->con->query ( 'SELECT id, path + name AS filepath FROM {smplphotoalbum} LIMIT ' . $i . ',1' );
       $rec = $qry->fetchAssoc ();
       
-      if (! file_exists ( $root . $rec ['filepath'] )) {
+      if ( !file_exists ( $root . $rec ['filepath'] )) {
         $del .= ',' . $rec ['id'];
       }
     }
@@ -1064,7 +1128,7 @@ class SettingsForm extends ConfigFormBase {
   private function removeduplicate() {
     $sql = 'DELETE t1 FROM {smplphotoalbum} t1
             INNER JOIN {smplphotoalbum} t2
-            WHERE t1.id < t2.id AND
+            WHERE t1.id <> t2.id AND
             t1.path + t1.name = t2.path + t2.name;
            ';
     $this->con->query ( $sql );

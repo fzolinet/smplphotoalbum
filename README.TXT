@@ -1,5 +1,5 @@
 
-Simple Photoalbum 1.9.x-xxxx
+Simple Photoalbum 1.10.x-xxxx
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Features
 ~~~~~~~~
@@ -118,7 +118,7 @@ Parameters
   title: 
   subtitle:
   path: 
-  notes: some-text
+  notes: some-text with link or anything other text
   number: number of images on one page
   width: width of thumbnails in pixel
   lang: en|hu, default: en

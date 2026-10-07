@@ -6,7 +6,7 @@
 			<div id="smplup">{{ Up }}</div>
 			<div id="smplprev">{{ Previous }}</div>
 			<img id="smplslideimg" src="{{ link }}" class="smplslideimg" title="{{ titleimg }}"
-				alt="{{ titleimg }}" style="{{ slidestyle }}" data-link="{{ link }}"  />							
+				alt="{{ titleimg }}" style="{{ slstyle }}" data-link="{{ link }}"  />							
 			<div id="smplnext">{{ Next }}</div>								
 			<div id="smpldown">{{ Down }}</div>
 		</div>
@@ -75,20 +75,20 @@
 	
 	class SmplSlide {};
 	var smplslide = new SmplSlide();
-	smplslide.ajax       = "{{ ajax }}";	
-	smplslide.timer      = false;	
-	smplslide.id         = {{ id }};		// id in the database
-	smplslide.title      = '{{ title }}';
-	smplslide.subtitle   = "{{ sub }}";
-	smplslide.linksrc    = "{{ linksrc }}";
-	smplslide.interval   = {{ interval }};
-	smplslide.slidestyle = "{{ slidestyle }}";
-	smplslide.styles     = ['none','fade','slide','zero' ];
-	smplslide.eftime     = 500;
-	smplslide.ths        = [];
-	smplslide.testmsg    = '';
-	smplslide.test       = {{ test }};
-	smplslide.maxhi      = 0;
-	smplslide.lastcmd    = "next";
-	var smpltimer        = false;
+	smplslide.ajax     = "{{ ajax }}";	
+	smplslide.timer    = false;	
+	smplslide.id       = {{ id }};		// id in the database
+	smplslide.title    = '{{ title }}';
+	smplslide.subtitle = "{{ sub }}";
+	smplslide.linksrc  = "{{ linksrc }}";
+	smplslide.interval = {{ interval }};
+	smplslide.slstyle  = "{{ slstyle }}";
+	smplslide.styles   = ['none','fade','slide','zero' ];
+	smplslide.eftime   = 500;
+	smplslide.ths      = [];
+	smplslide.testmsg  = '';
+	smplslide.test     = {{ test }};
+	smplslide.maxhi    = 0;
+	smplslide.lastcmd  = "next";
+	var smpltimer      = false;
 </script>

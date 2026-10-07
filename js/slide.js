@@ -92,14 +92,14 @@
 
 		// alter mode comes the next image 
 		let st = "";
-		if (smplslide.slidestyle == "random") {
+		if (smplslide.slstyle == "random") {
 			st = smplslide.styles[Math.floor(Math.random() * smplslide.styles.length)];
 			if (st == "slide") {
 				var cmds = ['up', 'down', 'next', 'prev'];
 				cmd = cmds[Math.floor(Math.random() * cmds.length)];
 			}
 		} else {
-			st = smplslide.slidestyle;
+			st = smplslide.slstyle;
 		}
 
 		// TODO - optimize the code, there is a lot of repetition

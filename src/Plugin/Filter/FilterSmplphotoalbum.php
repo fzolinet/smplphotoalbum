@@ -55,7 +55,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $is_img01 = preg_match( $minta01, $text, $ml01 );
     $is_img02 = preg_match( $minta02, $text, $ml02 );
     $is_img03 = preg_match( $minta03, $text, $ml03 ); // New Style
-         
+     
     if( !($is_img01 > 0 || $is_img02 > 0 || $is_img03 > 0 ) ){ 
       return new FilterProcessResult ( $text );
     }
@@ -67,14 +67,14 @@ class FilterSmplphotoalbum extends FilterBase {
 
     //------------------   
     if( $is_img01 > 0 ){      
-      $match = str_ireplace( [ '[smpl|' , ']' ] ,"", $ml01[0] );              
+      $match = str_ireplace( [ '[smpl|' , ']' ] ,"", $ml01[0] );                   
       $this->ParamsInit();
       $match = str_replace ( "\\", "/", $match );        
       $match = (substr ( $match, 0, 1 ) != "/" ? "/" : "") . $match . (substr ( $match, 0, - 1 ) != "/" ? "/" : "");
       $this->params ['path'] = $match;
 
     } else if( $is_img02 > 0 ){      
-      $match = str_ireplace( [ '{smpl|' , '}' ] ,"", $ml02[0] );              
+      $match = str_ireplace( [ '{smpl|' , '}' ] ,"", $ml02[0] );                  
       $this->ParamsInit();
       $match = str_replace ( "\\", "/", $match );        
       $match = (substr ( $match, 0, 1 ) != "/" ? "/" : "") . $match . (substr ( $match, 0, - 1 ) != "/" ? "/" : "");
@@ -82,11 +82,11 @@ class FilterSmplphotoalbum extends FilterBase {
     
     } else if ( $is_img03 > 0 ){
       $match = $ml03 [0];
-      $match = strip_tags( $match );
-      $this->ParamsInit();      
+      $match = strip_tags( $match );      
+      $this->ParamsInit();          
       $this->ParamsChange( $match ); 
     } 
-    
+
     $GLOBALS["smplphotoalbum"] = True;
 
     // is error in root checking
@@ -232,10 +232,9 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['slide']    = false;
     $this->params['interval'] = 10;  //sec
     $this->params['style']      = 'none';
-    $this->params['slidestyle'] = 'none';
+    $this->params['slstyle'] = 'none';
     $this->params['translate']  = false;     
     $this->params['methods']    = 'POST';
-    $this->params['folders']    = ($this->params['folders'] === 1 ? true: false);    
     
     if (! isset ( $this->params['icon'] )) {
       $this->params['icon'] = '_col';
@@ -251,7 +250,7 @@ class FilterSmplphotoalbum extends FilterBase {
     $this->params['video_extensions']      = " " . $this->params ['video_extensions']." ";
     $this->params['videohtml5_extensions'] = " " . $this->params ['videohtml5_extensions']." ";    
     $this->params["aigemini"]              = $this->params["aigemini"];
-    ksort($this->params);    
+    ksort($this->params);     
   }
 
   /**
@@ -293,7 +292,7 @@ class FilterSmplphotoalbum extends FilterBase {
         'slide',
         'slide_checking',
         'slide_extensions',        
-        'slidestyle',
+        'slstyle',
         'sortorder',
         'stat',
         'style',
@@ -379,7 +378,7 @@ class FilterSmplphotoalbum extends FilterBase {
             $this->params['slide']     = $this->truefalse($v); 
             break;
           // style of slide
-          case 'slidestyle': $this->params['slidestyle']= $v; break;
+          case 'slstyle'   : $this->params['slstyle']   = $v; break;
           // style of smplbox
           case 'smplbox'   : $this->params['smplbox']   = $v; break;
           // default sortorder
@@ -424,8 +423,15 @@ class FilterSmplphotoalbum extends FilterBase {
    * @return boolean
    */
   function truefalse($v){
+    if( is_bool($v) ){
+      return $v;
+    }
+    if( is_numeric($v) ){
+      return (int) $v > 0 ? true : false;
+    }
+
     $v = strtolower( trim( $v ) );
-    return in_array ( $v, [ true, 'true', 'TRUE', 'True' , 1, '1', 'on'] ) ? true : false;    
+    return ( $v == "true" || $v == "1" || $v == "on" ) ? true : false;    
   }
 
   /** 
@@ -537,14 +543,15 @@ class FilterSmplphotoalbum extends FilterBase {
       
       //Videoedit
       'ffmpeg',
-      'ffmpeg_path'
+      'ffmpeg_path',
+      'ffprobe_path'
     ];
     $config = \Drupal::config ( 'smplphotoalbum.settings' );
     $cfg = [];
 
     foreach( $index as $i ) {
       $cfg[$i] = $config->get( $i );
-    }
+    }    
     return $cfg;
   } 
 }

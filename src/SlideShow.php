@@ -129,8 +129,8 @@ class SlideShow {
 		$s["interval"] = '{{ interval }}';
 		$r["interval"] = $params["interval"] * 500;
 
-		$s["slidestyle"] = "{{ slidestyle }}";
-		$r["slidestyle"] = $params["slidestyle"];
+		$s["slstyle"] = "{{ slstyle }}";
+		$r["slstyle"] = $params["slstyle"];
 
 		$s["style"] = '{{ style }}';
 		$r["style"] = $this->params["style"];

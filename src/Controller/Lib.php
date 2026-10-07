@@ -408,4 +408,13 @@ class Lib{
 	public static function Pics(){		
 		return $_SESSION["slide"]["img"];		
 	}
+
+  public static function FFMpegOK( string $ffmpeg_path = "", string $ffprobe_path = ""){
+    return ( 
+      !empty( $ffmpeg_path ) &&       
+      !empty( $ffprobe_path ) &&       			
+			is_executable($ffmpeg_path ) &&
+			is_executable($ffprobe_path )			
+		);
+  }
 }

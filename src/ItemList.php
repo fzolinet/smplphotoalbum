@@ -89,7 +89,7 @@ class ItemList {
 	protected $oth = 1;
 	protected $video = 1;
 	protected $imgver = ['','Do not exists Imagick'];
-	protected $ffmpeg = 1;
+	protected $ffmpeg = 0;
 	
 	// Slideshow
 	/** @var SlideShow */
@@ -104,7 +104,7 @@ class ItemList {
 	protected $slide_db = 0;
 	protected $slide_subtitle = "";
 	protected $slide_title = "";
-	protected $slidestyle = "";
+	protected $slstyle = "";
 	protected $style = "none";
 	
 	use StringTranslationTrait;
@@ -119,11 +119,12 @@ class ItemList {
 		$this->access	  = $this->RightAccess();		
 		$this->sess   	= \Drupal::request()->getSession();	
 		$this->con    	= \Drupal::database();		
-		$this->params   = &$params;			
+		$this->params   = &$params;
+
 		$this->preSettings();
-				
+		
 		$this->upload 		= $this->access && $this->upload;		
-			
+		
 		// If method comes from page
 		if( isset( $this->params["method"] ) ){
 			$method = strtolower( $this->params["method"] );
@@ -378,7 +379,7 @@ class ItemList {
 		
 		$this->edit      = $this->params["edit"];		  // Edit 
 		$this->imgedit   = $this->params["imgedit"];	// Image Edit
-		$this->ffmpeg    = $this->params["ffmpeg"];		// Video and audio edit with ffmpeg
+		$this->ffmpeg    = $this->params["ffmpeg"];		// Video and audio edit with ffmpeg		
 		$this->wmpath    = $this->params["wmpath"];	  // Watermark		
 		$this->upload    = $this->params['upload'];	  // Upload enabled | disabled
 		$this->folders   = $this->params['folders'];  //List of folders enabled | disabled
@@ -393,8 +394,8 @@ class ItemList {
 		$this->html5 = $this->params['html5_checking']; // Use the html5 widgets
 		$this->url   = $this->params['url_checking'];		
 		
-		$this->title = isset ( $this->params['title'] ) && !empty( $this->params[ 'title' ] ) ? '<h2 class="smpl_title">' . $this->params['title'] . '</h2>' : '';
-		$this->notes = isset ( $this->params['notes'] ) && !empty( $this->params[ 'notes' ] ) ? '<div class="smpl_notes">' . $this->params['notes'] . '</div>' : '';
+		$this->title = isset ( $this->params['title'] ) && !empty( $this->params[ 'title' ] ) ? '<h2 class="smpl_title">' . $this->LinkRecognition($this->params['title'] ). '</h2>' : '';
+		$this->notes = isset ( $this->params['notes'] ) && !empty( $this->params[ 'notes' ] ) ? '<div class="smpl_notes">' . $this->LinkRecognition($this->params['notes'] ) . '</div>' : '';
 		
 		// Slideshow		
 	  $this->slide_checking = $this->params['slide_checking'];
@@ -402,7 +403,7 @@ class ItemList {
 			$this->params['slide'] = true;
 		}
 		$this->slide          = $this->params['slide'] && $this->params['slide_checking'];
-		$this->slidestyle     = $this->params['slidestyle'];
+		$this->slstyle     = $this->params['slstyle'];
 		$this->interval       = $this->params['interval'];
 
 		// icon color or black & white
@@ -436,6 +437,23 @@ class ItemList {
 	  }
 	}
 
+	/**
+ 	* Recognizes and formats links
+ 	* @param string $link 
+ 	* @return string 
+ 	*/
+	function LinkRecognition(string $link){
+		if( empty($link) ) return "";
+		$link = trim($link);
+		if( stripos($link, "http://") === 0 || stripos($link, "https://") === 0 ){
+			$link = "<a href=\"$link\" target=\"_blank\">$link</a>";
+			return $link;
+		}
+		if(stripos($link, "www.") === 0 ){
+			$link = "<a href=\"http://$link\" target=\"_blank\">$link</a>";
+		}
+		return $link;
+	}
 	/**
 	 * Get hte abolute path of root
 	 * @param string $root
@@ -969,8 +987,8 @@ class ItemList {
 								$base_path . $this->modulepath . "/image/404.png",
 								$this->tpl["editform"], 
 							  $this->tpl["imgeditform"], 
-								($this->ffmpeg ? $this->tpl["videoeditform"] :""),
-								($this->ffmpeg ? $this->tpl["audioeditform"] :""), 																								
+								($this->ffmpeg ? $this->tpl["videoeditform"] : ""),
+								($this->ffmpeg ? $this->tpl["audioeditform"] : ""), 																								
 								($this->upload ? $this->tpl["uploadform"]: ''),
 								($this->folders ? $this->tpl["folderform"] : ''),
 								$this->method
@@ -1045,8 +1063,18 @@ class ItemList {
 		$this->GraphicDriver( $str );
 		
 		//FFMpeg information
-		if($this->ffmpeg){
-			$this->FFMpegInfo( $str );
+		
+		if( $this->ffmpeg ){
+			if( ( $this->ffmpeg = Lib::FFMpegOK($this->params["ffmpeg_path"] , $this->params["ffprobe_path"] ) == false) )
+			{
+				\Drupal::messenger()->addMessage( $this->words["FFMpeg path is invalid"].": '".$this->params["ffmpeg_path"] . "' or '".$this->params["ffprobe_path"] ."'", 'warning' );
+				$this->params["ffmpeg"] = False;				
+				$str = str_replace("{{ FFMpegVersion }}", "FFMpeg do not installed", $str);
+			}else{
+				$this->FFMpegInfo( $str );
+			}					
+		} else{			
+			$str = str_replace("{{ FFMpegVersion }}", "", $str);
 		}
 
 		//Autoclose
@@ -1196,7 +1224,7 @@ class ItemList {
 	 * Show / Hide Upload button
 	 * @param string &$str
 	 */
-	function NewFolderButton(string &$str){
+	function NewFolderButton(string &$str){				
 		if( $this->access && $this->folders ){
 			$str = str_replace(['<FolderButton>','</FolderButton>'],'', $str);			
 		}else{
@@ -1286,7 +1314,8 @@ class ItemList {
 	 * @param string $str
 	 * @return void
 	 */
-	function FFMpeginfo( &$str ){	
+	function FFMpeginfo( &$str ){			
+
 		require __DIR__."/../vendor/autoload.php";
 		$ffmpeg = \FFMpeg\FFMpeg::create();	
 		$version = $ffmpeg->getFFMpegDriver()->getVersion();
